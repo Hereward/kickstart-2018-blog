@@ -1,0 +1,48 @@
+{
+  "name": "meteor-react-kickstart-2018",
+  "private": true,
+  "scripts": {
+    "start": "meteor --settings settings-development.json",
+    "flow": "flow"
+  },
+  "dependencies": {
+    "@types/meteor": "^1.4.12",
+    "@types/react": "^16.0.31",
+    "babel-runtime": "^6.26.0",
+    "bootstrap": "^4.0.0-beta.2",
+    "classnames": "^2.2.5",
+    "jquery": "^3.2.1",
+    "meteor-node-stubs": "^0.3.2",
+    "popper.js": "^1.13.0",
+    "prop-types": "^15.6.0",
+    "qrcode": "^1.0.0",
+    "react": "^16.2.0",
+    "react-art-svg-renderer": "0.0.1-rc.8",
+    "react-dom": "^16.2.0",
+    "react-native": "^0.49.5",
+    "react-qr-code": "^0.1.2",
+    "react-router-dom": "^4.2.2",
+    "react-timer-mixin": "^0.13.3",
+    "react-transition-group": "^1.2.1",
+    "reactstrap": "^5.0.0-alpha.4",
+    "speakeasy": "git+https://github.com/speakeasyjs/speakeasy.git"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.1.2",
+    "babel-preset-flow": "^6.23.0",
+    "eslint": "^4.14.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-config-defaults": "^9.0.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-sensible": "^5.0.2",
+    "eslint-plugin-babel": "^4.1.2",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-meteor": "^4.1.6",
+    "eslint-plugin-prettier": "^2.4.0",
+    "eslint-plugin-react": "^7.5.1",
+    "flow-bin": "^0.61.0",
+    "prettier": "1.9.2"
+  }
+}

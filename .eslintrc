@@ -1,0 +1,91 @@
+{
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "allowImportExportEverywhere": true
+  },
+  "plugins": ["meteor", "prettier"],
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "plugin:meteor/recommended"
+  ],
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  "rules": {
+    "linebreak-style": "off",
+    "no-console": "off",
+    "spaced-comment": "off",
+    "new-cap": [
+      1,
+      { "capIsNewExceptions": ["Match", "Match.ObjectIncluding"] }
+    ],
+    "no-param-reassign": [2, { "props": false }],
+    "lines-around-comment": [
+      2,
+      {
+        "beforeLineComment": true,
+        "allowObjectStart": true,
+        "allowBlockStart": true
+      }
+    ],
+    "no-underscore-dangle": [0],
+    "no-extra-boolean-cast": [0],
+    "no-return-assign": [0],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/require-default-props": [0],
+    "import/no-namespace": [2],
+    "import/order": [
+      2,
+      {
+        "groups": [
+          ["builtin", "external"],
+          ["internal", "parent", "sibling", "index"]
+        ]
+      }
+    ],
+    "import/newline-after-import": [2],
+    "import/prefer-default-export": [2],
+    "import/extensions": [0],
+    "import/no-absolute-path": [0],
+    "import/no-extraneous-dependencies": [0],
+    "import/no-named-as-default": [0],
+    "import/no-unresolved": [0],
+    "no-use-before-define": "error",
+    "camelcase": "warn",
+    "class-methods-use-this": "off",
+    "no-unused-vars": "warn",
+    "no-else-return": "off",
+    "no-undef": "warn",
+    "consistent-return": "warn",
+    "no-shadow": "off",
+    "no-unneeded-ternary": "warn",
+    "no-alert": "off",
+    "react/jsx-indent": "off",
+    "no-useless-constructor":"off",
+    "react/no-string-refs":"warn",
+    "react/jsx-boolean-value": "react/jsx-boolean-value",
+    "react/prefer-stateless-function": "off",
+    "react/sort-comp": "off",
+    "prefer-destructuring": [
+      "warn",
+      {
+        "array": true,
+        "object": true
+      },
+      {
+        "enforceForRenamedProperties": false
+      }
+    ],
+    "prefer-const": [
+      "warn",
+      {
+        "destructuring": "any",
+        "ignoreReadBeforeAssign": false
+      }
+    ],
+    "object-shorthand": ["warn", "always", { "avoidQuotes": true }],
+    "prettier/prettier": "warn"
+  }
+}
