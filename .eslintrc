@@ -68,6 +68,8 @@
     "react/jsx-boolean-value": "react/jsx-boolean-value",
     "react/prefer-stateless-function": "off",
     "react/sort-comp": "off",
+    "react/no-typos": "warn",
+    "lines-around-comment": "off",
     "prefer-destructuring": [
       "warn",
       {

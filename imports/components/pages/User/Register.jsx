@@ -1,11 +1,16 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import ReactRouterPropTypes from 'react-router-prop-types';
+
 import { Meteor } from "meteor/meteor";
-import { Link } from "react-router-dom";
+import Link, { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import QRCode from "react-qr-code";
 import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 import RegistrationForm from "../../forms/Registration";
+
+// hello
 
 let speakeasy = require("speakeasy");
 
@@ -37,8 +42,6 @@ class Register extends Component {
   registerUserZ(event) {
     console.log(`FORM SUBMIT >> EMAIL =  ${this.state.email}`);
     this.setState({ showAuthenticator: true });
-
-    //this.props.history.push("/authenticate");
   }
 
   registerUser(event) {
@@ -51,7 +54,7 @@ class Register extends Component {
 
     let isValidPassword = function isValidPassword(password1, password2) {
       if (password1 === password2) {
-        return (password1.length >= 6) ? true : false;
+        return password1.length >= 6 ? true : false;
       } else {
         return swal({
           title: "Passwords don't match",
@@ -84,9 +87,11 @@ class Register extends Component {
           } else {
             console.log("Successfully created account!");
 
-            //this.props.history.push("/authenticate");
-
-            this.setState({ showAuthenticator: true });
+            if (this.props.EnhancedAuth) {
+              this.setState({ showAuthenticator: true });
+            } else {
+              this.props.history.push("/");
+            }
           }
         }
       );
@@ -100,23 +105,43 @@ class Register extends Component {
     }
   }
 
-  render() {
-    let layout = this.state.showAuthenticator ? (
-      <Authenticator fresh {...this.props} />
-    ) : (
+  getLayout() {
+    let layout = "";
+    let form = (
       <RegistrationForm
         handleChange={this.handleChange}
         handleSubmit={this.registerUser}
       />
     );
 
+    if (this.props.EnhancedAuth) {
+      layout = this.state.showAuthenticator ? (
+        <Authenticator fresh {...this.props} />
+      ) : (
+        form
+      );
+    } else {
+      layout = form;
+    }
+
+    return layout;
+  }
+
+  render() {
+    let layout = this.getLayout();
+
     return <Transition>{layout}</Transition>;
   }
 }
 
-export default withTracker(() => {
+export default withRouter(withTracker(({ params }) => {
   Meteor.subscribe("userData");
+  return {
 
-  return {};
-})(Register);
+  };
+})(Register));
 
+Register.propTypes = {
+  EnhancedAuth: PropTypes.number,
+  history: ReactRouterPropTypes.history
+};

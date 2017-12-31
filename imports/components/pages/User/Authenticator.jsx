@@ -1,5 +1,3 @@
-
-
 /*
 "extends": "airbnb"
 //"use strict";
@@ -8,8 +6,6 @@
 "extends": "defaults/configurations/airbnb/es6-react",
  "extends": ["plugin:meteor/recommended"]
 */
-
-
 
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
@@ -116,7 +112,7 @@ class Authenticator extends Component {
 
   handleVerifyClick() {
     this.verifyToken();
-  } 
+  }
 
   handleQRClick() {
     this.setState({ hideQRcode: true });
@@ -213,6 +209,13 @@ class Authenticator extends Component {
     });
   }
 
+  getlayout() {
+    let layout = (
+      <div>{this.state.hideQRcode ? this.verifyLayout() : this.QRLayout()}</div>
+    );
+    return layout;
+  }
+
   QRLayout() {
     let QRLayout = (
       <Transition>
@@ -274,9 +277,7 @@ class Authenticator extends Component {
   }
 
   render() {
-    return (
-      <div>{this.state.hideQRcode ? this.verifyLayout() : this.QRLayout()}</div>
-    );
+    return this.getlayout();
   }
 }
 
@@ -290,5 +291,6 @@ export default withTracker(() => {
 Authenticator.propTypes = {
   fresh: PropTypes.bool,
   SignedIn: PropTypes.bool,
-  PrivateKey: PropTypes.string
+  PrivateKey: PropTypes.string,
+  EnhancedAuth: PropTypes.number
 };

@@ -11,7 +11,7 @@ const Main = props => (
     <Switch>
       <Route exact path="/" component={Index} />
       <Route path="/about" component={About} />
-      <Route path="/register" component={Register} />
+      <Route path="/register" render={() => (<Register {...props} />)} />
       <Route path="/signin" render={() => (<SignIn {...props} />)} />
       <Route path="/authenticate" component={Authenticator} />
     </Switch>

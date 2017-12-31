@@ -51,6 +51,7 @@ export default withTracker(() => {
     UserName: UserName,
     MainTitle: Meteor.settings.public.MainTitle,
     ShortTitle: Meteor.settings.public.ShortTitle,
+    EnhancedAuth: Meteor.settings.public.EnhancedAuth,
     mySillyProp: "boo"
   };
 })(App);

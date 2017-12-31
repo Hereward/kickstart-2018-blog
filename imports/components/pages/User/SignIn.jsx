@@ -1,13 +1,14 @@
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
+import ReactRouterPropTypes from 'react-router-prop-types';
 import { withTracker } from "meteor/react-meteor-data";
 import React, { Component } from "react";
-import CSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
-import { Link } from "react-router-dom";
+import { Link, withRouter } from "react-router-dom";
 import Authenticator from "./Authenticator";
+import Transition from "../../partials/Transition";
 
 class SignIn extends Component {
-  //export default class SignIn extends Component { 
+  //export default class SignIn extends Component {
 
   constructor(props) {
     super(props);
@@ -48,13 +49,17 @@ class SignIn extends Component {
             </div>
 
             <div className="form-group">
-              <Link to="/register">Click here to register...</Link>
+            <Link href="/" to="/register">Click here to register...</Link>
             </div>
           </form>
         </div>
       );
-    } else {
+
+    } else if (this.props.EnhancedAuth) {
       return <Authenticator />;
+    } else {
+      this.props.history.push("/");
+      return (<div></div>)
     }
   }
 
@@ -86,26 +91,22 @@ class SignIn extends Component {
 
   render() {
     return (
-      <CSSTransitionGroup
-        component="div"
-        transitionName="route"
-        transitionEnterTimeout={600}
-        transitionAppearTimeout={600}
-        transitionLeaveTimeout={400}
-        transitionAppear={true}
-      >
+      <Transition>
         <div>{this.getLayout()}</div>
-      </CSSTransitionGroup>
+      </Transition>
     );
   }
 }
 
-export default withTracker(() => {
-  Meteor.subscribe("userData");
-
-  return {};
-})(SignIn);
+export default withRouter(
+  withTracker(({ params }) => {
+    Meteor.subscribe("userData");
+    return {};
+  })(SignIn)
+);
 
 SignIn.propTypes = {
-  SignedIn: PropTypes.bool
+  SignedIn: PropTypes.bool,
+  EnhancedAuth: PropTypes.number,
+  history: ReactRouterPropTypes.history
 };
