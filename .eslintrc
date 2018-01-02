@@ -11,7 +11,10 @@
   ],
   "env": {
     "browser": true,
-    "node": true
+    "node": true,
+    "meteor": true,
+    "mongo": true,
+    "es6": true
   },
   "rules": {
     "linebreak-style": "off",
@@ -22,20 +25,12 @@
       { "capIsNewExceptions": ["Match", "Match.ObjectIncluding"] }
     ],
     "no-param-reassign": [2, { "props": false }],
-    "lines-around-comment": [
-      2,
-      {
-        "beforeLineComment": true,
-        "allowObjectStart": true,
-        "allowBlockStart": true
-      }
-    ],
     "no-underscore-dangle": [0],
     "no-extra-boolean-cast": [0],
     "no-return-assign": [0],
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx",".ts",".tsx"] }],
     "react/require-default-props": [0],
-    "import/no-namespace": [2],
+    "import/no-namespace": "warn",
     "import/order": [
       2,
       {

@@ -37,12 +37,14 @@ class App extends Component {
 
 export default withTracker(() => {
   let UserName = " - Guest";
+  let AuthVerified = false;
   let SignedIn = false;
 
   if (Meteor.loggingIn()) {
     UserName = ` - logging in...`;
   } else if (Meteor.user()) {
     UserName = ` - ${Meteor.user().username}`;
+    AuthVerified = Meteor.user().auth_verified;
     SignedIn = true;
   }
 
@@ -52,6 +54,7 @@ export default withTracker(() => {
     MainTitle: Meteor.settings.public.MainTitle,
     ShortTitle: Meteor.settings.public.ShortTitle,
     EnhancedAuth: Meteor.settings.public.EnhancedAuth,
+    AuthVerified: AuthVerified,
     mySillyProp: "boo"
   };
 })(App);

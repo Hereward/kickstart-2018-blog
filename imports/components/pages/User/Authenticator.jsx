@@ -127,7 +127,7 @@ class Authenticator extends Component {
       console.log("Updating User Profile");
       Meteor.users.update(userId, {
         $set: {
-          auth_verified: privateKey
+          auth_verified: state
         }
       });
     }
