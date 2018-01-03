@@ -1,5 +1,17 @@
 @import 'partials/_variables';
 
+.circle {
+  border-radius: 50%;
+}
+
+.verified {
+  color: green;
+}
+
+.unverified {
+  color: red;
+}
+
 form {
   margin-top: 2rem;
   margin-bottom: 2rem;

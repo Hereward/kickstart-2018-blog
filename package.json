@@ -26,7 +26,8 @@
     "react-timer-mixin": "^0.13.3",
     "react-transition-group": "^1.2.1",
     "reactstrap": "^5.0.0-alpha.4",
-    "speakeasy": "git+https://github.com/speakeasyjs/speakeasy.git"
+    "speakeasy": "git+https://github.com/speakeasyjs/speakeasy.git",
+    "styled-components": "^2.4.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

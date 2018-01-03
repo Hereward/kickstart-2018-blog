@@ -105,6 +105,7 @@ class Index extends Component<IProps, IState> {
   
   export default withTracker(() => {
     Meteor.subscribe('tasks');
+    Meteor.subscribe("userData");
   
     return {
       tasks: Tasks.find({}, { sort: { createdAt: -1 } }).fetch(),

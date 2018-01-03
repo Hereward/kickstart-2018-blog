@@ -180,12 +180,14 @@ class Authenticator extends Component {
         } else {
           this.updateAuthVerified(true);
 
+          /*
           return swal({
-            title: "Jackpot!",
-            text: "You da man.",
+            title: "Success!",
+            text: "Your session has been verified.",
             showConfirmButton: true,
             type: "success"
           });
+          */
         }
       }
     );
@@ -262,8 +264,6 @@ class Authenticator extends Component {
           <div>
             <Alert color="primary">{this.state.currentValidToken}</Alert>
           </div>
-
-          <div>{this.renderExpiredTokens()}</div>
         </Transition>
       </div>
     );

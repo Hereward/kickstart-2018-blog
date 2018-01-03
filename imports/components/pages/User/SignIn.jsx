@@ -81,6 +81,7 @@ class SignIn extends Component {
       } else {
         let key = Meteor.user().private_key;
         let name = Meteor.user().username;
+        this.updateAuthVerified(false);
         console.log(`Successfull Login: [${name}] [${key}]`);
         console.log(`SignInUser: props.SignedIn: [${this.props.SignedIn}]`);
 
@@ -89,7 +90,24 @@ class SignIn extends Component {
     });
   }
 
+  updateAuthVerified(state) {
+    //let privateKey = this.state.keyBase32;
+    let userId = Meteor.userId();
+    //console.log(`updateAuthVerified: verified = [${state}]`);
+    if (userId) {
+      console.log("Updating User Profile");
+      Meteor.users.update(userId, {
+        $set: {
+          auth_verified: false
+        }
+      });
+    }
+  }
+
   render() {
+    if (this.props.AuthVerified === true) {
+      this.props.history.push("/");
+    }
     return (
       <Transition>
         <div>{this.getLayout()}</div>
@@ -108,5 +126,6 @@ export default withRouter(
 SignIn.propTypes = {
   SignedIn: PropTypes.bool,
   EnhancedAuth: PropTypes.number,
+  AuthVerified: PropTypes.bool,
   history: ReactRouterPropTypes.history
 };

@@ -9,6 +9,7 @@ import * as PropTypes from "prop-types";
 //import { Link } from "react-router-dom";
 import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
+import styled from "styled-components";
 
 import {
   Collapse,
@@ -21,7 +22,9 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
-  DropdownItem
+  DropdownItem,
+  Tooltip,
+  UncontrolledTooltip
 } from "reactstrap";
 
 interface IProps {
@@ -38,6 +41,16 @@ interface IState {
 
 //import { browserHistory } from 'react-router';
 
+const VerifiedIndicator = styled.div`
+  border-radius: 50%;
+  height: 1rem;
+  width: 1rem;
+  display: inline-block;
+  position: relative;
+  top: 0.2rem;
+  background-color: ${props => (props.verified ? 'green' : 'red')};
+`;
+
 class Navigation extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
@@ -46,16 +59,14 @@ class Navigation extends React.Component<IProps, IState> {
     this.state = {
       isOpen: false
     };
+
     //console.log(`Navigation Constructor: props.SignedIn: [${this.props.mySillyProp}] [${this.props.SignedIn}]`);
   }
-
 
   static propTypes = {
     AuthVerified: PropTypes.bool,
     SignedIn: PropTypes.bool
   };
-  
-  
 
   toggle() {
     this.setState({
@@ -101,7 +112,20 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   authVerified() {
-    let verified = this.props.AuthVerified ? <span> [verified] </span> : "";
+    //let verified = this.props.AuthVerified ? <span> [verified] </span> : "";
+    let tip = this.props.AuthVerified === true ? 'Your session was verified.' : 'Unverified session.';
+    let verified = (
+      <span>
+        <VerifiedIndicator
+          verified={this.props.AuthVerified}
+          id="VerifiedIndicator"
+        />
+
+        <UncontrolledTooltip placement="right" target="VerifiedIndicator">
+           {tip}
+        </UncontrolledTooltip>
+      </span>
+    );
     //let verified =  <span> [NOT VERIFIED] </span>;
     return verified;
   }
