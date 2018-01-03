@@ -48,7 +48,7 @@ const VerifiedIndicator = styled.div`
   display: inline-block;
   position: relative;
   top: 0.2rem;
-  background-color: ${props => (props.verified ? 'green' : 'red')};
+  background-color: ${props => (props.verified ? 'lime' : 'red')};
 `;
 
 class Navigation extends React.Component<IProps, IState> {
@@ -59,6 +59,8 @@ class Navigation extends React.Component<IProps, IState> {
     this.state = {
       isOpen: false
     };
+
+    //this.LogOut = this.LogOut.bind(this);
 
     //console.log(`Navigation Constructor: props.SignedIn: [${this.props.mySillyProp}] [${this.props.SignedIn}]`);
   }
@@ -132,7 +134,7 @@ class Navigation extends React.Component<IProps, IState> {
 
   render() {
     return (
-      <Navbar color="faded" light expand="md" className="main-nav">
+      <Navbar color="dark" expand="md" className="main-nav" dark>
         <NavbarBrand>
           <span className="app-title">{this.props.ShortTitle}</span>
           {this.props.UserName} {this.authVerified()}

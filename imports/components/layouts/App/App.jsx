@@ -23,7 +23,7 @@ class App extends Component {
     return (
       <BrowserRouter>
         <div>
-          <div className="container header">
+          <div className="container-fluid header">
             <Header {...this.props} />
           </div>
           <div className="container main">

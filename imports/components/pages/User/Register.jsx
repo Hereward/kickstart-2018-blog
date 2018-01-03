@@ -128,6 +128,10 @@ class Register extends Component {
   }
 
   render() {
+    if (this.props.AuthVerified === true) {
+      this.props.history.push("/");
+    }
+
     let layout = this.getLayout();
 
     return <Transition>{layout}</Transition>;
@@ -143,5 +147,6 @@ export default withRouter(withTracker(({ params }) => {
 
 Register.propTypes = {
   EnhancedAuth: PropTypes.number,
-  history: ReactRouterPropTypes.history
+  history: ReactRouterPropTypes.history,
+  AuthVerified: PropTypes.bool
 };
