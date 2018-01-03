@@ -26,9 +26,7 @@ Meteor.methods({
       encoding: "base32"
     });
 
-    console.log(
-      `mySecret = [${key}] CVT = [${currentValidToken}] MYTOKEN = ${myToken} VERIFIED= [${verified}]`
-    );
+    //console.log(`mySecret = [${key}] CVT = [${currentValidToken}] MYTOKEN = ${myToken} VERIFIED= [${verified}]`);
 
     return verified;
   },
@@ -41,10 +39,12 @@ Meteor.methods({
     return token;
   },
   "authenticator.generateKey": function generateKey() {
+    console.log(`authenticator.generateKey START`);
+    let user  = Meteor.users.findOne(this.userId); //Meteor.users.find({_id: this.userId});
+    let email = user.emails[0].address;
+    console.log(`authenticator.generateKey: email = [${email}]`);
     let future = new Future();
-
-    let key = speakeasy.generateSecret({length: 20, name: "Personal Web Wallet"});
-
+    let key = speakeasy.generateSecret({length: 20, name: `Personal Web Wallet: ${email}`});
 
     QRCode.toDataURL(key.otpauth_url, (err, data_url) => {
 

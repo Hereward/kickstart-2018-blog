@@ -68,10 +68,9 @@ class Register extends Component {
     if (isValidPassword(password1, password2)) {
       Accounts.createUser(
         {
-          username: email,
           email: email,
-          private_key: "boo",
-          auth_verified: false,
+          private_key: null,
+          auth_verified: null,
           password: password1
         },
         error => {

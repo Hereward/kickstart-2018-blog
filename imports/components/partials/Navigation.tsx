@@ -31,12 +31,14 @@ interface IProps {
   history: any;
   SignedIn: any;
   ShortTitle: any;
-  UserName: any;
+  Email: any;
   AuthVerified: boolean;
+  EnhancedAuth: number;
 }
 
 interface IState {
   isOpen: boolean;
+  collapsed: boolean;
 }
 
 //import { browserHistory } from 'react-router';
@@ -48,16 +50,20 @@ const VerifiedIndicator = styled.div`
   display: inline-block;
   position: relative;
   top: 0.2rem;
-  background-color: ${props => (props.verified ? 'lime' : 'red')};
+  background-color: ${props => (props['data-verified'] ? 'lime' : 'red')};
 `;
+
 
 class Navigation extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
+    this.toggleNavbar = this.toggleNavbar.bind(this);
+
     this.toggle = this.toggle.bind(this);
     this.state = {
-      isOpen: false
+      isOpen: false,
+      collapsed: true
     };
 
     //this.LogOut = this.LogOut.bind(this);
@@ -65,9 +71,18 @@ class Navigation extends React.Component<IProps, IState> {
     //console.log(`Navigation Constructor: props.SignedIn: [${this.props.mySillyProp}] [${this.props.SignedIn}]`);
   }
 
+  toggleNavbar() {
+    this.setState({
+      collapsed: !this.state.collapsed
+    });
+  }
+
   static propTypes = {
     AuthVerified: PropTypes.bool,
-    SignedIn: PropTypes.bool
+    SignedIn: PropTypes.bool,
+    EnhancedAuth: PropTypes.number,
+    Email: PropTypes.string,
+    ShortTitle: PropTypes.string,
   };
 
   toggle() {
@@ -114,12 +129,15 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   authVerified() {
+    if (!this.props.EnhancedAuth) {
+      return '';
+    }
     //let verified = this.props.AuthVerified ? <span> [verified] </span> : "";
     let tip = this.props.AuthVerified === true ? 'Your session was verified.' : 'Unverified session.';
     let verified = (
       <span>
         <VerifiedIndicator
-          verified={this.props.AuthVerified}
+          data-verified={this.props.AuthVerified}
           id="VerifiedIndicator"
         />
 
@@ -137,10 +155,10 @@ class Navigation extends React.Component<IProps, IState> {
       <Navbar color="dark" expand="md" className="main-nav" dark>
         <NavbarBrand>
           <span className="app-title">{this.props.ShortTitle}</span>
-          {this.props.UserName} {this.authVerified()}
+          {this.props.Email} {this.authVerified()}
         </NavbarBrand>
-        <NavbarToggler onClick={this.toggle} />
-        <Collapse isOpen={this.state.isOpen} navbar>
+        <NavbarToggler onClick={this.toggleNavbar} />
+        <Collapse isOpen={!this.state.collapsed} navbar>
           <Nav className="ml-auto" navbar>
             <NavItem>
               <NavLink tag={Link} to="/">

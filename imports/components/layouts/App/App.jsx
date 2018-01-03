@@ -36,21 +36,21 @@ class App extends Component {
 }
 
 export default withTracker(() => {
-  let UserName = " - Guest";
+  let Email = " - Guest";
   let AuthVerified = false;
   let SignedIn = false;
 
   if (Meteor.loggingIn()) {
-    UserName = ` - logging in...`;
+    Email = ` - logging in...`;
   } else if (Meteor.user()) {
-    UserName = ` - ${Meteor.user().username}`;
+    Email = ` - ${Meteor.user().emails[0].address}`;
     AuthVerified = Meteor.user().auth_verified;
     SignedIn = true;
   }
 
   return {
     SignedIn: SignedIn,
-    UserName: UserName,
+    Email: Email,
     MainTitle: Meteor.settings.public.MainTitle,
     ShortTitle: Meteor.settings.public.ShortTitle,
     EnhancedAuth: Meteor.settings.public.EnhancedAuth,

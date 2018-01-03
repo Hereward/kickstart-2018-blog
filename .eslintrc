@@ -83,6 +83,6 @@
       }
     ],
     "object-shorthand": ["warn", "always", { "avoidQuotes": true }],
-    "prettier/prettier": "warn"
+    "prettier/prettier": "off"
   }
 }

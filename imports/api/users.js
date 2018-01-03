@@ -15,11 +15,33 @@ Meteor.publish('userData', function () {
 
 */
 
-Meteor.publish('userData', function() {
-  if(!this.userId) return null;
-  return Meteor.users.find(this.userId, {fields: {
-    private_key: 1, auth_verified: 1,
-  }});
+Accounts.onCreateUser((options, user) => {
+
+  if (typeof options.private_key !== 'undefined') {
+    user.private_key = options.private_key;
+  }
+
+  if (typeof options.auth_verified !== 'undefined') {
+    user.auth_verified = options.auth_verified;
+  }
+ 
+  if (options.profile) {
+    user.profile = options.profile;
+  }
+  
+  // Don't forget to return the new user object at the end!
+  return user;
+});
+
+Meteor.publish("userData", function userData() {
+  if (!this.userId) {
+    return null;
+  }
+  const options = {
+    fields: { private_key: 1, auth_verified: 1 }
+  };
+
+  return Meteor.users.find(this.userId, options);
 });
 
 Meteor.users.allow({ update: () => true });
