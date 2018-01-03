@@ -178,7 +178,7 @@ class Authenticator extends Component {
             type: "error"
           });
         } else {
-          this.updateAuthVerified(true);
+          //this.updateAuthVerified(true);
 
           /*
           return swal({

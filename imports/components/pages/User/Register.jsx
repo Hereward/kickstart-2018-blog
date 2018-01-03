@@ -29,6 +29,13 @@ class Register extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  componentWillReceiveProps(nextProps: Props) {
+    if (nextProps.AuthVerified) {
+      console.log(`Authenticator> push('/')`);
+      this.props.history.push("/");
+    }
+  }
+
   handleChange(e) {
     //this.setState({ showAuthenticator: true });
 
@@ -127,10 +134,6 @@ class Register extends Component {
   }
 
   render() {
-    if (this.props.AuthVerified === true) {
-      this.props.history.push("/");
-    }
-
     let layout = this.getLayout();
 
     return <Transition>{layout}</Transition>;

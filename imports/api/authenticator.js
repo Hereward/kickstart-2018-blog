@@ -26,6 +26,12 @@ Meteor.methods({
       encoding: "base32"
     });
 
+    Meteor.users.update(this.userId, {
+      $set: {
+        auth_verified: verified
+      }
+    });
+
     //console.log(`mySecret = [${key}] CVT = [${currentValidToken}] MYTOKEN = ${myToken} VERIFIED= [${verified}]`);
 
     return verified;
