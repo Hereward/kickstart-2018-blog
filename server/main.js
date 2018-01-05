@@ -20,7 +20,7 @@ Meteor.startup(() => {
     to: "editor@truthnews.com.au",
     from: "postmaster@mg.truthnews.com.au",
     subject: "Example Email",
-    text: "Boo!",
+    text: "Banana!",
   });
 
 });
