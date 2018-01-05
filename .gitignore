@@ -2,6 +2,7 @@
 
 # Meteor
 settings-production.json
+settings-development.json
 
 ### Windows ###
 # Windows image file caches

@@ -7,6 +7,8 @@ import '../imports/api/authenticator.js';
 
 Meteor.startup(() => {
   // code to run on server at startup
+
+  let smtp = Meteor.settings.private.smtp;
   
   let env = `smtp://${encodeURIComponent(smtp.username)}:${encodeURIComponent(smtp.password)}@${encodeURIComponent(smtp.server)}:${smtp.port}`;
 
@@ -18,7 +20,7 @@ Meteor.startup(() => {
     to: "editor@truthnews.com.au",
     from: "postmaster@mg.truthnews.com.au",
     subject: "Example Email",
-    text: "The contents of our email in plain text.",
+    text: "Boo!",
   });
 
 });
