@@ -1,13 +1,15 @@
 {
-	"public": {
-		"MainTitle": "Meteor/React/Bootsrap Kickstart 2018",
-		"ShortTitle": "Kickstart",
-		"ShortTitleExternalLink": "https://github.com/Hereward/meteor-react-kickstart",
-		"IMGPathStub_medium": "http://gcf.eyeofthetiger.asia/assets/Uploads/_resampled/CroppedImage600435-",
-		"DefaultRecipeLimit": 10,
-		"EnhancedAuth": 1
-	},
-	"private": {
-		"ptest": "Hello Private"
-	}
+  "public": {
+    "MainTitle": "Meteor/React/Bootsrap Kickstart 2018",
+    "ShortTitle": "Kickstart",
+    "ShortTitleExternalLink":
+      "https://github.com/Hereward/meteor-react-kickstart",
+    "IMGPathStub_medium":
+      "http://gcf.eyeofthetiger.asia/assets/Uploads/_resampled/CroppedImage600435-",
+    "DefaultRecipeLimit": 10,
+    "EnhancedAuth": 1
+  },
+  "private": {
+    "ptest": "Hello Private"
+  }
 }

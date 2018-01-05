@@ -65,6 +65,8 @@
     "react/sort-comp": "off",
     "react/no-typos": "warn",
     "lines-around-comment": "off",
+    "prefer-template": "warn",
+    "global-require": "warn",
     "prefer-destructuring": [
       "warn",
       {
