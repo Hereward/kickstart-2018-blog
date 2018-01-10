@@ -67,6 +67,12 @@
     "lines-around-comment": "off",
     "prefer-template": "warn",
     "global-require": "warn",
+    "semi": ["error", "always"],
+    "prefer-arrow-callback": ["warn",
+      {
+        "allowNamedFunctions": true
+      }
+    ],
     "prefer-destructuring": [
       "warn",
       {

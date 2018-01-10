@@ -51,6 +51,9 @@ class SignIn extends Component {
             <div className="form-group">
             <Link href="/" to="/register">Click here to register...</Link>
             </div>
+            <div className="form-group">
+            <Link href="/" to="/forgot-password">Forgot Password ?</Link>
+            </div>
           </form>
         </div>
       );
@@ -59,7 +62,7 @@ class SignIn extends Component {
       return <Authenticator />;
     } else {
       this.props.history.push("/");
-      return (<div></div>)
+      return (<div />);
     }
   }
 
@@ -84,13 +87,24 @@ class SignIn extends Component {
         this.updateAuthVerified(false);
         console.log(`Successfull Login: [${name}] [${key}]`);
         console.log(`SignInUser: props.SignedIn: [${this.props.SignedIn}]`);
-
-        //this.props.history.push("/");
       }
     });
   }
 
   updateAuthVerified(state) {
+    Meteor.call(
+      "authenticator.updateAuthVerified",
+      state,
+      (error, response) => {
+        if (error) {
+          console.warn(error);
+        }
+      }
+    );
+  }
+
+/*
+  zzupdateAuthVerified(state) {
     //let privateKey = this.state.keyBase32;
     let userId = Meteor.userId();
     //console.log(`updateAuthVerified: verified = [${state}]`);
@@ -104,10 +118,9 @@ class SignIn extends Component {
     }
   }
 
+  */
+
   render() {
-    if (this.props.AuthVerified === true) {
-      this.props.history.push("/");
-    }
     return (
       <Transition>
         <div>{this.getLayout()}</div>

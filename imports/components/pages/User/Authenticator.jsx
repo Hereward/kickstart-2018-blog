@@ -8,9 +8,11 @@
 */
 
 import { Meteor } from "meteor/meteor";
+import ReactRouterPropTypes from 'react-router-prop-types';
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { withTracker } from "meteor/react-meteor-data";
+import { withRouter } from "react-router-dom";
 import {
   Alert,
   Button,
@@ -57,6 +59,15 @@ class Authenticator extends Component {
     console.log(`CONSTUCTOR PRIVATE KEY = ${this.props.PrivateKey}`);
     console.log(`CONSTUCTOR SignedIn = ${this.props.SignedIn}`);
   }
+
+  /*
+  componentWillReceiveProps(nextProps: Props) {
+    if (nextProps.AuthVerified) {
+      console.log(`Authenticator> push('/')`);
+      this.props.history.push("/");
+    }
+  }
+  */
 
   componentWillMount() {
     this.getKey();
@@ -119,19 +130,6 @@ class Authenticator extends Component {
     this.updatePrivateKey();
   }
 
-  updateAuthVerified(state) {
-    let privateKey = this.state.keyBase32;
-    let userId = Meteor.userId();
-    console.log(`updateAuthVerified: verified = [${state}]`);
-    if (userId) {
-      console.log("Updating User Profile");
-      Meteor.users.update(userId, {
-        $set: {
-          auth_verified: state
-        }
-      });
-    }
-  }
 
   updatePrivateKey() {
     let userId = Meteor.userId();
@@ -152,6 +150,18 @@ class Authenticator extends Component {
     let id = target.id;
 
     this.setState({ [id]: value });
+  }
+
+  updateAuthVerified(state) {
+    Meteor.call(
+      "authenticator.updateAuthVerified",
+      state,
+      (error, response) => {
+        if (error) {
+          console.warn(error);
+        }
+      }
+    );
   }
 
   verifyToken() {
@@ -178,16 +188,9 @@ class Authenticator extends Component {
             type: "error"
           });
         } else {
-          //this.updateAuthVerified(true);
-
-          /*
-          return swal({
-            title: "Success!",
-            text: "Your session has been verified.",
-            showConfirmButton: true,
-            type: "success"
-          });
-          */
+          this.updateAuthVerified(verified);
+          console.log(`verifyToken: Authenticator> push('/')`);
+          this.props.history.push("/");
         }
       }
     );
@@ -281,16 +284,17 @@ class Authenticator extends Component {
   }
 }
 
-export default withTracker(() => {
+export default withRouter(withTracker(() => {
   Meteor.subscribe("userData");
   let SignedIn = Meteor.user() ? true : false;
   let PrivateKey = SignedIn ? Meteor.user().private_key : "";
   return { PrivateKey: PrivateKey, SignedIn: SignedIn };
-})(Authenticator);
+})(Authenticator));
 
 Authenticator.propTypes = {
   fresh: PropTypes.bool,
   SignedIn: PropTypes.bool,
   PrivateKey: PropTypes.string,
-  EnhancedAuth: PropTypes.number
+  AuthVerified: PropTypes.bool,
+  history: ReactRouterPropTypes.history,
 };

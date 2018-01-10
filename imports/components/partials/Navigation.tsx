@@ -122,6 +122,11 @@ class Navigation extends React.Component<IProps, IState> {
             Sign In
           </NavLink>
         </DropdownItem>
+        <DropdownItem>
+          <NavLink tag={Link} to="/forgot-password">
+            Forgot Password
+          </NavLink>
+        </DropdownItem>
       </DropdownMenu>
     );
 

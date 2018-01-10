@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { check } from 'meteor/check'
+import { check } from 'meteor/check';
 
 const speakeasy = require("speakeasy");
 const QRCode = require("qrcode");
@@ -35,6 +35,15 @@ Meteor.methods({
     //console.log(`mySecret = [${key}] CVT = [${currentValidToken}] MYTOKEN = ${myToken} VERIFIED= [${verified}]`);
 
     return verified;
+  },
+  "authenticator.updateAuthVerified": function currentValidToken(state) {
+    check(state, Boolean);
+    Meteor.users.update(this.userId, {
+      $set: {
+        auth_verified: state
+      }
+    });
+    return true;
   },
   "authenticator.currentValidToken": function currentValidToken(key) {
     check(key, String);

@@ -10,7 +10,7 @@ import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 import RegistrationForm from "../../forms/Registration";
 
-// hello
+// hello //
 
 let speakeasy = require("speakeasy");
 
@@ -29,12 +29,7 @@ class Register extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.AuthVerified) {
-      console.log(`Authenticator> push('/')`);
-      this.props.history.push("/");
-    }
-  }
+
 
   handleChange(e) {
     //this.setState({ showAuthenticator: true });
