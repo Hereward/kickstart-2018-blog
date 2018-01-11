@@ -9,6 +9,6 @@ const Header = props => (
     <header>
         <Navigation {...props} />
     </header>
-)
+);
 
-export default Header
+export default Header;

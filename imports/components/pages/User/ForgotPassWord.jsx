@@ -15,9 +15,20 @@ class ForgotPassWord extends Component {
 
   constructor(props) {
     super(props);
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+
+    this.state = {
+      DisableSubmit: false,
+      SubmitText: "Submit"
+    };
   }
 
-  //&#39;
+  handleSubmit(e) {
+    e.preventDefault();
+    this.setState({ DisableSubmit: true, SubmitText: "processing..." });
+    this.sendResetPassWordLink();
+  }
 
   getLayout() {
     if (!this.props.SignedIn) {
@@ -30,7 +41,7 @@ class ForgotPassWord extends Component {
             will receive an email with further instructions.
           </p>
 
-          <form onSubmit={this.sendResetPassWordLink.bind(this)}>
+          <form onSubmit={this.handleSubmit}>
             <div className="form-group">
               <label htmlFor="email">Email address</label>
               <input
@@ -43,8 +54,12 @@ class ForgotPassWord extends Component {
             </div>
 
             <div className="form-group">
-              <button type="submit" className="btn btn-default">
-                Submit
+              <button
+                disabled={this.state.DisableSubmit}
+                type="submit"
+                className="btn btn-default"
+              >
+                {this.state.SubmitText}
               </button>
             </div>
 
@@ -64,39 +79,41 @@ class ForgotPassWord extends Component {
     }
   }
 
-  sendResetPassWordLink(event) {
-    event.preventDefault();
+  sendResetPassWordLink() {
+    
     let email = this.refs.email.value.trim();
 
-  
-
     console.log("Sending reset forgot password email...");
-    Accounts.forgotPassword({ email: email }, function fp(e, r) {
-      if (e) {
-        let msg = '';
-        console.log(e.reason);
-        if (e.reason === "User not found") {
-          msg = 'That email address does not seem to be in our system.';
-        } else {
-          msg = 'There was an error sending the email (message was rejected) Please check your email server settings.';
-        }
+    Accounts.forgotPassword(
+      { email: email },
+      function fp(e, r) {
+        if (e) {
+          let msg = "";
+          console.log(e.reason);
+          if (e.reason === "User not found") {
+            msg = "That email address does not seem to be in our system.";
+          } else {
+            msg =
+              "There was an error sending the email (message was rejected) Please check your email server settings.";
+          }
 
-        return swal({
-          title: "Oops...",
-          text: msg,
-          showConfirmButton: true,
-          type: "error"
-        });
-      } else {
-        swal({
-          title: "Success!",
-          text: "Instructions for resetting your password have been emailed.",
-          showConfirmButton: true,
-          type: "success"
-        });
-        this.props.history.push("/");
-      }
-    }.bind(this));
+          return swal({
+            title: "Oops...",
+            text: msg,
+            showConfirmButton: true,
+            type: "error"
+          });
+        } else {
+          swal({
+            title: "Success!",
+            text: "Instructions for resetting your password have been emailed.",
+            showConfirmButton: true,
+            type: "success"
+          });
+          this.props.history.push("/");
+        }
+      }.bind(this)
+    );
   }
 
   render() {
