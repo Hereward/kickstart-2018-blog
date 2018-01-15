@@ -54,7 +54,7 @@ Meteor.methods({
     return token;
   },
   "authenticator.generateKey": function generateKey() {
-    console.log(`authenticator.generateKey START`);
+    console.log(`authenticator.generateKey START. USER ID = [${this.userId}]`);
     let user  = Meteor.users.findOne(this.userId); //Meteor.users.find({_id: this.userId});
     let email = user.emails[0].address;
     console.log(`authenticator.generateKey: email = [${email}]`);

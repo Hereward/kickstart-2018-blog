@@ -74,7 +74,7 @@
       }
     ],
     "prefer-destructuring": [
-      "warn",
+      "off",
       {
         "array": true,
         "object": true
@@ -90,7 +90,7 @@
         "ignoreReadBeforeAssign": false
       }
     ],
-    "object-shorthand": ["warn", "always", { "avoidQuotes": true }],
+    "object-shorthand": ["off", "always", { "avoidQuotes": true }],
     "prettier/prettier": "off"
   }
 }

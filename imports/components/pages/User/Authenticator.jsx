@@ -62,10 +62,7 @@ class Authenticator extends Component {
 
   /*
   componentWillReceiveProps(nextProps: Props) {
-    if (nextProps.AuthVerified) {
-      console.log(`Authenticator> push('/')`);
-      this.props.history.push("/");
-    }
+  
   }
   */
 
@@ -295,6 +292,5 @@ Authenticator.propTypes = {
   fresh: PropTypes.bool,
   SignedIn: PropTypes.bool,
   PrivateKey: PropTypes.string,
-  AuthVerified: PropTypes.bool,
   history: ReactRouterPropTypes.history,
 };

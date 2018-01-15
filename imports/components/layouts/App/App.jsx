@@ -38,13 +38,21 @@ class App extends Component {
 export default withTracker(() => {
   let Email = " - Guest";
   let AuthVerified = false;
+  let EmailVerified =  (Meteor.user()) ? Meteor.user().emails[0].verified : false;
   let SignedIn = false;
+  let EmailVerificationAlert = false;
+  let verificationEmailSent = false;
+  //let user = {Meteor.user()};
 
   if (Meteor.loggingIn()) {
     Email = ` - logging in...`;
   } else if (Meteor.user()) {
+    verificationEmailSent = Meteor.user().verificationEmailSent;
     Email = ` - ${Meteor.user().emails[0].address}`;
     AuthVerified = Meteor.user().auth_verified;
+    if (verificationEmailSent && AuthVerified && !EmailVerified) {
+      EmailVerificationAlert = true;
+    }
     SignedIn = true;
   }
 
@@ -55,6 +63,8 @@ export default withTracker(() => {
     ShortTitle: Meteor.settings.public.ShortTitle,
     EnhancedAuth: Meteor.settings.public.EnhancedAuth,
     AuthVerified: AuthVerified,
-    mySillyProp: "boo"
+    EmailVerificationAlert: EmailVerificationAlert,
+    EmailVerified: EmailVerified,
+    verificationEmailSent: verificationEmailSent,
   };
 })(App);

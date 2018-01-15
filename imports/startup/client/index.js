@@ -6,6 +6,8 @@ import { BrowserRouter } from 'react-router-dom'
 import './accounts-config.js';
 //import { BrowserRouter } from 'react-router-dom'
 
+
+
 console.log('starting...');
 
 Meteor.startup(() => {

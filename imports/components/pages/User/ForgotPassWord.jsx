@@ -7,6 +7,8 @@ import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
+import BlockUi from "react-block-ui";
+import 'react-block-ui/style.css';
 import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 
@@ -20,13 +22,18 @@ class ForgotPassWord extends Component {
 
     this.state = {
       DisableSubmit: false,
-      SubmitText: "Submit"
+      SubmitText: "Submit",
+      blocking: false
     };
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    this.setState({ DisableSubmit: true, SubmitText: "processing..." });
+    this.setState({
+      DisableSubmit: true,
+      SubmitText: "processing...",
+      blocking: true
+    });
     this.sendResetPassWordLink();
   }
 
@@ -41,34 +48,36 @@ class ForgotPassWord extends Component {
             will receive an email with further instructions.
           </p>
 
-          <form onSubmit={this.handleSubmit}>
-            <div className="form-group">
-              <label htmlFor="email">Email address</label>
-              <input
-                type="email"
-                className="form-control"
-                ref="email"
-                id="email"
-                placeholder="Email"
-              />
-            </div>
+          <BlockUi tag="div" blocking={this.state.blocking}>
+            <form onSubmit={this.handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="email">Email address</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  ref="email"
+                  id="email"
+                  placeholder="Email"
+                />
+              </div>
 
-            <div className="form-group">
-              <button
-                disabled={this.state.DisableSubmit}
-                type="submit"
-                className="btn btn-default"
-              >
-                {this.state.SubmitText}
-              </button>
-            </div>
+              <div className="form-group">
+                <button
+                  disabled={this.state.DisableSubmit}
+                  type="submit"
+                  className="btn btn-default"
+                >
+                  {this.state.SubmitText}
+                </button>
+              </div>
 
-            <div className="form-group">
-              <Link href="/" to="/register">
-                Click here to register...
-              </Link>
-            </div>
-          </form>
+              <div className="form-group">
+                <Link href="/" to="/register">
+                  Click here to register...
+                </Link>
+              </div>
+            </form>
+          </BlockUi>
         </div>
       );
     } else if (this.props.EnhancedAuth) {
@@ -80,7 +89,6 @@ class ForgotPassWord extends Component {
   }
 
   sendResetPassWordLink() {
-    
     let email = this.refs.email.value.trim();
 
     console.log("Sending reset forgot password email...");

@@ -1,14 +1,18 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import ReactRouterPropTypes from 'react-router-prop-types';
+import ReactRouterPropTypes from "react-router-prop-types";
 
 import { Meteor } from "meteor/meteor";
 import Link, { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import QRCode from "react-qr-code";
+import {
+  Alert
+} from "reactstrap";
 import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 import RegistrationForm from "../../forms/Registration";
+
 
 // hello //
 
@@ -27,13 +31,21 @@ class Register extends Component {
     };
     this.registerUser = this.registerUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    //console.log(`verificationEmailSent = [${this.props.verificationEmailSent}]`)
   }
 
+  componentDidUpdate() {}
 
+  sendVerificationEmail() {
+    Meteor.call("user.sendVerificationEmail", (error, response) => {
+      if (error) {
+        console.warn(error);
+      }
+    });
+    console.log("sendVerificationEmail: done");
+  }
 
   handleChange(e) {
-    //this.setState({ showAuthenticator: true });
-
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let id = target.id;
@@ -73,6 +85,7 @@ class Register extends Component {
           email: email,
           private_key: null,
           auth_verified: null,
+          verificationEmailSent: null,
           password: password1
         },
         error => {
@@ -87,6 +100,7 @@ class Register extends Component {
             });
           } else {
             console.log("Successfully created account!");
+            this.sendVerificationEmail();
 
             if (this.props.EnhancedAuth) {
               this.setState({ showAuthenticator: true });
@@ -106,6 +120,12 @@ class Register extends Component {
     }
   }
 
+  verificationNotice() {
+    if (this.props.verificationEmailSent) {
+      return <div className="messages"><Alert color="success">A verification email has been sent. Please check your email and click on the verification link.</Alert></div>;
+    }
+  }
+
   getLayout() {
     let layout = "";
     let form = (
@@ -120,12 +140,13 @@ class Register extends Component {
         <Authenticator fresh {...this.props} />
       ) : (
         form
+        
       );
     } else {
       layout = form;
     }
 
-    return layout;
+    return <div>{layout}{this.verificationNotice()}</div>;
   }
 
   render() {
@@ -135,15 +156,16 @@ class Register extends Component {
   }
 }
 
-export default withRouter(withTracker(({ params }) => {
-  Meteor.subscribe("userData");
-  return {
-
-  };
-})(Register));
+export default withRouter(
+  withTracker(({ params }) => {
+    Meteor.subscribe("userData");
+    return {};
+  })(Register)
+);
 
 Register.propTypes = {
   EnhancedAuth: PropTypes.number,
   history: ReactRouterPropTypes.history,
-  AuthVerified: PropTypes.bool
+  AuthVerified: PropTypes.bool,
+  verificationEmailSent: PropTypes.bool,
 };

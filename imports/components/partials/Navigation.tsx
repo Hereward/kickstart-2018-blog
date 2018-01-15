@@ -1,12 +1,10 @@
-//import React from 'react';
-
-//var withTracker: any;
+/*global Bert */ 
 
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import * as PropTypes from "prop-types";
-//import PropTypes from "prop-types";
-//import { Link } from "react-router-dom";
+// import * as Bert from "meteor/themeteorchef:bert";
+
 import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import styled from "styled-components";
@@ -33,6 +31,7 @@ interface IProps {
   ShortTitle: any;
   Email: any;
   AuthVerified: boolean;
+  EmailVerified: boolean;
   EnhancedAuth: number;
 }
 
@@ -53,6 +52,8 @@ const VerifiedIndicator = styled.div`
   background-color: ${props => (props['data-verified'] ? 'lime' : 'red')};
 `;
 
+declare var Bert: any;
+
 
 class Navigation extends React.Component<IProps, IState> {
   constructor(props) {
@@ -65,10 +66,44 @@ class Navigation extends React.Component<IProps, IState> {
       isOpen: false,
       collapsed: true
     };
+  }
 
-    //this.LogOut = this.LogOut.bind(this);
+  
 
-    //console.log(`Navigation Constructor: props.SignedIn: [${this.props.mySillyProp}] [${this.props.SignedIn}]`);
+  componentWillReceiveProps() {
+
+  }
+
+  componentWillUpdate(nextProps) {
+
+    if (nextProps.SignedIn && nextProps.AuthVerified && !nextProps.EmailVerified) {
+      Bert.defaults.hideDelay = 8000;
+      Bert.alert({
+        hideDelay: 10000,
+        type: 'warning',
+        icon: 'fa-magic',
+        title: 'Check Your Email',
+        message: 'A verification email has been sent to your nominated email account. Please check your email and click on the verification link.'
+       });
+
+    }
+
+  }
+
+  componentDidMount() {
+
+  }
+
+  updateAuthVerified(state) {
+    Meteor.call(
+      "authenticator.updateAuthVerified",
+      state,
+      (error, response) => {
+        if (error) {
+          console.warn(error);
+        }
+      }
+    );
   }
 
   toggleNavbar() {
@@ -79,6 +114,7 @@ class Navigation extends React.Component<IProps, IState> {
 
   static propTypes = {
     AuthVerified: PropTypes.bool,
+    EmailVerified: PropTypes.bool,
     SignedIn: PropTypes.bool,
     EnhancedAuth: PropTypes.number,
     Email: PropTypes.string,
@@ -93,6 +129,7 @@ class Navigation extends React.Component<IProps, IState> {
 
   LogOut(event) {
     event.preventDefault();
+    this.updateAuthVerified(false);
     Meteor.logout(() => {
       console.log("Successfull log out!");
       this.props.history.push("/");
@@ -137,12 +174,28 @@ class Navigation extends React.Component<IProps, IState> {
     if (!this.props.EnhancedAuth) {
       return '';
     }
-    //let verified = this.props.AuthVerified ? <span> [verified] </span> : "";
-    let tip = this.props.AuthVerified === true ? 'Your session was verified.' : 'Unverified session.';
+
+    let verifiedFlag = (this.props.SignedIn && this.props.AuthVerified && this.props.EmailVerified);
+    let tip = verifiedFlag ? 'Your session was verified.' : 'Unverified session: ';
+
+    if (!this.props.SignedIn) {
+      tip += 'Not signed in.';
+    } else {
+
+      if (!this.props.EmailVerified) {
+        tip += 'Email address not verified';
+      }
+     
+      if (!this.props.AuthVerified) {
+        tip += ', session does not have 2 factor authentication.';
+      }
+      
+    }
+   
     let verified = (
       <span>
         <VerifiedIndicator
-          data-verified={this.props.AuthVerified}
+          data-verified={verifiedFlag}
           id="VerifiedIndicator"
         />
 
@@ -197,23 +250,3 @@ export default withRouter(
 );
 
 
-
-/*
-Navigation.propTypes = {
-  AuthVerified: PropTypes.bool,
-  SignedIn: PropTypes.bool
-};
-*/
-
-
-//
-
-
-/*
-export default withRouter(withTracker(({ params }) => {
-    Meteor.subscribe('tasks');
-    return {
-
-    };
-})(Navigation));
-*/

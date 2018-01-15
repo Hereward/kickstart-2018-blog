@@ -2,20 +2,6 @@ import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import { check } from "meteor/check";
 
-// Server
-
-/*
-Meteor.publish('userData', function () {
-  if (this.userId) {
-    return Meteor.users.find({ _id: this.userId }, {
-      fields: { private_key: 1,  auth_verified: 1 }
-    });
-  } else {
-    this.ready();
-  }
-});
-
-*/
 
 Accounts.onCreateUser((options, user) => {
   if (typeof options.private_key !== "undefined") {
@@ -26,11 +12,15 @@ Accounts.onCreateUser((options, user) => {
     user.auth_verified = options.auth_verified;
   }
 
+  if (typeof options.verificationEmailSent !== "undefined") {
+    console.log(`FUCK A PENGUIN`);
+    user.verificationEmailSent = options.verificationEmailSent;
+  }
+
   if (options.profile) {
     user.profile = options.profile;
   }
 
-  // Don't forget to return the new user object at the end!
   return user;
 });
 
@@ -39,7 +29,7 @@ Meteor.publish("userData", function userData() {
     return null;
   }
   const options = {
-    fields: { private_key: 1, auth_verified: 1 }
+    fields: { private_key: 1, auth_verified: 1, verificationEmailSent: 1 }
   };
 
   return Meteor.users.find(this.userId, options);
@@ -48,32 +38,19 @@ Meteor.publish("userData", function userData() {
 Meteor.users.allow({ update: () => true });
 
 Meteor.methods({
-  "user.sendForgotPasswordEmail": function sfe(email) {
-    check(email, String);
-    console.log(`user.sendForgotPasswordEmail: [${email}] `);
-    let user = Accounts.findUserByEmail(email);
-    if (user) {
-      //console.log(`USER: [${user}] `);
-      console.log(`user.sendForgotPasswordEmail: ID = [${user._id}]`);
-      //let result = Accounts.sendResetPasswordEmail(user._id);
-      //return result;
-
-      let options = {};
-      options.email = email;
-
-      Accounts.forgotPassword(options, function fp(err) {
-        if (err) {
-          console.log("error: " + err.reason);
-        } else {
-          console.log("Success!");
+  "user.sendVerificationEmail": function sve() {
+    console.log(`user.sendVerificationEmail:BEGIN`);
+    //console.log(`user.sendForgotPasswordEmail: [${email}] `);
+      
+      Accounts.sendVerificationEmail(this.userId);
+      Meteor.users.update(this.userId, {
+        $set: {
+          verificationEmailSent: true
         }
       });
+      console.log(`user.sendVerificationEmail: ID = [${this.userId}]`);
       return true;
-    } else {
-      console.log(`USER DOES NOT EXIST`);
-      return false;
     }
-  }
 });
 
 /*
