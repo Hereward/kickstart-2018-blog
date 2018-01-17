@@ -68,6 +68,9 @@
     "prefer-template": "warn",
     "global-require": "warn",
     "react/no-unused-prop-types": "warn",
+    "react/no-find-dom-node": "warn",
+    "jsx-a11y/label-has-for": "warn",
+    "no-restricted-globals": "warn",
     "semi": ["error", "always"],
     "prefer-arrow-callback": ["warn",
       {

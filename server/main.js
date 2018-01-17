@@ -8,6 +8,8 @@ import "../imports/api/authenticator.js";
 Meteor.startup(() => {
   // code to run on server at startup
   Accounts.urls.resetPassword = token => Meteor.absoluteUrl(`forgot-password-reset/${token}`);
+  Accounts.urls.verifyEmail = token => Meteor.absoluteUrl(`verify-email/${token}`);
+  
   Accounts.emailTemplates.from = 'Personal Web Wallet <postmaster@mg.truthnews.com.au>';
  
 

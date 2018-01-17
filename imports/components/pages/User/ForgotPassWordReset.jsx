@@ -21,9 +21,7 @@ class ForgotPassWordReset extends Component {
     let url = jquery(location).attr("href");
     this.token = url.substr(url.lastIndexOf("/") + 1);
 
-    //let token = url.substring(url.lastIndexOf('/')+1, url.length);
     console.log(`TOKEN= [${this.token}]`);
-    //console.log(`TOKEN 2= [${services.password.reset.token}]`);
 
     this.state = {
       password1: "",

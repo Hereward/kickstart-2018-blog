@@ -1,12 +1,13 @@
-import * as React from 'react'
-import { Component } from 'react';
+import * as React from 'react';
+//import { Component, React } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 //import * as withTracker from 'meteor/react-meteor-data';
-import { Tasks } from '../../../api/tasks.js';
-import Task from '../../partials/Task.js';
+
 //import ReactDOM from 'react-dom';
 import * as ReactDOM from 'react-dom';
-import AccountsUIWrapper from '../../partials/AccountsUIWrapper.js';
+import { Tasks } from '../../../api/tasks.js';
+import Task from '../../partials/Task.js';
+//import AccountsUIWrapper from '../../partials/AccountsUIWrapper.js';
 
 interface IProps {
   history: any;
@@ -22,9 +23,12 @@ interface IState {
   hideCompleted: boolean;
 }
 
-class Index extends Component<IProps, IState> {
+class Index extends React.Component<IProps, IState> {
     constructor(props) {
       super(props);
+
+      this.toggleHideCompleted = this.toggleHideCompleted.bind(this);
+      this.handleSubmit = this.handleSubmit.bind(this);
   
       this.state = {
         hideCompleted: false,
@@ -79,13 +83,13 @@ class Index extends Component<IProps, IState> {
                 type="checkbox"
                 readOnly
                 checked={this.state.hideCompleted}
-                onClick={this.toggleHideCompleted.bind(this)}
+                onClick={this.toggleHideCompleted}
               />
               Hide Completed Tasks
             </label>
     
             { this.props.currentUser ?
-              <form className="new-task" onSubmit={this.handleSubmit.bind(this)} >
+              <form className="new-task" onSubmit={this.handleSubmit} >
                 <input
                   type="text"
                   ref="textInput"
