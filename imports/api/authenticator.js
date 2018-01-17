@@ -36,7 +36,7 @@ Meteor.methods({
 
     return verified;
   },
-  "authenticator.updateAuthVerified": function currentValidToken(state) {
+  "authenticator.updateEmailVerified": function updateEmailVerified(state) {
     check(state, Boolean);
     Meteor.users.update(this.userId, {
       $set: {

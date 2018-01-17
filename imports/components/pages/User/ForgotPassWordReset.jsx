@@ -97,7 +97,7 @@ class ForgotPassWordReset extends Component {
           if (!err) {
             Meteor.call(
               "authenticator.updateAuthVerified",
-              false,
+              true,
               (error, response) => {
                 if (error) {
                   console.warn(error);

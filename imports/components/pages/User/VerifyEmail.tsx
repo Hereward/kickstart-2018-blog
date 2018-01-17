@@ -3,7 +3,8 @@ import { Accounts } from "meteor/accounts-base";
 import PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from 'meteor/react-meteor-data';
-import React, { Component } from "react";
+//import React, { Component } from "react";
+import * as React from "react";
 import { withRouter } from "react-router-dom";
 import jquery from "jquery";
 
@@ -20,22 +21,23 @@ interface IState {
  
 }
 
-class VerifyEmail extends Component<IProps, IState> {
+//declare var swal: any;
+
+class VerifyEmail extends React.Component<IProps, IState> {
   //export default class SignIn extends Component {
 
   token: string;
-
- declare function swal: any;
+ 
 
   constructor(props) {
     super(props);
-
+    this.checkToken = this.checkToken.bind(this);
     let url = jquery(location).attr("href");
     this.token = url.substr(url.lastIndexOf("/") + 1);
+  }
 
-    this.state = {
-     
-    };
+  componentDidMount() {
+    this.checkToken();
   }
 
   static propTypes = {
@@ -44,67 +46,39 @@ class VerifyEmail extends Component<IProps, IState> {
     history: ReactRouterPropTypes.history
   };
 
+
+
   checkToken() {
     Accounts.verifyEmail(
       this.token,
-      function reset(err) {
+      function verified(err) {
         if (!err) {
-          Meteor.call(
-            "authenticator.updateAuthVerified",
-            false,
-            (error, response) => {
-              if (error) {
-                console.warn(error);
-              }
-            }
-          );
-
-          /*
-          let userId = Meteor.userId();
-          if (userId) {
-            console.log("Updating User Profile");
-            Meteor.users.update(userId, {
-              $set: {
-                auth_verified: false
-              }
-            });
-          }
-          */
-          //console.log('Password reset');
           swal({
             title: "Success!",
-            text: "Your password was reset.",
+            text: "Your email was verified.",
             showConfirmButton: true,
             type: "success"
           });
-          if (this.props.EnhancedAuth) {
-            console.log("password reset: redirect to /authenticate");
-            this.props.history.push("/authenticate");
-          } else {
-            this.props.history.push("/");
-            console.log("password reset: redirect to /");
-          }
+          this.props.history.push("/");
         } else {
           swal({
             title: "Failed",
-            text: `Password reset failed: ${err}`,
+            text: `Email verification failed: ${err}`,
             showConfirmButton: true,
             type: "error"
           });
           console.log(err);
         }
       }.bind(this)
-    )
+    );
   }
 
   
 
   getLayout() {
-    return <div>YAHOOOO!</div>
-   
+    return <div className="lead">Verifying....</div>;
   }
 
-  
 
   render() {
     return (

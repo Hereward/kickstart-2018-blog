@@ -71,6 +71,7 @@ class Navigation extends React.Component<IProps, IState> {
     };
   }
 
+
   componentWillReceiveProps() {}
 
   componentWillUpdate(nextProps) {
