@@ -13,4 +13,4 @@ declare module 'meteor/react-meteor-data' {
 
 declare var Bert: any;
 
-declare function swal(options:object); // old
+declare function swal(options:object);
