@@ -41,7 +41,7 @@
       }
     ],
     "import/newline-after-import": [2],
-    "import/prefer-default-export": [2],
+    "import/prefer-default-export": "warn",
     "import/extensions": [0],
     "import/no-absolute-path": [0],
     "import/no-extraneous-dependencies": [0],
@@ -67,6 +67,7 @@
     "lines-around-comment": "off",
     "prefer-template": "warn",
     "global-require": "warn",
+    "react/no-unused-prop-types": "warn",
     "semi": ["error", "always"],
     "prefer-arrow-callback": ["warn",
       {

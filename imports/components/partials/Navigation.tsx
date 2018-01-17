@@ -1,8 +1,9 @@
-/*global Bert */ 
+/*global Bert */
 
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import * as PropTypes from "prop-types";
+import ReactRouterPropTypes from 'react-router-prop-types';
 // import * as Bert from "meteor/themeteorchef:bert";
 
 import { Link, withRouter } from "react-router-dom";
@@ -24,6 +25,8 @@ import {
   Tooltip,
   UncontrolledTooltip
 } from "reactstrap";
+
+import * as lib from '../../modules/library';
 
 interface IProps {
   history: any;
@@ -49,11 +52,10 @@ const VerifiedIndicator = styled.div`
   display: inline-block;
   position: relative;
   top: 0.2rem;
-  background-color: ${props => (props['data-verified'] ? 'lime' : 'red')};
+  background-color: ${props => (props["data-verified"] ? "lime" : "red")};
 `;
 
 declare var Bert: any;
-
 
 class Navigation extends React.Component<IProps, IState> {
   constructor(props) {
@@ -62,37 +64,34 @@ class Navigation extends React.Component<IProps, IState> {
     this.toggleNavbar = this.toggleNavbar.bind(this);
 
     this.toggle = this.toggle.bind(this);
+    this.logOut = this.logOut.bind(this);
     this.state = {
       isOpen: false,
       collapsed: true
     };
   }
 
-  
-
-  componentWillReceiveProps() {
-
-  }
+  componentWillReceiveProps() {}
 
   componentWillUpdate(nextProps) {
-
-    if (nextProps.SignedIn && nextProps.AuthVerified && !nextProps.EmailVerified) {
+    if (
+      nextProps.SignedIn &&
+      nextProps.AuthVerified &&
+      !nextProps.EmailVerified
+    ) {
       Bert.defaults.hideDelay = 8000;
       Bert.alert({
         hideDelay: 10000,
-        type: 'warning',
-        icon: 'fa-magic',
-        title: 'Check Your Email',
-        message: 'A verification email has been sent to your nominated email account. Please check your email and click on the verification link.'
-       });
-
+        type: "warning",
+        icon: "fa-magic",
+        title: "Check Your Email",
+        message:
+          "A verification email has been sent to your nominated email account. Please check your email and click on the verification link."
+      });
     }
-
   }
 
-  componentDidMount() {
-
-  }
+  componentDidMount() {}
 
   updateAuthVerified(state) {
     Meteor.call(
@@ -119,6 +118,7 @@ class Navigation extends React.Component<IProps, IState> {
     EnhancedAuth: PropTypes.number,
     Email: PropTypes.string,
     ShortTitle: PropTypes.string,
+    history: ReactRouterPropTypes.history
   };
 
   toggle() {
@@ -127,7 +127,7 @@ class Navigation extends React.Component<IProps, IState> {
     });
   }
 
-  LogOut(event) {
+  logOut(event) {
     event.preventDefault();
     this.updateAuthVerified(false);
     Meteor.logout(() => {
@@ -140,7 +140,7 @@ class Navigation extends React.Component<IProps, IState> {
     let SignedInLayout = (
       <DropdownMenu>
         <DropdownItem>
-          <NavLink tag={Link} to="#" onClick={this.LogOut.bind(this)}>
+          <NavLink tag={Link} to="#" onClick={this.logOut}>
             Sign Out
           </NavLink>
         </DropdownItem>
@@ -171,27 +171,42 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   authVerified() {
+
+    const tipObj = lib.dashBoardTip(this.props);
+    const tip = tipObj.tip;
+    const verifiedFlag = tipObj.verified;
+
+    //let verifiedFlag = false;
+    //let tip = '';
+    /*
     if (!this.props.EnhancedAuth) {
-      return '';
-    }
-
-    let verifiedFlag = (this.props.SignedIn && this.props.AuthVerified && this.props.EmailVerified);
-    let tip = verifiedFlag ? 'Your session was verified.' : 'Unverified session: ';
-
-    if (!this.props.SignedIn) {
-      tip += 'Not signed in.';
+      verifiedFlag = this.props.SignedIn && this.props.EmailVerified;
+      let tip = verifiedFlag
+        ? "Your account is verified."
+        : "Your email address is not verified. ";
     } else {
+      verifiedFlag =
+        this.props.SignedIn &&
+        this.props.AuthVerified &&
+        this.props.EmailVerified;
+      tip = verifiedFlag
+        ? "Your session was verified."
+        : "Unverified session: ";
 
-      if (!this.props.EmailVerified) {
-        tip += 'Email address not verified';
+      if (!this.props.SignedIn) {
+        tip += "Not signed in.";
+      } else {
+        if (!this.props.EmailVerified) {
+          tip += "Email address not verified";
+        }
+
+        if (!this.props.AuthVerified) {
+          tip += ", session does not have 2 factor authentication.";
+        }
       }
-     
-      if (!this.props.AuthVerified) {
-        tip += ', session does not have 2 factor authentication.';
-      }
-      
     }
-   
+    */
+
     let verified = (
       <span>
         <VerifiedIndicator
@@ -200,7 +215,7 @@ class Navigation extends React.Component<IProps, IState> {
         />
 
         <UncontrolledTooltip placement="right" target="VerifiedIndicator">
-           {tip}
+          {tip}
         </UncontrolledTooltip>
       </span>
     );
@@ -248,5 +263,3 @@ export default withRouter(
     return {};
   })(Navigation)
 );
-
-

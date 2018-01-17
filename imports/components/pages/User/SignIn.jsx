@@ -84,9 +84,11 @@ class SignIn extends Component {
       } else {
         let key = Meteor.user().private_key;
         let name = Meteor.user().username;
+
         //this.updateAuthVerified(false);
         console.log(`Successfull Login: [${name}] [${key}]`);
         console.log(`SignInUser: props.SignedIn: [${this.props.SignedIn}]`);
+        //this.props.history.push("/");
       }
     });
   }
