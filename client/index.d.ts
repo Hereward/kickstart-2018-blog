@@ -4,6 +4,7 @@ declare module 'meteor/react-meteor-data' {
     var withTracker: any;
 }
 
+// nothing
 
 /*
 
