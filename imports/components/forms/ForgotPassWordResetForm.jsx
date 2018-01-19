@@ -2,6 +2,7 @@
 //import React from 'react';
 import React, { Component } from "react";
 import { withTracker } from "meteor/react-meteor-data";
+import PropTypes from "prop-types";
 
 export default class ForgotPassWordResetForm extends Component {
   constructor(props) {
@@ -66,3 +67,8 @@ export default class ForgotPassWordResetForm extends Component {
     );
   }
 }
+
+ForgotPassWordResetForm.propTypes = {
+  handleSubmit: PropTypes.func,
+  handleChange: PropTypes.func,
+};

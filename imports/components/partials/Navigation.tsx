@@ -95,6 +95,7 @@ class Navigation extends React.Component<IProps, IState> {
   componentDidMount() {}
 
   updateAuthVerified(state) {
+    //console.log(`FUCK YOU`);
     Meteor.call(
       "authenticator.updateAuthVerified",
       state,
@@ -149,6 +150,7 @@ class Navigation extends React.Component<IProps, IState> {
     );
 
     let SignedOuLayout = (
+
       <DropdownMenu>
         <DropdownItem>
           <NavLink tag={Link} to="/register">

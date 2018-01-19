@@ -1,33 +1,32 @@
 import { Meteor } from "meteor/meteor";
-import { Accounts } from "meteor/accounts-base";
+//import { Accounts } from "meteor/accounts-base";
 import PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
-import { withTracker } from 'meteor/react-meteor-data';
+import { withTracker } from "meteor/react-meteor-data";
 //import React, { Component } from "react";
 import * as React from "react";
 import { withRouter } from "react-router-dom";
-import jquery from "jquery";
+import * as jquery from 'jquery';
+//import jquery from "jquery";
 
 import Transition from "../../partials/Transition";
 
 interface IProps {
   history: any;
   AuthVerified: boolean;
-  SignedIn: boolean;
   EnhancedAuth: number;
 }
 
-interface IState {
- 
-}
+interface IState {}
 
 //declare var swal: any;
+declare var location: any;
+declare var Accounts: any;
 
 class VerifyEmail extends React.Component<IProps, IState> {
   //export default class SignIn extends Component {
 
   token: string;
- 
 
   constructor(props) {
     super(props);
@@ -41,12 +40,21 @@ class VerifyEmail extends React.Component<IProps, IState> {
   }
 
   static propTypes = {
-    SignedIn: PropTypes.bool,
+    history: ReactRouterPropTypes.history,
     EnhancedAuth: PropTypes.number,
-    history: ReactRouterPropTypes.history
   };
 
-
+  updateAuthVerified(state) {
+    Meteor.call(
+      "authenticator.updateAuthVerified",
+      state,
+      (error, response) => {
+        if (error) {
+          console.warn(error);
+        }
+      }
+    );
+  }
 
   checkToken() {
     Accounts.verifyEmail(
@@ -59,7 +67,15 @@ class VerifyEmail extends React.Component<IProps, IState> {
             showConfirmButton: true,
             type: "success"
           });
-          this.props.history.push("/");
+
+          if (this.props.EnhancedAuth) {
+            console.log("password reset: redirect to /authenticate");
+            this.updateAuthVerified(false);
+            this.props.history.push("/authenticate");
+          } else {
+            this.props.history.push("/");
+            console.log("password reset: redirect to /");
+          }
         } else {
           swal({
             title: "Failed",
@@ -73,12 +89,9 @@ class VerifyEmail extends React.Component<IProps, IState> {
     );
   }
 
-  
-
   getLayout() {
     return <div className="lead">Verifying....</div>;
   }
-
 
   render() {
     return (
@@ -95,5 +108,3 @@ export default withRouter(
     return {};
   })(VerifyEmail)
 );
-
-
