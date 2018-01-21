@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 //import { Accounts } from "meteor/accounts-base";
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 //import React, { Component } from "react";
@@ -41,7 +41,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
 
   static propTypes = {
     history: ReactRouterPropTypes.history,
-    EnhancedAuth: PropTypes.number,
+    EnhancedAuth: PropTypes.number
   };
 
   updateAuthVerified(state) {

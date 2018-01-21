@@ -26,7 +26,7 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 
-import * as lib from '../../modules/library';
+import * as Library from '../../modules/library';
 
 interface IProps {
   history: any;
@@ -35,6 +35,7 @@ interface IProps {
   Email: any;
   AuthVerified: boolean;
   EmailVerified: boolean;
+  verificationEmailSent: number;
   EnhancedAuth: number;
 }
 
@@ -71,13 +72,15 @@ class Navigation extends React.Component<IProps, IState> {
     };
   }
 
-
   componentWillReceiveProps() {}
 
   componentWillUpdate(nextProps) {
+    Library.userAlert("verifyEmail", nextProps);
+    /*
     if (
       nextProps.SignedIn &&
       nextProps.AuthVerified &&
+      nextProps.verificationEmailSent &&
       !nextProps.EmailVerified
     ) {
       Bert.defaults.hideDelay = 8000;
@@ -90,6 +93,7 @@ class Navigation extends React.Component<IProps, IState> {
           "A verification email has been sent to your nominated email account. Please check your email and click on the verification link."
       });
     }
+    */
   }
 
   componentDidMount() {}
@@ -114,6 +118,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   static propTypes = {
+    verificationEmailSent: PropTypes.number,
     AuthVerified: PropTypes.bool,
     EmailVerified: PropTypes.bool,
     SignedIn: PropTypes.bool,
@@ -138,6 +143,18 @@ class Navigation extends React.Component<IProps, IState> {
     });
   }
 
+  getAuthLink() {
+    if (this.props.EnhancedAuth) {
+      return (
+        <DropdownItem>
+          <NavLink tag={Link} to="/authenticate">
+            Authenticator
+          </NavLink>
+        </DropdownItem>
+      );
+    }
+  }
+
   getAuthLayout() {
     let SignedInLayout = (
       <DropdownMenu>
@@ -146,11 +163,11 @@ class Navigation extends React.Component<IProps, IState> {
             Sign Out
           </NavLink>
         </DropdownItem>
+        {this.getAuthLink()}
       </DropdownMenu>
     );
 
-    let SignedOuLayout = (
-
+    let SignedOutLayout = (
       <DropdownMenu>
         <DropdownItem>
           <NavLink tag={Link} to="/register">
@@ -170,45 +187,13 @@ class Navigation extends React.Component<IProps, IState> {
       </DropdownMenu>
     );
 
-    return this.props.SignedIn ? SignedInLayout : SignedOuLayout;
+    return this.props.SignedIn ? SignedInLayout : SignedOutLayout;
   }
 
   authVerified() {
-
-    const tipObj = lib.dashBoardTip(this.props);
+    const tipObj = Library.dashBoardTip(this.props);
     const tip = tipObj.tip;
     const verifiedFlag = tipObj.verified;
-
-    //let verifiedFlag = false;
-    //let tip = '';
-    /*
-    if (!this.props.EnhancedAuth) {
-      verifiedFlag = this.props.SignedIn && this.props.EmailVerified;
-      let tip = verifiedFlag
-        ? "Your account is verified."
-        : "Your email address is not verified. ";
-    } else {
-      verifiedFlag =
-        this.props.SignedIn &&
-        this.props.AuthVerified &&
-        this.props.EmailVerified;
-      tip = verifiedFlag
-        ? "Your session was verified."
-        : "Unverified session: ";
-
-      if (!this.props.SignedIn) {
-        tip += "Not signed in.";
-      } else {
-        if (!this.props.EmailVerified) {
-          tip += "Email address not verified";
-        }
-
-        if (!this.props.AuthVerified) {
-          tip += ", session does not have 2 factor authentication.";
-        }
-      }
-    }
-    */
 
     let verified = (
       <span>
@@ -222,7 +207,6 @@ class Navigation extends React.Component<IProps, IState> {
         </UncontrolledTooltip>
       </span>
     );
-    //let verified =  <span> [NOT VERIFIED] </span>;
     return verified;
   }
 

@@ -23,6 +23,7 @@
     "react-art-svg-renderer": "0.0.1-rc.8",
     "react-block-ui": "^1.1.1",
     "react-dom": "^16.2.0",
+    "react-loader-spinner": "^1.4.7",
     "react-native": "^0.49.5",
     "react-qr-code": "^0.1.2",
     "react-router-dom": "^4.2.2",

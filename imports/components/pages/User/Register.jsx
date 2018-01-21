@@ -1,18 +1,21 @@
+//import Future from 'fibers/future';
+import { Promise } from 'meteor/promise';
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
-
 import { Meteor } from "meteor/meteor";
 import Link, { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import QRCode from "react-qr-code";
-import {
-  Alert
-} from "reactstrap";
+
+import { Alert } from "reactstrap";
 import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 import RegistrationForm from "../../forms/Registration";
 
+
+
+//let Future = Npm.require("fibers/future");
 
 // hello //
 
@@ -31,18 +34,38 @@ class Register extends Component {
     };
     this.registerUser = this.registerUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    //console.log(`verificationEmailSent = [${this.props.verificationEmailSent}]`)
   }
 
   componentDidUpdate() {}
 
   sendVerificationEmail() {
+    
+    //let future = new Future();
     Meteor.call("user.sendVerificationEmail", (error, response) => {
       if (error) {
         console.warn(error);
+        swal({
+          title: "Verification email not sent.",
+          text: "There was a problem sending the verification email.",
+          showConfirmButton: true,
+          type: "error"
+        });
       }
+      console.log(`sendVerificationEmail: done. response =[${response}]`);
+      //return response;
+      //future.return(response);
     });
-    console.log("sendVerificationEmail: done");
+    //return future.wait();
+    
+/*
+    let ve = new Promise((resolve, reject) => {
+      Meteor.call('user.sendVerificationEmail', (error, result) => {
+        if (error) reject(error);
+        resolve(result);
+      });
+    });
+    */
+
   }
 
   handleChange(e) {
@@ -85,7 +108,7 @@ class Register extends Component {
           email: email,
           private_key: null,
           auth_verified: null,
-          verificationEmailSent: null,
+          verificationEmailSent: 0,
           password: password1
         },
         error => {
@@ -122,7 +145,14 @@ class Register extends Component {
 
   verificationNotice() {
     if (this.props.verificationEmailSent) {
-      return <div className="messages"><Alert color="success">A verification email has been sent. Please check your email and click on the verification link.</Alert></div>;
+      return (
+        <div className="messages">
+          <Alert color="success">
+            A verification email has been sent. Please check your email and
+            click on the verification link.
+          </Alert>
+        </div>
+      );
     }
   }
 
@@ -140,13 +170,16 @@ class Register extends Component {
         <Authenticator fresh {...this.props} />
       ) : (
         form
-        
       );
     } else {
       layout = form;
     }
 
-    return <div>{layout}{this.verificationNotice()}</div>;
+    return (
+      <div>
+        {layout}
+      </div>
+    );
   }
 
   render() {
@@ -167,5 +200,17 @@ Register.propTypes = {
   EnhancedAuth: PropTypes.number,
   history: ReactRouterPropTypes.history,
   AuthVerified: PropTypes.bool,
-  verificationEmailSent: PropTypes.bool,
+  verificationEmailSent: PropTypes.number
 };
+
+
+/*
+export const callWithPromise = (method) => {
+  return new Promise((resolve, reject) => {
+    Meteor.call(method, (error, result) => {
+      if (error) reject(error);
+      resolve(result);
+    });
+  });
+};
+*/

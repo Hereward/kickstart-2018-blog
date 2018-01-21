@@ -13,6 +13,8 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import { withRouter } from "react-router-dom";
+import styled from "styled-components";
+import Loader from 'react-loader-spinner';
 import {
   Alert,
   Button,
@@ -25,6 +27,16 @@ import {
 import Transition from "../../partials/Transition";
 
 const speakeasy = require("speakeasy");
+
+const LoadingPlaceHolder = styled.div`
+  border: 1px dashed Silver;
+  margin: 1rem;
+  height: 228px;
+  width: 228px;
+  text-align: center;
+  background-color: WhiteSmoke;
+  color: #303030;
+`;
 
 class Authenticator extends Component {
   constructor(props) {
@@ -84,7 +96,7 @@ class Authenticator extends Component {
   getQRcode() {
     let QRcode = (
       <div className="QRcode">
-        <img alt="" src={this.state.QRcodeURL} />
+        <img alt="QR Code" src={this.state.QRcodeURL} />
       </div>
     );
     return QRcode;
@@ -126,7 +138,6 @@ class Authenticator extends Component {
     this.setState({ hideQRcode: true });
     this.updatePrivateKey();
   }
-
 
   updatePrivateKey() {
     let userId = Meteor.userId();
@@ -218,6 +229,21 @@ class Authenticator extends Component {
     return layout;
   }
 
+  getLoadingPlaceHolder() {
+    let tag = (
+      <LoadingPlaceHolder className="d-flex align-items-center">
+        <div className="m-auto">
+          <Loader type="Oval" color="red" height="80" width="80" />
+          <div className="mx-2 mt-2">Loading QR code, please wait...</div>
+        </div>
+      </LoadingPlaceHolder>
+    );
+
+    return tag;
+  }
+
+  // this.getQRcode()
+
   QRLayout() {
     let QRLayout = (
       <Transition>
@@ -227,7 +253,12 @@ class Authenticator extends Component {
             In order to use the full range of our services you will need to use
             2 factor authentication.
           </p>
-          <div>{this.getQRcode()}</div>
+          <div>
+            {this.state.keyBase32
+              ? this.this.getQRcode()
+              : this.getLoadingPlaceHolder()}
+          </div>
+
           <p className="lead">
             Please scan the above QR code in Google Authenticator.
           </p>

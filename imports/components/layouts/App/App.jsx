@@ -41,7 +41,7 @@ export default withTracker(() => {
   let EmailVerified =  (Meteor.user()) ? Meteor.user().emails[0].verified : false;
   let SignedIn = false;
   let EmailVerificationAlert = false;
-  let verificationEmailSent = false;
+  let verificationEmailSent = 0;
   //let user = {Meteor.user()};
 
   if (Meteor.loggingIn()) {

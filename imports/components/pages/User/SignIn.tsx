@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import * as React from "react";
@@ -20,24 +20,18 @@ interface IState {
   password: string;
 }
 
-/*
-declare namespace User {
-  let private_key: string;
-}
-*/
-
 const user: any = Meteor.user();
 
-//var outerHtmlElement: any = outerElement[0];
-//var coordinates = outerHtmlElement.getBBox();
-
 class SignIn extends React.Component<IProps, IState> {
-  //export default class SignIn extends Component {
 
   constructor(props) {
     super(props);
     this.SignInUser = this.SignInUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.state = {
+      password: '',
+      email: ''
+    };
   }
 
   static propTypes = {
@@ -47,10 +41,13 @@ class SignIn extends React.Component<IProps, IState> {
   };
 
   handleChange(e) {
+    
     //this.setState({ showAuthenticator: true });
     let target = e.target;
     let value = target.value;
     let id = target.id;
+
+    console.log(`handleChange PARENT [${target}] [${value}]`);
 
     this.setState({ [id]: value });
   }
@@ -76,9 +73,7 @@ class SignIn extends React.Component<IProps, IState> {
 
 
   SignInUser() {
-    //event.preventDefault();
-    //let email = this.refs.email.value.trim();
-    //let password = this.refs.password.value.trim();
+
     console.log(`Login [${this.state.email}] [${this.state.password}]`);
 
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {

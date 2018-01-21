@@ -4,7 +4,7 @@ import { check } from 'meteor/check';
 const speakeasy = require("speakeasy");
 const QRCode = require("qrcode");
 
-let Future = Npm.require( 'fibers/future' ); 
+let Future = Npm.require('fibers/future'); 
 
   
 

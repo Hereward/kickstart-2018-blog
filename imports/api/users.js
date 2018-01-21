@@ -2,6 +2,7 @@ import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import { check } from "meteor/check";
 
+let Future = Npm.require('fibers/future'); 
 
 Accounts.onCreateUser((options, user) => {
   if (typeof options.private_key !== "undefined") {
@@ -13,7 +14,6 @@ Accounts.onCreateUser((options, user) => {
   }
 
   if (typeof options.verificationEmailSent !== "undefined") {
-    console.log(`FUCK A PENGUIN`);
     user.verificationEmailSent = options.verificationEmailSent;
   }
 
@@ -39,18 +39,27 @@ Meteor.users.allow({ update: () => true });
 
 Meteor.methods({
   "user.sendVerificationEmail": function sve() {
+    let emailRes = false;
     console.log(`user.sendVerificationEmail:BEGIN`);
-    //console.log(`user.sendForgotPasswordEmail: [${email}] `);
-      
-      Accounts.sendVerificationEmail(this.userId);
-      Meteor.users.update(this.userId, {
-        $set: {
-          verificationEmailSent: true
-        }
-      });
-      console.log(`user.sendVerificationEmail: ID = [${this.userId}]`);
-      return true;
+
+    emailRes = Accounts.sendVerificationEmail(this.userId);
+    console.log(`emailRes = [${emailRes}]`);
+    let verificationEmailSent = 2;
+    let output = false;
+
+    if (emailRes) {
+      verificationEmailSent = 1;
+      output = true;
     }
+
+    Meteor.users.update(this.userId, {
+      $set: {
+        verificationEmailSent: verificationEmailSent
+      }
+    });
+
+    return output;
+  }
 });
 
 /*

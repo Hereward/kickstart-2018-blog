@@ -3,14 +3,19 @@
 //import React, { Component } from "react";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 
 interface IProps {
     handleSubmit: any;
     handleChange: any;
   }
 
-export default class SignInForm extends React.Component<IProps> {
+  interface IState {
+    DisableSubmit: boolean;
+    SubmitText: string;
+  }
+
+export default class SignInForm extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
@@ -35,6 +40,7 @@ export default class SignInForm extends React.Component<IProps> {
   }
 
   handleChange(e) {
+    console.log(`handleChange CHILD`);
     this.props.handleChange(e);
   }
 
@@ -46,6 +52,7 @@ export default class SignInForm extends React.Component<IProps> {
           <div className="form-group">
             <label htmlFor="email">Email address</label>
             <input
+              onChange={this.handleChange}
               type="email"
               className="form-control"
               ref="email"
@@ -57,6 +64,7 @@ export default class SignInForm extends React.Component<IProps> {
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
+              onChange={this.handleChange}
               type="password"
               className="form-control"
               ref="password"
