@@ -5,12 +5,14 @@ import { check } from "meteor/check";
 let Future = Npm.require('fibers/future'); 
 
 Accounts.onCreateUser((options, user) => {
-  if (typeof options.private_key !== "undefined") {
-    user.private_key = options.private_key;
-  }
+  let objData = JSON.stringify(options);
+  console.log(`options= [${objData}]`);
 
-  if (typeof options.auth_verified !== "undefined") {
-    user.auth_verified = options.auth_verified;
+  if (typeof options.enhancedAuth !== "undefined") {
+    user.enhancedAuth = {};
+    user.enhancedAuth.verified = options.enhancedAuth.verified;
+    user.enhancedAuth.private_key = options.enhancedAuth.private_key;
+    user.enhancedAuth.attempts = 0;
   }
 
   if (typeof options.verificationEmailSent !== "undefined") {
@@ -29,7 +31,7 @@ Meteor.publish("userData", function userData() {
     return null;
   }
   const options = {
-    fields: { private_key: 1, auth_verified: 1, verificationEmailSent: 1 }
+    fields: { 'enhancedAuth.private_key': 1, 'enhancedAuth.verified': 1, 'enhancedAuth.attempts': 1, verificationEmailSent: 1 }
   };
 
   return Meteor.users.find(this.userId, options);

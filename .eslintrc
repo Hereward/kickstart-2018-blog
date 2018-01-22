@@ -48,7 +48,7 @@
     "import/no-named-as-default": [0],
     "import/no-unresolved": [0],
     "no-use-before-define": "error",
-    "camelcase": "warn",
+    "camelcase": "error",
     "class-methods-use-this": "off",
     "no-unused-vars": "warn",
     "no-else-return": "off",
@@ -71,6 +71,7 @@
     "react/no-find-dom-node": "warn",
     "jsx-a11y/label-has-for": "warn",
     "no-restricted-globals": "warn",
+    "react/forbid-prop-types": "warn",
     "semi": ["error", "always"],
     "prefer-arrow-callback": ["warn",
       {

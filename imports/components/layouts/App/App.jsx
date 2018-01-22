@@ -14,7 +14,6 @@ const App = props => (
 */
 
 class App extends Component {
-
   constructor(props) {
     super(props);
   }
@@ -42,6 +41,7 @@ export default withTracker(() => {
   let SignedIn = false;
   let EmailVerificationAlert = false;
   let verificationEmailSent = 0;
+  //let EnhancedAuthObj = {verified: false, currentAttempts: 0, private_key: null};
   //let user = {Meteor.user()};
 
   if (Meteor.loggingIn()) {
@@ -49,7 +49,9 @@ export default withTracker(() => {
   } else if (Meteor.user()) {
     verificationEmailSent = Meteor.user().verificationEmailSent;
     Email = ` - ${Meteor.user().emails[0].address}`;
-    AuthVerified = Meteor.user().auth_verified;
+    //AuthVerified = Meteor.user().auth_verified;
+    AuthVerified = Meteor.user().enhancedAuth.verified;
+
     if (verificationEmailSent && AuthVerified && !EmailVerified) {
       EmailVerificationAlert = true;
     }
@@ -61,7 +63,7 @@ export default withTracker(() => {
     Email: Email,
     MainTitle: Meteor.settings.public.MainTitle,
     ShortTitle: Meteor.settings.public.ShortTitle,
-    EnhancedAuth: Meteor.settings.public.EnhancedAuth,
+    enhancedAuth: Meteor.settings.public.enhancedAuth.active, 
     AuthVerified: AuthVerified,
     EmailVerificationAlert: EmailVerificationAlert,
     EmailVerified: EmailVerified,

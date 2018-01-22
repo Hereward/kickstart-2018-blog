@@ -19,7 +19,7 @@ const Main = props => (
       <Route path="/forgot-password" render={() => (<ForgotPassWord {...props} />)} />
       <Route path="/forgot-password-reset" render={() => (<ForgotPassWordReset {...props} />)} />
       <Route path="/verify-email" render={() => (<VerifyEmail {...props} />)} />
-      <Route path="/authenticate" component={Authenticator} />
+      <Route path="/authenticate" render={() => (<Authenticator {...props} />)} />
       
     </Switch>
   </main>

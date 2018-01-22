@@ -22,8 +22,8 @@ export function dashBoardTip(props) {
   console.log(`dashBoardTip SignedIn=[${props.SignedIn}]`);
   let verifiedFlag: boolean;
   let tip: string;
-  if (!props.EnhancedAuth) {
-    verifiedFlag = this.props.SignedIn && this.props.EmailVerified;
+  if (!props.enhancedAuth) {
+    verifiedFlag = props.SignedIn && props.EmailVerified;
     let tip = verifiedFlag
       ? "Your account is verified."
       : "Your email address is not verified. ";

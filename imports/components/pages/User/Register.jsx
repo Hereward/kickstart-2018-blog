@@ -34,6 +34,10 @@ class Register extends Component {
     };
     this.registerUser = this.registerUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
+
+    let objData = JSON.stringify(this.props);
+    console.log(`Register: objData: [${objData}]`);
+    
   }
 
   componentDidUpdate() {}
@@ -106,8 +110,7 @@ class Register extends Component {
       Accounts.createUser(
         {
           email: email,
-          private_key: null,
-          auth_verified: null,
+          enhancedAuth: {verified: false, currentAttempts: 0, private_key: null},
           verificationEmailSent: 0,
           password: password1
         },
@@ -125,7 +128,8 @@ class Register extends Component {
             console.log("Successfully created account!");
             this.sendVerificationEmail();
 
-            if (this.props.EnhancedAuth) {
+            if (this.props.enhancedAuth) {
+              //this.props.history.push("/");
               this.setState({ showAuthenticator: true });
             } else {
               this.props.history.push("/");
@@ -165,9 +169,9 @@ class Register extends Component {
       />
     );
 
-    if (this.props.EnhancedAuth) {
+    if (this.props.enhancedAuth) {
       layout = this.state.showAuthenticator ? (
-        <Authenticator fresh {...this.props} />
+        <Authenticator fresh />
       ) : (
         form
       );
@@ -197,9 +201,8 @@ export default withRouter(
 );
 
 Register.propTypes = {
-  EnhancedAuth: PropTypes.number,
+  enhancedAuth: PropTypes.number,
   history: ReactRouterPropTypes.history,
-  AuthVerified: PropTypes.bool,
   verificationEmailSent: PropTypes.number
 };
 

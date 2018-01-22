@@ -68,8 +68,12 @@ class Authenticator extends Component {
       keyBase32: ""
     };
 
-    console.log(`CONSTUCTOR PRIVATE KEY = ${this.props.PrivateKey}`);
-    console.log(`CONSTUCTOR SignedIn = ${this.props.SignedIn}`);
+    let objData = JSON.stringify(this.props);
+
+    console.log(`Authenticator: objData: [${objData}]`);
+
+    console.log(`Authenticator: this.props.enhancedAuthObj [${JSON.stringify(this.props.enhancedAuthObj)}]`);
+
   }
 
   /*
@@ -103,15 +107,8 @@ class Authenticator extends Component {
   }
 
   getKey() {
-    //let key = Meteor.user().private_key;
-    //let SignedIn =  (Meteor.user());
-    console.log(
-      `getKey: SignedIn = [${this.props.SignedIn}] PrivateKey = [${
-        this.props.PrivateKey
-      }]`
-    );
-    if (this.props.SignedIn && this.props.PrivateKey) {
-      this.setKeyProps(this.props.PrivateKey);
+    if (this.props.SignedIn && this.props.enhancedAuthObj.private_key) {
+      this.setKeyProps(this.props.enhancedAuthObj.private_key);
     } else {
       Meteor.call("authenticator.generateKey", (error, data) => {
         console.log("generating new key");
@@ -119,6 +116,7 @@ class Authenticator extends Component {
           console.warn(error);
         }
         this.setKeyProps(data.key.base32);
+        this.updatePrivateKey();
         this.setState({ QRcodeURL: data.url });
       });
     }
@@ -136,7 +134,6 @@ class Authenticator extends Component {
 
   handleQRClick() {
     this.setState({ hideQRcode: true });
-    this.updatePrivateKey();
   }
 
   updatePrivateKey() {
@@ -146,7 +143,7 @@ class Authenticator extends Component {
     if (userId) {
       Meteor.users.update(userId, {
         $set: {
-          private_key: privateKey
+          'enhancedAuth.private_key': privateKey
         }
       });
     }
@@ -255,7 +252,7 @@ class Authenticator extends Component {
           </p>
           <div>
             {this.state.keyBase32
-              ? this.this.getQRcode()
+              ? this.getQRcode()
               : this.getLoadingPlaceHolder()}
           </div>
 
@@ -315,13 +312,13 @@ class Authenticator extends Component {
 export default withRouter(withTracker(() => {
   Meteor.subscribe("userData");
   let SignedIn = Meteor.user() ? true : false;
-  let PrivateKey = SignedIn ? Meteor.user().private_key : "";
-  return { PrivateKey: PrivateKey, SignedIn: SignedIn };
+  let enhancedAuthObj = SignedIn ? Meteor.user().enhancedAuth : {};
+  return { enhancedAuthObj: enhancedAuthObj, SignedIn: SignedIn };
 })(Authenticator));
 
 Authenticator.propTypes = {
+  enhancedAuthObj: PropTypes.object,
   fresh: PropTypes.bool,
   SignedIn: PropTypes.bool,
-  PrivateKey: PropTypes.string,
   history: ReactRouterPropTypes.history,
 };
