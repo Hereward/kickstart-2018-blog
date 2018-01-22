@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import * as PropTypes from "prop-types";
-import ReactRouterPropTypes from 'react-router-prop-types';
+import ReactRouterPropTypes from "react-router-prop-types";
 // import * as Bert from "meteor/themeteorchef:bert";
 
 import { Link, withRouter } from "react-router-dom";
@@ -26,17 +26,18 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 
-import * as Library from '../../modules/library';
+import * as Library from "../../modules/library";
 
 interface IProps {
   history: any;
-  SignedIn: any;
+  signedIn: any;
   ShortTitle: any;
   Email: any;
   AuthVerified: boolean;
   EmailVerified: boolean;
   verificationEmailSent: number;
   EnhancedAuth: number;
+  loading: boolean;
 }
 
 interface IState {
@@ -70,30 +71,19 @@ class Navigation extends React.Component<IProps, IState> {
       isOpen: false,
       collapsed: true
     };
+
+    
   }
 
   componentWillReceiveProps() {}
 
   componentWillUpdate(nextProps) {
+
+    console.log(
+      `Navigation: verificationEmailSent [${nextProps.verificationEmailSent}]`
+    );
+
     Library.userAlert("verifyEmail", nextProps);
-    /*
-    if (
-      nextProps.SignedIn &&
-      nextProps.AuthVerified &&
-      nextProps.verificationEmailSent &&
-      !nextProps.EmailVerified
-    ) {
-      Bert.defaults.hideDelay = 8000;
-      Bert.alert({
-        hideDelay: 10000,
-        type: "warning",
-        icon: "fa-magic",
-        title: "Check Your Email",
-        message:
-          "A verification email has been sent to your nominated email account. Please check your email and click on the verification link."
-      });
-    }
-    */
   }
 
   componentDidMount() {}
@@ -121,11 +111,12 @@ class Navigation extends React.Component<IProps, IState> {
     verificationEmailSent: PropTypes.number,
     AuthVerified: PropTypes.bool,
     EmailVerified: PropTypes.bool,
-    SignedIn: PropTypes.bool,
+    signedIn: PropTypes.bool,
     EnhancedAuth: PropTypes.number,
     Email: PropTypes.string,
     ShortTitle: PropTypes.string,
-    history: ReactRouterPropTypes.history
+    history: ReactRouterPropTypes.history,
+    loading: PropTypes.bool
   };
 
   toggle() {
@@ -187,7 +178,7 @@ class Navigation extends React.Component<IProps, IState> {
       </DropdownMenu>
     );
 
-    return this.props.SignedIn ? SignedInLayout : SignedOutLayout;
+    return this.props.signedIn ? SignedInLayout : SignedOutLayout;
   }
 
   authVerified() {
@@ -210,7 +201,7 @@ class Navigation extends React.Component<IProps, IState> {
     return verified;
   }
 
-  render() {
+  navBar() {
     return (
       <Navbar color="dark" expand="md" className="main-nav" dark>
         <NavbarBrand>
@@ -242,11 +233,16 @@ class Navigation extends React.Component<IProps, IState> {
       </Navbar>
     );
   }
+
+  render() {
+    return this.navBar();
+  }
 }
 
 export default withRouter(
   withTracker(({ params }) => {
-    Meteor.subscribe("tasks");
-    return {};
+    let userDataHandle = Meteor.subscribe("userData");
+    let loading = !userDataHandle.ready();
+    return { loading: loading };
   })(Navigation)
 );

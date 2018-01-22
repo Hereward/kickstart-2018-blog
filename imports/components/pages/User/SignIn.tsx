@@ -11,8 +11,8 @@ import SignInForm from "../../forms/SignInForm";
 interface IProps {
   history: any;
   AuthVerified: boolean;
-  EnhancedAuth: number;
-  SignedIn: boolean;
+  enhancedAuth: number;
+  signedIn: boolean;
 }
 
 interface IState {
@@ -36,8 +36,8 @@ class SignIn extends React.Component<IProps, IState> {
 
   static propTypes = {
     history: ReactRouterPropTypes.history,
-    EnhancedAuth: PropTypes.number,
-    SignedIn: PropTypes.bool,
+    enhancedAuth: PropTypes.number,
+    signedIn: PropTypes.bool,
   };
 
   handleChange(e) {
@@ -60,9 +60,9 @@ class SignIn extends React.Component<IProps, IState> {
       />
     );
 
-    if (!this.props.SignedIn) {
+    if (!this.props.signedIn) {
       return form;
-    } else if (this.props.EnhancedAuth) {
+    } else if (this.props.enhancedAuth) {
       return <Authenticator />;
     } else {
       this.props.history.push("/");
@@ -85,11 +85,6 @@ class SignIn extends React.Component<IProps, IState> {
           showConfirmButton: false,
           type: "error"
         });
-      } else {
-        let key = user.private_key;
-        let name = user.username;
-        console.log(`Successfull Login: [${name}] [${key}]`);
-        console.log(`SignInUser: props.SignedIn: [${this.props.SignedIn}]`);
       }
     });
   }

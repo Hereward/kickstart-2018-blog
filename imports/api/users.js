@@ -28,7 +28,7 @@ Accounts.onCreateUser((options, user) => {
 
 Meteor.publish("userData", function userData() {
   if (!this.userId) {
-    return null;
+    return this.ready();
   }
   const options = {
     fields: { 'enhancedAuth.private_key': 1, 'enhancedAuth.verified': 1, 'enhancedAuth.attempts': 1, verificationEmailSent: 1 }

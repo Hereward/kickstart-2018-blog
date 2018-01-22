@@ -38,7 +38,7 @@ class ForgotPassWord extends Component {
   }
 
   getLayout() {
-    if (!this.props.SignedIn) {
+    if (!this.props.signedIn) {
       return (
         <div>
           <h2>Forgot Your Password ?</h2>
@@ -141,7 +141,7 @@ export default withRouter(
 );
 
 ForgotPassWord.propTypes = {
-  SignedIn: PropTypes.bool,
+  signedIn: PropTypes.bool,
   EnhancedAuth: PropTypes.number,
   history: ReactRouterPropTypes.history
 };

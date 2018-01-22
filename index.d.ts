@@ -17,3 +17,23 @@ declare var Bert: any;
 declare function swal(options:object);
 declare var console: Console;
 //declare var Accounts: any;
+
+declare namespace Meteor.User {
+  let verificationEmailSent: boolean;
+}
+
+declare module "meteor/meteor" {
+  module Meteor {
+     
+      interface User {
+          _id?: string;
+          username?: string;
+          emails?: UserEmail[];
+          createdAt?: number;
+          profile?: any;
+          services?: any;
+          verificationEmailSent?: boolean;
+      }
+
+  }
+}

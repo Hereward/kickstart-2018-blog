@@ -107,7 +107,7 @@ class Authenticator extends Component {
   }
 
   getKey() {
-    if (this.props.SignedIn && this.props.enhancedAuthObj.private_key) {
+    if (this.props.signedIn && this.props.enhancedAuthObj.private_key) {
       this.setKeyProps(this.props.enhancedAuthObj.private_key);
     } else {
       Meteor.call("authenticator.generateKey", (error, data) => {
@@ -311,14 +311,14 @@ class Authenticator extends Component {
 
 export default withRouter(withTracker(() => {
   Meteor.subscribe("userData");
-  let SignedIn = Meteor.user() ? true : false;
-  let enhancedAuthObj = SignedIn ? Meteor.user().enhancedAuth : {};
-  return { enhancedAuthObj: enhancedAuthObj, SignedIn: SignedIn };
+  let signedIn = Meteor.user() ? true : false;
+  let enhancedAuthObj = signedIn ? Meteor.user().enhancedAuth : {};
+  return { enhancedAuthObj: enhancedAuthObj, signedIn: signedIn };
 })(Authenticator));
 
 Authenticator.propTypes = {
   enhancedAuthObj: PropTypes.object,
   fresh: PropTypes.bool,
-  SignedIn: PropTypes.bool,
+  signedIn: PropTypes.bool,
   history: ReactRouterPropTypes.history,
 };

@@ -35,10 +35,12 @@ class App extends Component {
 }
 
 export default withTracker(() => {
+  let userDataReady = Meteor.subscribe("userData");
+
   let Email = " - Guest";
   let AuthVerified = false;
-  let EmailVerified =  (Meteor.user()) ? Meteor.user().emails[0].verified : false;
-  let SignedIn = false;
+  let EmailVerified = Meteor.user() ? Meteor.user().emails[0].verified : false;
+  let signedIn = false;
   let EmailVerificationAlert = false;
   let verificationEmailSent = 0;
   //let EnhancedAuthObj = {verified: false, currentAttempts: 0, private_key: null};
@@ -47,26 +49,32 @@ export default withTracker(() => {
   if (Meteor.loggingIn()) {
     Email = ` - logging in...`;
   } else if (Meteor.user()) {
-    verificationEmailSent = Meteor.user().verificationEmailSent;
+    signedIn = true;
+    let objData = JSON.stringify(Meteor.user());
+    console.log(`USER = ${objData}`);
     Email = ` - ${Meteor.user().emails[0].address}`;
     //AuthVerified = Meteor.user().auth_verified;
-    AuthVerified = Meteor.user().enhancedAuth.verified;
 
-    if (verificationEmailSent && AuthVerified && !EmailVerified) {
-      EmailVerificationAlert = true;
+    if (userDataReady) {
+      if (typeof Meteor.user().verificationEmailSent !== 'undefined') {
+        verificationEmailSent = Meteor.user().verificationEmailSent;
+        AuthVerified = Meteor.user().enhancedAuth.verified;
+
+        //console.log(`APP: verificationEmailSent = ${verificationEmailSent}`);
     }
-    SignedIn = true;
+      //verificationEmailSent = Meteor.user().verificationEmailSent;
+      //AuthVerified = Meteor.user().enhancedAuth.verified;
+    }
   }
 
   return {
-    SignedIn: SignedIn,
+    signedIn: signedIn,
     Email: Email,
     MainTitle: Meteor.settings.public.MainTitle,
     ShortTitle: Meteor.settings.public.ShortTitle,
-    enhancedAuth: Meteor.settings.public.enhancedAuth.active, 
+    enhancedAuth: Meteor.settings.public.enhancedAuth.active,
     AuthVerified: AuthVerified,
-    EmailVerificationAlert: EmailVerificationAlert,
     EmailVerified: EmailVerified,
-    verificationEmailSent: verificationEmailSent,
+    verificationEmailSent: verificationEmailSent
   };
 })(App);

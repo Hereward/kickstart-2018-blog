@@ -41,7 +41,7 @@ Meteor.methods({
     check(state, Boolean);
     Meteor.users.update(this.userId, {
       $set: {
-        auth_verified: state
+        'enhancedAuth.verified': state
       }
     });
     return true;

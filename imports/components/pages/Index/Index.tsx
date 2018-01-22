@@ -11,7 +11,7 @@ import Task from '../../partials/Task.js';
 
 interface IProps {
   history: any;
-  SignedIn: any;
+  signedIn: any;
   ShortTitle: any;
   UserName: any;
   tasks: any;

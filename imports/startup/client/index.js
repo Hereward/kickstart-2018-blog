@@ -8,7 +8,6 @@ import App from '../../components/layouts/App/App';
 //import { BrowserRouter } from 'react-router-dom'
 
 
-
 console.log('starting...');
 
 Meteor.startup(() => {

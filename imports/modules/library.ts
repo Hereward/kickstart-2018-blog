@@ -19,19 +19,19 @@ export { Auth };
 */
 
 export function dashBoardTip(props) {
-  console.log(`dashBoardTip SignedIn=[${props.SignedIn}]`);
+  console.log(`dashBoardTip SignedIn=[${props.signedIn}]`);
   let verifiedFlag: boolean;
   let tip: string;
   if (!props.enhancedAuth) {
-    verifiedFlag = props.SignedIn && props.EmailVerified;
+    verifiedFlag = props.signedIn && props.EmailVerified;
     let tip = verifiedFlag
       ? "Your account is verified."
       : "Your email address is not verified. ";
   } else {
-    verifiedFlag = props.SignedIn && props.AuthVerified && props.EmailVerified;
+    verifiedFlag = props.signedIn && props.AuthVerified && props.EmailVerified;
     tip = verifiedFlag ? "Your session was verified." : "Unverified session: ";
 
-    if (!props.SignedIn) {
+    if (!props.signedIn) {
       tip += "Not signed in.";
     } else {
       if (!props.EmailVerified) {
@@ -47,7 +47,10 @@ export function dashBoardTip(props) {
 }
 
 export function userAlert(type, props) {
-  if (!props.SignedIn) { return; }
+  if (!props.signedIn) { return; }
+
+  let objData = JSON.stringify(props);
+  console.log(`userAlert [${type}] [${objData}]`);
 
   let msg = "";
   let alertType = "";
@@ -57,7 +60,7 @@ export function userAlert(type, props) {
   let allowAlert = false;
   if (type === "verifyEmail") {
     if (
-      props.SignedIn &&
+      props.signedIn &&
       props.AuthVerified &&
       props.verificationEmailSent === 1 &&
       !props.EmailVerified
@@ -68,7 +71,7 @@ export function userAlert(type, props) {
         "A verification email has been sent to your nominated email account. Please check your email and click on the verification link.";
       alertType = "warning";
     } else if (
-      props.SignedIn &&
+      props.signedIn &&
       props.AuthVerified &&
       props.verificationEmailSent === 2 &&
       !props.EmailVerified

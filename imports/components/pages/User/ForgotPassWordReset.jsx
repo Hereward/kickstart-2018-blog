@@ -168,7 +168,6 @@ export default withRouter(
 );
 
 ForgotPassWordReset.propTypes = {
-  SignedIn: PropTypes.bool,
   history: ReactRouterPropTypes.history,
   EnhancedAuth: PropTypes.number,
   AuthVerified: PropTypes.bool
