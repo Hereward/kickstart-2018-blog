@@ -33,10 +33,10 @@ interface IProps {
   signedIn: any;
   ShortTitle: any;
   Email: any;
-  AuthVerified: boolean;
+  authVerified: boolean;
   EmailVerified: boolean;
   verificationEmailSent: number;
-  EnhancedAuth: number;
+  enhancedAuth: number;
   loading: boolean;
 }
 
@@ -77,19 +77,22 @@ class Navigation extends React.Component<IProps, IState> {
 
   componentWillReceiveProps() {}
 
-  componentWillUpdate(nextProps) {
 
-    console.log(
-      `Navigation: verificationEmailSent [${nextProps.verificationEmailSent}]`
-    );
+  componentWillUpdate(nextProps) {}
 
-    Library.userAlert("verifyEmail", nextProps);
+  componentDidUpdate() {
+    console.log(`componentDidUpdate`);
+
+    if (this.props.signedIn && (this.props.authVerified || !this.props.enhancedAuth)) {
+      
+      console.log(`userAlert`);
+      Library.userAlert("verifyEmail", this.props);
+    }
   }
 
   componentDidMount() {}
 
   updateAuthVerified(state) {
-    //console.log(`FUCK YOU`);
     Meteor.call(
       "authenticator.updateAuthVerified",
       state,
@@ -109,10 +112,10 @@ class Navigation extends React.Component<IProps, IState> {
 
   static propTypes = {
     verificationEmailSent: PropTypes.number,
-    AuthVerified: PropTypes.bool,
+    authVerified: PropTypes.bool,
     EmailVerified: PropTypes.bool,
     signedIn: PropTypes.bool,
-    EnhancedAuth: PropTypes.number,
+    enhancedAuth: PropTypes.number,
     Email: PropTypes.string,
     ShortTitle: PropTypes.string,
     history: ReactRouterPropTypes.history,
@@ -135,7 +138,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   getAuthLink() {
-    if (this.props.EnhancedAuth) {
+    if (this.props.enhancedAuth) {
       return (
         <DropdownItem>
           <NavLink tag={Link} to="/authenticate">

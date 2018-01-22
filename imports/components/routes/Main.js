@@ -9,6 +9,7 @@ import Register from "../pages/User/Register";
 import SignIn from "../pages/User/SignIn";
 import Authenticator from "../pages/User/Authenticator";
 
+
 const Main = props => (
   <main>
     <Switch>
@@ -20,7 +21,7 @@ const Main = props => (
       <Route path="/forgot-password-reset" render={() => (<ForgotPassWordReset {...props} />)} />
       <Route path="/verify-email" render={() => (<VerifyEmail {...props} />)} />
       <Route path="/authenticate" render={() => (<Authenticator {...props} />)} />
-      
+
     </Switch>
   </main>
 );

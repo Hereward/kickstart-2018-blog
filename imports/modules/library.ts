@@ -56,12 +56,12 @@ export function userAlert(type, props) {
   let alertType = "";
   let icon = "fa-magic";
   let title = "";
-  let hideDelay = 10000;
+  let hideDelay = 7000;
   let allowAlert = false;
   if (type === "verifyEmail") {
     if (
       props.signedIn &&
-      props.AuthVerified &&
+      props.authVerified &&
       props.verificationEmailSent === 1 &&
       !props.EmailVerified
     ) {
@@ -72,7 +72,7 @@ export function userAlert(type, props) {
       alertType = "warning";
     } else if (
       props.signedIn &&
-      props.AuthVerified &&
+      props.authVerified &&
       props.verificationEmailSent === 2 &&
       !props.EmailVerified
     ) {
