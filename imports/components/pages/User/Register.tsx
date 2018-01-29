@@ -1,9 +1,9 @@
-//import Future from 'fibers/future';
-import { Promise } from 'meteor/promise';
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import ReactRouterPropTypes from "react-router-prop-types";
+
 import { Meteor } from "meteor/meteor";
+import * as React from "react";
+import * as PropTypes from 'prop-types';
+import { Accounts } from "meteor/accounts-base";
+import ReactRouterPropTypes from "react-router-prop-types";
 import Link, { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import QRCode from "react-qr-code";
@@ -11,21 +11,36 @@ import QRCode from "react-qr-code";
 import { Alert } from "reactstrap";
 import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
-import RegistrationForm from "../../forms/Registration";
-import { createProfile }  from "../../../api/profiles/methods";
-import { Profiles } from '../../../api/profiles/publish';
+import RegistrationForm from "../../forms/RegistrationForm";
+import { createProfile } from "../../../api/profiles/methods";
+import { Profiles } from "../../../api/profiles/publish";
 
 
+import SignInForm from "../../forms/SignInForm";
 
-//let Future = Npm.require("fibers/future");
+//let speakeasy = require("speakeasy");
 
-// hello //
+//let RegistrationForm: any;
 
-let speakeasy = require("speakeasy");
+//let Accounts: any;
 
-//import * as Speakeasy from 'speakeasy'
+interface IProps {
+  history: any;
+  AuthVerified: boolean;
+  enhancedAuth: boolean;
+  signedIn: boolean;
+  verificationEmailSent: number;
+}
 
-class Register extends Component {
+interface IState {
+  showAuthenticator: boolean;
+  email: string;
+  password1: string;
+  password2: string;
+}
+
+
+class Register extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
@@ -39,14 +54,17 @@ class Register extends Component {
 
     let objData = JSON.stringify(this.props);
     console.log(`Register: objData: [${objData}]`);
-    
   }
+
+  static propTypes = {
+    enhancedAuth: PropTypes.bool,
+    history: ReactRouterPropTypes.history,
+    verificationEmailSent: PropTypes.number,
+  };
 
   componentDidUpdate() {}
 
   sendVerificationEmail() {
-    
-    //let future = new Future();
     Meteor.call("user.sendVerificationEmail", (error, response) => {
       if (error) {
         console.warn(error);
@@ -58,20 +76,7 @@ class Register extends Component {
         });
       }
       console.log(`sendVerificationEmail: done. response =[${response}]`);
-      //return response;
-      //future.return(response);
     });
-    //return future.wait();
-    
-/*
-    let ve = new Promise((resolve, reject) => {
-      Meteor.call('user.sendVerificationEmail', (error, result) => {
-        if (error) reject(error);
-        resolve(result);
-      });
-    });
-    */
-
   }
 
   handleChange(e) {
@@ -112,7 +117,11 @@ class Register extends Component {
       Accounts.createUser(
         {
           email: email,
-          enhancedAuth: {verified: false, currentAttempts: 0, private_key: null},
+          enhancedAuth: {
+            verified: false,
+            currentAttempts: 0,
+            private_key: null
+          },
           verificationEmailSent: 0,
           password: password1
         },
@@ -127,29 +136,20 @@ class Register extends Component {
               type: "error"
             });
           } else {
-            /*
-            Meteor.call(
-              
-              "profiles.create",
-              (error, response) => {
-                if (error) {
-                  console.warn(error);
-                }
-              }
-            );
-            */
+            console.log("createUser: done");
 
-            console.log('createUser: done');
+            let profileFields = {
+              fname: "Adolf",
+              initial: "K",
+              lname: "Hitler"
+            };
 
-            let profileFields = {fname: 'Adolf', initial: 'K', lname: 'Hitler'};
-
-            createProfile.call(profileFields,(err, res) => {
-              console.log('createProfile.call');
+            createProfile.call(profileFields, (err, res) => {
+              console.log("createProfile.call");
               if (err) {
                 swal({
-                  title: 'Oops, something went wrong!',
-                  text:
-                    'There was a problem creating the User Profile.',
+                  title: "Oops, something went wrong!",
+                  text: "There was a problem creating the User Profile.",
                   showConfirmButton: true,
                   type: "error"
                 });
@@ -193,30 +193,21 @@ class Register extends Component {
     }
   }
 
+
+
   getLayout() {
-    let layout = "";
+    let layout: any;
     let form = (
-      <RegistrationForm
-        handleChange={this.handleChange}
-        handleSubmit={this.registerUser}
-      />
+      <RegistrationForm handleChange={this.handleChange} handleSubmit={this.registerUser} />
     );
 
     if (this.props.enhancedAuth) {
-      layout = this.state.showAuthenticator ? (
-        <Authenticator fresh />
-      ) : (
-        form
-      );
+      layout = this.state.showAuthenticator ? <Authenticator fresh /> : form;
     } else {
       layout = form;
     }
 
-    return (
-      <div>
-        {layout}
-      </div>
-    );
+    return <div>{layout}</div>;
   }
 
   render() {
@@ -232,21 +223,3 @@ export default withRouter(
     return {};
   })(Register)
 );
-
-Register.propTypes = {
-  enhancedAuth: PropTypes.number,
-  history: ReactRouterPropTypes.history,
-  verificationEmailSent: PropTypes.number
-};
-
-
-/*
-export const callWithPromise = (method) => {
-  return new Promise((resolve, reject) => {
-    Meteor.call(method, (error, result) => {
-      if (error) reject(error);
-      resolve(result);
-    });
-  });
-};
-*/
