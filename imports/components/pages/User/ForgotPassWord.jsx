@@ -5,14 +5,33 @@ import { Accounts } from "meteor/accounts-base";
 import PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
-import React, { Component } from "react";
+import * as React from "react";
+
 import { Link, withRouter } from "react-router-dom";
 import BlockUi from "react-block-ui";
 import 'react-block-ui/style.css';
 import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 
-class ForgotPassWord extends Component {
+/*
+ signedIn: PropTypes.bool,
+  EnhancedAuth: PropTypes.bool,
+  history: ReactRouterPropTypes.history
+  */
+
+interface IProps {
+  signedIn: boolean;
+  history: any;
+  enhancedAuth: boolean;
+}
+
+interface IState {
+  disableSubmit: boolean;
+  submitText: string;
+  blocking: boolean;
+}
+
+class ForgotPassWord extends React.Component<IProps, IState> {
   //export default class SignIn extends Component {
 
   constructor(props) {
@@ -21,8 +40,8 @@ class ForgotPassWord extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = {
-      DisableSubmit: false,
-      SubmitText: "Submit",
+      disableSubmit: false,
+      submitText: "Submit",
       blocking: false
     };
   }
@@ -30,8 +49,8 @@ class ForgotPassWord extends Component {
   handleSubmit(e) {
     e.preventDefault();
     this.setState({
-      DisableSubmit: true,
-      SubmitText: "processing...",
+      disableSubmit: true,
+      submitText: "processing...",
       blocking: true
     });
     this.sendResetPassWordLink();
@@ -63,11 +82,11 @@ class ForgotPassWord extends Component {
 
               <div className="form-group">
                 <button
-                  disabled={this.state.DisableSubmit}
+                  disabled={this.state.disableSubmit}
                   type="submit"
                   className="btn btn-default"
                 >
-                  {this.state.SubmitText}
+                  {this.state.submitText}
                 </button>
               </div>
 
@@ -80,7 +99,7 @@ class ForgotPassWord extends Component {
           </BlockUi>
         </div>
       );
-    } else if (this.props.EnhancedAuth) {
+    } else if (this.props.enhancedAuth) {
       return <Authenticator />;
     } else {
       this.props.history.push("/");
@@ -140,8 +159,10 @@ export default withRouter(
   })(ForgotPassWord)
 );
 
+/*
 ForgotPassWord.propTypes = {
   signedIn: PropTypes.bool,
   EnhancedAuth: PropTypes.bool,
   history: ReactRouterPropTypes.history
 };
+*/

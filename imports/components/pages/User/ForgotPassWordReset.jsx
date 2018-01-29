@@ -11,6 +11,8 @@ import { Link, withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
 
+// OLD
+
 class ForgotPassWordReset extends Component {
 
   constructor(props) {

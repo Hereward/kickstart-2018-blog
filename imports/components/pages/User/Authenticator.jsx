@@ -7,6 +7,8 @@
  "extends": ["plugin:meteor/recommended"]
 */
 
+// OLD
+
 import { Meteor } from "meteor/meteor";
 import ReactRouterPropTypes from 'react-router-prop-types';
 import PropTypes from "prop-types";

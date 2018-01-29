@@ -4,6 +4,8 @@ import React, { Component } from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
 
+// OLD
+
 export default class ForgotPassWordResetForm extends Component {
   constructor(props) {
     super(props);
