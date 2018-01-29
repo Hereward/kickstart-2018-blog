@@ -1,19 +1,16 @@
-//import * as React from 'react'
-//import React from 'react';
-//import React, { Component } from "react";
 import * as React from "react";
 import { Link } from "react-router-dom";
-import * as PropTypes from 'prop-types';
+import * as PropTypes from "prop-types";
 
 interface IProps {
-    handleSubmit: any;
-    handleChange: any;
-  }
+  handleSubmit: any;
+  handleChange: any;
+}
 
-  interface IState {
-    DisableSubmit: boolean;
-    SubmitText: string;
-  }
+interface IState {
+  DisableSubmit: boolean;
+  SubmitText: string;
+}
 
 export default class SignInForm extends React.Component<IProps, IState> {
   constructor(props) {
@@ -30,7 +27,7 @@ export default class SignInForm extends React.Component<IProps, IState> {
 
   static propTypes = {
     handleSubmit: PropTypes.func,
-    handleChange: PropTypes.func,
+    handleChange: PropTypes.func
   };
 
   handleSubmit(e) {
@@ -55,7 +52,6 @@ export default class SignInForm extends React.Component<IProps, IState> {
               onChange={this.handleChange}
               type="email"
               className="form-control"
-              ref="email"
               id="email"
               placeholder="Email"
             />
@@ -67,7 +63,6 @@ export default class SignInForm extends React.Component<IProps, IState> {
               onChange={this.handleChange}
               type="password"
               className="form-control"
-              ref="password"
               id="password"
               placeholder="Password"
             />
@@ -98,5 +93,3 @@ export default class SignInForm extends React.Component<IProps, IState> {
     );
   }
 }
-
-

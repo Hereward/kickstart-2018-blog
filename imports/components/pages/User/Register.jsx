@@ -12,6 +12,8 @@ import { Alert } from "reactstrap";
 import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 import RegistrationForm from "../../forms/Registration";
+import { createProfile }  from "../../../api/profiles/methods";
+import { Profiles } from '../../../api/profiles/publish';
 
 
 
@@ -125,6 +127,37 @@ class Register extends Component {
               type: "error"
             });
           } else {
+            /*
+            Meteor.call(
+              
+              "profiles.create",
+              (error, response) => {
+                if (error) {
+                  console.warn(error);
+                }
+              }
+            );
+            */
+
+            console.log('createUser: done');
+
+            let profileFields = {fname: 'Adolf', initial: 'K', lname: 'Hitler'};
+
+            createProfile.call(profileFields,(err, res) => {
+              console.log('createProfile.call');
+              if (err) {
+                swal({
+                  title: 'Oops, something went wrong!',
+                  text:
+                    'There was a problem creating the User Profile.',
+                  showConfirmButton: true,
+                  type: "error"
+                });
+              } else {
+                console.log(`profile successfully created`);
+              }
+            });
+
             console.log("Successfully created account!");
             this.sendVerificationEmail();
 

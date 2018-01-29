@@ -142,6 +142,6 @@ export default withRouter(
 
 ForgotPassWord.propTypes = {
   signedIn: PropTypes.bool,
-  EnhancedAuth: PropTypes.number,
+  EnhancedAuth: PropTypes.bool,
   history: ReactRouterPropTypes.history
 };

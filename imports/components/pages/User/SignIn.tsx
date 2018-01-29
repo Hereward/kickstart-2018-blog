@@ -11,7 +11,7 @@ import SignInForm from "../../forms/SignInForm";
 interface IProps {
   history: any;
   AuthVerified: boolean;
-  enhancedAuth: number;
+  enhancedAuth: boolean;
   signedIn: boolean;
 }
 
@@ -36,7 +36,7 @@ class SignIn extends React.Component<IProps, IState> {
 
   static propTypes = {
     history: ReactRouterPropTypes.history,
-    enhancedAuth: PropTypes.number,
+    enhancedAuth: PropTypes.bool,
     signedIn: PropTypes.bool,
   };
 

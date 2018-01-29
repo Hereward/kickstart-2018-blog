@@ -1,11 +1,10 @@
 //import * as React from 'react'
-import React from 'react';
-import { Component } from 'react';
+import { React } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
 
 
-export default class Registration extends Component {
+export default class Registration extends React.Component {
 
     constructor(props) {
         super(props);
@@ -48,6 +47,12 @@ export default class Registration extends Component {
     }
 
 }
+
+Registration.propTypes = {
+    handleSubmit: any,
+    handleChange: any
+
+  };
 
 
 

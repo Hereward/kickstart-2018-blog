@@ -30,7 +30,7 @@
     "no-return-assign": [0],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx",".ts",".tsx"] }],
     "react/require-default-props": [0],
-    "import/no-namespace": "warn",
+    "import/no-namespace": "off",
     "import/order": [
       2,
       {

@@ -18,6 +18,16 @@ class Auth implements IAuth {
 export { Auth };
 */
 
+export function modalErrorAlert(reason='scary code error') {
+  swal({
+    title: "Oops, something went wrong!",
+    text: `There was a problem executing that command: [${reason}]`,
+    showConfirmButton: true,
+    type: "error"
+  });
+
+}
+
 export function dashBoardTip(props) {
   console.log(`dashBoardTip SignedIn=[${props.signedIn}]`);
   let verifiedFlag: boolean;
@@ -56,7 +66,7 @@ export function userAlert(type, props) {
   let alertType = "";
   let icon = "fa-magic";
   let title = "";
-  let hideDelay = 7000;
+  let hideDelay = 2000;
   let allowAlert = false;
   if (type === "verifyEmail") {
     if (

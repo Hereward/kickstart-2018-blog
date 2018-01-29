@@ -1,12 +1,13 @@
 import { Meteor } from "meteor/meteor";
-//import { Accounts } from "meteor/accounts-base";
+import { withTracker } from "meteor/react-meteor-data";
+import { Accounts } from "meteor/accounts-base";
 import * as PropTypes from 'prop-types';
 import ReactRouterPropTypes from "react-router-prop-types";
-import { withTracker } from "meteor/react-meteor-data";
+
 //import React, { Component } from "react";
 import * as React from "react";
 import { withRouter } from "react-router-dom";
-import * as jquery from 'jquery';
+//import * as jquery from 'jquery';
 //import jquery from "jquery";
 
 import Transition from "../../partials/Transition";
@@ -14,24 +15,25 @@ import Transition from "../../partials/Transition";
 interface IProps {
   history: any;
   AuthVerified: boolean;
-  EnhancedAuth: number;
+  enhancedAuth: boolean;
 }
 
 interface IState {}
 
 //declare var swal: any;
-declare var location: any;
-declare var Accounts: any;
+//declare var location: any;
+//declare var Accounts: any;
+
 
 class VerifyEmail extends React.Component<IProps, IState> {
-  //export default class SignIn extends Component {
 
   token: string;
 
   constructor(props) {
     super(props);
     this.checkToken = this.checkToken.bind(this);
-    let url = jquery(location).attr("href");
+    //let boo = jquery(location).attr("href");
+    let url = window.location.href; //jquery(location).attr("href");
     this.token = url.substr(url.lastIndexOf("/") + 1);
   }
 
@@ -41,7 +43,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
 
   static propTypes = {
     history: ReactRouterPropTypes.history,
-    EnhancedAuth: PropTypes.number
+    enhancedAuth: PropTypes.boolean
   };
 
   updateAuthVerified(state) {
@@ -56,6 +58,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
     );
   }
 
+  
   checkToken() {
     Accounts.verifyEmail(
       this.token,
@@ -68,7 +71,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
             type: "success"
           });
 
-          if (this.props.EnhancedAuth) {
+          if (this.props.enhancedAuth) {
             console.log("password reset: redirect to /authenticate");
             this.updateAuthVerified(false);
             this.props.history.push("/authenticate");
@@ -87,19 +90,22 @@ class VerifyEmail extends React.Component<IProps, IState> {
         }
       }.bind(this)
     );
-  }
 
-  getLayout() {
-    return <div className="lead">Verifying....</div>;
   }
+  //export default class SignIn extends Component {
 
-  render() {
-    return (
-      <Transition>
-        <div>{this.getLayout()}</div>
-      </Transition>
-    );
-  }
+    getLayout() {
+      return <div className="lead">Verifying....</div>;
+    }
+
+    render() {
+      return (
+        <Transition>
+          <div>{this.getLayout()}</div>
+        </Transition>
+      );
+    }
+ 
 }
 
 export default withRouter(
@@ -108,3 +114,5 @@ export default withRouter(
     return {};
   })(VerifyEmail)
 );
+
+

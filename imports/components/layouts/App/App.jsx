@@ -28,6 +28,12 @@ class App extends Component {
 
 export default withTracker(() => {
   let userDataReady = Meteor.subscribe("userData");
+  let ProfilesDataReady = Meteor.subscribe("profiles");
+  let enhancedAuth: boolean = true;
+  if (Meteor.settings.public.enhancedAuth.active === 0) {
+    enhancedAuth = false;
+  }
+  console.log(`ENhanced Auth = [${enhancedAuth}]`);
 
   let Email = " - Guest";
   let authVerified = false;
@@ -55,9 +61,11 @@ export default withTracker(() => {
     Email: Email,
     MainTitle: Meteor.settings.public.MainTitle,
     ShortTitle: Meteor.settings.public.ShortTitle,
-    enhancedAuth: Meteor.settings.public.enhancedAuth.active,
+    enhancedAuth: enhancedAuth,
     authVerified: authVerified,
     EmailVerified: EmailVerified,
     verificationEmailSent: verificationEmailSent
   };
 })(App);
+
+// && typeof Meteor.user().enhancedAuth !== "undefined"

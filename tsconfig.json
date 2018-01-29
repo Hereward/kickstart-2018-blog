@@ -8,7 +8,8 @@
         "jsx": "react",
         "allowJs": true,
         "noImplicitAny": false,
-        "strictNullChecks": false
+        "strictNullChecks": false,
+        "lib": [ "es6", "dom" ]
     },
     "include": [
         "client/**/*",

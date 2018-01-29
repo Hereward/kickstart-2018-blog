@@ -6,6 +6,7 @@
     "flow": "flow"
   },
   "dependencies": {
+    "@types/jquery": "^3.3.0",
     "@types/meteor": "^1.4.13",
     "@types/node": "^9.3.0",
     "@types/react": "^16.0.34",
@@ -31,6 +32,7 @@
     "react-timer-mixin": "^0.13.3",
     "react-transition-group": "^1.2.1",
     "reactstrap": "^5.0.0-alpha.4",
+    "simpl-schema": "^1.4.1",
     "speakeasy": "git+https://github.com/speakeasyjs/speakeasy.git",
     "styled-components": "^2.4.0"
   },

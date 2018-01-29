@@ -1,24 +1,23 @@
+
+// import jquery from "jquery";
 import { Meteor } from "meteor/meteor";
-//import * as url from "url";
-//import url from "url";
-import jquery from "jquery";
 import { Accounts } from "meteor/accounts-base";
 import PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
+
 import { withTracker } from "meteor/react-meteor-data";
 import React, { Component } from "react";
 import { Link, withRouter } from "react-router-dom";
-import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
 
 class ForgotPassWordReset extends Component {
-  //export default class SignIn extends Component {
 
   constructor(props) {
     super(props);
 
-    let url = jquery(location).attr("href");
+    //let url = jquery(location).attr("href");
+    let url = window.location.href;
     this.token = url.substr(url.lastIndexOf("/") + 1);
 
     console.log(`TOKEN= [${this.token}]`);
@@ -31,19 +30,17 @@ class ForgotPassWordReset extends Component {
     this.handleChange = this.handleChange.bind(this);
 
     console.log(
-      `ForgotPassWordReset: EnhancedAuth = [${this.props.EnhancedAuth}]`
+      `ForgotPassWordReset: enhancedAuth = [${this.props.enhancedAuth}]`
     );
   }
 
   componentWillReceiveProps(nextProps: Props) {
     if (nextProps.AuthVerified) {
-      console.log(`Authenticator> push('/')`);
       this.props.history.push("/");
     }
   }
 
   handleChange(e) {
-    //this.setState({ showAuthenticator: true });
 
     let target = e.target;
     let value = target.value;
@@ -105,25 +102,13 @@ class ForgotPassWordReset extends Component {
               }
             );
 
-            /*
-            let userId = Meteor.userId();
-            if (userId) {
-              console.log("Updating User Profile");
-              Meteor.users.update(userId, {
-                $set: {
-                  auth_verified: false
-                }
-              });
-            }
-            */
-            //console.log('Password reset');
             swal({
               title: "Success!",
               text: "Your password was reset.",
               showConfirmButton: true,
               type: "success"
             });
-            if (this.props.EnhancedAuth) {
+            if (this.props.enhancedAuth) {
               console.log("password reset: redirect to /authenticate");
               this.props.history.push("/authenticate");
             } else {
@@ -167,8 +152,11 @@ export default withRouter(
   })(ForgotPassWordReset)
 );
 
+
 ForgotPassWordReset.propTypes = {
   history: ReactRouterPropTypes.history,
-  EnhancedAuth: PropTypes.number,
+  enhancedAuth: PropTypes.bool,
   AuthVerified: PropTypes.bool
 };
+
+

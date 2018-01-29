@@ -19,9 +19,12 @@ Accounts.onCreateUser((options, user) => {
     user.verificationEmailSent = options.verificationEmailSent;
   }
 
+  user.profile = options.profile || {firstname: '', lastname: ''};
+/*
   if (options.profile) {
     user.profile = options.profile;
   }
+  */
 
   return user;
 });

@@ -36,7 +36,7 @@ interface IProps {
   authVerified: boolean;
   EmailVerified: boolean;
   verificationEmailSent: number;
-  enhancedAuth: number;
+  enhancedAuth: boolean;
   loading: boolean;
 }
 
@@ -115,7 +115,7 @@ class Navigation extends React.Component<IProps, IState> {
     authVerified: PropTypes.bool,
     EmailVerified: PropTypes.bool,
     signedIn: PropTypes.bool,
-    enhancedAuth: PropTypes.number,
+    enhancedAuth: PropTypes.bool,
     Email: PropTypes.string,
     ShortTitle: PropTypes.string,
     history: ReactRouterPropTypes.history,
