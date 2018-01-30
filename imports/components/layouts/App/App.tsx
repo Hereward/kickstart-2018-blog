@@ -1,12 +1,22 @@
-import React, { Component } from "react";
+import { Meteor } from "meteor/meteor";
+import * as React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import Header from "../../partials/Header";
 import Main from "../../routes/Main";
 
-//<Main {...this.props} />
+interface IProps {
+  signedIn: boolean;
+  enhancedAuth: boolean;
+  Email: string;
+  MainTitle: string;
+  ShortTitle: string;
+  authVerified: boolean,
+  EmailVerified: boolean,
+  verificationEmailSent: number
+}
 
-class App extends Component {
+class App extends React.Component<IProps> {
   constructor(props) {
     super(props);
   }

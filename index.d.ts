@@ -53,7 +53,7 @@ declare module "meteor/meteor" {
       createdAt?: number;
       profile?: any;
       services?: any;
-      verificationEmailSent?: boolean;
+      verificationEmailSent?: number;
       enhancedAuth: any;
     }
   }
