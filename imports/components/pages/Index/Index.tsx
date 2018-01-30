@@ -2,7 +2,7 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as ReactDOM from "react-dom";
 import { Tasks } from "../../../api/tasks/publish";
-import Task from "../../partials/Task.js";
+import Task from "../../partials/Task";
 import * as Methods from "../../../api/tasks/methods";
 import * as Library from "../../../modules/library";
 
@@ -65,8 +65,7 @@ class Index extends React.Component<IProps, IState> {
 
     console.log(filteredTasks);
     return filteredTasks.map(task => {
-      const currentUserId =
-        this.props.currentUser && this.props.currentUser._id;
+      const currentUserId = this.props.currentUser && this.props.currentUser._id;
       const showPrivateButton = task.owner === currentUserId;
 
       return (
@@ -83,7 +82,7 @@ class Index extends React.Component<IProps, IState> {
   render() {
     let tasks: any;
 
-    tasks = (this.props.taskCount)? <div>Loading...</div>: <div />;
+    tasks = this.props.taskCount ? <div>Loading...</div> : <div />;
 
     if (this.props.tasks) {
       tasks = this.renderTasks();

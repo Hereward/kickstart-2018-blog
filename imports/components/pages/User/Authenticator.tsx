@@ -1,6 +1,7 @@
 import { Meteor } from "meteor/meteor";
+import * as speakeasy from "speakeasy";
 import ReactRouterPropTypes from "react-router-prop-types";
-import PropTypes from "prop-types";
+import * as PropTypes from 'prop-types';
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import { withRouter } from "react-router-dom";
@@ -17,7 +18,9 @@ import {
 } from "reactstrap";
 import Transition from "../../partials/Transition";
 
-const speakeasy = require("speakeasy");
+//const speakeasy = require("speakeasy");
+
+
 
 const LoadingPlaceHolder = styled.div`
   border: 1px dashed Silver;
@@ -29,18 +32,13 @@ const LoadingPlaceHolder = styled.div`
   color: #303030;
 `;
 
-/*
-enhancedAuthObj: PropTypes.object,
-fresh: PropTypes.bool,
-signedIn: PropTypes.bool,
-history: ReactRouterPropTypes.history,
-*/
+
 
 interface IProps {
-  enhancedAuthObj: any;
   fresh: boolean;
   signedIn: boolean;
   history: any;
+  boojam: string;
 }
 
 interface IState {
@@ -83,8 +81,15 @@ class Authenticator extends React.Component<IProps, IState> {
 
     let objData = JSON.stringify(this.props);
 
-    //console.log(`Authenticator: this.props.enhancedAuthObj [${JSON.stringify(this.props.enhancedAuthObj)}]`);
+    console.log(`fuck a duck`);
+
   }
+
+  static propTypes = {
+    fresh: PropTypes.bool,
+    signedIn: PropTypes.bool,
+    history: ReactRouterPropTypes.history
+  };
 
   componentWillMount() {
     this.getKey();
@@ -111,8 +116,8 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 
   getKey() {
-    if (this.props.signedIn && this.props.enhancedAuthObj.private_key) {
-      this.setKeyProps(this.props.enhancedAuthObj.private_key);
+    if (this.props.signedIn && Meteor.user().enhancedAuth.private_key) {
+      this.setKeyProps(Meteor.user().enhancedAuth.private_key);
     } else {
       Meteor.call("authenticator.generateKey", (error, data) => {
         //console.log("generating new key");
@@ -314,17 +319,14 @@ class Authenticator extends React.Component<IProps, IState> {
 export default withRouter(
   withTracker(() => {
     Meteor.subscribe("userData");
-    let signedIn = Meteor.user() ? true : false;
-    let enhancedAuthObj = signedIn ? Meteor.user().enhancedAuth : {};
-    return { enhancedAuthObj: enhancedAuthObj, signedIn: signedIn };
+    let fresh: boolean;
+    if (typeof Meteor.user().enhancedAuth !== "undefined") {
+      fresh = (Meteor.user().enhancedAuth.private_key === null);
+    }
+    console.log(`Authenticator: fresh= [${fresh}]`);
+   
+    return { fresh: fresh };
   })(Authenticator)
 );
 
-/*
-Authenticator.propTypes = {
-  enhancedAuthObj: PropTypes.object,
-  fresh: PropTypes.bool,
-  signedIn: PropTypes.bool,
-  history: ReactRouterPropTypes.history,
-};
-*/
+

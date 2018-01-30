@@ -38,7 +38,7 @@ export function dashBoardTip(props) {
       ? "Your account is verified."
       : "Your email address is not verified. ";
   } else {
-    verifiedFlag = props.signedIn && props.AuthVerified && props.EmailVerified;
+    verifiedFlag = props.signedIn && props.authVerified && props.EmailVerified;
     tip = verifiedFlag ? "Your session was verified." : "Unverified session: ";
 
     if (!props.signedIn) {
@@ -48,7 +48,7 @@ export function dashBoardTip(props) {
         tip += "Email address not verified";
       }
 
-      if (!props.AuthVerified) {
+      if (!props.authVerified) {
         tip += ", session does not have 2 factor authentication.";
       }
     }

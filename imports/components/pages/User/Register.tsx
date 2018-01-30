@@ -4,7 +4,7 @@ import * as React from "react";
 import * as PropTypes from 'prop-types';
 import { Accounts } from "meteor/accounts-base";
 import ReactRouterPropTypes from "react-router-prop-types";
-import Link, { withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import QRCode from "react-qr-code";
 
@@ -33,7 +33,6 @@ interface IProps {
 }
 
 interface IState {
-  showAuthenticator: boolean;
   email: string;
   password1: string;
   password2: string;
@@ -44,7 +43,6 @@ class Register extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {
-      showAuthenticator: false,
       email: "",
       password1: "",
       password2: ""
@@ -59,7 +57,7 @@ class Register extends React.Component<IProps, IState> {
   static propTypes = {
     enhancedAuth: PropTypes.bool,
     history: ReactRouterPropTypes.history,
-    verificationEmailSent: PropTypes.number,
+    verificationEmailSent: PropTypes.number
   };
 
   componentDidUpdate() {}
@@ -89,7 +87,6 @@ class Register extends React.Component<IProps, IState> {
 
   registerUserZ(event) {
     console.log(`FORM SUBMIT >> EMAIL =  ${this.state.email}`);
-    this.setState({ showAuthenticator: true });
   }
 
   registerUser(event) {
@@ -163,7 +160,7 @@ class Register extends React.Component<IProps, IState> {
 
             if (this.props.enhancedAuth) {
               //this.props.history.push("/");
-              this.setState({ showAuthenticator: true });
+              this.props.history.push("/authenticate");
             } else {
               this.props.history.push("/");
             }
@@ -194,18 +191,16 @@ class Register extends React.Component<IProps, IState> {
   }
 
 
-
   getLayout() {
     let layout: any;
     let form = (
-      <RegistrationForm handleChange={this.handleChange} handleSubmit={this.registerUser} />
+      <RegistrationForm
+        handleChange={this.handleChange}
+        handleSubmit={this.registerUser}
+      />
     );
 
-    if (this.props.enhancedAuth) {
-      layout = this.state.showAuthenticator ? <Authenticator fresh /> : form;
-    } else {
-      layout = form;
-    }
+    layout = form;
 
     return <div>{layout}</div>;
   }

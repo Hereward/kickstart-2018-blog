@@ -17,6 +17,8 @@ declare module "meteor/react-meteor-data" {
 
 declare var Bert: any;
 
+declare var process: any;
+
 declare function swal(options: object);
 //declare function ValidatedMethod(options:object);
 declare var console: Console;
@@ -45,6 +47,7 @@ declare module "meteor/accounts-base" {
 }
 
 declare module "meteor/meteor" {
+  var process: any;
   namespace Meteor {
     interface User {
       _id?: string;
@@ -73,16 +76,39 @@ declare module "meteor/aldeed:simple-schema" {
   }
 }
 
-
 declare class ValidatedMethod {
   constructor(properties: object);
   call(params: any, response: any): any;
 }
-
 
 declare class SimpleSchema {
   constructor(properties: object);
   validator(): any;
 }
 
+declare module "meteor/accounts-base" {
+  namespace Accounts {
+    var urls: URLS;
+    var emailTemplates: EmailTemplates;
+    
+    function forgotPassword(
+      options: {
+        email?: string;
+      },
+      callback?: Function
+    ): void;
 
+    function resetPassword(token: string, newPassword: string, callback?: Function): void;
+  }
+}
+
+// IntrinsicAttributes
+//IntrinsicElements
+
+/*
+declare module JSX {
+  interface IntrinsicAttributes {
+    "fresh": any;
+  }
+}
+*/

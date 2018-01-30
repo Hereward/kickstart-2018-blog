@@ -138,7 +138,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   getAuthLink() {
-    if (this.props.enhancedAuth) {
+    if (this.props.enhancedAuth && !this.props.authVerified) {
       return (
         <DropdownItem>
           <NavLink tag={Link} to="/authenticate">

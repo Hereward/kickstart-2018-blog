@@ -1,6 +1,7 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 
-const About = () => (
+const About = props => (
   <div className="about">
     <h1>This Is the About Page!</h1>
   </div>
