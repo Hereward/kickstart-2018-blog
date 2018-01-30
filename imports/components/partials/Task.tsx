@@ -9,6 +9,7 @@ interface IProps {
   task: {_id: string, checked: any, private: any};
   taskLabel: string;
   showPrivateButton: boolean;
+  hide: boolean;
 }
 
 // Task component - represents a single todo item
@@ -25,6 +26,7 @@ export default class Task extends React.Component<IProps> {
     task: PropTypes.object,
     taskLabel: PropTypes.string,
     showPrivateButton: PropTypes.bool,
+    hide: PropTypes.bool,
   };
 
   toggleChecked() {
@@ -65,14 +67,17 @@ export default class Task extends React.Component<IProps> {
 
 
 
+  getLayout() {
+
+  }
 
   render() {
-    // Give tasks a different className when they are checked off,
-    // so that we can style them nicely in CSS
+  
     console.log(`TASK ID = [${this.props.task._id}]`);
     const taskClassName = classnames({
       checked: this.props.task.checked,
-      private: this.props.task.private
+      private: this.props.task.private,
+      hidden: this.props.hide
     });
 
     return (

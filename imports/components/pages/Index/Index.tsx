@@ -74,6 +74,7 @@ class Index extends React.Component<IProps, IState> {
           key={task._id}
           taskLabel={task.text}
           showPrivateButton={showPrivateButton}
+          hide={(this.state.hideCompleted && (task.checked))}
         />
       );
     });

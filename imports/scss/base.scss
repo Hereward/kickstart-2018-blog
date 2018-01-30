@@ -211,6 +211,10 @@ body {
   color: #888;
 }
 
+.main li.hidden {
+  display: none;
+}
+
 .main li.checked .text {
   text-decoration: line-through;
 }
