@@ -19,7 +19,8 @@ import {
 
 import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
-import { setPrivateKey } from "../../../api/auth/methods";
+//import { setPrivateKey } from "../../../api/auth/methods";
+import * as Methods from "../../../api/auth/methods";
 
 //const speakeasy = require("speakeasy");
 
@@ -81,9 +82,6 @@ class Authenticator extends React.Component<IProps, IState> {
     };
 
     let objData = JSON.stringify(this.props);
-
-    console.log(`fuck a duck`);
-
   }
 
   static propTypes = {
@@ -154,11 +152,12 @@ class Authenticator extends React.Component<IProps, IState> {
       private_key: privateKey
     };
 
-    setPrivateKey.call(authFields, (err, res) => {
+    Methods.setPrivateKey.call(authFields, (err, res) => {
       console.log("setPrivateKey.call", authFields);
       if (err) {
         Library.modalErrorAlert(err.reason);
-        console.log(`setPrivateKey error: [${err.reason}]`);
+        console.log(`setPrivateKey error`, err);
+        
       } else {
         console.log(`Private Key successfully created`);
       }
@@ -183,6 +182,21 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 
   updateAuthVerified(state) {
+
+    let authFields = {
+      verified: true
+    };
+
+    Methods.setVerified.call(authFields, (err, res) => {
+      console.log("setVerified.call", authFields);
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`setVerified error`, err);
+      } else {
+        console.log(`Private Key successfully created`);
+      }
+    });
+
     Meteor.call(
       "authenticator.updateAuthVerified",
       state,

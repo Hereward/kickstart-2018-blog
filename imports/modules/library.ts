@@ -29,7 +29,7 @@ export function modalErrorAlert(reason='scary code error') {
 }
 
 export function dashBoardTip(props) {
-  console.log(`dashBoardTip SignedIn=[${props.signedIn}]`);
+  //console.log(`dashBoardTip SignedIn=[${props.signedIn}]`);
   let verifiedFlag: boolean;
   let tip: string;
   if (!props.enhancedAuth) {
@@ -60,7 +60,7 @@ export function userAlert(type, props) {
   if (!props.signedIn) { return; }
 
   let objData = JSON.stringify(props);
-  console.log(`userAlert [${type}] [${objData}]`);
+ // console.log(`userAlert [${type}] [${objData}]`);
 
   let msg = "";
   let alertType = "";
