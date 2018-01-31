@@ -39,6 +39,7 @@ class App extends React.Component<IProps> {
 export default withTracker(() => {
   let userDataReady = Meteor.subscribe("userData");
   let ProfilesDataReady = Meteor.subscribe("profiles");
+  let authDataReady = Meteor.subscribe("enhancedAuth");
   let enhancedAuth: boolean = true;
   if (Meteor.settings.public.enhancedAuth.active === 0) {
     enhancedAuth = false;

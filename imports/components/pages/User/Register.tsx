@@ -1,4 +1,3 @@
-
 import { Meteor } from "meteor/meteor";
 import * as React from "react";
 import * as PropTypes from 'prop-types';
@@ -7,22 +6,14 @@ import ReactRouterPropTypes from "react-router-prop-types";
 import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import QRCode from "react-qr-code";
-
 import { Alert } from "reactstrap";
-import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 import RegistrationForm from "../../forms/RegistrationForm";
 import { createProfile } from "../../../api/profiles/methods";
-import { Profiles } from "../../../api/profiles/publish";
-
+import { createAuth } from "../../../api/auth/methods";
+import * as Library from "../../../modules/library";
 
 import SignInForm from "../../forms/SignInForm";
-
-//let speakeasy = require("speakeasy");
-
-//let RegistrationForm: any;
-
-//let Accounts: any;
 
 interface IProps {
   history: any;
@@ -101,12 +92,7 @@ class Register extends React.Component<IProps, IState> {
       if (password1 === password2) {
         return password1.length >= 6 ? true : false;
       } else {
-        return swal({
-          title: "Passwords don't match",
-          text: "Please try again",
-          showConfirmButton: true,
-          type: "error"
-        });
+        return Library.modalErrorAlert("Passwords don't match");
       }
     };
 
@@ -122,16 +108,10 @@ class Register extends React.Component<IProps, IState> {
           verificationEmailSent: 0,
           password: password1
         },
-        error => {
-          if (error) {
-            console.log(`Error: ${error.reason}`);
-            return swal({
-              title: "Oops, something went wrong!",
-              text:
-                "There was a problem creating this account. Please try again.",
-              showConfirmButton: true,
-              type: "error"
-            });
+        err => {
+          if (err) {
+            console.log(`Error: ${err.reason}`);
+            return Library.modalErrorAlert(err.reason);
           } else {
             console.log("createUser: done");
 
@@ -142,18 +122,28 @@ class Register extends React.Component<IProps, IState> {
             };
 
             createProfile.call(profileFields, (err, res) => {
-              console.log("createProfile.call");
+              console.log("createProfile.call", profileFields);
               if (err) {
-                swal({
-                  title: "Oops, something went wrong!",
-                  text: "There was a problem creating the User Profile.",
-                  showConfirmButton: true,
-                  type: "error"
-                });
+                Library.modalErrorAlert(err.reason);
               } else {
                 console.log(`profile successfully created`);
               }
             });
+
+            let authFields = {
+              owner: Meteor.userId()
+            };
+
+            createAuth.call(authFields, (err, res) => {
+              console.log("createAuth.call", authFields);
+              if (err) {
+                Library.modalErrorAlert(err.reason);
+                console.log(`createAuth error: [${err.reason}]`);
+              } else {
+                console.log(`auth successfully created`);
+              }
+            });
+
 
             console.log("Successfully created account!");
             this.sendVerificationEmail();

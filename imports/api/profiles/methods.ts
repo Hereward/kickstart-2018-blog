@@ -1,5 +1,5 @@
-//import { SimpleSchema } from 'meteor/aldeed:simple-schema';
-//import { ValidatedMethod } from 'meteor/mdg:validated-method';
+import { SimpleSchema } from 'meteor/aldeed:simple-schema';
+import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Profiles } from './publish';
 
 export const createProfile = new ValidatedMethod({

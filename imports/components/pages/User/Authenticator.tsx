@@ -16,11 +16,12 @@ import {
   Input,
   FormText
 } from "reactstrap";
+
+import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
+import { setPrivateKey } from "../../../api/auth/methods";
 
 //const speakeasy = require("speakeasy");
-
-
 
 const LoadingPlaceHolder = styled.div`
   border: 1px dashed Silver;
@@ -148,6 +149,21 @@ class Authenticator extends React.Component<IProps, IState> {
   updatePrivateKey() {
     let userId = Meteor.userId();
     let privateKey = this.state.keyBase32;
+
+    let authFields = {
+      private_key: privateKey
+    };
+
+    setPrivateKey.call(authFields, (err, res) => {
+      console.log("setPrivateKey.call", authFields);
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`setPrivateKey error: [${err.reason}]`);
+      } else {
+        console.log(`Private Key successfully created`);
+      }
+    });
+
 
     if (userId) {
       Meteor.users.update(userId, {
@@ -319,14 +335,18 @@ class Authenticator extends React.Component<IProps, IState> {
 export default withRouter(
   withTracker(() => {
     Meteor.subscribe("userData");
-    let fresh: boolean;
-    if (typeof Meteor.user().enhancedAuth !== "undefined") {
-      fresh = (Meteor.user().enhancedAuth.private_key === null);
+    let fresh: boolean = false;
+    if (Meteor.user()) {
+      if (typeof Meteor.user().enhancedAuth !== "undefined") {
+        fresh = (Meteor.user().enhancedAuth.private_key === null);
+      }
     }
+   
     console.log(`Authenticator: fresh= [${fresh}]`);
    
     return { fresh: fresh };
   })(Authenticator)
 );
+//boo
 
 
