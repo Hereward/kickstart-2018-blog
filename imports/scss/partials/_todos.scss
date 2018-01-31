@@ -1,0 +1,66 @@
+// TODOS 
+  
+  .new-task input {
+    box-sizing: border-box;
+    padding: 10px 0;
+    background: transparent;
+    border: none;
+    width: 100%;
+    padding-right: 80px;
+    font-size: 1em;
+  }
+  
+  .new-task input:focus {
+    outline: 0;
+  }
+  
+  .main ul {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+  
+  .delete {
+    float: right;
+    font-weight: bold;
+    background: none;
+    font-size: 1em;
+    border: none;
+    position: relative;
+  }
+  
+  .main li {
+    position: relative;
+    list-style: none;
+    padding: 15px;
+    border-bottom: #eee solid 1px;
+  }
+  
+  .main li .text {
+    margin-left: 10px;
+  }
+  
+  .main li.checked {
+    color: #888;
+  }
+  
+  .main li.hidden {
+    display: none;
+  }
+  
+  .main li.checked .text {
+    text-decoration: line-through;
+  }
+  
+  .main li.private {
+    background: #eee;
+    border-color: #ddd;
+  }
+  
+  div.todos-top-section .hide-completed {
+    float: right;
+  }
+  
+  .toggle-private {
+    margin-left: 5px;
+  }
