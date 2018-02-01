@@ -44,7 +44,6 @@ export default withTracker(() => {
   if (Meteor.settings.public.enhancedAuth.active === 0) {
     enhancedAuth = false;
   }
-  console.log(`ENhanced Auth = [${enhancedAuth}]`);
 
   let Email = " - Guest";
   let authVerified = false;

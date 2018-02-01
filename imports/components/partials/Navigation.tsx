@@ -81,7 +81,7 @@ class Navigation extends React.Component<IProps, IState> {
   componentWillUpdate(nextProps) {}
 
   componentDidUpdate() {
-    console.log(`componentDidUpdate`);
+    //console.log(`componentDidUpdate`);
 
     if (this.props.signedIn && (this.props.authVerified || !this.props.enhancedAuth)) {
       

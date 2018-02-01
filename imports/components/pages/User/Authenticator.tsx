@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import * as speakeasy from "speakeasy";
 import ReactRouterPropTypes from "react-router-prop-types";
-import * as PropTypes from 'prop-types';
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import { withRouter } from "react-router-dom";
@@ -21,6 +21,7 @@ import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
 //import { setPrivateKey } from "../../../api/auth/methods";
 import * as Methods from "../../../api/auth/methods";
+import { Auth } from "../../../api/auth/publish";
 
 //const speakeasy = require("speakeasy");
 
@@ -34,13 +35,12 @@ const LoadingPlaceHolder = styled.div`
   color: #303030;
 `;
 
-
-
 interface IProps {
   fresh: boolean;
   signedIn: boolean;
   history: any;
   boojam: string;
+  authData: any;
 }
 
 interface IState {
@@ -87,7 +87,8 @@ class Authenticator extends React.Component<IProps, IState> {
   static propTypes = {
     fresh: PropTypes.bool,
     signedIn: PropTypes.bool,
-    history: ReactRouterPropTypes.history
+    history: ReactRouterPropTypes.history,
+    authData: PropTypes.object
   };
 
   componentWillMount() {
@@ -114,9 +115,10 @@ class Authenticator extends React.Component<IProps, IState> {
     return QRcode;
   }
 
+  // Meteor.user().enhancedAuth.private_key)
   getKey() {
-    if (this.props.signedIn && Meteor.user().enhancedAuth.private_key) {
-      this.setKeyProps(Meteor.user().enhancedAuth.private_key);
+    if (this.props.signedIn && this.props.authData)  {
+      this.setKeyProps();
     } else {
       Meteor.call("authenticator.generateKey", (error, data) => {
         //console.log("generating new key");
@@ -130,8 +132,9 @@ class Authenticator extends React.Component<IProps, IState> {
     }
   }
 
-  setKeyProps(key) {
+  setKeyProps(newKey='') {
     //console.log(`setKeyProps: ${key}`);
+    let key = (newKey) ? newKey : this.props.authData._id;
     this.setState({ keyBase32: key });
     this.timerID = setInterval(() => this.checkTokens(key), 2000);
   }
@@ -157,12 +160,10 @@ class Authenticator extends React.Component<IProps, IState> {
       if (err) {
         Library.modalErrorAlert(err.reason);
         console.log(`setPrivateKey error`, err);
-        
       } else {
         console.log(`Private Key successfully created`);
       }
     });
-
 
     if (userId) {
       Meteor.users.update(userId, {
@@ -182,7 +183,6 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 
   updateAuthVerified(state) {
-
     let authFields = {
       verified: true
     };
@@ -348,19 +348,24 @@ class Authenticator extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(() => {
+    let authData: any;
     Meteor.subscribe("userData");
+    let authDataReady = Meteor.subscribe("enhancedAuth");
     let fresh: boolean = false;
     if (Meteor.user()) {
+      let id = Meteor.userId();
       if (typeof Meteor.user().enhancedAuth !== "undefined") {
-        fresh = (Meteor.user().enhancedAuth.private_key === null);
+        fresh = Meteor.user().enhancedAuth.private_key === null;
+      }
+
+      if (authDataReady) {
+        authData = Auth.findOne({owner: id});
       }
     }
-   
+
     console.log(`Authenticator: fresh= [${fresh}]`);
-   
-    return { fresh: fresh };
+
+    return {fresh: fresh,  authData: authData};
   })(Authenticator)
 );
 //boo
-
-

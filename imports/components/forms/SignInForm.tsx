@@ -37,7 +37,6 @@ export default class SignInForm extends React.Component<IProps, IState> {
   }
 
   handleChange(e) {
-    console.log(`handleChange CHILD`);
     this.props.handleChange(e);
   }
 

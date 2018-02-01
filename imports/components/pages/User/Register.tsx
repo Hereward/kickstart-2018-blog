@@ -10,7 +10,7 @@ import { Alert } from "reactstrap";
 import Transition from "../../partials/Transition";
 import RegistrationForm from "../../forms/RegistrationForm";
 import { createProfile } from "../../../api/profiles/methods";
-import { createAuth } from "../../../api/auth/methods";
+import * as Methods from "../../../api/auth/methods";
 import * as Library from "../../../modules/library";
 
 import SignInForm from "../../forms/SignInForm";
@@ -53,7 +53,23 @@ class Register extends React.Component<IProps, IState> {
 
   componentDidUpdate() {}
 
-  sendVerificationEmail() {
+  sendVerificationEmail(id) {
+
+    let authFields = {
+      id: id
+    };
+
+    Methods.sendVerificationEmail.call(authFields, (err, res) => {
+      console.log("sendVerificationEmail.call", authFields);
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`sendVerificationEmail error`, err);
+      } else {
+        console.log(`sendVerificationEmail success`);
+      }
+    });
+
+    /*
     Meteor.call("user.sendVerificationEmail", (error, response) => {
       if (error) {
         console.warn(error);
@@ -66,6 +82,7 @@ class Register extends React.Component<IProps, IState> {
       }
       console.log(`sendVerificationEmail: done. response =[${response}]`);
     });
+    */
   }
 
   handleChange(e) {
@@ -82,7 +99,7 @@ class Register extends React.Component<IProps, IState> {
 
   registerUser(event) {
     //event.preventDefault();
-    console.log(`FORM SUBMIT >> EMAIL =  ${this.state.email}`);
+    //console.log(`FORM SUBMIT >> EMAIL =  ${this.state.email}`);
 
     let email = this.state.email.trim();
     let password1 = this.state.password1.trim();
@@ -113,7 +130,7 @@ class Register extends React.Component<IProps, IState> {
             console.log(`Error: ${err.reason}`);
             return Library.modalErrorAlert(err.reason);
           } else {
-            console.log("createUser: done");
+            //console.log("createUser: done");
 
             let profileFields = {
               fname: "Adolf",
@@ -122,11 +139,11 @@ class Register extends React.Component<IProps, IState> {
             };
 
             createProfile.call(profileFields, (err, res) => {
-              console.log("createProfile.call", profileFields);
+              //console.log("createProfile.call", profileFields);
               if (err) {
                 Library.modalErrorAlert(err.reason);
               } else {
-                console.log(`profile successfully created`);
+                //console.log(`profile successfully created`);
               }
             });
 
@@ -134,19 +151,20 @@ class Register extends React.Component<IProps, IState> {
               owner: Meteor.userId()
             };
 
-            createAuth.call(authFields, (err, res) => {
+            Methods.createAuth.call(authFields, (err, id) => {
               console.log("createAuth.call", authFields);
               if (err) {
                 Library.modalErrorAlert(err.reason);
                 console.log(`createAuth error: [${err.reason}]`);
               } else {
-                console.log(`auth successfully created`);
+                console.log(`auth successfully created. res = [${id}]`);
+                this.sendVerificationEmail(id);
               }
             });
 
 
-            console.log("Successfully created account!");
-            this.sendVerificationEmail();
+            //console.log("Successfully created account!");
+            //this.sendVerificationEmail(0);
 
             if (this.props.enhancedAuth) {
               //this.props.history.push("/");

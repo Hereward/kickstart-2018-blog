@@ -12,7 +12,7 @@
     "@types/react": "^16.0.34",
     "@types/react-router-dom": "^4.2.3",
     "babel-runtime": "^6.26.0",
-    "bootstrap": "^4.0.0-beta.3",
+    "bootstrap": "^4.0.0",
     "classnames": "^2.2.5",
     "gmail-send": "^1.2.13",
     "jquery": "^3.2.1",
@@ -32,7 +32,7 @@
     "react-router-prop-types": "0.0.3",
     "react-timer-mixin": "^0.13.3",
     "react-transition-group": "^1.2.1",
-    "reactstrap": "^5.0.0-alpha.4",
+    "reactstrap": "^5.0.0-beta",
     "simpl-schema": "^1.4.1",
     "speakeasy": "git+https://github.com/speakeasyjs/speakeasy.git",
     "styled-components": "^2.4.0"
