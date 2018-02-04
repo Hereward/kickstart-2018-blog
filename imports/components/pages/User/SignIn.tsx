@@ -4,9 +4,13 @@ import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import * as React from "react";
 import { Link, withRouter } from "react-router-dom";
+
+//import * as jquery from 'jquery';
+
 import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 import SignInForm from "../../forms/SignInForm";
+
 
 interface IProps {
   history: any;
@@ -32,6 +36,10 @@ class SignIn extends React.Component<IProps, IState> {
       password: '',
       email: ''
     };
+  }
+
+  componentDidMount() {
+    
   }
 
   static propTypes = {

@@ -18,3 +18,4 @@ export default class AccountsUIWrapper extends Component {
     return <span ref="container" />;
   }
 }
+// boo
