@@ -32,13 +32,14 @@ export function dashBoardTip(props) {
   //console.log(`dashBoardTip SignedIn=[${props.signedIn}]`);
   let verifiedFlag: boolean;
   let tip: string;
-  if (!props.enhancedAuth) {
+  if (!props.enhancedAuth || !props.authData) {
     verifiedFlag = props.signedIn && props.EmailVerified;
     let tip = verifiedFlag
       ? "Your account is verified."
       : "Your email address is not verified. ";
   } else {
-    verifiedFlag = props.signedIn && props.authVerified && props.EmailVerified;
+    //console.log(`props.authData.verified`,props.authData.verified);
+    verifiedFlag = props.signedIn && props.authData.verified && props.EmailVerified;
     tip = verifiedFlag ? "Your session was verified." : "Unverified session: ";
 
     if (!props.signedIn) {
@@ -48,7 +49,7 @@ export function dashBoardTip(props) {
         tip += "Email address not verified";
       }
 
-      if (!props.authVerified) {
+      if (!props.authData.verified) {
         tip += ", session does not have 2 factor authentication.";
       }
     }
@@ -56,11 +57,11 @@ export function dashBoardTip(props) {
   return { verified: verifiedFlag, tip: tip };
 }
 
-export function userAlert(type, props) {
+export function userModelessAlert(type, props) {
   if (!props.signedIn) { return; }
 
   let objData = JSON.stringify(props);
- // console.log(`userAlert [${type}] [${objData}]`);
+  console.log(`userModelessAlert [${type}] [${objData}]`);
 
   let msg = "";
   let alertType = "";
@@ -71,8 +72,8 @@ export function userAlert(type, props) {
   if (type === "verifyEmail") {
     if (
       props.signedIn &&
-      props.authVerified &&
-      props.verificationEmailSent === 1 &&
+      props.authData.verified &&
+      props.profile.verificationEmailSent === 1 &&
       !props.EmailVerified
     ) {
       allowAlert = true;
@@ -82,8 +83,8 @@ export function userAlert(type, props) {
       alertType = "warning";
     } else if (
       props.signedIn &&
-      props.authVerified &&
-      props.verificationEmailSent === 2 &&
+      props.authData.verified &&
+      props.profile.verificationEmailSent === 2 &&
       !props.EmailVerified
     ) {
       allowAlert = true;

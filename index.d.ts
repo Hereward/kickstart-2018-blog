@@ -28,21 +28,24 @@ declare namespace Meteor.User {
   let verificationEmailSent: boolean;
 }
 
+//        profile?: Object;
+
+
 declare module "meteor/accounts-base" {
   namespace Accounts {
+    
     function createUser(
       options: {
-        enhancedAuth?: object;
-        verificationEmailSent: number;
         username?: string;
         email?: string;
         password?: string;
-        profile?: Object;
       },
       callback?: Function
     ): string;
+    
 
     function verifyEmail(token: string, func: any): any;
+    function sendVerificationEmail(id: string): any;
   }
 }
 
@@ -101,6 +104,9 @@ declare module "meteor/accounts-base" {
     function resetPassword(token: string, newPassword: string, callback?: Function): void;
   }
 }
+
+declare var require: any
+
 
 // IntrinsicAttributes
 //IntrinsicElements

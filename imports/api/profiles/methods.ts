@@ -1,6 +1,16 @@
+import { Accounts } from "meteor/accounts-base";
 import { SimpleSchema } from 'meteor/aldeed:simple-schema';
 import { ValidatedMethod } from 'meteor/mdg:validated-method';
 import { Profiles } from './publish';
+
+const authCheck = (userId, methodName) => {
+  if (!userId) {
+    throw new Meteor.Error(
+      `not-authorized [${methodName}]`,
+      "Must be logged in to access this function."
+    );
+  }
+};
 
 export const createProfile = new ValidatedMethod({
 
@@ -20,7 +30,7 @@ export const createProfile = new ValidatedMethod({
         throw new Meteor.Error('not-authorized');
       }
 
-      Profiles.insert({
+      let id = Profiles.insert({
         fname: "Adolf",
         initial: "K",
         lname: "Hitler",
@@ -30,11 +40,40 @@ export const createProfile = new ValidatedMethod({
         region: "",
         postcode: "",
         country: "",
+        verificationEmailSent: 0,
         createdAt: new Date(),
         owner: this.userId
       });
 
       console.log(`profiles.create - DONE!`);
+      return id;
+    }
+  });
+
+  export const sendVerificationEmail = new ValidatedMethod({
+    name: "profiles.sendVerificationEmail",
+  
+    validate: new SimpleSchema({
+      id: { type: String }
+    }).validator(),
+  
+    run(fields) {
+      authCheck("profiles.sendVerificationEmail", this.userId);
+  
+      let verificationEmailSent = 1;
+  
+      if (!this.isSimulation) {
+        let emailResServer = Accounts.sendVerificationEmail(this.userId);
+        if (!emailResServer) {
+          verificationEmailSent = 2;
+          //throw new Meteor.Error("Could not send verification email");
+        }
+      }
+  
+      Profiles.update(fields.id, {
+        $set: { verificationEmailSent: verificationEmailSent }
+      });
+      console.log(`profiles.sendVerificationEmail - DONE!`);
     }
   });
 

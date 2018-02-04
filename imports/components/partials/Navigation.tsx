@@ -3,7 +3,9 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import * as PropTypes from "prop-types";
+
 import ReactRouterPropTypes from "react-router-prop-types";
+
 // import * as Bert from "meteor/themeteorchef:bert";
 
 import { Link, withRouter } from "react-router-dom";
@@ -26,6 +28,8 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 
+import * as AuthMethods from "../../api/auth/methods";
+import { Auth } from "../../api/auth/publish";
 import * as Library from "../../modules/library";
 
 interface IProps {
@@ -35,9 +39,18 @@ interface IProps {
   Email: any;
   authVerified: boolean;
   EmailVerified: boolean;
-  verificationEmailSent: number;
   enhancedAuth: boolean;
   loading: boolean;
+  profile: any;
+  authData: {
+    _id: string;
+    verified: boolean;
+    currentAttempts: number;
+    private_key: string;
+    owner: string;
+    keyObj: any;
+    QRCodeShown: boolean;
+  };
 }
 
 interface IState {
@@ -72,6 +85,8 @@ class Navigation extends React.Component<IProps, IState> {
       collapsed: true
     };
 
+
+    console.log(`Navigation`,this.props, this.state);
     
   }
 
@@ -82,17 +97,34 @@ class Navigation extends React.Component<IProps, IState> {
 
   componentDidUpdate() {
     //console.log(`componentDidUpdate`);
-
-    if (this.props.signedIn && (this.props.authVerified || !this.props.enhancedAuth)) {
-      
-      console.log(`userAlert`);
-      Library.userAlert("verifyEmail", this.props);
+    if (this.verifyEmailNotificationRequired()) {
+      Library.userModelessAlert("verifyEmail", this.props);
     }
   }
 
   componentDidMount() {}
 
+  verifyEmailNotificationRequired() {
+    return (this.props.signedIn && this.props.profile && (!this.props.enhancedAuth || this.props.authData));
+  }
+
   updateAuthVerified(state) {
+
+    let authFields = {
+      verified: true
+    };
+
+    AuthMethods.setVerified.call(authFields, (err, res) => {
+      console.log("setVerified.call", authFields);
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`setVerified error`, err);
+      } else {
+        console.log(`Private Key successfully created`);
+      }
+    });
+
+    /*
     Meteor.call(
       "authenticator.updateAuthVerified",
       state,
@@ -102,6 +134,7 @@ class Navigation extends React.Component<IProps, IState> {
         }
       }
     );
+    */
   }
 
   toggleNavbar() {
@@ -111,7 +144,6 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   static propTypes = {
-    verificationEmailSent: PropTypes.number,
     authVerified: PropTypes.bool,
     EmailVerified: PropTypes.bool,
     signedIn: PropTypes.bool,
@@ -119,7 +151,17 @@ class Navigation extends React.Component<IProps, IState> {
     Email: PropTypes.string,
     ShortTitle: PropTypes.string,
     history: ReactRouterPropTypes.history,
-    loading: PropTypes.bool
+    loading: PropTypes.bool,
+    profile: PropTypes.any,
+    authData: PropTypes.shape({
+      _id: PropTypes.string,
+      verified: PropTypes.bool,
+      currentAttempts: PropTypes.number,
+      private_key: PropTypes.string,
+      owner: PropTypes.string,
+      keyObj: PropTypes.any,
+      QRCodeShown: PropTypes.bool,
+    })
   };
 
   toggle() {
@@ -184,10 +226,18 @@ class Navigation extends React.Component<IProps, IState> {
     return this.props.signedIn ? SignedInLayout : SignedOutLayout;
   }
 
-  authVerified() {
-    const tipObj = Library.dashBoardTip(this.props);
-    const tip = tipObj.tip;
-    const verifiedFlag = tipObj.verified;
+  authVerifiedLayout() {
+    
+    //let verifiedFlag = false;
+    //if (!this.props.enhancedAuth || this.props.authData) {
+    let tipObj = Library.dashBoardTip(this.props);
+    let tip = tipObj.tip;
+    let verifiedFlag = tipObj.verified;
+
+    //}
+    //const tipObj = Library.dashBoardTip(this.props);
+    //const tip = tipObj.tip;
+    //const verifiedFlag = tipObj.verified;
 
     let verified = (
       <span>
@@ -209,7 +259,7 @@ class Navigation extends React.Component<IProps, IState> {
       <Navbar color="dark" expand="md" className="main-nav" dark>
         <NavbarBrand>
           <span className="app-title">{this.props.ShortTitle}</span>
-          {this.props.Email} {this.authVerified()}
+          {this.props.Email} {this.authVerifiedLayout()}
         </NavbarBrand>
         <NavbarToggler onClick={this.toggleNavbar} />
         <Collapse isOpen={!this.state.collapsed} navbar>
@@ -245,7 +295,16 @@ class Navigation extends React.Component<IProps, IState> {
 export default withRouter(
   withTracker(({ params }) => {
     let userDataHandle = Meteor.subscribe("userData");
+    let authDataReady = Meteor.subscribe("enhancedAuth");
+    let authData: any;
+    //authData = {verified: false};
+    if (Meteor.user()) {
+      if (authDataReady) {
+        console.log(`Loading Auth Data`);
+        authData = Auth.findOne({ owner: Meteor.userId() });
+      }
+    }
     let loading = !userDataHandle.ready();
-    return { loading: loading };
+    return { loading: loading, authData: authData };
   })(Navigation)
 );

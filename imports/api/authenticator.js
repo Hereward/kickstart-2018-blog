@@ -52,6 +52,7 @@ Meteor.methods({
       secret: key,
       encoding: "base32"
     });
+    console.log(`KEY = [${key}] TOKEN = [${token}]`);
     return token;
   },
   "authenticator.generateKey": function generateKey() {

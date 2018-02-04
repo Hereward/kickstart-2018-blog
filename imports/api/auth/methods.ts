@@ -1,12 +1,26 @@
 import { Accounts } from "meteor/accounts-base";
+import { Meteor } from "meteor/meteor";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Auth } from "./publish";
 
+let Future: any;
+let QRCode: any;
+let speakeasy = require("speakeasy");
+
+declare var Npm: any;
+
+if (Meteor.isServer) {
+  Future = Npm.require("fibers/future");
+  QRCode = require("qrcode");
+}
 
 const authCheck = (userId, methodName) => {
   if (!userId) {
-    throw new Meteor.Error(`not-authorized [${methodName}]`,'Must be logged in to access this function.');
+    throw new Meteor.Error(
+      `not-authorized [${methodName}]`,
+      "Must be logged in to access this function."
+    );
   }
 };
 
@@ -18,21 +32,28 @@ export const createAuth = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    authCheck('auth.create',this.userId);
+    authCheck("auth.create", this.userId);
+    let key: any;
+    let secret: any;
+    let user = Meteor.users.findOne(this.userId);
+    let email = user.emails[0].address;
 
-/*
-    console.log(
-      `METHODS: auth.create fields.owner = [${fields.owner}] this.userId = [${
-        this.userId
-      }]`
-    );
-*/
+    if (!this.isSimulation) {
+      secret = speakeasy.generateSecret({
+        length: 20,
+        name: `Personal Web Wallet: ${email}`
+      });
+      key = secret.base32;
+    }
+    
+    //console.log(`auth.create: key = [${key}]`);
 
     let id = Auth.insert({
       verified: false,
       currentAttempts: 0,
-      private_key: null,
-      verificationEmailSent: 0,
+      private_key: key,
+      keyObj: secret,
+      QRCodeShown: false,
       owner: fields.owner
     });
 
@@ -49,7 +70,7 @@ export const setPrivateKey = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    authCheck('auth.setPrivateKey',this.userId);
+    authCheck("auth.setPrivateKey", this.userId);
     let ownerId = this.userId;
     let authRecord: any;
     authRecord = Auth.findOne({ owner: ownerId });
@@ -76,7 +97,7 @@ export const setVerified = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    authCheck('auth.setVerified',this.userId);
+    authCheck("auth.setVerified", this.userId);
     let ownerId = this.userId;
     let authRecord: any;
     authRecord = Auth.findOne({ owner: ownerId });
@@ -95,41 +116,110 @@ export const setVerified = new ValidatedMethod({
   }
 });
 
-export const sendVerificationEmail = new ValidatedMethod({
-  name: "auth.sendVerificationEmail",
+
+export const generateQRCode = new ValidatedMethod({
+  name: "auth.generateQRCode",
 
   validate: new SimpleSchema({
+    otpauth_url: { type: String },
     id: { type: String }
   }).validator(),
 
   run(fields) {
-    authCheck('auth.sendVerificationEmail',this.userId);
-    
-    let verificationEmailSent = 1;
+    authCheck("auth.generateQRCode", this.userId);
+    let toDataURLObj = { error: "", url: "" };
+    let output: string; // = { key: "", url: "" };
+    let user = Meteor.users.findOne(this.userId); //Meteor.users.find({_id: this.userId});
+    let email = user.emails[0].address;
+    //let keyBase32: string;
+
+    console.log(`auth.generateQRCode: [${fields.otpauth_url}]`);
 
     if (!this.isSimulation) {
-      let emailResServer = Accounts.sendVerificationEmail(this.userId);
-      if (!emailResServer) {
-        verificationEmailSent = 2;
-        //throw new Meteor.Error("Could not send verification email");
-      }
+      /*
+      let key = speakeasy.generateSecret({
+        length: 20,
+        name: `Personal Web Wallet: ${email}`
+      });
+      output.key = key.base32;
+      console.log(`key`, key.base32);
+      */
 
+      let future = new Future();
+      QRCode.toDataURL(fields.otpauth_url, (err, dataUrl) => {
+        future.return({ error: err, url: dataUrl });
+      });
+
+      toDataURLObj = future.wait();
+      output = toDataURLObj.url;
+      //console.log(`QRCodeURL [SERVER]`, output);
     }
 
     //let ownerId = this.userId;
     //let authRecord: any;
     //authRecord = Auth.findOne({ owner: ownerId });
 
-    //console.log(`auth.setVerified: authRecord`, authRecord);
-    /*
-    console.log(
-      `METHODS: auth.sendVerificationEmail fields.verified = [${
-        fields.send
-      }] authRecord._id = [${authRecord._id}] `
-    );
-    */
+    
+    //console.log(`auth.generateQRCode - DONE!`);
 
-    Auth.update(fields.id, { $set: { verificationEmailSent: verificationEmailSent } });
-    console.log(`auth.setVerified - DONE!`);
+    if (toDataURLObj.error) {
+      throw new Meteor.Error(
+        `toDataURL FAIL [auth.generateQRCode] [${toDataURLObj.error}]`,
+        "Could not retrieve QRCode URL."
+      );
+    } else {
+      Auth.update(fields.id, { $set: { QRCodeShown: true } });
+    }
+
+    return output;
+  }
+});
+
+export const currentValidToken = new ValidatedMethod({
+  name: "auth.currentValidToken",
+  validate: new SimpleSchema({
+    key: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("auth.currentValidToken", this.userId);
+    //console.log(`auth.currentValidToken - START`);
+    let token: any = "000000";
+    if (!this.isSimulation) {
+      
+      if (fields.key) {
+        token = speakeasy.totp({
+          secret: fields.key,
+          encoding: "base32"
+        });
+      }
+      //console.log(`TOKEN = [${token}]`);
+      //console.log(`auth.currentValidToken - DONE!`, token);
+    }
+    return token;
+  }
+});
+
+export const verifyToken = new ValidatedMethod({
+  name: "auth.verifyToken",
+  validate: new SimpleSchema({
+    key: { type: String },
+    myToken: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("auth.currentValidToken", this.userId);
+    let verified = true;
+
+    if (!this.isSimulation) {
+      verified = speakeasy.time.verify({
+        secret: fields.key,
+        encoding: "base32",
+        token: fields.myToken,
+        window: 2
+      });
+    }
+
+    return verified;
   }
 });

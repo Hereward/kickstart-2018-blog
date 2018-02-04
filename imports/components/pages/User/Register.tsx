@@ -1,4 +1,5 @@
 import { Meteor } from "meteor/meteor";
+//import { Session } from 'meteor/session';
 import * as React from "react";
 import * as PropTypes from 'prop-types';
 import { Accounts } from "meteor/accounts-base";
@@ -9,8 +10,9 @@ import QRCode from "react-qr-code";
 import { Alert } from "reactstrap";
 import Transition from "../../partials/Transition";
 import RegistrationForm from "../../forms/RegistrationForm";
-import { createProfile } from "../../../api/profiles/methods";
-import * as Methods from "../../../api/auth/methods";
+//import { createProfile } from "../../../api/profiles/methods";
+import * as ProfileMethods from "../../../api/profiles/methods";
+import * as AuthMethods from "../../../api/auth/methods";
 import * as Library from "../../../modules/library";
 
 import SignInForm from "../../forms/SignInForm";
@@ -20,7 +22,6 @@ interface IProps {
   AuthVerified: boolean;
   enhancedAuth: boolean;
   signedIn: boolean;
-  verificationEmailSent: number;
 }
 
 interface IState {
@@ -48,7 +49,6 @@ class Register extends React.Component<IProps, IState> {
   static propTypes = {
     enhancedAuth: PropTypes.bool,
     history: ReactRouterPropTypes.history,
-    verificationEmailSent: PropTypes.number
   };
 
   componentDidUpdate() {}
@@ -59,7 +59,7 @@ class Register extends React.Component<IProps, IState> {
       id: id
     };
 
-    Methods.sendVerificationEmail.call(authFields, (err, res) => {
+    ProfileMethods.sendVerificationEmail.call(authFields, (err, res) => {
       console.log("sendVerificationEmail.call", authFields);
       if (err) {
         Library.modalErrorAlert(err.reason);
@@ -117,12 +117,6 @@ class Register extends React.Component<IProps, IState> {
       Accounts.createUser(
         {
           email: email,
-          enhancedAuth: {
-            verified: false,
-            currentAttempts: 0,
-            private_key: null
-          },
-          verificationEmailSent: 0,
           password: password1
         },
         err => {
@@ -132,18 +126,20 @@ class Register extends React.Component<IProps, IState> {
           } else {
             //console.log("createUser: done");
 
+            //Session.set('showQRcode', true);
+
             let profileFields = {
               fname: "Adolf",
               initial: "K",
               lname: "Hitler"
             };
 
-            createProfile.call(profileFields, (err, res) => {
-              //console.log("createProfile.call", profileFields);
+            ProfileMethods.createProfile.call(profileFields, (err, id) => {
               if (err) {
                 Library.modalErrorAlert(err.reason);
               } else {
                 //console.log(`profile successfully created`);
+                this.sendVerificationEmail(id);
               }
             });
 
@@ -151,14 +147,14 @@ class Register extends React.Component<IProps, IState> {
               owner: Meteor.userId()
             };
 
-            Methods.createAuth.call(authFields, (err, id) => {
+            AuthMethods.createAuth.call(authFields, (err, id) => {
               console.log("createAuth.call", authFields);
               if (err) {
                 Library.modalErrorAlert(err.reason);
                 console.log(`createAuth error: [${err.reason}]`);
               } else {
                 console.log(`auth successfully created. res = [${id}]`);
-                this.sendVerificationEmail(id);
+               
               }
             });
 
@@ -185,6 +181,8 @@ class Register extends React.Component<IProps, IState> {
     }
   }
 
+  /*
+
   verificationNotice() {
     if (this.props.verificationEmailSent) {
       return (
@@ -197,6 +195,8 @@ class Register extends React.Component<IProps, IState> {
       );
     }
   }
+
+  */
 
 
   getLayout() {

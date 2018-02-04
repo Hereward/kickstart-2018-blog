@@ -2,12 +2,13 @@ import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import { check } from "meteor/check";
 
-let Future = Npm.require('fibers/future'); 
+//let Future = Npm.require('fibers/future'); 
 
 Accounts.onCreateUser((options, user) => {
-  let objData = JSON.stringify(options);
-  console.log(`options= [${objData}]`);
+  //let objData = JSON.stringify(options);
+  //console.log(`options= [${objData}]`);
 
+  /*
   if (typeof options.enhancedAuth !== "undefined") {
     user.enhancedAuth = {};
     user.enhancedAuth.verified = options.enhancedAuth.verified;
@@ -19,7 +20,9 @@ Accounts.onCreateUser((options, user) => {
     user.verificationEmailSent = options.verificationEmailSent;
   }
 
-  user.profile = options.profile || {firstname: '', lastname: ''};
+  */
+
+  // user.profile = options.profile || {firstname: '', lastname: ''};
 /*
   if (options.profile) {
     user.profile = options.profile;
@@ -29,6 +32,7 @@ Accounts.onCreateUser((options, user) => {
   return user;
 });
 
+/*
 Meteor.publish("userData", function userData() {
   if (!this.userId) {
     return this.ready();
@@ -39,6 +43,7 @@ Meteor.publish("userData", function userData() {
 
   return Meteor.users.find(this.userId, options);
 });
+*/
 
 Meteor.users.allow({ update: () => true });
 
