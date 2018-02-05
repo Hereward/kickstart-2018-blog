@@ -37,16 +37,8 @@ export const createAuth = new ValidatedMethod({
     let secret: any;
     let user = Meteor.users.findOne(this.userId);
     let email = user.emails[0].address;
+    let toDataURLObj = { error: "", url: "" };
 
-    if (!this.isSimulation) {
-      secret = speakeasy.generateSecret({
-        length: 20,
-        name: `Personal Web Wallet: ${email}`
-      });
-      key = secret.base32;
-    }
-    
-    //console.log(`auth.create: key = [${key}]`);
 
     let id = Auth.insert({
       verified: false,
@@ -54,8 +46,42 @@ export const createAuth = new ValidatedMethod({
       private_key: key,
       keyObj: secret,
       QRCodeShown: false,
+      QRCodeURL: '',
       owner: fields.owner
     });
+
+    if (!this.isSimulation) {
+      secret = speakeasy.generateSecret({
+        length: 20,
+        name: `Personal Web Wallet: ${email}`
+      });
+      key = secret.base32;
+
+      Auth.update(id, { $set: { private_key: key,  keyObj: secret} });
+
+      let future = new Future();
+      QRCode.toDataURL(secret.otpauth_url, (err, dataUrl) => {
+        future.return({ error: err, url: dataUrl });
+      });
+
+      toDataURLObj = future.wait();
+      //output = toDataURLObj.url;
+
+      if (toDataURLObj.error) {
+        console.log(`toDataURL FAIL: `, toDataURLObj.error);
+        throw new Meteor.Error(
+          `toDataURL FAIL [auth.generateQRCode] [${toDataURLObj.error}]`,
+          "Could not retrieve QRCode URL."
+        );
+      } else {
+        console.log(`toDataURL SUCCESS`);
+        Auth.update(id, { $set: { QRCodeURL: toDataURLObj.url } });
+      }
+    }
+    
+    //console.log(`auth.create: key = [${key}]`);
+
+    
 
     console.log(`auth.create - DONE id=[${id}]`);
     return id;
@@ -89,32 +115,7 @@ export const setPrivateKey = new ValidatedMethod({
   }
 });
 
-export const setVerified = new ValidatedMethod({
-  name: "auth.setVerified",
 
-  validate: new SimpleSchema({
-    verified: { type: Boolean }
-  }).validator(),
-
-  run(fields) {
-    authCheck("auth.setVerified", this.userId);
-    let ownerId = this.userId;
-    let authRecord: any;
-    authRecord = Auth.findOne({ owner: ownerId });
-
-    //console.log(`auth.setVerified: authRecord`, authRecord);
-    /*
-    console.log(
-      `METHODS: auth.setverified fields.verified = [${
-        fields.verified
-      }] authRecord._id = [${authRecord._id}] `
-    );
-    */
-
-    Auth.update(authRecord._id, { $set: { verified: fields.verified } });
-    console.log(`auth.setVerified - DONE!`);
-  }
-});
 
 
 export const generateQRCode = new ValidatedMethod({
@@ -152,7 +153,7 @@ export const generateQRCode = new ValidatedMethod({
 
       toDataURLObj = future.wait();
       output = toDataURLObj.url;
-      //console.log(`QRCodeURL [SERVER]`, output);
+      console.log(`QRCodeURL [SERVER]`, output);
     }
 
     //let ownerId = this.userId;
@@ -160,7 +161,7 @@ export const generateQRCode = new ValidatedMethod({
     //authRecord = Auth.findOne({ owner: ownerId });
 
     
-    //console.log(`auth.generateQRCode - DONE!`);
+    console.log(`auth.generateQRCode - DONE!`);
 
     if (toDataURLObj.error) {
       throw new Meteor.Error(
@@ -200,6 +201,24 @@ export const currentValidToken = new ValidatedMethod({
   }
 });
 
+export const setVerified = new ValidatedMethod({
+  name: "auth.setVerified",
+
+  validate: new SimpleSchema({
+    verified: { type: Boolean }
+  }).validator(),
+
+  run(fields) {
+    authCheck("auth.setVerified", this.userId);
+    let ownerId = this.userId;
+    let authRecord: any;
+    authRecord = Auth.findOne({ owner: ownerId });
+
+    Auth.update(authRecord._id, { $set: { verified: fields.verified } });
+    console.log(`auth.setVerified - DONE!`);
+  }
+});
+
 export const verifyToken = new ValidatedMethod({
   name: "auth.verifyToken",
   validate: new SimpleSchema({
@@ -218,6 +237,13 @@ export const verifyToken = new ValidatedMethod({
         token: fields.myToken,
         window: 2
       });
+
+      if (verified) {
+        let ownerId = this.userId;
+        let authRecord: any;
+        authRecord = Auth.findOne({ owner: ownerId });
+        Auth.update(authRecord._id, { $set: { verified: true, QRCodeShown: true } });
+      }
     }
 
     return verified;

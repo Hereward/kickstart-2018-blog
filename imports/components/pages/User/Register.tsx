@@ -19,7 +19,6 @@ import SignInForm from "../../forms/SignInForm";
 
 interface IProps {
   history: any;
-  AuthVerified: boolean;
   enhancedAuth: boolean;
   signedIn: boolean;
 }

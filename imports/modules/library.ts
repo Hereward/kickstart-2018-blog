@@ -61,7 +61,7 @@ export function userModelessAlert(type, props) {
   if (!props.signedIn) { return; }
 
   let objData = JSON.stringify(props);
-  console.log(`userModelessAlert [${type}] [${objData}]`);
+  //console.log(`userModelessAlert [${type}] [${objData}]`);
 
   let msg = "";
   let alertType = "";

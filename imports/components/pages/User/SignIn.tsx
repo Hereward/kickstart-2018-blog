@@ -3,11 +3,15 @@ import * as PropTypes from 'prop-types';
 import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import * as React from "react";
-import { Link, withRouter } from "react-router-dom";
+import { Link, withRouter, Redirect } from "react-router-dom";
+
+import * as AuthMethods from "../../../api/auth/methods";
+import * as Library from "../../../modules/library";
+
 
 //import * as jquery from 'jquery';
 
-import Authenticator from "./Authenticator";
+//import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 import SignInForm from "../../forms/SignInForm";
 
@@ -30,17 +34,24 @@ class SignIn extends React.Component<IProps, IState> {
 
   constructor(props) {
     super(props);
+
+   
+
     this.SignInUser = this.SignInUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       password: '',
       email: ''
     };
+
+    console.log(`Props:`, this.props);
   }
 
-  componentDidMount() {
-    
-  }
+  componentWillMount() {}
+
+  componentDidMount() {}
+
+  componentWillReceiveProps(nextProps) {}
 
   static propTypes = {
     history: ReactRouterPropTypes.history,
@@ -55,7 +66,7 @@ class SignIn extends React.Component<IProps, IState> {
     let value = target.value;
     let id = target.id;
 
-    console.log(`handleChange PARENT [${target}] [${value}]`);
+    //console.log(`handleChange PARENT [${target}] [${value}]`);
 
     this.setState({ [id]: value });
   }
@@ -70,11 +81,8 @@ class SignIn extends React.Component<IProps, IState> {
 
     if (!this.props.signedIn) {
       return form;
-    } else if (this.props.enhancedAuth) {
-      return <Authenticator />;
     } else {
-      this.props.history.push("/");
-      return <div />;
+      return <div>Already signed in.</div>;
     }
   }
 
@@ -82,7 +90,7 @@ class SignIn extends React.Component<IProps, IState> {
 
   SignInUser() {
 
-    console.log(`Login [${this.state.email}] [${this.state.password}]`);
+    //console.log(`Login [${this.state.email}] [${this.state.password}]`);
 
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
       if (error) {
@@ -93,16 +101,33 @@ class SignIn extends React.Component<IProps, IState> {
           showConfirmButton: false,
           type: "error"
         });
+      } else if (this.props.enhancedAuth) {
+        let authFields = {
+          verified: false
+        };
+    
+        AuthMethods.setVerified.call(authFields, (err, res) => {
+          //console.log("setVerified.call", authFields);
+          if (err) {
+            Library.modalErrorAlert(err.reason);
+            console.log(`setVerified error`, err);
+          } else {
+            this.props.history.push("/authenticate");
+          }
+        });
+        
+      } else {
+        this.props.history.push("/");
       }
     });
   }
 
   render() {
     return (
-      <Transition>
-        <div>{this.getLayout()}</div>
-      </Transition>
-    );
+        <Transition>
+          <div>{this.getLayout()}</div>
+        </Transition>
+      );
   }
 }
 

@@ -47,6 +47,7 @@ interface IProps {
     owner: string;
     keyObj: any;
     QRCodeShown: boolean;
+    QRCodeURL: string;
   };
 }
 
@@ -54,7 +55,6 @@ interface IState {
   showQRcode: boolean;
   authCode: string;
   currentValidToken: string;
-  QRcodeURL: string;
 }
 
 class Authenticator extends React.Component<IProps, IState> {
@@ -68,32 +68,38 @@ class Authenticator extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
+    if (this.props.authData && this.props.authData.verified) {
+      this.props.history.push("/");
+    }
+
     this.handleQRClick = this.handleQRClick.bind(this);
     this.handleVerifyClick = this.handleVerifyClick.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.checkTokens = this.checkTokens.bind(this);
     this.renderExpiredTokens = this.renderExpiredTokens.bind(this);
-    //this.getKey = this.getKey.bind(this);
     this.oldToken = "";
     this.counter = 0;
-
     this.expiredTokens = [];
-
     this.timerID = 0;
-
-    let showQRcode = !this.props.authData.QRCodeShown;
+    let showQRcode =
+      this.props.authData && this.props.authData.QRCodeShown === false
+        ? true
+        : false;
 
     //Session.get("showQRcode") ? true : false;
 
     this.state = {
       showQRcode: showQRcode,
       authCode: "",
-      currentValidToken: "",
-      QRcodeURL: ""
+      currentValidToken: ""
     };
 
     //let objData = JSON.stringify(this.props);
-    console.log(`Authenticator constructor: showQRcode= [${showQRcode}]`, this.props, this.state);
+    console.log(
+      `Authenticator constructor: showQRcode= [${showQRcode}]`,
+      this.props,
+      this.state
+    );
   }
 
   static propTypes = {
@@ -107,6 +113,7 @@ class Authenticator extends React.Component<IProps, IState> {
       owner: PropTypes.string,
       keyObj: PropTypes.any,
       QRCodeShown: PropTypes.bool,
+      QRCodeURL: PropTypes.string
     })
   };
 
@@ -118,17 +125,30 @@ class Authenticator extends React.Component<IProps, IState> {
   componentDidUpdate() {}
 
   componentWillReceiveProps(nextProps) {
+    this.setTimer();
+    /*
     console.log(`componentWillReceiveProps`, nextProps.authData);
     if (this.props.authData !== nextProps.authData) {
-      if (typeof nextProps.authData.keyObj !== "undefined") {
+      if (typeof nextProps.authData.keyObj !== "undefined" && !nextProps.authData.QRCodeShown) {
         this.getQRCodeURL(nextProps.authData.keyObj.otpauth_url);
         this.setTimer(nextProps.authData);
       }
     }
+    */
   }
 
   componentDidMount() {
+    this.setTimer();
+    /*
+    console.log(`componentDidMount`, this.props.authData);
+    if (this.props.authData && !this.props.authData.QRCodeShown) {
+      if (typeof this.props.authData.keyObj !== "undefined") {
+        this.getQRCodeURL(this.props.authData.keyObj.otpauth_url);
+        //this.setTimer(this.props.authData);
+      }
+    }
       this.setTimer(this.props.authData);
+      */
   }
 
   componentWillUnmount() {
@@ -142,22 +162,29 @@ class Authenticator extends React.Component<IProps, IState> {
   }
   */
 
-  setTimer(props) {
-    if (typeof props.private_key !== "undefined" && !this.timerWasSet) {
-      this.timerID = setInterval(() => this.checkTokens(props.private_key), 2000);
-      this.timerWasSet = true;
+  //typeof this.props.private_key !== "undefined"
+  setTimer() {
+    if (this.props.authData) {
+      if (this.props.authData.private_key && !this.timerWasSet) {
+        this.timerID = setInterval(
+          () => this.checkTokens(this.props.authData.private_key),
+          2000
+        );
+        this.timerWasSet = true;
+      }
     }
   }
 
   getQRCodeLayout() {
     let QRcode = (
       <div className="QRcode">
-        <img alt="QR Code" src={this.state.QRcodeURL} />
+        <img alt="QR Code" src={this.props.authData.QRCodeURL} />
       </div>
     );
     return QRcode;
   }
 
+  /*
   getQRCodeURL(OTPauthUrl) {
     if (OTPauthUrl) {
       let authFields = {
@@ -172,12 +199,12 @@ class Authenticator extends React.Component<IProps, IState> {
           Library.modalErrorAlert(err.reason);
           console.log(`generateQRCode error`, err);
         } else {
-          this.setState({ QRcodeURL: res });
           console.log(`QRCODE successfully generated`, res);
         }
       });
     }
   }
+  */
 
   /*
   getKey(nextProps) {
@@ -215,9 +242,7 @@ class Authenticator extends React.Component<IProps, IState> {
           console.log(`generateQRCode error`, err);
         } else {
           //this.setKeyProps(res.key);
-          //this.setState({ QRcodeURL: res.url });
           //this.setKeyProps();
-          this.setState({ QRcodeURL: res });
           console.log(`QRCODE successfully generated`);
         }
       });
@@ -296,10 +321,10 @@ class Authenticator extends React.Component<IProps, IState> {
         Library.modalErrorAlert(err.reason);
         console.log(`setVerified error`, err);
       } else {
-        console.log(`Private Key successfully created`);
+        console.log(`Session was verified`);
       }
     });
-
+    /*
     Meteor.call(
       "authenticator.updateAuthVerified",
       state,
@@ -309,6 +334,7 @@ class Authenticator extends React.Component<IProps, IState> {
         }
       }
     );
+    */
   }
 
   verifyToken() {
@@ -332,7 +358,7 @@ class Authenticator extends React.Component<IProps, IState> {
           type: "error"
         });
       } else {
-        this.updateAuthVerified(verified);
+        //this.updateAuthVerified(verified);
         console.log(`verifyToken: Authenticator> push('/')`);
         this.props.history.push("/");
       }
@@ -369,8 +395,7 @@ class Authenticator extends React.Component<IProps, IState> {
   checkTokens(key) {
     //console.log("CHECK TOKENS");
     //let token: string;
-    
-   
+
     let authFields = {
       key: key
     };
@@ -380,21 +405,20 @@ class Authenticator extends React.Component<IProps, IState> {
         console.log(`currentValidToken error`, err);
       } else if (token && this.oldToken !== token) {
         //this.setKeyProps(res.key);
-        //this.setState({ QRcodeURL: res.url });
         //this.setKeyProps();
         //console.log(`Key successfully created`, res);
 
         //console.log(`UPDATE SCREEN!`);
         //console.log(`NEW TOKEN: ${token} | OLD TOKEN ${this.oldToken}`);
-         if (this.oldToken !== token) {
-        this.setState({ currentValidToken: token });
-        this.oldToken = token;
-        this.expiredTokens.push(this.oldToken);
-         }
+        if (this.oldToken !== token) {
+          this.setState({ currentValidToken: token });
+          this.oldToken = token;
+          this.expiredTokens.push(this.oldToken);
+        }
       }
     });
-    
-/*
+
+    /*
     Meteor.call("authenticator.currentValidToken", key, (error, response) => {
       if (error) {
         console.warn(error);
@@ -412,6 +436,15 @@ class Authenticator extends React.Component<IProps, IState> {
     */
   }
 
+  QRCodeReady() {
+    let flag = false;
+    //if (this.props.authData) {
+    if (this.props.authData.QRCodeURL) {
+      flag = true;
+    }
+    //}
+    return flag;
+  }
 
   getLayout() {
     let layout = (
@@ -443,7 +476,7 @@ class Authenticator extends React.Component<IProps, IState> {
             2 factor authentication.
           </p>
           <div>
-            {this.state.QRcodeURL
+            {this.props.authData.QRCodeURL
               ? this.getQRCodeLayout()
               : this.getLoadingPlaceHolder()}
           </div>

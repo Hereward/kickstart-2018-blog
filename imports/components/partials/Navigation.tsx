@@ -86,7 +86,7 @@ class Navigation extends React.Component<IProps, IState> {
     };
 
 
-    console.log(`Navigation`,this.props, this.state);
+    //console.log(`Navigation`,this.props, this.state);
     
   }
 
@@ -115,12 +115,12 @@ class Navigation extends React.Component<IProps, IState> {
     };
 
     AuthMethods.setVerified.call(authFields, (err, res) => {
-      console.log("setVerified.call", authFields);
+      //console.log("setVerified.call", authFields);
       if (err) {
         Library.modalErrorAlert(err.reason);
-        console.log(`setVerified error`, err);
+        //console.log(`setVerified error`, err);
       } else {
-        console.log(`Private Key successfully created`);
+        //console.log(`Private Key successfully created`);
       }
     });
 
@@ -174,7 +174,7 @@ class Navigation extends React.Component<IProps, IState> {
     event.preventDefault();
     this.updateAuthVerified(false);
     Meteor.logout(() => {
-      console.log("Successfull log out!");
+      //console.log("Successfull log out!");
       this.props.history.push("/");
     });
   }
@@ -300,7 +300,7 @@ export default withRouter(
     //authData = {verified: false};
     if (Meteor.user()) {
       if (authDataReady) {
-        console.log(`Loading Auth Data`);
+        //console.log(`Loading Auth Data`);
         authData = Auth.findOne({ owner: Meteor.userId() });
       }
     }

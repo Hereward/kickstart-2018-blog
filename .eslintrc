@@ -72,6 +72,7 @@
     "jsx-a11y/label-has-for": "warn",
     "no-restricted-globals": "warn",
     "react/forbid-prop-types": "warn",
+    "react/prop-types": "warn",
     "semi": ["error", "always"],
     "prefer-arrow-callback": ["warn",
       {

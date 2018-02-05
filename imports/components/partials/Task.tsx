@@ -17,7 +17,7 @@ export default class Task extends React.Component<IProps> {
   constructor(props) {
     super(props);
 
-    console.log('ZZZZZZZ SUB TASK:', this.props.task);
+    //console.log('ZZZZZZZ SUB TASK:', this.props.task);
 
   }
 
@@ -50,7 +50,7 @@ export default class Task extends React.Component<IProps> {
   }
 
   deleteThisTask() {
-    console.log(`deleteThisTask.call [${this.props.task._id}]`);
+    //console.log(`deleteThisTask.call [${this.props.task._id}]`);
     //Meteor.call("tasks.remove", this.props.task._id);
 
     let fields = { taskId: this.props.task._id };
@@ -60,7 +60,7 @@ export default class Task extends React.Component<IProps> {
         Library.modalErrorAlert(err.reason);
         console.log(`error`, err);
       } else {
-        console.log(`task successfully removed`);
+        //console.log(`task successfully removed`);
       }
     });
   }
@@ -73,7 +73,7 @@ export default class Task extends React.Component<IProps> {
 
   render() {
   
-    console.log(`TASK ID = [${this.props.task._id}]`);
+    //console.log(`TASK ID = [${this.props.task._id}]`);
     const taskClassName = classnames({
       checked: this.props.task.checked,
       private: this.props.task.private,

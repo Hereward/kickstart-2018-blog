@@ -42,11 +42,11 @@ class Index extends React.Component<IProps, IState> {
     let taskFields = { text: text };
 
     Methods.create.call(taskFields, (err, res) => {
-      console.log("createTask.call");
+      //console.log("createTask.call");
       if (err) {
         Library.modalErrorAlert(err.reason);
       } else {
-        console.log(`task successfully created`);
+        //console.log(`task successfully created`);
       }
     });
 
@@ -63,7 +63,7 @@ class Index extends React.Component<IProps, IState> {
   renderTasks() {
     let filteredTasks = this.props.tasks;
 
-    console.log(filteredTasks);
+    //console.log(filteredTasks);
     return filteredTasks.map(task => {
       const currentUserId = this.props.currentUser && this.props.currentUser._id;
       const showPrivateButton = task.owner === currentUserId;
@@ -131,7 +131,7 @@ export default withTracker(() => {
 
   let query = Tasks.find({}, { sort: { createdAt: -1 } });
   count = query.count();
-  console.log(`COUNT = ${count}`);
+  //console.log(`COUNT = ${count}`);
   //tasks = Tasks.find({}, { sort: { createdAt: -1 } }).fetch();
 
   if (count) {
