@@ -19,17 +19,21 @@ interface IProps {
 
 interface IState {
   hideCompleted: boolean;
+  textInput: any;
 }
 
 class Index extends React.Component<IProps, IState> {
+  textInputDOM: any;
   constructor(props) {
     super(props);
 
     this.toggleHideCompleted = this.toggleHideCompleted.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
 
     this.state = {
-      hideCompleted: false
+      hideCompleted: false,
+      textInput: ''
     };
   }
 
@@ -37,7 +41,7 @@ class Index extends React.Component<IProps, IState> {
     event.preventDefault();
 
     // Find the text field via the React ref
-    const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
+    const text = this.state.textInput; //ReactDOM.findDOMNode(this.state.textInput).value.trim();
 
     let taskFields = { text: text };
 
@@ -51,7 +55,18 @@ class Index extends React.Component<IProps, IState> {
     });
 
     // Clear form
-    ReactDOM.findDOMNode(this.refs.textInput).value = "";
+    //ReactDOM.findDOMNode(this.textInputDOM).value = "";
+    //this.textInputDOM.value = "";
+    this.setState({textInput: ''});
+  }
+
+  handleChange(e) {
+    
+    let target = e.target;
+    let value = target.value;
+    let id = target.id;
+
+    this.setState({ [id]: value });
   }
 
   toggleHideCompleted() {
@@ -108,8 +123,11 @@ class Index extends React.Component<IProps, IState> {
             <form className="new-task" onSubmit={this.handleSubmit}>
               <input
                 type="text"
-                ref="textInput"
+                ref={textInput => this.textInputDOM = textInput}
+                id="textInput"
                 placeholder="Type to add new tasks"
+                value={this.state.textInput}
+                onChange={this.handleChange}
               />
             </form>
           ) : (
