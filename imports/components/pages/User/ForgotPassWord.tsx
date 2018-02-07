@@ -9,10 +9,11 @@ import { withTracker } from "meteor/react-meteor-data";
 
 
 import { Link, withRouter } from "react-router-dom";
-import BlockUi from "react-block-ui";
-import 'react-block-ui/style.css';
+
+//import 'react-block-ui/style.css';
 import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
+import ForgotPassWordForm from "../../forms/ForgotPassWordForm";
 
 /*
  signedIn: PropTypes.bool,
@@ -27,92 +28,58 @@ interface IProps {
 }
 
 interface IState {
-  disableSubmit: boolean;
-  submitText: string;
-  blocking: boolean;
+  email: string;
 }
 
 class ForgotPassWord extends React.Component<IProps, IState> {
-    refs: any;
   //export default class SignIn extends Component {
 
   constructor(props) {
     super(props);
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
 
-    this.state = {
-      disableSubmit: false,
-      submitText: "Submit",
-      blocking: false
+    this.state = { 
+      email: '',
     };
   }
 
   handleSubmit(e) {
     e.preventDefault();
-    this.setState({
-      disableSubmit: true,
-      submitText: "processing...",
-      blocking: true
-    });
+
     this.sendResetPassWordLink();
+  }
+
+  handleChange(e) {
+    
+    //this.setState({ showAuthenticator: true });
+    let target = e.target;
+    let value = target.value;
+    let id = target.id;
+
+    //console.log(`handleChange PARENT [${target}] [${value}]`);
+
+    this.setState({ [id]: value });
   }
 
   getLayout() {
     if (!this.props.signedIn) {
       return (
-        <div>
-          <h2>Forgot Your Password ?</h2>
-
-          <p>
-            Let&#8217;s recover it! Please enter your email address below. You
-            will receive an email with further instructions.
-          </p>
-
-          <BlockUi tag="div" blocking={this.state.blocking}>
-            <form onSubmit={this.handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="email">Email address</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  ref="email"
-                  id="email"
-                  placeholder="Email"
-                />
-              </div>
-
-              <div className="form-group">
-                <button
-                  disabled={this.state.disableSubmit}
-                  type="submit"
-                  className="btn btn-default"
-                >
-                  {this.state.submitText}
-                </button>
-              </div>
-
-              <div className="form-group">
-                <Link href="/" to="/register">
-                  Click here to register...
-                </Link>
-              </div>
-            </form>
-          </BlockUi>
-        </div>
+        <ForgotPassWordForm
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+        />
       );
-    } else if (this.props.enhancedAuth) {
-      return <Authenticator />;
     } else {
-      this.props.history.push("/");
-      return <div />;
+      return <div>Already signed in.</div>;
     }
   }
 
   sendResetPassWordLink() {
-    let email = this.refs.email.value.trim();
+    let email = this.state.email;
 
-    console.log("Sending reset forgot password email...");
+    console.log(`Sending reset forgot password email: [${email}]`);
     Accounts.forgotPassword(
       { email: email },
       function fp(e, r) {

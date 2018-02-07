@@ -15,6 +15,7 @@ declare module "meteor/react-meteor-data" {
   ): ComponentConstructor<InP>;
 }
 
+
 declare var Bert: any;
 
 declare var process: any;

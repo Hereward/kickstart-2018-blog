@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es5",
+        "target": "es2015",
         "module": "commonjs",
         "moduleResolution": "node",
         "alwaysStrict": true,
@@ -20,3 +20,4 @@
         ".meteor"
     ]
 }
+
