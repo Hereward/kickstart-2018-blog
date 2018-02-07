@@ -1,12 +1,23 @@
 // TODOS 
   
-  .new-task input {
-    box-sizing: border-box;
-    padding: 10px 0;
+
+.new-task ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: lightblue;
+  opacity: 1; /* Firefox */
+}
+
+.new-task input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px white inset;
+}
+
+.new-task input {
+    //box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid lightblue;
     background: transparent;
-    border: none;
-    width: 100%;
-    padding-right: 80px;
+    //border: none;
+    width: 20rem;
+    //padding-right: 80px;
     font-size: 1em;
   }
   
