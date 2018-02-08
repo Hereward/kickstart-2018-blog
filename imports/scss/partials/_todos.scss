@@ -69,8 +69,17 @@
   }
   
   div.todos-top-section .hide-completed {
-    float: right;
+    // float: right;
   }
+
+  div.todos-form-wrapper {
+    margin-top: 2rem;
+  }
+
+  form#todos-form {
+    margin-top: 1rem;
+  }
+
   
   .toggle-private {
     margin-left: 5px;

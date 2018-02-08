@@ -1,6 +1,8 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
+import * as jquery from "jquery";
+import "jquery-validation";
 
 interface IProps {
   handleChange: any;
@@ -13,6 +15,7 @@ interface IState {
 }
 
 export default class ForgotPassWordResetForm extends React.Component<IProps,IState> {
+  formID: string = "ForgotPassWordResetForm";
 
   constructor(props) {
     super(props);
@@ -24,6 +27,15 @@ export default class ForgotPassWordResetForm extends React.Component<IProps,ISta
       DisableSubmit: false,
       SubmitText: "Submit"
     };
+  }
+
+  componentDidMount() {
+    console.log(`ComponentDidMount`);
+    jquery(`#${this.formID}`).validate({
+      submitHandler: (form) => {
+        this.props.handleSubmit();
+      }
+    });
   }
 
   handleSubmit(e) {
@@ -40,7 +52,7 @@ export default class ForgotPassWordResetForm extends React.Component<IProps,ISta
     return (
       <div>
         <h2>Password Reset</h2>
-        <form onSubmit={this.handleSubmit}>
+        <form id={this.formID}>
           <div className="form-group">
             <label htmlFor="password1">Password</label>
             <input
@@ -48,7 +60,9 @@ export default class ForgotPassWordResetForm extends React.Component<IProps,ISta
               type="password"
               className="form-control"
               id="password1"
+              name="password1"
               placeholder="Password"
+              required
             />
           </div>
           <div className="form-group">
@@ -58,7 +72,9 @@ export default class ForgotPassWordResetForm extends React.Component<IProps,ISta
               type="password"
               className="form-control"
               id="password2"
+              name="password2"
               placeholder="Confirm Password"
+              required
             />
           </div>
 

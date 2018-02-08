@@ -11,6 +11,9 @@ import ReactRouterPropTypes from "react-router-prop-types";
 import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import styled from "styled-components";
+import ActionVerifiedUser from 'material-ui/svg-icons/action/verified-user';
+import ActionHighlightOff from 'material-ui/svg-icons/action/highlight-off';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import {
   Collapse,
@@ -59,7 +62,7 @@ interface IState {
 }
 
 //import { browserHistory } from 'react-router';
-
+/*
 const VerifiedIndicator = styled.div`
   border-radius: 50%;
   height: 1rem;
@@ -69,6 +72,39 @@ const VerifiedIndicator = styled.div`
   top: 0.2rem;
   background-color: ${props => (props["data-verified"] ? "lime" : "red")};
 `;
+*/
+
+/*
+const VerifiedIndicatorWrapper = styled.div`
+  height: 1rem;
+  width: 1rem;
+  display: inline-block;
+  position: relative;
+  top: 0.2rem;
+  color: white;
+  background-color: ${props => (props["data-verified"] ? "lime" : "red")};
+`;
+*/
+
+
+const VerifiedIndicator = function vfi(verified) {
+  let tag: any;
+  let style: any;
+
+  if (verified) {
+    style = { verticalAlign: "text-top", color: "lime" };
+    tag = <ActionVerifiedUser style={style} />;
+  } else {
+    style = { verticalAlign: "middle", color: "red" };
+    tag = <ActionHighlightOff style={style} />;
+  }
+  //<MuiThemeProvider>
+  return <div id="VerifiedIndicator"><MuiThemeProvider>{tag}</MuiThemeProvider></div>;
+
+  //return <VerifiedIndicatorWrapper id="VerifiedIndicator"><MuiThemeProvider>{tag}</MuiThemeProvider></VerifiedIndicatorWrapper>;
+};
+
+
 
 declare var Bert: any;
 
@@ -238,18 +274,21 @@ class Navigation extends React.Component<IProps, IState> {
     //const tipObj = Library.dashBoardTip(this.props);
     //const tip = tipObj.tip;
     //const verifiedFlag = tipObj.verified;
-
-    let verified = (
-      <span>
-        <VerifiedIndicator
+    /*
+    <VerifiedIndicator
           data-verified={verifiedFlag}
           id="VerifiedIndicator"
         />
+        */
+
+    let verified = (
+      <div className="d-inline-block">
+        {VerifiedIndicator(verifiedFlag)}
 
         <UncontrolledTooltip placement="right" target="VerifiedIndicator">
           {tip}
         </UncontrolledTooltip>
-      </span>
+      </div>
     );
     return verified;
   }
@@ -259,7 +298,7 @@ class Navigation extends React.Component<IProps, IState> {
       <Navbar color="dark" expand="md" className="main-nav" dark>
         <NavbarBrand>
           <span className="app-title">{this.props.ShortTitle}</span>
-          {this.props.Email} {this.authVerifiedLayout()}
+          {this.props.Email} {this.props.signedIn ? this.authVerifiedLayout() : ''}
         </NavbarBrand>
         <NavbarToggler onClick={this.toggleNavbar} />
         <Collapse isOpen={!this.state.collapsed} navbar>

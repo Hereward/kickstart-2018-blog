@@ -1,9 +1,12 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
-import BlockUi from "react-block-ui";
+//import BlockUi from "react-block-ui";
 import { Link } from "react-router-dom";
 import "react-block-ui/style.css";
+import * as jquery from "jquery";
+import "jquery-validation";
+
 
 interface IProps {
   handleChange: any;
@@ -16,10 +19,9 @@ interface IState {
   blocking: boolean;
 }
 
-export default class ForgotPassWordForm extends React.Component<
-  IProps,
-  IState
-> {
+export default class ForgotPassWordForm extends React.Component<IProps,IState> {
+  formID: string = "ForgotPassWordForm";
+
   constructor(props) {
     super(props);
 
@@ -31,6 +33,15 @@ export default class ForgotPassWordForm extends React.Component<
       submitText: "Submit",
       blocking: false
     };
+  }
+
+  componentDidMount() {
+    console.log(`ComponentDidMount`);
+    jquery(`#${this.formID}`).validate({
+      submitHandler: (form) => {
+        this.props.handleSubmit();
+      }
+    });
   }
 
   handleSubmit(e) {
@@ -58,7 +69,7 @@ export default class ForgotPassWordForm extends React.Component<
         </p>
 
         
-          <form onSubmit={this.handleSubmit}>
+          <form id={this.formID}>
             <div className="form-group">
               <label htmlFor="email">Email address</label>
               <input
@@ -66,7 +77,9 @@ export default class ForgotPassWordForm extends React.Component<
                 onChange={this.handleChange}
                 className="form-control"
                 id="email"
+                name="email"
                 placeholder="Email"
+                required
               />
             </div>
 

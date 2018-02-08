@@ -1,6 +1,8 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as ReactDOM from "react-dom";
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import Checkbox from 'material-ui/Checkbox';
 import { Tasks } from "../../../api/tasks/publish";
 import Task from "../../partials/Task";
 import * as Methods from "../../../api/tasks/methods";
@@ -33,7 +35,7 @@ class Index extends React.Component<IProps, IState> {
 
     this.state = {
       hideCompleted: false,
-      textInput: ''
+      textInput: ""
     };
   }
 
@@ -57,11 +59,10 @@ class Index extends React.Component<IProps, IState> {
     // Clear form
     //ReactDOM.findDOMNode(this.textInputDOM).value = "";
     //this.textInputDOM.value = "";
-    this.setState({textInput: ''});
+    this.setState({ textInput: "" });
   }
 
   handleChange(e) {
-    
     let target = e.target;
     let value = target.value;
     let id = target.id;
@@ -80,7 +81,8 @@ class Index extends React.Component<IProps, IState> {
 
     //console.log(filteredTasks);
     return filteredTasks.map(task => {
-      const currentUserId = this.props.currentUser && this.props.currentUser._id;
+      const currentUserId =
+        this.props.currentUser && this.props.currentUser._id;
       const showPrivateButton = task.owner === currentUserId;
 
       return (
@@ -89,7 +91,7 @@ class Index extends React.Component<IProps, IState> {
           key={task._id}
           taskLabel={task.text}
           showPrivateButton={showPrivateButton}
-          hide={(this.state.hideCompleted && (task.checked))}
+          hide={this.state.hideCompleted && task.checked}
         />
       );
     });
@@ -109,30 +111,28 @@ class Index extends React.Component<IProps, IState> {
         <div className="todos-top-section">
           <h1>Todo List ({this.props.incompleteCount})</h1>
 
-          <label className="hide-completed">
-            <input
-              type="checkbox"
-              readOnly
-              checked={this.state.hideCompleted}
-              onClick={this.toggleHideCompleted}
-            />
-            Hide Completed Tasks
-          </label>
-
-          {this.props.currentUser ? (
-            <form className="new-task" onSubmit={this.handleSubmit}>
-              <input
-                type="text"
-                ref={textInput => this.textInputDOM = textInput}
-                id="textInput"
-                placeholder="Type here &amp; hit return to add new tasks"
-                value={this.state.textInput}
-                onChange={this.handleChange}
-              />
-            </form>
-          ) : (
-            ""
-          )}
+          <div className="todos-form-wrapper">
+          <MuiThemeProvider><Checkbox label="Hide Completed Tasks" checked={this.state.hideCompleted} onClick={this.toggleHideCompleted} /></MuiThemeProvider>
+             
+            {this.props.currentUser ? (
+              <form
+                id="todos-form"
+                className="new-task"
+                onSubmit={this.handleSubmit}
+              >
+                <input
+                  type="text"
+                  ref={textInput => (this.textInputDOM = textInput)}
+                  id="textInput"
+                  placeholder="Type here &amp; hit return to add new tasks"
+                  value={this.state.textInput}
+                  onChange={this.handleChange}
+                />
+              </form>
+            ) : (
+              ""
+            )}
+          </div>
         </div>
 
         <ul>{tasks}</ul>

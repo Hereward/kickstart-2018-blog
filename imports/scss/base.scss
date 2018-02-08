@@ -2,6 +2,10 @@
 @import "partials/_todos";
 @import "partials/_transitions";
 
+form .error {
+  color: red;
+}
+
 .messages {
   margin-top: 4rem;
 }

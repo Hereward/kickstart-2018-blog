@@ -1,9 +1,8 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
-
-//  handleSubmit: any;
-// handleChange: any;
+import * as jquery from "jquery";
+import "jquery-validation";
 
 interface IProps {
     handleChange: any;
@@ -17,6 +16,8 @@ interface IState {
 }
 
 export default class RegistrationForm extends React.Component<IProps, IState> {
+  formID: string = "RegistrationForm";
+
   constructor(props) {
     super(props);
 
@@ -28,6 +29,15 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
     handleSubmit: PropTypes.func,
     handleChange: PropTypes.func,
   };
+
+  componentDidMount() {
+    console.log(`ComponentDidMount`);
+    jquery(`#${this.formID}`).validate({
+      submitHandler: (form) => {
+        this.props.handleSubmit();
+      }
+    });
+  }
 
   handleSubmit(e) {
     e.preventDefault();
@@ -42,7 +52,7 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
     return (
       <div>
         <h2>Register</h2>
-        <form onSubmit={this.handleSubmit}>
+        <form id={this.formID}>
           <div className="form-group">
             <label htmlFor="email">Email address</label>
             <input
@@ -50,7 +60,9 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
               type="email"
               className="form-control"
               id="email"
+              name="email"
               placeholder="Email"
+              required
             />
           </div>
           <div className="form-group">
@@ -60,7 +72,9 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
               type="password"
               className="form-control"
               id="password1"
+              name="password1"
               placeholder="Password"
+              required
             />
           </div>
           <div className="form-group">
@@ -70,7 +84,9 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
               type="password"
               className="form-control"
               id="password2"
+              name="password2"
               placeholder="Confirm Password"
+              required
             />
           </div>
 
