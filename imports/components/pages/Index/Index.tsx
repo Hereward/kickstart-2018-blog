@@ -97,9 +97,39 @@ class Index extends React.Component<IProps, IState> {
     });
   }
 
+  getForm() {
+    if (this.props.currentUser) {
+      return (
+        <form id="todos-form" className="new-task" onSubmit={this.handleSubmit}>
+          <input
+            type="text"
+            ref={textInput => (this.textInputDOM = textInput)}
+            id="textInput"
+            placeholder="Type here &amp; hit return to add new tasks"
+            value={this.state.textInput}
+            onChange={this.handleChange}
+          />
+        </form>
+      );
+    }
+  }
+
+  getCheckBox() {
+    if (this.props.currentUser) {
+      return (
+        <MuiThemeProvider>
+          <Checkbox
+            label="Hide Completed Tasks"
+            checked={this.state.hideCompleted}
+            onClick={this.toggleHideCompleted}
+          />
+        </MuiThemeProvider>
+      );
+    }
+  }
+
   render() {
     let tasks: any;
-
     tasks = this.props.taskCount ? <div>Loading...</div> : <div />;
 
     if (this.props.tasks) {
@@ -110,31 +140,11 @@ class Index extends React.Component<IProps, IState> {
       <div className="container">
         <div className="todos-top-section">
           <h1>Todo List ({this.props.incompleteCount})</h1>
-
           <div className="todos-form-wrapper">
-          <MuiThemeProvider><Checkbox label="Hide Completed Tasks" checked={this.state.hideCompleted} onClick={this.toggleHideCompleted} /></MuiThemeProvider>
-             
-            {this.props.currentUser ? (
-              <form
-                id="todos-form"
-                className="new-task"
-                onSubmit={this.handleSubmit}
-              >
-                <input
-                  type="text"
-                  ref={textInput => (this.textInputDOM = textInput)}
-                  id="textInput"
-                  placeholder="Type here &amp; hit return to add new tasks"
-                  value={this.state.textInput}
-                  onChange={this.handleChange}
-                />
-              </form>
-            ) : (
-              ""
-            )}
+            {this.getCheckBox()}
+            {this.getForm()}
           </div>
         </div>
-
         <ul>{tasks}</ul>
       </div>
     );
