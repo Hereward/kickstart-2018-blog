@@ -14,6 +14,7 @@ import { Link, withRouter } from "react-router-dom";
 import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 import ForgotPassWordForm from "../../forms/ForgotPassWordForm";
+import * as Library from "../../../modules/library";
 
 /*
  signedIn: PropTypes.bool,
@@ -45,8 +46,9 @@ class ForgotPassWord extends React.Component<IProps, IState> {
     };
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
+  handleSubmit() {
+    //e.preventDefault();
+    //console.log(`Forgot Password: handleSubmit`);
 
     this.sendResetPassWordLink();
   }
@@ -93,19 +95,16 @@ class ForgotPassWord extends React.Component<IProps, IState> {
               "There was an error sending the email (message was rejected) Please check your email server settings.";
           }
 
-          return swal({
-            title: "Oops...",
-            text: msg,
-            showConfirmButton: true,
-            type: "error"
-          });
+          return Library.modalErrorAlert(
+            {message: msg, title: "Oops..."}
+          );
+
         } else {
-          swal({
-            title: "Success!",
-            text: "Instructions for resetting your password have been emailed.",
-            showConfirmButton: true,
-            type: "success"
-          });
+
+          Library.modalSuccessAlert(
+            {message: 'Instructions for resetting your password have been emailed to you.'}
+          );
+          
           this.props.history.push("/");
         }
       }.bind(this)

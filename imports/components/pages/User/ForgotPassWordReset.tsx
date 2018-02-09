@@ -9,6 +9,7 @@ import * as React from "react";
 import { Link, withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
+import * as Library from "../../../modules/library";
 
 /*
   history: ReactRouterPropTypes.history,
@@ -89,12 +90,9 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
       if (password1 === password2) {
         return password1.length >= 6 ? true : false;
       } else {
-        return swal({
-          title: "Passwords don't match",
-          text: "Please try again",
-          showConfirmButton: true,
-          type: "error"
-        });
+        return Library.modalErrorAlert(
+          {message: "Please try again.", title: "Passwords don't match."}
+        );
       }
     };
 
@@ -114,12 +112,10 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
               }
             );
 
-            swal({
-              title: "Success!",
-              text: "Your password was reset.",
-              showConfirmButton: true,
-              type: "success"
-            });
+            Library.modalSuccessAlert(
+              {message: 'Your password was reset.'}
+            );
+
             if (this.props.enhancedAuth) {
               console.log("password reset: redirect to /authenticate");
               this.props.history.push("/authenticate");
@@ -128,23 +124,18 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
               console.log("password reset: redirect to /");
             }
           } else {
-            swal({
-              title: "Failed",
-              text: `Password reset failed: ${err}`,
-              showConfirmButton: true,
-              type: "error"
-            });
+            Library.modalErrorAlert(
+              {reason: err, title: "Password reset failed."}
+            );
+           
             console.log(err);
           }
         }.bind(this)
       );
     } else {
-      return swal({
-        title: "Password must be at least 6 characters.",
-        text: "Please try again",
-        showConfirmButton: true,
-        type: "error"
-      });
+      return Library.modalErrorAlert(
+        {message: 'Please try again.', title: "Password must be at least 6 characters."}
+      );
     }
   }
 

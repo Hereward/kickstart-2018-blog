@@ -65,12 +65,6 @@ export default withTracker(() => {
       profile = Profiles.findOne({ owner: Meteor.userId() });
     }
 
-    /*
-    if (userDataReady) {
-      verificationEmailSent = Meteor.user().verificationEmailSent;
-      //authVerified = Meteor.user().enhancedAuth.verified;
-    }
-    */
   }
 
   return {
@@ -79,9 +73,9 @@ export default withTracker(() => {
     MainTitle: Meteor.settings.public.MainTitle,
     ShortTitle: Meteor.settings.public.ShortTitle,
     enhancedAuth: enhancedAuth,
-    //authVerified: authVerified,
     EmailVerified: EmailVerified,
-    profile: profile
+    profile: profile,
+    sillyProp: 'banana'
   };
 })(App);
 

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
 import "jquery-validation";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 //import BlockUi from "react-block-ui";
 
@@ -133,7 +132,7 @@ export default class SignInForm extends React.Component<IProps, IState> {
 
           
           <div className="form-group">
-            <MuiThemeProvider><RaisedButton disabled={this.state.DisableSubmit} type="submit" primary={true} label={this.state.SubmitText} /></MuiThemeProvider>
+            <RaisedButton disabled={this.state.DisableSubmit} type="submit" primary={true} label={this.state.SubmitText} />
           </div>
 
           <div className="form-group">

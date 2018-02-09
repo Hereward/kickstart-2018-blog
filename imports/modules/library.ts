@@ -16,16 +16,58 @@ class Auth implements IAuth {
 }
 
 export { Auth };
-*/
+*/  
 
-export function modalErrorAlert(reason='scary code error') {
+export function modalSuccessAlert(params: any) {
+  let message: string;
+  let title: string;
+  let obj = arguments[0];
+  message = obj.message || "Operation completed sucessfully.";
+  title = obj.title || "Success!";
+
   swal({
-    title: "Oops, something went wrong!",
-    text: `There was a problem executing that command: [${reason}]`,
+    title: title,
+    text: message,
+    showConfirmButton: true,
+    type: "success"
+  });
+}
+
+export function modalErrorAlert(params: any) {
+  let argLength = arguments.length;
+  let message: string;
+  let title: string;
+  let detail: string;
+  let text = "";
+
+  if (typeof arguments[0] === "object") {
+    let obj = arguments[0];
+    message = obj.message;
+    title = obj.title || "Oops, something went wrong!";
+    detail = obj.detail;
+  } else {
+    message = arguments[1] || "The last action failed to complete properly.";
+    title = arguments[2] || "Oops, something went wrong!";
+    detail = arguments[0] || "Please try again.";
+  }
+  // customDetail='', customMessage='', customTitle=''
+
+  if (message) {
+    text += message;
+  }
+  if (message && detail) {
+    text += " ";
+  }
+  if (detail) {
+    text += detail;
+  }
+
+  swal({
+    title: title,
+    text: `${text}`,
     showConfirmButton: true,
     type: "error"
   });
-
 }
 
 export function dashBoardTip(props) {

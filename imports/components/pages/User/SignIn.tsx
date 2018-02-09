@@ -49,7 +49,9 @@ class SignIn extends React.Component<IProps, IState> {
 
   componentWillMount() {}
 
-  componentDidMount() {}
+  componentDidMount() {
+    console.log(`componentDidMount SignIn. SignedIn =[${this.props.signedIn}]`);
+  }
 
   componentWillReceiveProps(nextProps) {}
 
@@ -94,13 +96,10 @@ class SignIn extends React.Component<IProps, IState> {
 
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
       if (error) {
-        return swal({
-          title: "Email or password incorrect",
-          text: "Please try again",
-          timer: 2500,
-          showConfirmButton: false,
-          type: "error"
-        });
+        return Library.modalErrorAlert(
+          {detail: error.reason, title: 'Sign In Failed'}
+        );
+       
       } else if (this.props.enhancedAuth) {
         let authFields = {
           verified: false

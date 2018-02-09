@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Meteor } from "meteor/meteor";
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import App from "../../components/layouts/App/App";
 
 //let React = require('react');
@@ -12,7 +13,7 @@ class Launch extends React.Component {
   }
 
   render() {
-    return <App />;
+    return <MuiThemeProvider><App /></MuiThemeProvider>;
   }
 }
 

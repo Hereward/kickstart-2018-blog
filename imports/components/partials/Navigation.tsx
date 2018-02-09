@@ -13,7 +13,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import styled from "styled-components";
 import ActionVerifiedUser from 'material-ui/svg-icons/action/verified-user';
 import ActionHighlightOff from 'material-ui/svg-icons/action/highlight-off';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 
 import {
   Collapse,
@@ -98,10 +98,9 @@ const VerifiedIndicator = function vfi(verified) {
     style = { verticalAlign: "middle", color: "red" };
     tag = <ActionHighlightOff style={style} />;
   }
-  //<MuiThemeProvider>
-  return <div id="VerifiedIndicator"><MuiThemeProvider>{tag}</MuiThemeProvider></div>;
+  return <div id="VerifiedIndicator">{tag}</div>;
 
-  //return <VerifiedIndicatorWrapper id="VerifiedIndicator"><MuiThemeProvider>{tag}</MuiThemeProvider></VerifiedIndicatorWrapper>;
+
 };
 
 
@@ -144,34 +143,6 @@ class Navigation extends React.Component<IProps, IState> {
     return (this.props.signedIn && this.props.profile && (!this.props.enhancedAuth || this.props.authData));
   }
 
-  updateAuthVerified(state) {
-
-    let authFields = {
-      verified: true
-    };
-
-    AuthMethods.setVerified.call(authFields, (err, res) => {
-      //console.log("setVerified.call", authFields);
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        //console.log(`setVerified error`, err);
-      } else {
-        //console.log(`Private Key successfully created`);
-      }
-    });
-
-    /*
-    Meteor.call(
-      "authenticator.updateAuthVerified",
-      state,
-      (error, response) => {
-        if (error) {
-          console.warn(error);
-        }
-      }
-    );
-    */
-  }
 
   toggleNavbar() {
     this.setState({
@@ -208,7 +179,12 @@ class Navigation extends React.Component<IProps, IState> {
 
   logOut(event) {
     event.preventDefault();
-    this.updateAuthVerified(false);
+    AuthMethods.setVerified.call({verified: false}, (err, res) => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`setVerified error`, err);
+      }
+    });
     Meteor.logout(() => {
       //console.log("Successfull log out!");
       this.props.history.push("/");
@@ -295,10 +271,11 @@ class Navigation extends React.Component<IProps, IState> {
 
   navBar() {
     return (
+      <div>
       <Navbar color="dark" expand="md" className="main-nav" dark>
         <NavbarBrand>
           <span className="app-title">{this.props.ShortTitle}</span>
-          {this.props.Email} {this.props.signedIn ? this.authVerifiedLayout() : ''}
+          {this.props.Email} {this.props.signedIn === true ? this.authVerifiedLayout() : ''}
         </NavbarBrand>
         <NavbarToggler onClick={this.toggleNavbar} />
         <Collapse isOpen={!this.state.collapsed} navbar>
@@ -323,6 +300,7 @@ class Navigation extends React.Component<IProps, IState> {
           </Nav>
         </Collapse>
       </Navbar>
+      </div>
     );
   }
 

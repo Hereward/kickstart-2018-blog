@@ -73,6 +73,8 @@
     "no-restricted-globals": "warn",
     "react/forbid-prop-types": "warn",
     "react/prop-types": "warn",
+    "arrow-body-style": "warn",
+    "prefer-rest-params": "warn",
     "semi": ["error", "always"],
     "prefer-arrow-callback": ["warn",
       {

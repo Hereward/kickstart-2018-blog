@@ -67,7 +67,7 @@ const Main = props => (
   <main>
     <Switch>
       <Route exact path="/" component={Index} />
-      <Route path="/about" component={About} />
+      <Route path="/about" render={() => (<About {...props} />)} />
       <Route path="/verify-email" render={() => (<VerifyEmail {...props} />)} />
       <AuthRoute path="/forgot-password" cProps={props} component={ForgotPassWord} condition={(!Meteor.user())} redirect='/' />
       <AuthRoute path="/signin" cProps={props} component={SignIn} condition={(!Meteor.user())} redirect='/' />

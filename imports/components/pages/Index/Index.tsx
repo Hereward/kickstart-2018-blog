@@ -1,7 +1,6 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as ReactDOM from "react-dom";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Checkbox from 'material-ui/Checkbox';
 import { Tasks } from "../../../api/tasks/publish";
 import Task from "../../partials/Task";
@@ -115,15 +114,13 @@ class Index extends React.Component<IProps, IState> {
   }
 
   getCheckBox() {
-    if (this.props.currentUser) {
+    if (this.props.currentUser && this.props.taskCount) {
       return (
-        <MuiThemeProvider>
           <Checkbox
             label="Hide Completed Tasks"
             checked={this.state.hideCompleted}
             onClick={this.toggleHideCompleted}
           />
-        </MuiThemeProvider>
       );
     }
   }

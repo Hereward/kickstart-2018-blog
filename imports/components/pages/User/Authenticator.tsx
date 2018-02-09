@@ -63,7 +63,7 @@ class Authenticator extends React.Component<IProps, IState> {
   timerID: any;
   expiredTokens: string[];
   allowKeyGeneration: boolean = true;
-  timerWasSet: boolean = false;
+  timerWasSet: boolean;
 
   constructor(props) {
     super(props);
@@ -81,6 +81,7 @@ class Authenticator extends React.Component<IProps, IState> {
     this.counter = 0;
     this.expiredTokens = [];
     this.timerID = 0;
+    this.timerWasSet = false;
     let showQRcode =
       this.props.authData && this.props.authData.QRCodeShown === false
         ? true
@@ -164,8 +165,11 @@ class Authenticator extends React.Component<IProps, IState> {
 
   //typeof this.props.private_key !== "undefined"
   setTimer() {
+    console.log(`set timer A`);
     if (this.props.authData) {
+      console.log(`set timer B`);
       if (this.props.authData.private_key && !this.timerWasSet) {
+        console.log(`set timer C`);
         this.timerID = setInterval(
           () => this.checkTokens(this.props.authData.private_key),
           2000
@@ -324,17 +328,6 @@ class Authenticator extends React.Component<IProps, IState> {
         console.log(`Session was verified`);
       }
     });
-    /*
-    Meteor.call(
-      "authenticator.updateAuthVerified",
-      state,
-      (error, response) => {
-        if (error) {
-          console.warn(error);
-        }
-      }
-    );
-    */
   }
 
   verifyToken() {
@@ -351,12 +344,8 @@ class Authenticator extends React.Component<IProps, IState> {
         Library.modalErrorAlert(err.reason);
         console.log(`verifyToken error`, err);
       } else if (!verified) {
-        return swal({
-          title: "Invalid Code",
-          text: "You have 2 more attempts.",
-          showConfirmButton: true,
-          type: "error"
-        });
+        return Library.modalErrorAlert({title: "Invalid Code", message: "Please try again."});
+        
       } else {
         //this.updateAuthVerified(verified);
         console.log(`verifyToken: Authenticator> push('/')`);
