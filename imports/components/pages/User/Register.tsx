@@ -221,7 +221,6 @@ class Register extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(({ params }) => {
-    Meteor.subscribe("userData");
     return {};
   })(Register)
 );

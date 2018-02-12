@@ -120,13 +120,10 @@ class Navigation extends React.Component<IProps, IState> {
       collapsed: true
     };
 
-
-    //console.log(`Navigation`,this.props, this.state);
-    
+    console.log(`Navigation`, this.props, this.state);
   }
 
   componentWillReceiveProps() {}
-
 
   componentWillUpdate(nextProps) {}
 
@@ -140,9 +137,12 @@ class Navigation extends React.Component<IProps, IState> {
   componentDidMount() {}
 
   verifyEmailNotificationRequired() {
-    return (this.props.signedIn && this.props.profile && (!this.props.enhancedAuth || this.props.authData));
+    return (
+      this.props.signedIn &&
+      this.props.profile &&
+      (!this.props.enhancedAuth || this.props.authData)
+    );
   }
-
 
   toggleNavbar() {
     this.setState({
@@ -167,7 +167,7 @@ class Navigation extends React.Component<IProps, IState> {
       private_key: PropTypes.string,
       owner: PropTypes.string,
       keyObj: PropTypes.any,
-      QRCodeShown: PropTypes.bool,
+      QRCodeShown: PropTypes.bool
     })
   };
 
@@ -179,7 +179,7 @@ class Navigation extends React.Component<IProps, IState> {
 
   logOut(event) {
     event.preventDefault();
-    AuthMethods.setVerified.call({verified: false}, (err, res) => {
+    AuthMethods.setVerified.call({ verified: false }, (err, res) => {
       if (err) {
         Library.modalErrorAlert(err.reason);
         console.log(`setVerified error`, err);
@@ -192,14 +192,16 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   getAuthLink() {
-    if (this.props.enhancedAuth && !this.props.authVerified) {
-      return (
-        <DropdownItem>
-          <NavLink tag={Link} to="/authenticate">
-            Authenticator
-          </NavLink>
-        </DropdownItem>
-      );
+    if (this.props.enhancedAuth) {
+      if (this.props.authData && !this.props.authData.verified) {
+        return (
+          <DropdownItem>
+            <NavLink tag={Link} to="/authenticate">
+              Authenticator
+            </NavLink>
+          </DropdownItem>
+        );
+      }
     }
   }
 
@@ -209,6 +211,11 @@ class Navigation extends React.Component<IProps, IState> {
         <DropdownItem>
           <NavLink tag={Link} to="#" onClick={this.logOut}>
             Sign Out
+          </NavLink>
+        </DropdownItem>
+        <DropdownItem>
+          <NavLink tag={Link} to="/profile">
+            Profile
           </NavLink>
         </DropdownItem>
         {this.getAuthLink()}
@@ -239,7 +246,6 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   authVerifiedLayout() {
-    
     //let verifiedFlag = false;
     //if (!this.props.enhancedAuth || this.props.authData) {
     let tipObj = Library.dashBoardTip(this.props);
@@ -272,34 +278,35 @@ class Navigation extends React.Component<IProps, IState> {
   navBar() {
     return (
       <div>
-      <Navbar color="dark" expand="md" className="main-nav" dark>
-        <NavbarBrand>
-          <span className="app-title">{this.props.ShortTitle}</span>
-          {this.props.Email} {this.props.signedIn === true ? this.authVerifiedLayout() : ''}
-        </NavbarBrand>
-        <NavbarToggler onClick={this.toggleNavbar} />
-        <Collapse isOpen={!this.state.collapsed} navbar>
-          <Nav className="ml-auto" navbar>
-            <NavItem>
-              <NavLink tag={Link} to="/">
-                Home
-              </NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink tag={Link} to="About">
-                About
-              </NavLink>
-            </NavItem>
+        <Navbar color="dark" expand="md" className="main-nav" dark>
+          <NavbarBrand>
+            <span className="app-title">{this.props.ShortTitle}</span>
+            {this.props.Email}{" "}
+            {this.props.signedIn === true ? this.authVerifiedLayout() : ""}
+          </NavbarBrand>
+          <NavbarToggler onClick={this.toggleNavbar} />
+          <Collapse isOpen={!this.state.collapsed} navbar>
+            <Nav className="ml-auto" navbar>
+              <NavItem>
+                <NavLink tag={Link} to="/">
+                  Home
+                </NavLink>
+              </NavItem>
+              <NavItem>
+                <NavLink tag={Link} to="About">
+                  About
+                </NavLink>
+              </NavItem>
 
-            <UncontrolledDropdown nav inNavbar>
-              <DropdownToggle nav caret>
-                Members
-              </DropdownToggle>
-              {this.getAuthLayout()}
-            </UncontrolledDropdown>
-          </Nav>
-        </Collapse>
-      </Navbar>
+              <UncontrolledDropdown nav inNavbar>
+                <DropdownToggle nav caret>
+                  Members
+                </DropdownToggle>
+                {this.getAuthLayout()}
+              </UncontrolledDropdown>
+            </Nav>
+          </Collapse>
+        </Navbar>
       </div>
     );
   }

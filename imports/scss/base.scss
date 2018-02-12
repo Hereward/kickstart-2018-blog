@@ -2,9 +2,15 @@
 @import "partials/_todos";
 @import "partials/_transitions";
 
+.profile-details label.error {
+  position: absolute;
+}
+
+/*
 form .error {
   color: red;
 }
+*/
 
 .messages {
   margin-top: 4rem;

@@ -13,6 +13,7 @@
     "@types/react": "^16.0.34",
     "@types/react-dom": "^16.0.3",
     "@types/react-router-dom": "^4.2.3",
+    "@types/tooltipster": "0.0.29",
     "babel-runtime": "^6.26.0",
     "bootstrap": "^4.0.0",
     "classnames": "^2.2.5",
@@ -39,7 +40,8 @@
     "reactstrap": "^5.0.0-beta",
     "simpl-schema": "^1.4.1",
     "speakeasy": "git+https://github.com/speakeasyjs/speakeasy.git",
-    "styled-components": "^2.4.0"
+    "styled-components": "^2.4.0",
+    "tooltipster": "^4.2.6"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",

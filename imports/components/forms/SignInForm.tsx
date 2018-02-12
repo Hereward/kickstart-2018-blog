@@ -6,23 +6,6 @@ import "jquery-validation";
 import RaisedButton from 'material-ui/RaisedButton';
 //import BlockUi from "react-block-ui";
 
-/*
-declare namespace jquery {
-  validate(params: any): any;
-  
-}
-*/
-
-/*
-declare module "jquery" {
-  namespace jquery {
-    
-    function validate(): string;
-    
-  }
-}
-*/
-
 interface IProps {
   handleSubmit: any;
   handleChange: any;
@@ -53,18 +36,6 @@ export default class SignInForm extends React.Component<IProps, IState> {
     handleChange: PropTypes.func
   };
 
-  /*
-   console.log(`ComponentDidMount`);
-    jquery("#signInForm").validate({
-      submitHandler: (form) => {
-        // do other things for a valid form
-        //form.submit();
-        console.log(`BOOJAM`);
-        this.props.handleSubmit();
-      }
-    });
-
-    */
 
   componentDidMount() {
     console.log(`ComponentDidMount`);
@@ -75,20 +46,8 @@ export default class SignInForm extends React.Component<IProps, IState> {
     });
   }
 
-  /*
-    jquery("#signInForm").validate({
-      submitHandler: (form) => {
-        // do other things for a valid form
-        //form.submit();
-        console.log(`BOOJAM`);
-        this.props.handleSubmit();
-      }
-    });
-    */
-
   handleSubmit(e) {
     e.preventDefault();
-
     //this.setState({ DisableSubmit: true, SubmitText: "processing..." });
     this.props.handleSubmit(e);
   }
@@ -96,8 +55,6 @@ export default class SignInForm extends React.Component<IProps, IState> {
   handleChange(e) {
     this.props.handleChange(e);
   }
-
-  // onSubmit={this.handleSubmit}
 
   render() {
     return (
