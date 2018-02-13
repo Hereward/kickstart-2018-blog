@@ -24,6 +24,8 @@ const authCheck = (userId, methodName) => {
   }
 };
 
+//let objData = JSON.stringify(options);
+
 export const createAuth = new ValidatedMethod({
   name: "auth.create",
 
@@ -38,6 +40,8 @@ export const createAuth = new ValidatedMethod({
     let user = Meteor.users.findOne(this.userId);
     let email = user.emails[0].address;
     let toDataURLObj = { error: "", url: "" };
+
+    console.log(`auth.create`,fields);
 
 
     let id = Auth.insert({
@@ -56,6 +60,7 @@ export const createAuth = new ValidatedMethod({
         name: `Personal Web Wallet: ${email}`
       });
       key = secret.base32;
+      console.log(`auth.create: secret`,secret);
 
       Auth.update(id, { $set: { private_key: key,  keyObj: secret} });
 

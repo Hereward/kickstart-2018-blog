@@ -43,35 +43,23 @@ export default class SingleWidgetForm extends React.Component<IProps, IState> {
 
   componentDidMount() {
     jquery(`#${this.props.name}`).tooltipster({
-      // <-  USE THE PROPER SELECTOR FOR YOUR INPUTs
       trigger: "custom", // default is 'hover' which is no good here
       onlyOne: true // allow multiple tips to be open at a time
     });
 
     let FormID = `${this.props.name}Form`;
-    console.log(`ComponentDidMount`, FormID);
 
     jquery(`#${FormID}`).validate({
       errorPlacement: function ep(error, element) {
         let errorString = jquery(error).text();
-        console.log(`Jquery validate error`, element);
-        // construct tooltip with message as per plugin method
-        //alert(errorString);
         element.tooltipster("content", errorString);
         element.tooltipster("open");
-        // jquery(element).tooltipster('open', jquery(error).text());
-        // show tooltip as per plugin method
-        //jquery(element).tooltipster("show");
       },
       success: function success(label, element) {
-        console.log("SUCCESS", element.id, element);
-        // hide tooltip as per plugin method
         jquery(`#${element.id}`).tooltipster("close");
-        //element.tooltipster('close');
       },
       submitHandler: form => {
         this.props.handleSubmit(this.props.name);
-        //console.log("You submitted the form.");
       }
     });
   }

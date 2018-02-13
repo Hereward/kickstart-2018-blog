@@ -37,8 +37,6 @@ class App extends React.Component<IProps> {
 }
 
 export default withTracker(() => {
-  //let userDataReady = Meteor.subscribe("userData");
-  //let authDataReady = Meteor.subscribe("enhancedAuth");
   let ProfilesDataReady = Meteor.subscribe("profiles");
   let enhancedAuth: boolean = true;
   let authData: any;
@@ -57,12 +55,9 @@ export default withTracker(() => {
   } else if (Meteor.user()) {
     EmailVerified = Meteor.user().emails[0].verified;
     signedIn = true;
-    //let objData = JSON.stringify(Meteor.user());
-    //console.log(`USER = ${objData}`);
     Email = ` - ${Meteor.user().emails[0].address}`;
 
     if (ProfilesDataReady) {
-      console.log(`Loading Profile Data`);
       profile = Profiles.findOne({ owner: Meteor.userId() });
     }
 

@@ -31,9 +31,9 @@ export const createProfile = new ValidatedMethod({
       }
 
       let id = Profiles.insert({
-        fname: "Adolf",
-        initial: "K",
-        lname: "Hitler",
+        fname: "",
+        initial: "",
+        lname: "",
         street1: "",
         street2: "",
         city: "",
@@ -41,6 +41,7 @@ export const createProfile = new ValidatedMethod({
         postcode: "",
         country: "",
         verificationEmailSent: 0,
+        new: true,
         createdAt: new Date(),
         owner: this.userId
       });

@@ -9,7 +9,8 @@ import { withTracker } from "meteor/react-meteor-data";
 //import QRCode from "react-qr-code";
 //import { Alert } from "reactstrap";
 import Transition from "../../partials/Transition";
-import SingleWidgetForm from "../../forms/SingleWidgetForm";
+//import SingleWidgetForm from "../../forms/SingleWidgetForm";
+import ProfileForm from "../../forms/ProfileForm";
 //import { createProfile } from "../../../api/profiles/methods";
 import * as ProfileMethods from "../../../api/profiles/methods";
 //import * as AuthMethods from "../../../api/auth/methods";
@@ -41,7 +42,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
   handleChange(e) {}
 
   handleSubmit(fieldName) {
-    console.log(`SUBMIT`,fieldName);
+    console.log(`SUBMIT`, fieldName);
   }
 
   static propTypes = {
@@ -53,39 +54,34 @@ class ProfileIndex extends React.Component<IProps, IState> {
   componentDidUpdate() {}
 
   getLayout() {
-    let profileData: any;
+    let layout: any;
 
-    if (this.props.profile) {
-      profileData = <div>FNAME: [{this.props.profile.fname}]</div>;
+    if (this.props.profile && this.props.profile.new) {
+      layout = (
+        <div>
+          <h2>Create Profile</h2>
+          <ProfileForm
+            profileObj={this.props.profile}
+            handleChange={this.handleChange}
+            handleSubmit={this.handleSubmit}
+          />
+        </div>
+      );
+    } else if (this.props.profile) {
+      layout = (
+        <div>
+          <h2>Profile</h2>
+          <div>FIRST NAME: {this.props.profile.fname}</div>
+        </div>
+      );
+    } else {
+      layout = <div>Loading...</div>;
     }
 
     return (
-      <div className='profile-details'>
-        <h2>Profile</h2>
-        <SingleWidgetForm
-          handleChange={this.handleChange}
-          handleSubmit={this.handleSubmit}
-          name="fname"
-          type="input"
-          label="First Name"
-          data={this.props.profile}
-        />
-        <SingleWidgetForm
-          handleChange={this.handleChange}
-          handleSubmit={this.handleSubmit}
-          name="initial"
-          type="input"
-          label="Initial"
-          data={this.props.profile}
-        />
-        <SingleWidgetForm
-          handleChange={this.handleChange}
-          handleSubmit={this.handleSubmit}
-          name="lname"
-          type="input"
-          label="Last Name"
-          data={this.props.profile}
-        />
+      <div className="profile-details">
+        
+        {layout}
       </div>
     );
   }
@@ -103,3 +99,16 @@ export default withRouter(
     return {};
   })(ProfileIndex)
 );
+
+/*
+
+  <SingleWidgetForm
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+          name="fname"
+          type="input"
+          label="First Name"
+          data={this.props.profile}
+        />
+
+        */

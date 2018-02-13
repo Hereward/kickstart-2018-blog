@@ -123,10 +123,6 @@ class Register extends React.Component<IProps, IState> {
             console.log(`Error: ${err.reason}`);
             return Library.modalErrorAlert(err.reason);
           } else {
-            //console.log("createUser: done");
-
-            //Session.set('showQRcode', true);
-
             let profileFields = {
               fname: "Adolf",
               initial: "K",
