@@ -63,9 +63,9 @@ export default class ProfileForm extends React.Component<IProps, IState> {
 
   componentDidMount() {
     jquery(`.tooltipster`).tooltipster({
-      trigger: 'custom', // default is 'hover' which is no good here
-      animation: 'slide',
-   theme: 'tooltipster-light',
+      trigger: "custom", // default is 'hover' which is no good here
+      animation: "slide",
+      theme: "tooltipster-light"
     });
 
     jquery(`#${this.formID}`).validate({
@@ -93,11 +93,18 @@ export default class ProfileForm extends React.Component<IProps, IState> {
   }
 
   getWidget(props: any) {
-      let widgetType = (props.widgetType) ? props.widgetType : 'simple';
-      return <Widget widgetType={widgetType} handleChange={this.handleChange} dataObj={this.props.profileObj} wProps={props} />;
-
+    let widgetType = props.widgetType ? props.widgetType : "simple";
+    return (
+      <Widget
+        widgetType={widgetType}
+        handleChange={this.handleChange}
+        dataObj={this.props.profileObj}
+        wProps={props}
+      />
+    );
   }
-/*
+
+  /*
   widget(wprops: {
     name: string;
     label?: string;
@@ -137,17 +144,22 @@ export default class ProfileForm extends React.Component<IProps, IState> {
         postcode: "",
         country: "",
         */
-//          {this.widget({ name: "fname", label: "First Name" })}
+  //          {this.widget({ name: "fname", label: "First Name" })}
 
   render() {
     return (
       <div>
         <form id={this.formID}>
           {this.getWidget({ name: "fname", label: "First Name" })}
-          {this.getWidget({ name: "initial", required: false, label: "Initial" })}
+          {this.getWidget({
+            name: "initial",
+            required: false,
+            label: "Initial"
+          })}
           {this.getWidget({ name: "lname", label: "Last Name" })}
-          {this.getWidget({ name: "street1",label: "Street Address 1" })}
+          {this.getWidget({ name: "street1", label: "Street Address 1" })}
           {this.getWidget({ name: "street2", label: "Street Address 2" })}
+          {this.getWidget({ name: "city", label: "City", required: false })}
           {this.getWidget({ name: "region", label: "Region/State" })}
           {this.getWidget({ name: "postcode", label: "Postal Code" })}
           {this.getWidget({ name: "country", label: "Country" })}

@@ -13,6 +13,8 @@ interface IState {}
 export default class Widget extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
+    this.handleChange = this.handleChange.bind(this);
+    //console.log(`Widget`, this.props);
   }
 
   static propTypes = {
@@ -20,7 +22,16 @@ export default class Widget extends React.Component<IProps, IState> {
     default: PropTypes.string
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+      if (this.props.dataObj) {
+          //console.log(`Widget componentDidMount:`, this.props.dataObj);
+          //this.props.setDefaultState
+      }
+  }
+
+  handleChange(e) {
+    this.props.handleChange(e);
+  }
 
   simple(wprops: {
     name: string;
@@ -33,7 +44,7 @@ export default class Widget extends React.Component<IProps, IState> {
       <div className="form-group">
         <label htmlFor="fname">{wprops.label || "Enter Text"}</label>
         <input
-          onChange={this.props.handleChange}
+          onChange={this.handleChange}
           type={wprops.type || "text"}
           className="form-control tooltipster"
           id={wprops.name}
