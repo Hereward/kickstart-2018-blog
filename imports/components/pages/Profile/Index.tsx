@@ -27,6 +27,7 @@ interface IProps {
   profile: any;
 }
 
+/*
 interface IState {
   fname: string;
   initial: string;
@@ -39,8 +40,9 @@ interface IState {
   country: string;
   editProfile: boolean;
 }
+*/
 
-class ProfileIndex extends React.Component<IProps, IState> {
+class ProfileIndex extends React.Component<IProps> {
   fieldsArray = [
     'fname',
     'initial',
@@ -71,7 +73,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.fieldsObj = this.fieldsToObject();
+    this.fieldsObj = this.fieldMapper('init'); //this.fieldsToObject();
     let obj = Object.assign({}, this.fieldsObj, { editProfile: false });
     this.state = obj;
     console.log(`ProfileIndex constructor`, this.state, this.props);
@@ -92,6 +94,21 @@ class ProfileIndex extends React.Component<IProps, IState> {
     };
     */
 
+  fieldMapper(type, props='') {
+    let obj = {};
+
+    if (type==='init') {
+      this.fieldsArray.forEach(element => (obj[element] = ''));
+    } else if (type==='props') {
+      this.fieldsArray.forEach(element => (obj[element] = props[element]));
+    } else if (type==='method') {
+      this.fieldsArray.forEach(element => (obj[element] = this.state[element]));
+      obj['id'] = this.props.profile._id;
+    }
+    return obj;
+  }
+
+  /*
   fieldsToObject() {
     let obj = {};
     this.fieldsArray.forEach(element => (obj[element] = ""));
@@ -111,6 +128,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
     console.log(`fieldsToMethod`, obj);
     return obj;
   }
+  */
 
   handleChange(e) {
     let target = e.target;
@@ -121,7 +139,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
   }
 
   initState(props) {
-    let obj = this.fieldsToProps(props);
+    let obj = this.fieldMapper('props',props); //this.fieldsToProps(props);
     this.setState(obj);
     //console.log(`Profile initState`, obj, this.state);
     /*
@@ -140,7 +158,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
   }
 
   handleSubmit() {
-    let profileFields = this.fieldsToMethod();
+    let profileFields = this.fieldMapper('method'); //this.fieldsToMethod();
     
     /* {
       id: this.props.profile._id,
@@ -207,7 +225,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
 
   getLayout() {
     let layout: any;
-    if (this.props.profile && this.state.editProfile) {
+    if (this.props.profile && this.state['editProfile']) {
       layout = this.getForm("Edit Profile");
     } else if (this.props.profile && this.props.profile.new) {
       layout = this.getForm("Create Profile");
