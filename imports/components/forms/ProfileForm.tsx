@@ -32,7 +32,11 @@ export default class ProfileForm extends React.Component<IProps, IState> {
   static propTypes = {
     handleSubmit: PropTypes.func,
     handleChange: PropTypes.func,
-    profileObj: PropTypes.shape({
+    profileObj: PropTypes.object
+  };
+
+  /*
+  PropTypes.shape({
       _id: PropTypes.string,
       fname: PropTypes.string,
       initial: PropTypes.string,
@@ -48,7 +52,7 @@ export default class ProfileForm extends React.Component<IProps, IState> {
       createdAt: PropTypes.date,
       owner: PropTypes.string
     })
-  };
+    */
 
   /*
   componentDidMount() {

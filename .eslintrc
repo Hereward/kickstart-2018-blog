@@ -75,6 +75,7 @@
     "react/prop-types": "warn",
     "arrow-body-style": "warn",
     "prefer-rest-params": "warn",
+    "dot-notation": "off",
     "semi": ["error", "always"],
     "prefer-arrow-callback": ["warn",
       {

@@ -41,13 +41,44 @@ interface IState {
 }
 
 class ProfileIndex extends React.Component<IProps, IState> {
+  fieldsArray = [
+    'fname',
+    'initial',
+    'lname',
+    'street1',
+    'street2',
+    'city',
+    'region',
+    'postcode',
+    'country'
+  ];
+
+  fieldsObj: any;
+  /* = {
+    fname: "",
+    initial: "",
+    lname: "",
+    street1: "",
+    street2: "",
+    city: "",
+    region: "",
+    postcode: "",
+    country: ""
+  };
+  */
+
   constructor(props) {
     super(props);
-
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    //this.setEditor = this.setEditor.bind(this);
-    this.state = {
+    this.fieldsObj = this.fieldsToObject();
+    let obj = Object.assign({}, this.fieldsObj, { editProfile: false });
+    this.state = obj;
+    console.log(`ProfileIndex constructor`, this.state, this.props);
+  }
+
+  /*
+   this.state = {
       fname: "",
       initial: "",
       lname: "",
@@ -59,9 +90,26 @@ class ProfileIndex extends React.Component<IProps, IState> {
       country: "",
       editProfile: false
     };
+    */
 
-    //let objData = JSON.stringify(this.props);
-    console.log(`ProfileIndex constructor`, this.state, this.props);
+  fieldsToObject() {
+    let obj = {};
+    this.fieldsArray.forEach(element => (obj[element] = ""));
+    return obj;
+  }
+
+  fieldsToProps(props) {
+    let obj = {};
+    this.fieldsArray.forEach(element => (obj[element] = props[element]));
+    return obj;
+  }
+
+  fieldsToMethod() {
+    let obj = {};
+    this.fieldsArray.forEach(element => (obj[element] = this.state[element]));
+    obj['id'] = this.props.profile._id;
+    console.log(`fieldsToMethod`, obj);
+    return obj;
   }
 
   handleChange(e) {
@@ -73,7 +121,10 @@ class ProfileIndex extends React.Component<IProps, IState> {
   }
 
   initState(props) {
-    console.log(`Profile initState `);
+    let obj = this.fieldsToProps(props);
+    this.setState(obj);
+    //console.log(`Profile initState`, obj, this.state);
+    /*
     this.setState({
       fname: props.fname,
       initial: props.initial,
@@ -85,11 +136,13 @@ class ProfileIndex extends React.Component<IProps, IState> {
       postcode: props.postcode,
       country: props.country
     });
+    */
   }
 
   handleSubmit() {
-    console.log(`Profile SUBMIT`);
-    let profileFields = {
+    let profileFields = this.fieldsToMethod();
+    
+    /* {
       id: this.props.profile._id,
       fname: this.state.fname,
       initial: this.state.initial,
@@ -101,6 +154,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
       postcode: this.state.postcode,
       country: this.state.country
     };
+    */
 
     ProfileMethods.updateProfile.call(profileFields, err => {
       if (err) {
@@ -128,7 +182,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.profile !== this.props.profile) {
-        this.initState(nextProps.profile);
+      this.initState(nextProps.profile);
     }
   }
 
