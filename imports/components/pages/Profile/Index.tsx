@@ -27,6 +27,10 @@ interface IProps {
   profile: any;
 }
 
+interface IState {
+  //editProfile: boolean;
+}
+
 /*
 interface IState {
   fname: string;
@@ -42,7 +46,7 @@ interface IState {
 }
 */
 
-class ProfileIndex extends React.Component<IProps> {
+class ProfileIndex extends React.Component<IProps, IState> {
   fieldsArray = [
     'fname',
     'initial',
@@ -55,7 +59,7 @@ class ProfileIndex extends React.Component<IProps> {
     'country'
   ];
 
-  fieldsObj: any;
+  //fieldsObj: any;
   /* = {
     fname: "",
     initial: "",
@@ -69,13 +73,16 @@ class ProfileIndex extends React.Component<IProps> {
   };
   */
 
+  state: any;
+
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.fieldsObj = this.fieldMapper('init'); //this.fieldsToObject();
-    let obj = Object.assign({}, this.fieldsObj, { editProfile: false });
-    this.state = obj;
+    
+    this.state = this.fieldMapper('init'); //this.fieldsToObject();
+    //let obj = Object.assign({}, this.fieldsObj, { editProfile: false });
+    //this.state = fieldsObj;
     console.log(`ProfileIndex constructor`, this.state, this.props);
   }
 
@@ -99,6 +106,7 @@ class ProfileIndex extends React.Component<IProps> {
 
     if (type==='init') {
       this.fieldsArray.forEach(element => (obj[element] = ''));
+      obj['editProfile'] = false;
     } else if (type==='props') {
       this.fieldsArray.forEach(element => (obj[element] = props[element]));
     } else if (type==='method') {
@@ -225,10 +233,10 @@ class ProfileIndex extends React.Component<IProps> {
 
   getLayout() {
     let layout: any;
-    if (this.props.profile && this.state['editProfile']) {
+    if (this.props.profile && this.state.editProfile) {
       layout = this.getForm("Edit Profile");
     } else if (this.props.profile && this.props.profile.new) {
-      layout = this.getForm("Create Profile");
+      layout = this.getForm('Create Profile');
     } else if (this.props.profile) {
       layout = (
         <div>
