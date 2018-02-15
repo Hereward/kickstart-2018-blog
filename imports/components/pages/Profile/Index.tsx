@@ -81,29 +81,12 @@ class ProfileIndex extends React.Component<IProps, IState> {
     this.handleChange = this.handleChange.bind(this);
     
     this.state = this.fieldMapper('init'); //this.fieldsToObject();
-    //let obj = Object.assign({}, this.fieldsObj, { editProfile: false });
-    //this.state = fieldsObj;
     console.log(`ProfileIndex constructor`, this.state, this.props);
+    //let obj = Object.assign({}, this.fieldsObj, { editProfile: false });
   }
-
-  /*
-   this.state = {
-      fname: "",
-      initial: "",
-      lname: "",
-      street1: "",
-      street2: "",
-      city: "",
-      region: "",
-      postcode: "",
-      country: "",
-      editProfile: false
-    };
-    */
 
   fieldMapper(type, props='') {
     let obj = {};
-
     if (type==='init') {
       this.fieldsArray.forEach(element => (obj[element] = ''));
       obj['editProfile'] = false;
