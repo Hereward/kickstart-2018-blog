@@ -162,7 +162,7 @@ export default class ProfileForm extends React.Component<IProps, IState> {
           })}
           {this.getWidget({ name: "lname", label: "Last Name" })}
           {this.getWidget({ name: "street1", label: "Street Address 1" })}
-          {this.getWidget({ name: "street2", label: "Street Address 2" })}
+          {this.getWidget({ name: "street2", label: "Street Address 2", required: false })}
           {this.getWidget({ name: "city", label: "City", required: false })}
           {this.getWidget({ name: "region", label: "Region/State" })}
           {this.getWidget({ name: "postcode", label: "Postal Code" })}

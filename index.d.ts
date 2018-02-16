@@ -120,6 +120,13 @@ declare module JSX {
 }
 */
 
+
+declare namespace JSX {
+  interface IntrinsicElements {
+    CustomTag: any
+  }
+}
+
 interface JQuery {
   /**
    * Remove the specified attributes from the first matched element and return them.

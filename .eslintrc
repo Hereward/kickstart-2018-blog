@@ -76,6 +76,7 @@
     "arrow-body-style": "warn",
     "prefer-rest-params": "warn",
     "dot-notation": "off",
+    "no-plusplus": "warn",
     "semi": ["error", "always"],
     "prefer-arrow-callback": ["warn",
       {
