@@ -28,6 +28,7 @@
     "react": "^16.2.0",
     "react-art-svg-renderer": "0.0.1-rc.8",
     "react-block-ui": "^1.1.1",
+    "react-country-region-selector": "^1.2.3",
     "react-dom": "^16.2.0",
     "react-loader-spinner": "^1.4.7",
     "react-native": "^0.49.5",

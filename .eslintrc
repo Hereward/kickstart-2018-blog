@@ -77,6 +77,7 @@
     "prefer-rest-params": "warn",
     "dot-notation": "off",
     "no-plusplus": "warn",
+    "react/no-unused-state": "react/no-unused-state",
     "semi": ["error", "always"],
     "prefer-arrow-callback": ["warn",
       {

@@ -7,6 +7,7 @@ import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import Widget from "./Widget";
+import CountryWidget from "./CountryWidget";
 
 interface IProps {
   handleChange: any;
@@ -15,8 +16,8 @@ interface IProps {
 }
 
 interface IState {
-  DisableSubmit: boolean;
-  SubmitText: string;
+  country: string;
+  region: string;
 }
 
 export default class ProfileForm extends React.Component<IProps, IState> {
@@ -27,6 +28,13 @@ export default class ProfileForm extends React.Component<IProps, IState> {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+
+    this.state = {
+      country: this.props.profileObj.country,
+      region: this.props.profileObj.region
+    };
+
+    console.log(`ProfileForm`, this.props, this.state);
   }
 
   static propTypes = {
@@ -54,18 +62,8 @@ export default class ProfileForm extends React.Component<IProps, IState> {
     })
     */
 
-  /*
   componentDidMount() {
-    console.log(`ComponentDidMount`);
-    jquery(`#${this.formID}`).validate({
-      submitHandler: (form) => {
-        this.props.handleSubmit();
-      }
-    });
-  }
-  */
 
-  componentDidMount() {
     jquery(`.tooltipster`).tooltipster({
       trigger: "custom", // default is 'hover' which is no good here
       animation: "slide",
@@ -86,6 +84,29 @@ export default class ProfileForm extends React.Component<IProps, IState> {
       }
     });
   }
+
+
+  /*
+      jquery.validator.addMethod(
+      "valueNotEquals",
+      function valueNotEquals(value, element, arg) {
+        return arg !== value;
+      },
+      "Value must not equal arg."
+    );
+      rules: {
+        country: {
+          valueNotEquals: ''
+        },
+        region: {
+          valueNotEquals: ''
+        }
+      },
+      messages: {
+        country: { valueNotEquals: "Please select an item!" },
+        region: { valueNotEquals: "Please select an item!" }
+      },
+      */
 
   handleSubmit() {
     //e.preventDefault();
@@ -108,48 +129,6 @@ export default class ProfileForm extends React.Component<IProps, IState> {
     );
   }
 
-  /*
-  widget(wprops: {
-    name: string;
-    label?: string;
-    type?: string;
-    required?: boolean;
-    placeholder?: string;
-  }) {
-    let layout = (
-      <div className="form-group">
-        <label htmlFor="fname">{wprops.label || "Enter Text"}</label>
-        <input
-          onChange={this.handleChange}
-          type={wprops.type || "text"}
-          className="form-control tooltipster"
-          id={wprops.name}
-          name={wprops.name}
-          placeholder={wprops.placeholder || ""}
-          defaultValue={
-            this.props.profileObj ? this.props.profileObj[wprops.name] : ""
-          }
-          required={wprops.required===false ? false : true}
-        />
-      </div>
-    );
-
-    return layout;
-  }
-  */
-
-  // {wprops.required ? 'required' : ''}
-
-  /*
-  street1: "",
-        street2: "",
-        city: "",
-        region: "",
-        postcode: "",
-        country: "",
-        */
-  //          {this.widget({ name: "fname", label: "First Name" })}
-
   render() {
     return (
       <div>
@@ -162,11 +141,20 @@ export default class ProfileForm extends React.Component<IProps, IState> {
           })}
           {this.getWidget({ name: "lname", label: "Last Name" })}
           {this.getWidget({ name: "street1", label: "Street Address 1" })}
-          {this.getWidget({ name: "street2", label: "Street Address 2", required: false })}
+          {this.getWidget({
+            name: "street2",
+            label: "Street Address 2",
+            required: false
+          })}
           {this.getWidget({ name: "city", label: "City", required: false })}
-          {this.getWidget({ name: "region", label: "Region/State" })}
+
+          <CountryWidget
+            handleChange={this.handleChange}
+            dataObj={this.props.profileObj}
+          />
+
           {this.getWidget({ name: "postcode", label: "Postal Code" })}
-          {this.getWidget({ name: "country", label: "Country" })}
+
           <button type="submit" className="btn btn-default">
             Submit
           </button>
@@ -175,6 +163,9 @@ export default class ProfileForm extends React.Component<IProps, IState> {
     );
   }
 }
+
+// {this.getWidget({ name: "region", label: "Region/State" })}
+//  {this.getWidget({ name: "country", label: "Country" })}
 
 /*
  {

@@ -43,6 +43,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSetState = this.handleSetState.bind(this);
 
     this.state = this.fieldMapper('init'); //this.fieldsToObject();
     console.log(`ProfileIndex constructor`, this.state, this.props);
@@ -61,6 +62,11 @@ class ProfileIndex extends React.Component<IProps, IState> {
       obj['id'] = this.props.profile._id;
     }
     return obj;
+  }
+
+  handleSetState(sVar, sVal) {
+    console.log(`handleSetState`, sVar, sVal);
+    this.setState({ [sVar]: sVal });
   }
 
   handleChange(e) {
