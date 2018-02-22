@@ -20,6 +20,8 @@ declare var Bert: any;
 
 declare var process: any;
 
+declare function dateFormat(date:any, options: any);
+
 declare function swal(options: object);
 //declare function ValidatedMethod(options:object);
 declare var console: Console;

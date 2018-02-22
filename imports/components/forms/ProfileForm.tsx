@@ -8,11 +8,13 @@ import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import Widget from "./Widget";
 import CountryWidget from "./CountryWidget";
+import DateWidget from "./DateWidget";
 
 interface IProps {
   handleChange: any;
   handleSubmit: any;
   profileObj: any;
+  handleSetState: any;
 }
 
 interface IState {
@@ -28,6 +30,7 @@ export default class ProfileForm extends React.Component<IProps, IState> {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSetStateUpstream = this.handleSetStateUpstream.bind(this);
 
     this.state = {
       country: this.props.profileObj.country,
@@ -40,6 +43,7 @@ export default class ProfileForm extends React.Component<IProps, IState> {
   static propTypes = {
     handleSubmit: PropTypes.func,
     handleChange: PropTypes.func,
+    handleSetState: PropTypes.func,
     profileObj: PropTypes.object
   };
 
@@ -63,11 +67,11 @@ export default class ProfileForm extends React.Component<IProps, IState> {
     */
 
   componentDidMount() {
-
-    jquery(`.tooltipster`).tooltipster({
+    jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
       trigger: "custom", // default is 'hover' which is no good here
       animation: "slide",
-      theme: "tooltipster-light"
+      theme: "tooltipster-light",
+      zIndex: 1400
     });
 
     jquery(`#${this.formID}`).validate({
@@ -77,6 +81,7 @@ export default class ProfileForm extends React.Component<IProps, IState> {
         element.tooltipster("open");
       },
       success: function success(label, element) {
+        //console.log(`SUCCESS (jquery validate) element=[${element.id}]`);
         jquery(`#${element.id}`).tooltipster("close");
       },
       submitHandler: form => {
@@ -84,7 +89,6 @@ export default class ProfileForm extends React.Component<IProps, IState> {
       }
     });
   }
-
 
   /*
       jquery.validator.addMethod(
@@ -107,6 +111,10 @@ export default class ProfileForm extends React.Component<IProps, IState> {
         region: { valueNotEquals: "Please select an item!" }
       },
       */
+
+  handleSetStateUpstream(sVar, sVal) {
+    this.props.handleSetState(sVar, sVal);
+  }
 
   handleSubmit() {
     //e.preventDefault();
@@ -140,6 +148,14 @@ export default class ProfileForm extends React.Component<IProps, IState> {
             label: "Initial"
           })}
           {this.getWidget({ name: "lname", label: "Last Name" })}
+          <DateWidget
+            handleSetStateUpstream={this.handleSetStateUpstream}
+            handleChange={this.handleChange}
+            dataObj={this.props.profileObj}
+            name="dob"
+            label="Date of Birth"
+          />
+
           {this.getWidget({ name: "street1", label: "Street Address 1" })}
           {this.getWidget({
             name: "street2",

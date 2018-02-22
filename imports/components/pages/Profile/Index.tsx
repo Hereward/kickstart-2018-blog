@@ -29,6 +29,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
     'fname',
     'initial',
     'lname',
+    'dob',
     'street1',
     'street2',
     'city',
@@ -65,7 +66,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
   }
 
   handleSetState(sVar, sVal) {
-    console.log(`handleSetState`, sVar, sVal);
+    console.log(`handleSetState (Profile index)`, sVar, sVal);
     this.setState({ [sVar]: sVal });
   }
 
@@ -128,13 +129,14 @@ class ProfileIndex extends React.Component<IProps, IState> {
           profileObj={this.props.profile}
           handleChange={this.handleChange}
           handleSubmit={this.handleSubmit}
+          handleSetState={this.handleSetState}
         />
       </div>
     );
     return layout;
   }
 
-  getItems(iProps: { items: any[]; method?: string; eClass?: string }) {
+  getItems(iProps: { items: any[]; label?: string; method?: string; eClass?: string }) {
     if (!iProps.method) {
       iProps.method = 'push';
     }
@@ -145,6 +147,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
     let content = '';
     let el = iProps.eClass === 'card-header' ? 'div' : 'li';
     let key:number=0;
+    let label = iProps.label ? `${iProps.label} ` : '';
 
     iProps.items.forEach(
       function iterateItem(item) {
@@ -152,7 +155,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
           if (iProps.method === 'push') {
             const CustomTag = el;
             layout.push(
-              <CustomTag key={key} className={iProps.eClass}>{this.props.profile[item].trim()}</CustomTag>
+              <CustomTag key={key} className={iProps.eClass}>{label}{this.props.profile[item].trim()}</CustomTag>
             );
             key++;
           } else if (iProps.method === 'concat') {
@@ -163,7 +166,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
     );
     if (iProps.method === 'concat') {
       const CustomTag = el;
-      layout.push(<CustomTag key={key} className={iProps.eClass}>{content.trim()}</CustomTag>);
+      layout.push(<CustomTag key={key} className={iProps.eClass}>{label}{content.trim()}</CustomTag>);
     }
     return layout;
   }
@@ -198,6 +201,7 @@ class ProfileIndex extends React.Component<IProps, IState> {
             <ul className='list-group list-group-flush'>
               {this.getItems({ items: ['street1', 'street2'] })}
               {this.getItems({ items: ['city'] })}
+              {this.getItems({ label: 'Date of Birth', items: ['dob'] })}
               {this.getItems({
                 items: ['region', 'postcode'],
                 method: 'concat'
