@@ -6,3 +6,5 @@ import '../../api/tasks/publish';
 import '../../api/tasks/methods';
 import '../../api/auth/publish'; 
 import '../../api/auth/methods';
+import '../../api/images/publish'; 
+import '../../api/images/methods';

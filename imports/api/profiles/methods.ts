@@ -36,6 +36,7 @@ export const createProfile = new ValidatedMethod({
       region: '',
       postcode: '',
       country: '',
+      image_id: '',
       verificationEmailSent: 0,
       new: true,
       createdAt: new Date(),
@@ -44,6 +45,29 @@ export const createProfile = new ValidatedMethod({
 
     console.log(`profiles.create - DONE!`);
     return id;
+  }
+});
+
+export const updateProfileImage = new ValidatedMethod({
+  name: "profileImage.update",
+  validate: new SimpleSchema({
+    id: { type: String },
+    image_id: { type: String },
+  
+  }).validator(),
+
+  run(fields) {
+    console.log(`profileImage.update`);
+    authCheck("profiles.update", this.userId);
+
+    Profiles.update(fields.id, {
+      $set: {
+        image_id: fields.image_id
+      }
+    });
+
+    console.log(`profileImage.update - DONE!`);
+    return true;
   }
 });
 

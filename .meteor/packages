@@ -16,19 +16,20 @@ es5-shim@4.6.15                # ECMAScript 5 compatibility for older browsers
 ecmascript@0.9.0              # Enable ECMAScript2015+ syntax in app code
 shell-server@0.3.0            # Server-side component of the `meteor shell` command
 
+static-html
+accounts-password@1.5.0
+session
+check
+email
+accounts-ui@1.2.0
+react-meteor-data
 
 barbatus:typescript
 themeteorchef:bert
 meteortoys:allthings
-accounts-ui@1.2.0
-accounts-password@1.5.0
 fourseven:scss
 seba:minifiers-autoprefixer
-react-meteor-data
 kevohagan:sweetalert
-session
-check
-email
 mdg:validated-method
 aldeed:simple-schema
-static-html
+ostrio:files
