@@ -2,10 +2,11 @@
 //import { FilesCollection } from "meteor/ostrio:files";
 //import axios from "axios";
 //import * as ProfileMethods from "./methods";
+import { Meteor } from "meteor/meteor";
 import { Images } from "./methods";
 
 //declare var Images:any;
-declare var Meteor: any;
+//declare var Meteor: any;
 
 // Meteor.Files
 

@@ -1,11 +1,14 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as ReactDOM from "react-dom";
-import Checkbox from 'material-ui/Checkbox';
+import Checkbox from "material-ui/Checkbox";
+
 import { Tasks } from "../../../api/tasks/publish";
 import Task from "../../partials/Task";
 import * as Methods from "../../../api/tasks/methods";
 import * as Library from "../../../modules/library";
+
+declare var DocHead: any;
 
 interface IProps {
   history: any;
@@ -116,11 +119,11 @@ class Index extends React.Component<IProps, IState> {
   getCheckBox() {
     if (this.props.currentUser && this.props.taskCount) {
       return (
-          <Checkbox
-            label="Hide Completed Tasks"
-            checked={this.state.hideCompleted}
-            onClick={this.toggleHideCompleted}
-          />
+        <Checkbox
+          label="Hide Completed Tasks"
+          checked={this.state.hideCompleted}
+          onClick={this.toggleHideCompleted}
+        />
       );
     }
   }
@@ -136,7 +139,11 @@ class Index extends React.Component<IProps, IState> {
     return (
       <div className="container">
         <div className="todos-top-section">
-          <h1>Todo List ({this.props.incompleteCount})</h1>
+          <h1>
+            <i className="fas fa-calculator" /> Todo List ({
+              this.props.incompleteCount
+            })
+          </h1>
           <div className="todos-form-wrapper">
             {this.getCheckBox()}
             {this.getForm()}

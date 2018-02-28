@@ -1,3 +1,4 @@
+import { Meteor } from "meteor/meteor";
 import { check } from "meteor/check";
 import { FilesCollection } from "meteor/ostrio:files";
 import axios from "axios";

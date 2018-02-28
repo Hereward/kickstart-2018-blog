@@ -8,3 +8,5 @@ import '../../api/auth/publish';
 import '../../api/auth/methods';
 import '../../api/images/publish'; 
 import '../../api/images/methods';
+import '../../api/pages/publish'; 
+import '../../api/pages/methods';

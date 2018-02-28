@@ -3,6 +3,7 @@ import * as ReactDOM from "react-dom";
 import { Meteor } from "meteor/meteor";
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import App from "../../components/layouts/App/App";
+import { addMeta } from './meta';
 
 class Launch extends React.Component {
   constructor(props) {
@@ -16,4 +17,5 @@ class Launch extends React.Component {
 
 Meteor.startup(() => {
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
+  addMeta();
 });
