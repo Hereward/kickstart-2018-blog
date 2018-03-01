@@ -22,8 +22,36 @@ interface IState {
   body: any;
 }
 
+
 export default class PageForm extends React.Component<IProps, IState> {
   formID: string = "ProfileForm";
+  toolbarOptions = [
+    [{ 'header': [1, 2, 3, 4, false] }],
+    ['bold', 'italic', 'underline','strike', 'blockquote'],
+    [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
+    [{ 'indent': '-1'}, { 'indent': '+1' }],
+    ['link', 'image', 'video'],
+    ['clean']
+  ];
+
+  modules = {
+    toolbar: this.toolbarOptions
+  };
+
+  formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "video"
+  ];
 
   constructor(props) {
     super(props);
@@ -99,6 +127,9 @@ export default class PageForm extends React.Component<IProps, IState> {
               id='bodyText'
               defaultValue={this.props.pageObj.body}
               onChange={this.handleSetStateUpstream}
+              modules={this.modules}
+              formats={this.formats}
+              theme={"snow"}
             />
           </div>
 

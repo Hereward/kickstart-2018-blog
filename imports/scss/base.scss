@@ -2,6 +2,11 @@
 @import "partials/_todos";
 @import "partials/_transitions";
 
+.ql-video {
+ 
+}
+
+
 /*
 .profile-details label.error {
   position: absolute;
@@ -126,18 +131,31 @@ div.about h1 {
   font-weight: 600;
 }
 
-
 @media (max-width: 320px) {
 }
 
 @media (min-width: 576px) {
+  .ql-video {
+    position: relative;
+    display: block;
+    padding: 0;
+    overflow: visible;
+    width: 512px;
+    height: 288px;
+  }
+ 
+  
 }
 
 @media (min-width: 768px) {
 }
 
 @media (min-width: 992px) {
-  
+  .ql-video {
+
+    width: 896px;
+    height: 504px;
+  }
 }
 
 @media (min-width: 1200px) {

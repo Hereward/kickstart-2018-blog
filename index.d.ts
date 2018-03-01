@@ -34,6 +34,10 @@ declare namespace Meteor.User {
   let verificationEmailSent: boolean;
 }
 
+
+
+
+
 //        profile?: Object;
 
 /*

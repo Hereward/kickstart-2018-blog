@@ -3,6 +3,7 @@
   "parserOptions": {
     "allowImportExportEverywhere": true
   },
+  
   "plugins": ["meteor", "prettier"],
   "extends": [
     "airbnb",
