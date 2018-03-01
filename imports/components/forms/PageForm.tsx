@@ -94,7 +94,9 @@ export default class PageForm extends React.Component<IProps, IState> {
           })}
 
           <div className="form-group">
+          <label htmlFor="bodyText">Body Text:</label>
             <ReactQuill
+              id='bodyText'
               defaultValue={this.props.pageObj.body}
               onChange={this.handleSetStateUpstream}
             />

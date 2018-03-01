@@ -2,14 +2,14 @@ import * as React from "react";
 import IconButton from "material-ui/IconButton";
 import EditorModeEdit from "material-ui/svg-icons/editor/mode-edit";
 
-export function edit(props: {onClick: any; }) {
+export function edit(props: {onClick: any; stateName: any}) {
     console.log(`edit icon`, props.onClick);
     return (
         <IconButton
           type="button"
           tooltip="Edit"
           onClick={() => {
-              props.onClick('edit', true);
+              props.onClick(props.stateName, true);
           }}
         >
           <EditorModeEdit />

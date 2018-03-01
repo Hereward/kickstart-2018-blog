@@ -48,7 +48,7 @@ export default class Widget extends React.Component<IProps, IState> {
         : `${this.baseCSSClass} required`;
     let layout = (
       <div className="form-group">
-        <label htmlFor={wprops.name}>{wprops.label || "Enter Text"}</label>
+        <label htmlFor={wprops.name}>{wprops.label || "Enter Text"}:</label>
         <input
           onChange={this.handleChange}
           type={wprops.type || "text"}

@@ -12,6 +12,8 @@ if (Meteor.isServer) {
   Meteor.startup(function () {
     // Insert sample data if the student collection is empty
     if (Pages.find().count() === 0) {
+      //console.log(`Adding default content to Pages`);
+
       Pages.insert({
         name: 'about',
         heading: 'About Page',
@@ -26,6 +28,8 @@ if (Meteor.isServer) {
         createdAt: new Date(),
         owner: ''
       });
+    } else {
+      //console.log(`DID NOT add default content to Pages`);
     }
   });
 }

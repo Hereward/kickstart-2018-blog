@@ -9,15 +9,18 @@ import EditorModeEdit from "material-ui/svg-icons/editor/mode-edit";
 import * as PageMethods from "../../../api/pages/methods";
 import * as Library from "../../../modules/library";
 //import * as ReactQuill from "react-quill";
-const ReactQuill = require("react-quill");
-import "react-quill/dist/quill.snow.css";
+//const ReactQuill = require("react-quill");
+//import "react-quill/dist/quill.snow.css";
 
 interface IProps {
   page: any;
 }
 
+interface IState {
+  edit: boolean;
+}
 
-class About extends React.Component<IProps> {
+class About extends React.Component<IProps, IState> {
     fieldsArray = [
         "body",
         "heading",
@@ -28,14 +31,8 @@ class About extends React.Component<IProps> {
     this.handleChange = this.handleChange.bind(this);
     this.handleSetState = this.handleSetState.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = this.fieldMapper("init");
-    /*
-    this.state = {
-      body: "",
-      heading: "",
-      edit: false
-    };
-    */
+    this.state = this.fieldMapper("init") as any;
+    //this.state = Object.assign({}, this.state, extraStates);
   }
 
   fieldMapper(type, props = "") {
@@ -95,8 +92,6 @@ class About extends React.Component<IProps> {
 
     let pageFields = this.fieldMapper("method");
       
-    //let pageFields = {id: this.props.page._id, name: this.props.page.name, body: this.state.body, heading: this.state.heading}
-    //console.log(`About handleSubmit`, this.state, pageFields);
 
     PageMethods.updatePage.call(pageFields, err => {
       if (err) {
@@ -132,8 +127,8 @@ class About extends React.Component<IProps> {
       } else {
         layout.push(
           <h2 key="heading">
-            {this.props.page.heading}{" "}
-            {Icon.edit({ onClick: this.handleSetState })}{" "}
+            {this.props.page.heading}
+            {Icon.edit({ onClick: this.handleSetState, stateName: 'edit' })}
           </h2>
         );
         layout.push(
@@ -163,7 +158,7 @@ export default withRouter(
     if (PagesDataReady) {
       page = Pages.findOne({ name: "about" });
     }
-    return { page };
+    return { page: page };
   })(About)
 );
 

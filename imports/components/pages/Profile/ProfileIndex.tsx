@@ -11,6 +11,8 @@ import Transition from "../../partials/Transition";
 import ProfileForm from "../../forms/ProfileForm";
 import * as ProfileMethods from "../../../api/profiles/methods";
 import * as Library from "../../../modules/library";
+import * as Icon from "../../../modules/icons";
+
 
 import UploadForm from "../../forms/UploadForm";
 import { Images } from "../../../api/images/methods";
@@ -26,9 +28,12 @@ interface IProps {
   myImages: any;
 }
 
-interface IState {}
+interface IState {
+  editImage: boolean;
+  editProfile: boolean;
+}
 
-class ProfileIndex extends React.Component<IProps> {
+class Profile extends React.Component<IProps, IState> {
   fieldsArray = [
     "fname",
     "initial",
@@ -53,9 +58,8 @@ class ProfileIndex extends React.Component<IProps> {
     //let fieldsObj = this.fieldMapper("init");
     //let stateObj = Object.assign({}, fieldsObj, { editImage: false });
 
-    this.state = this.fieldMapper("init"); //this.fieldsToObject();
+    this.state = this.fieldMapper("init") as any; //this.fieldsToObject();
     console.log(`ProfileIndex constructor`, this.state, this.props);
-    //let obj = Object.assign({}, this.fieldsObj, { editProfile: false });
   }
 
   fieldMapper(type, props = "") {
@@ -245,6 +249,7 @@ class ProfileIndex extends React.Component<IProps> {
     return layout;
   }
 
+  /*
   iconEdit(type = "editProfile") {
     return (
       <IconButton
@@ -258,6 +263,7 @@ class ProfileIndex extends React.Component<IProps> {
       </IconButton>
     );
   }
+  */
 
   getLayout() {
     let layout: any;
@@ -270,10 +276,23 @@ class ProfileIndex extends React.Component<IProps> {
         <div>
           <h1>Profile</h1>
 
-          <h3>Image {this.iconEdit("editImage")}</h3>
+          <h2>
+            Image{" "}
+            {Icon.edit({
+              onClick: this.handleSetState,
+              stateName: "editImage"
+            })}
+          </h2>
           {this.renderImage()}
 
-          <h3> Personal Details {this.iconEdit()}</h3>
+          <h2>
+            {" "}
+            Personal Details{" "}
+            {Icon.edit({
+              onClick: this.handleSetState,
+              stateName: "editProfile"
+            })}
+          </h2>
 
           <div className="card" style={{ width: "18rem" }}>
             {this.getItems({
@@ -317,7 +336,7 @@ export default withRouter(
       }
     }
     return { myImages };
-  })(ProfileIndex)
+  })(Profile)
 );
 
 /*
