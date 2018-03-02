@@ -122,7 +122,7 @@ export default class PageContent extends React.Component<IProps, IState> {
         layout = (
           <div>
             <h2>
-              Edit Page{" "}<CancelEditIcon style={{top: '5px'}} onClick={this.handleSetState} stateName='edit' />
+              Edit Page{" "}<CancelEditIcon className='cancel-edit-icon' onClick={this.handleSetState} stateName='edit' />
             </h2>
             <div>{this.editLayout()}</div>
           </div>

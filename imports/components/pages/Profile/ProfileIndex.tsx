@@ -11,8 +11,8 @@ import Transition from "../../partials/Transition";
 import ProfileForm from "../../forms/ProfileForm";
 import * as ProfileMethods from "../../../api/profiles/methods";
 import * as Library from "../../../modules/library";
-import * as Icon from "../../../modules/icons";
-
+//import * as Icon from "../../../modules/icons";
+import { EditIcon, CancelEditIcon } from "../../../modules/icons";
 
 import UploadForm from "../../forms/UploadForm";
 import { Images } from "../../../api/images/methods";
@@ -152,7 +152,14 @@ class Profile extends React.Component<IProps, IState> {
   getForm(heading: string) {
     let layout = (
       <div>
-        <h2>{heading}</h2>
+        <h2>
+          {heading}{" "}
+          <CancelEditIcon
+            className="cancel-edit-icon"
+            onClick={this.handleSetState}
+            stateName="editProfile"
+          />
+        </h2>
         <ProfileForm
           profileObj={this.props.profile}
           handleChange={this.handleChange}
@@ -219,13 +226,23 @@ class Profile extends React.Component<IProps, IState> {
     if (this.props.profile) {
       if (this.state.editImage) {
         layout = (
-          <UploadForm
-            Images={Images}
-            fileLocator=""
-            loading={false}
-            myImages={this.props.myImages}
-            profile={this.props.profile}
-          />
+          <div>
+            <h2>
+              Upload Image{" "}
+              <CancelEditIcon
+                className="cancel-edit-icon"
+                onClick={this.handleSetState}
+                stateName="editImage"
+              />
+            </h2>
+            <UploadForm
+              Images={Images}
+              fileLocator=""
+              loading={false}
+              myImages={this.props.myImages}
+              profile={this.props.profile}
+            />
+          </div>
         );
       } else if (this.props.myImages && this.props.myImages[0]) {
         let fileCursor = this.props.myImages[0];
@@ -233,15 +250,21 @@ class Profile extends React.Component<IProps, IState> {
         let link = Images.findOne({ _id: fileCursor._id }).link();
 
         layout = (
-          <Image
-            fileName={fileCursor.name}
-            fileUrl={link}
-            fileId={fileCursor._id}
-            fileSize={fileCursor.size}
-            Images={Images}
-            allowEdit={false}
-            profile={this.props.profile}
-          />
+          <div className="profile-image-holder">
+            <h2>
+              Image{" "}
+              <EditIcon onClick={this.handleSetState} stateName="editImage" />
+            </h2>
+            <Image
+              fileName={fileCursor.name}
+              fileUrl={link}
+              fileId={fileCursor._id}
+              fileSize={fileCursor.size}
+              Images={Images}
+              allowEdit={false}
+              profile={this.props.profile}
+            />
+          </div>
         );
       }
     }
@@ -276,22 +299,11 @@ class Profile extends React.Component<IProps, IState> {
         <div>
           <h1>Profile</h1>
 
-          <h2>
-            Image{" "}
-            {Icon.edit({
-              onClick: this.handleSetState,
-              stateName: "editImage"
-            })}
-          </h2>
           {this.renderImage()}
 
           <h2>
-            {" "}
             Personal Details{" "}
-            {Icon.edit({
-              onClick: this.handleSetState,
-              stateName: "editProfile"
-            })}
+            <EditIcon onClick={this.handleSetState} stateName="editProfile" />
           </h2>
 
           <div className="card" style={{ width: "18rem" }}>
