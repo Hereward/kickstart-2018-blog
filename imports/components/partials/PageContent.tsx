@@ -6,8 +6,10 @@ import { withTracker } from "meteor/react-meteor-data";
 import { Pages } from "../../api/pages/publish";
 import Transition from "../partials/Transition";
 import * as Icon from "../../modules/icons";
+import { EditIcon, CancelEditIcon } from "../../modules/icons";
 import PageForm from "../forms/PageForm";
-import EditorModeEdit from "material-ui/svg-icons/editor/mode-edit";
+//import EditorModeEdit from "material-ui/svg-icons/editor/mode-edit";
+
 import * as PageMethods from "../../api/pages/methods";
 import * as Library from "../../modules/library";
 //import * as ReactQuill from "react-quill";
@@ -23,7 +25,6 @@ interface IState {
 }
 
 export default class PageContent extends React.Component<IProps, IState> {
-
   fieldsArray = ["body", "heading"];
 
   constructor(props) {
@@ -114,31 +115,40 @@ export default class PageContent extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    let layout = [];
-
+    let layout: any;
     if (this.props.page) {
       if (this.state.edit) {
-        layout.push(<div key="quillEditor">{this.editLayout()}</div>);
-      } else {
-        layout.push(
-          <h2 key="heading">
-            {this.props.page.heading}
-            {Icon.edit({ onClick: this.handleSetState, stateName: "edit" })}
-          </h2>
+        // EDIT PAGE
+        layout = (
+          <div>
+            <h2>
+              Edit Page{" "}<CancelEditIcon style={{top: '5px'}} onClick={this.handleSetState} stateName='edit' />
+            </h2>
+            <div>{this.editLayout()}</div>
+          </div>
         );
-        layout.push(
-          <div
-            key="bodyText"
-            dangerouslySetInnerHTML={this.createMarkup(this.props.page.body)}
-          />
+      } else {
+        // VIEW PAGE
+        layout = (
+          <div>
+            <h1>
+              {this.props.page.heading}{" "}
+              <EditIcon onClick={this.handleSetState} stateName='edit' />
+            </h1>
+
+            <div dangerouslySetInnerHTML={this.createMarkup(this.props.page.body)} />
+          </div>
         );
       }
     } else {
-      layout.push(<div key="loading">Loading...</div>);
+      // LOADING
+      layout = <div key="loading">Loading...</div>;
     }
 
     return layout;
   }
+
+  //  {Icon.edit({ onClick: this.handleSetState, stateName: "edit" })}
 
   render() {
     let layout = this.getLayout();

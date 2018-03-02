@@ -1,9 +1,43 @@
 import * as React from "react";
 import IconButton from "material-ui/IconButton";
 import EditorModeEdit from "material-ui/svg-icons/editor/mode-edit";
+import EditorCancel from "material-ui/svg-icons/content/clear";
 
+export const EditIcon = function EditIcon(props: {onClick: any; stateName: any; style?: any}) {
+  return (
+    <IconButton
+      style={props.style}
+      type="button"
+      tooltip="Edit"
+      onClick={() => {
+          props.onClick(props.stateName, true);
+      }}
+    >
+      <EditorModeEdit />
+    </IconButton>
+  );
+
+}
+
+export const CancelEditIcon = function CancelEditIcon(props: {onClick: any; stateName: any; style?: any}) {
+  //console.log(`CancelEditIcon`,props.voffset);
+  //let style = props.voffset ? {top: props.voffset} : {};
+  return (
+    <IconButton
+      style={props.style}
+      type="button"
+      tooltip="Cancel"
+      onClick={() => {
+          props.onClick(props.stateName, false);
+      }}
+    >
+      <EditorCancel />
+    </IconButton>
+  );
+}
+
+/*
 export function edit(props: {onClick: any; stateName: any}) {
-    console.log(`edit icon`, props.onClick);
     return (
         <IconButton
           type="button"
@@ -17,6 +51,23 @@ export function edit(props: {onClick: any; stateName: any}) {
       );
 
 }
+
+
+export function cancelEdit(props: {onClick: any; stateName: any}) {
+  return (
+      <IconButton
+        type="button"
+        tooltip="Cancel"
+        onClick={() => {
+            props.onClick(props.stateName, false);
+        }}
+      >
+        <EditorCancel />
+      </IconButton>
+    );
+
+}
+*/
 
 /*
 edit(type = "editProfile") {

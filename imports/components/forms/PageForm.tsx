@@ -10,6 +10,8 @@ import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-side
 import Widget from "./Widget";
 const ReactQuill = require("react-quill");
 import "react-quill/dist/quill.snow.css";
+import * as Icon from "../../modules/icons";
+
 
 interface IProps {
   handleChange: any;
@@ -98,6 +100,11 @@ export default class PageForm extends React.Component<IProps, IState> {
     this.props.handleChange(e);
   }
 
+  handleSetState(sVar, sVal) {
+    //console.log(`handleSetState (About)`, sVar, sVal);
+    this.setState({ [sVar]: sVal });
+  }
+
   getWidget(props: any) {
     let widgetType = props.widgetType ? props.widgetType : "simple";
     return (
@@ -113,7 +120,7 @@ export default class PageForm extends React.Component<IProps, IState> {
   render() {
     return (
       <div>
-        <h2>Edit Page</h2>
+        
         <form id={this.formID} onSubmit={this.handleSubmit}>
           {this.getWidget({
             name: "heading",

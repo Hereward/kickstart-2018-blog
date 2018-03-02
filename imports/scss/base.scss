@@ -3,9 +3,20 @@
 @import "partials/_transitions";
 
 .ql-video {
- 
 }
 
+h1,
+.h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.4rem;
+}
+
+.page-content {
+  margin-bottom: 2rem;
+}
 
 /*
 .profile-details label.error {
@@ -143,8 +154,6 @@ div.about h1 {
     width: 512px;
     height: 288px;
   }
- 
-  
 }
 
 @media (min-width: 768px) {
@@ -152,9 +161,24 @@ div.about h1 {
 
 @media (min-width: 992px) {
   .ql-video {
-
     width: 896px;
     height: 504px;
+  }
+
+  p,
+  div,
+  .main-nav .navbar-brand,
+  .dropdown-menu { 
+    font-size: 1.1rem;
+  }
+
+  h1,
+  .h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 1.7rem;
   }
 }
 

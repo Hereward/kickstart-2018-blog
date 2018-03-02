@@ -3,7 +3,7 @@ import Transition from "../../partials/Transition";
 import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import { Pages } from "../../../api/pages/publish";
-import * as Icon from "../../../modules/icons";
+//import * as Icon from "../../../modules/icons";
 import PageContent from "../../partials/PageContent";
 
 interface IProps {

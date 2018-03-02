@@ -158,14 +158,17 @@ class Index extends React.Component<IProps, IState> {
     return (
       <Transition>
         <div className="container">
-          <div className="todos-top-section">
-            <PageContent page={this.props.page} />
-            <div className="todos-form-wrapper">
-              {this.getCheckBox()}
-              {this.getForm()}
+          <PageContent page={this.props.page} />
+          <div className="todos">
+            <div className="todos-top-section">
+             <h2>Simple Todos App</h2>
+              <div className="todos-form-wrapper">
+                {this.getCheckBox()}
+                {this.getForm()}
+              </div>
             </div>
+            <ul>{tasks}</ul>
           </div>
-          <ul>{tasks}</ul>
         </div>
       </Transition>
     );
