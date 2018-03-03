@@ -59,7 +59,7 @@ export default class DateWidget extends React.Component<IProps, IState> {
   handleChange = (event, date) => {
     let dateStringISO = dateFormat(date, "yyyy-mm-dd");
     let dateStringPretty = dateFormat(date, "yyyy-mm-dd");
-    console.log(`Date handleChange: [${dateStringISO}] [${dateStringPretty}]`, date);
+    //console.log(`Date handleChange: [${dateStringISO}] [${dateStringPretty}]`, date);
     this.setState({
       controlledDate: date,
     });

@@ -7,6 +7,7 @@ import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import IconButton from "material-ui/IconButton";
 import EditorModeEdit from "material-ui/svg-icons/editor/mode-edit";
+import * as dateFormat from "dateformat";
 import Transition from "../../partials/Transition";
 import ProfileForm from "../../forms/ProfileForm";
 import * as ProfileMethods from "../../../api/profiles/methods";
@@ -34,18 +35,7 @@ interface IState {
 }
 
 class Profile extends React.Component<IProps, IState> {
-  fieldsArray = [
-    "fname",
-    "initial",
-    "lname",
-    "dob",
-    "street1",
-    "street2",
-    "city",
-    "region",
-    "postcode",
-    "country"
-  ];
+  fieldsArray = ["fname", "initial", "lname", "dob", "street1", "street2", "city", "region", "postcode", "country"];
 
   state: any;
 
@@ -149,16 +139,21 @@ class Profile extends React.Component<IProps, IState> {
     this.setState({ editProfile: state });
   }
 
+
+  format(value, type) {
+    if (type === 'date') {
+      return dateFormat(value, "dd mmmm yyyy");
+    } else {
+      return value;
+    }
+  }
+
   getForm(heading: string) {
     let layout = (
       <div>
         <h2>
           {heading}{" "}
-          <CancelEditIcon
-            className="cancel-edit-icon"
-            onClick={this.handleSetState}
-            stateName="editProfile"
-          />
+          <CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="editProfile" />
         </h2>
         <ProfileForm
           profileObj={this.props.profile}
@@ -171,12 +166,7 @@ class Profile extends React.Component<IProps, IState> {
     return layout;
   }
 
-  getItems(iProps: {
-    items: any[];
-    label?: string;
-    method?: string;
-    eClass?: string;
-  }) {
+  getItems(iProps: { items: any[]; label?: string; method?: string; eClass?: string; format?: string }) {
     if (!iProps.method) {
       iProps.method = "push";
     }
@@ -187,7 +177,7 @@ class Profile extends React.Component<IProps, IState> {
     let content = "";
     let el = iProps.eClass === "card-header" ? "div" : "li";
     let key: number = 0;
-    let label = iProps.label ? `${iProps.label} ` : "";
+    let label = iProps.label ? <span>{iProps.label}: </span> : "";
 
     iProps.items.forEach(
       function iterateItem(item) {
@@ -197,7 +187,7 @@ class Profile extends React.Component<IProps, IState> {
             layout.push(
               <CustomTag key={key} className={iProps.eClass}>
                 {label}
-                {this.props.profile[item].trim()}
+                {this.format(this.props.profile[item].trim(), iProps.format)}
               </CustomTag>
             );
             key++;
@@ -229,11 +219,7 @@ class Profile extends React.Component<IProps, IState> {
           <div>
             <h2>
               Upload Image{" "}
-              <CancelEditIcon
-                className="cancel-edit-icon"
-                onClick={this.handleSetState}
-                stateName="editImage"
-              />
+              <CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="editImage" />
             </h2>
             <UploadForm
               Images={Images}
@@ -252,8 +238,7 @@ class Profile extends React.Component<IProps, IState> {
         layout = (
           <div className="profile-image-holder">
             <h2>
-              Image{" "}
-              <EditIcon onClick={this.handleSetState} stateName="editImage" />
+              Image <EditIcon onClick={this.handleSetState} stateName="editImage" />
             </h2>
             <Image
               fileName={fileCursor.name}
@@ -302,8 +287,7 @@ class Profile extends React.Component<IProps, IState> {
           {this.renderImage()}
 
           <h2>
-            Personal Details{" "}
-            <EditIcon onClick={this.handleSetState} stateName="editProfile" />
+            Personal Details <EditIcon onClick={this.handleSetState} stateName="editProfile" />
           </h2>
 
           <div className="card" style={{ width: "18rem" }}>
@@ -313,9 +297,9 @@ class Profile extends React.Component<IProps, IState> {
               method: "concat"
             })}
             <ul className="list-group list-group-flush">
+              {this.getItems({ label: "DOB", items: ["dob"], format: 'date' })}
               {this.getItems({ items: ["street1", "street2"] })}
               {this.getItems({ items: ["city"] })}
-              {this.getItems({ label: "Date of Birth", items: ["dob"] })}
               {this.getItems({
                 items: ["region", "postcode"],
                 method: "concat"

@@ -25,7 +25,7 @@ export function invalidAuthCodeAlert(error) {
   let title: string;
   let obj = arguments[0];
   message = obj.reason || "Operation completed sucessfully.";
-  title = (error.error === 'invalidCode') ? 'Invalid Code' : 'Access Denied';
+  title = (error.error === 'invalidCode') ? 'Invalid Code' : 'Account Locked';
 
   swal({
     title: title,
