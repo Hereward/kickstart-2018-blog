@@ -114,6 +114,10 @@ export default class PageContent extends React.Component<IProps, IState> {
     return { __html: html };
   }
 
+  editLink() {
+    return (Meteor.user()) ? <EditIcon onClick={this.handleSetState} stateName="edit" /> : '';
+  }
+
   getLayout() {
     let layout: any;
     if (this.props.page) {
@@ -122,7 +126,7 @@ export default class PageContent extends React.Component<IProps, IState> {
         layout = (
           <div>
             <h2>
-              Edit Page{" "}<CancelEditIcon className='cancel-edit-icon' onClick={this.handleSetState} stateName='edit' />
+              Edit Page <CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="edit" />
             </h2>
             <div>{this.editLayout()}</div>
           </div>
@@ -132,8 +136,7 @@ export default class PageContent extends React.Component<IProps, IState> {
         layout = (
           <div>
             <h1>
-              {this.props.page.heading}{" "}
-              <EditIcon onClick={this.handleSetState} stateName='edit' />
+              {this.props.page.heading} {this.editLink()}
             </h1>
 
             <div dangerouslySetInnerHTML={this.createMarkup(this.props.page.body)} />

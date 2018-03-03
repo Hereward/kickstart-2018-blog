@@ -18,6 +18,24 @@ class Auth implements IAuth {
 export { Auth };
 */  
 
+
+export function invalidAuthCodeAlert(error) {
+
+  let message: string;
+  let title: string;
+  let obj = arguments[0];
+  message = obj.reason || "Operation completed sucessfully.";
+  title = (error.error === 'invalidCode') ? 'Invalid Code' : 'Access Denied';
+
+  swal({
+    title: title,
+    text: message,
+    showConfirmButton: true,
+    type: "error"
+  });
+}
+
+
 export function modalSuccessAlert(params: any) {
   let message: string;
   let title: string;

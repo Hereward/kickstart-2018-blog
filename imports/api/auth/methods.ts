@@ -17,10 +17,21 @@ if (Meteor.isServer) {
 
 const authCheck = (userId, methodName) => {
   if (!userId) {
-    throw new Meteor.Error(
-      `not-authorized [${methodName}]`,
-      "Must be logged in to access this function."
-    );
+    throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
+  }
+};
+
+const exceedAttemptsCheck = (verified, attemptsLeft) => {
+  //console.log("exceedAttemptsCheck", verified, attemptsLeft);
+  let message: string;
+  if (attemptsLeft < 1) {
+    message = "You have exceeded the maximum allowed number of authentication attempts. Please contact Admin.";
+    throw new Meteor.Error(`exceededAttempts`, message);
+  } else if (!verified && attemptsLeft > 0) {
+    message = `You have ${attemptsLeft} attempts left.`;
+    throw new Meteor.Error(`invalidCode`, message);
+  } else {
+    return true;
   }
 };
 
@@ -41,8 +52,7 @@ export const createAuth = new ValidatedMethod({
     let email = user.emails[0].address;
     let toDataURLObj = { error: "", url: "" };
 
-    console.log(`auth.create`,fields);
-
+    console.log(`auth.create`, fields);
 
     let id = Auth.insert({
       verified: false,
@@ -50,7 +60,7 @@ export const createAuth = new ValidatedMethod({
       private_key: key,
       keyObj: secret,
       QRCodeShown: false,
-      QRCodeURL: '',
+      QRCodeURL: "",
       owner: fields.owner
     });
 
@@ -60,9 +70,9 @@ export const createAuth = new ValidatedMethod({
         name: `Personal Web Wallet: ${email}`
       });
       key = secret.base32;
-      console.log(`auth.create: secret`,secret);
+      console.log(`auth.create: secret`, secret);
 
-      Auth.update(id, { $set: { private_key: key,  keyObj: secret} });
+      Auth.update(id, { $set: { private_key: key, keyObj: secret } });
 
       let future = new Future();
       QRCode.toDataURL(secret.otpauth_url, (err, dataUrl) => {
@@ -83,10 +93,8 @@ export const createAuth = new ValidatedMethod({
         Auth.update(id, { $set: { QRCodeURL: toDataURLObj.url } });
       }
     }
-    
-    //console.log(`auth.create: key = [${key}]`);
 
-    
+    //console.log(`auth.create: key = [${key}]`);
 
     console.log(`auth.create - DONE id=[${id}]`);
     return id;
@@ -119,9 +127,6 @@ export const setPrivateKey = new ValidatedMethod({
     console.log(`auth.setPrivateKey - DONE!`);
   }
 });
-
-
-
 
 export const generateQRCode = new ValidatedMethod({
   name: "auth.generateQRCode",
@@ -165,7 +170,6 @@ export const generateQRCode = new ValidatedMethod({
     //let authRecord: any;
     //authRecord = Auth.findOne({ owner: ownerId });
 
-    
     console.log(`auth.generateQRCode - DONE!`);
 
     if (toDataURLObj.error) {
@@ -192,7 +196,6 @@ export const currentValidToken = new ValidatedMethod({
     //console.log(`auth.currentValidToken - START`);
     let token: any = "000000";
     if (!this.isSimulation) {
-      
       if (fields.key) {
         token = speakeasy.totp({
           secret: fields.key,
@@ -234,6 +237,10 @@ export const verifyToken = new ValidatedMethod({
   run(fields) {
     authCheck("auth.currentValidToken", this.userId);
     let verified = true;
+    let ownerId = this.userId;
+    let authRecord: any;
+    let maxAttempts = Meteor.settings.public.enhancedAuth.maxAttempts;
+    authRecord = Auth.findOne({ owner: ownerId });
 
     if (!this.isSimulation) {
       verified = speakeasy.time.verify({
@@ -243,11 +250,23 @@ export const verifyToken = new ValidatedMethod({
         window: 2
       });
 
-      if (verified) {
-        let ownerId = this.userId;
-        let authRecord: any;
-        authRecord = Auth.findOne({ owner: ownerId });
-        Auth.update(authRecord._id, { $set: { verified: true, QRCodeShown: true } });
+      let attemptsLeft = maxAttempts - (authRecord.currentAttempts + 1);
+/*
+      console.log(`verifyToken 
+      current=[${authRecord.currentAttempts}]
+      maxAttempts=[${maxAttempts}]
+      attemptsLeft=[${attemptsLeft}]
+      `);
+*/
+      if (!verified) {
+        let currentAttempts = authRecord.currentAttempts + 1;
+        Auth.update(authRecord._id, { $set: { verified: false, QRCodeShown: true, currentAttempts: currentAttempts } });
+      }
+
+      let attemptsOK = exceedAttemptsCheck(verified, attemptsLeft);
+
+      if (attemptsOK) {
+        Auth.update(authRecord._id, { $set: { verified: true, QRCodeShown: true, currentAttempts: 0 } });
       }
     }
 

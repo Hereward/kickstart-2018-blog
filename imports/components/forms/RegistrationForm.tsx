@@ -5,9 +5,8 @@ import * as jquery from "jquery";
 import "jquery-validation";
 
 interface IProps {
-    handleChange: any;
-    handleSubmit: any;
-  
+  handleChange: any;
+  handleSubmit: any;
 }
 
 interface IState {
@@ -27,13 +26,13 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
 
   static propTypes = {
     handleSubmit: PropTypes.func,
-    handleChange: PropTypes.func,
+    handleChange: PropTypes.func
   };
 
   componentDidMount() {
     console.log(`ComponentDidMount`);
     jquery(`#${this.formID}`).validate({
-      submitHandler: (form) => {
+      submitHandler: form => {
         this.props.handleSubmit();
       }
     });

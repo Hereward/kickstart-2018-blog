@@ -1,3 +1,4 @@
+///<reference path="../../../index.d.ts"/>
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
@@ -8,10 +9,10 @@ import NavigationCancel from "material-ui/svg-icons/navigation/cancel";
 //import BlockUi from "react-block-ui";
 import { Link } from "react-router-dom";
 import "react-block-ui/style.css";
-import * as jquery from "jquery";
-import "jquery-validation";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
+import * as jquery from "jquery";
+import "jquery-validation";
 
 interface IProps {
   handleChange: any;

@@ -3,7 +3,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
 
-import "jquery-validation";
+//import "jquery-validation";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
@@ -11,7 +11,6 @@ import Widget from "./Widget";
 const ReactQuill = require("react-quill");
 import "react-quill/dist/quill.snow.css";
 import * as Icon from "../../modules/icons";
-
 
 interface IProps {
   handleChange: any;
@@ -24,16 +23,15 @@ interface IState {
   body: any;
 }
 
-
 export default class PageForm extends React.Component<IProps, IState> {
   formID: string = "ProfileForm";
   toolbarOptions = [
-    [{ 'header': [1, 2, 3, 4, false] }],
-    ['bold', 'italic', 'underline','strike', 'blockquote'],
-    [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': '-1'}, {'indent': '+1'}],
-    [{ 'indent': '-1'}, { 'indent': '+1' }],
-    ['link', 'image', 'video'],
-    ['clean']
+    [{ header: [1, 2, 3, 4, false] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    ["link", "image", "video"],
+    ["clean"]
   ];
 
   modules = {
@@ -77,18 +75,18 @@ export default class PageForm extends React.Component<IProps, IState> {
   };
 
   componentDidMount() {
-    jquery(window).keydown(function(event){
-        if(event.keyCode == 13) {
-          event.preventDefault();
-          return false;
-        }
-      });
+    jquery(window).keydown(function(event) {
+      if (event.keyCode == 13) {
+        event.preventDefault();
+        return false;
+      }
+    });
   }
 
   handleSetStateUpstream(content) {
     //console.log(`handleSetStateUpstream`, content, 'body');
 
-    this.props.handleSetState('body', content);
+    this.props.handleSetState("body", content);
   }
 
   handleSubmit(e) {
@@ -108,19 +106,13 @@ export default class PageForm extends React.Component<IProps, IState> {
   getWidget(props: any) {
     let widgetType = props.widgetType ? props.widgetType : "simple";
     return (
-      <Widget
-        widgetType={widgetType}
-        handleChange={this.handleChange}
-        dataObj={this.props.pageObj}
-        wProps={props}
-      />
+      <Widget widgetType={widgetType} handleChange={this.handleChange} dataObj={this.props.pageObj} wProps={props} />
     );
   }
 
   render() {
     return (
       <div>
-        
         <form id={this.formID} onSubmit={this.handleSubmit}>
           {this.getWidget({
             name: "heading",
@@ -129,9 +121,9 @@ export default class PageForm extends React.Component<IProps, IState> {
           })}
 
           <div className="form-group">
-          <label htmlFor="bodyText">Body Text:</label>
+            <label htmlFor="bodyText">Body Text:</label>
             <ReactQuill
-              id='bodyText'
+              id="bodyText"
               defaultValue={this.props.pageObj.body}
               onChange={this.handleSetStateUpstream}
               modules={this.modules}

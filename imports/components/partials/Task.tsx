@@ -6,7 +6,7 @@ import * as Methods from "../../api/tasks/methods";
 import * as Library from "../../modules/library";
 
 interface IProps {
-  task: {_id: string, checked: any, private: any};
+  task: { _id: string; checked: any; private: any };
   taskLabel: string;
   showPrivateButton: boolean;
   hide: boolean;
@@ -18,15 +18,13 @@ export default class Task extends React.Component<IProps> {
     super(props);
 
     //console.log('ZZZZZZZ SUB TASK:', this.props.task);
-
   }
-
 
   static propTypes = {
     task: PropTypes.object,
     taskLabel: PropTypes.string,
     showPrivateButton: PropTypes.bool,
-    hide: PropTypes.bool,
+    hide: PropTypes.bool
   };
 
   toggleChecked() {
@@ -65,14 +63,9 @@ export default class Task extends React.Component<IProps> {
     });
   }
 
-
-
-  getLayout() {
-
-  }
+  getLayout() {}
 
   render() {
-  
     //console.log(`TASK ID = [${this.props.task._id}]`);
     const taskClassName = classnames({
       checked: this.props.task.checked,
@@ -86,18 +79,10 @@ export default class Task extends React.Component<IProps> {
           &times;
         </button>
 
-        <input
-          type="checkbox"
-          readOnly
-          checked={!!this.props.task.checked}
-          onClick={this.toggleChecked.bind(this)}
-        />
+        <input type="checkbox" readOnly checked={!!this.props.task.checked} onClick={this.toggleChecked.bind(this)} />
 
         {this.props.showPrivateButton ? (
-          <button
-            className="toggle-private"
-            onClick={this.togglePrivate.bind(this)}
-          >
+          <button className="toggle-private" onClick={this.togglePrivate.bind(this)}>
             {this.props.task.private ? "Private" : "Public"}
           </button>
         ) : (

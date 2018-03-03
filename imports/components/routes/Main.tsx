@@ -6,10 +6,11 @@ import About from "../pages/About/AboutIndex";
 import Profile from "../pages/Profile/ProfileIndex";
 import ForgotPassWord from "../pages/User/ForgotPassWord";
 import Authenticator from "../pages/User/Authenticator";
+import Register from "../pages/User/Register";
 import SignIn from "../pages/User/SignIn";
 import VerifyEmail from "../pages/User/VerifyEmail";
 import ForgotPassWordReset from "../pages/User/ForgotPassWordReset";
-import Register from "../pages/User/Register";
+
 
 // boo
 //const path = yourIsLoggedInCheck ? '/loggedInHome' : '/login';
@@ -76,9 +77,15 @@ const Main = props => (
       <AuthRoute path="/forgot-password-reset" cProps={props} component={ForgotPassWordReset} condition={(!Meteor.user())} redirect='/' />
       <AuthRoute path="/register" cProps={props} component={Register} condition={(!Meteor.user())} redirect='/' />
       <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={(Meteor.user())} redirect='/' />
+     
     </Switch>
   </main>
 );
+
+/*
+ <AuthRoute path="/register" cProps={props} component={Register} condition={(!Meteor.user())} redirect='/' />
+      <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={(Meteor.user())} redirect='/' />
+      */
  
 export default Main;
 

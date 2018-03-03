@@ -11,14 +11,17 @@ interface IProps {
 }
 
 class About extends React.Component<IProps> {
-
   constructor(props) {
     super(props);
     //this.state = Object.assign({}, this.state, extraStates);
   }
 
   render() {
-    return <Transition><PageContent page={this.props.page} /></Transition>;
+    return (
+      <Transition>
+        <PageContent page={this.props.page} />
+      </Transition>
+    );
   }
 }
 
@@ -32,4 +35,3 @@ export default withRouter(
     return { page: page };
   })(About)
 );
-

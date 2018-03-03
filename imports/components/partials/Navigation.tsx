@@ -11,9 +11,8 @@ import ReactRouterPropTypes from "react-router-prop-types";
 import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import styled from "styled-components";
-import ActionVerifiedUser from 'material-ui/svg-icons/action/verified-user';
-import ActionHighlightOff from 'material-ui/svg-icons/action/highlight-off';
-
+import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
+import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
 
 import {
   Collapse,
@@ -86,7 +85,6 @@ const VerifiedIndicatorWrapper = styled.div`
 `;
 */
 
-
 const VerifiedIndicator = function vfi(verified) {
   let tag: any;
   let style: any;
@@ -99,11 +97,7 @@ const VerifiedIndicator = function vfi(verified) {
     tag = <ActionHighlightOff style={style} />;
   }
   return <div id="VerifiedIndicator">{tag}</div>;
-
-
 };
-
-
 
 declare var Bert: any;
 
@@ -137,11 +131,7 @@ class Navigation extends React.Component<IProps, IState> {
   componentDidMount() {}
 
   verifyEmailNotificationRequired() {
-    return (
-      this.props.signedIn &&
-      this.props.profile &&
-      (!this.props.enhancedAuth || this.props.authData)
-    );
+    return this.props.signedIn && this.props.profile && (!this.props.enhancedAuth || this.props.authData);
   }
 
   toggleNavbar() {
@@ -281,8 +271,7 @@ class Navigation extends React.Component<IProps, IState> {
         <Navbar color="dark" expand="md" className="main-nav" dark>
           <NavbarBrand>
             <span className="app-title">{this.props.ShortTitle}</span>
-            {this.props.Email}{" "}
-            {this.props.signedIn === true ? this.authVerifiedLayout() : ""}
+            {this.props.Email} {this.props.signedIn === true ? this.authVerifiedLayout() : ""}
           </NavbarBrand>
           <NavbarToggler onClick={this.toggleNavbar} />
           <Collapse isOpen={!this.state.collapsed} navbar>

@@ -98,8 +98,7 @@ class Index extends React.Component<IProps, IState> {
 
     //console.log(filteredTasks);
     return filteredTasks.map(task => {
-      const currentUserId =
-        this.props.currentUser && this.props.currentUser._id;
+      const currentUserId = this.props.currentUser && this.props.currentUser._id;
       const showPrivateButton = task.owner === currentUserId;
 
       return (
@@ -117,11 +116,7 @@ class Index extends React.Component<IProps, IState> {
   getForm() {
     if (this.props.currentUser) {
       return (
-        <form
-          id="todos-form"
-          className="new-task"
-          onSubmit={this.handleSubmitTodos}
-        >
+        <form id="todos-form" className="new-task" onSubmit={this.handleSubmitTodos}>
           <input
             type="text"
             ref={textInput => (this.textInputDOM = textInput)}
@@ -138,37 +133,39 @@ class Index extends React.Component<IProps, IState> {
   getCheckBox() {
     if (this.props.currentUser && this.props.taskCount) {
       return (
-        <Checkbox
-          label="Hide Completed Tasks"
-          checked={this.state.hideCompleted}
-          onClick={this.toggleHideCompleted}
-        />
+        <Checkbox label="Hide Completed Tasks" checked={this.state.hideCompleted} onClick={this.toggleHideCompleted} />
       );
     }
   }
 
-  render() {
+  todosSection() {
     let tasks: any;
     tasks = this.props.taskCount ? <div>Loading...</div> : <div />;
 
     if (this.props.tasks) {
       tasks = this.renderTasks();
     }
+    let todosLayout = (
+      <div className="todos">
+        <div className="todos-top-section">
+          <h2>Simple Todos App</h2>
+          <div className="todos-form-wrapper">
+            {this.getCheckBox()}
+            {this.getForm()}
+          </div>
+        </div>
+        <ul>{tasks}</ul>
+      </div>
+    );
+    return Meteor.user() ? todosLayout : "";
+  }
 
+  render() {
     return (
       <Transition>
         <div className="container">
           <PageContent page={this.props.page} />
-          <div className="todos">
-            <div className="todos-top-section">
-             <h2>Simple Todos App</h2>
-              <div className="todos-form-wrapper">
-                {this.getCheckBox()}
-                {this.getForm()}
-              </div>
-            </div>
-            <ul>{tasks}</ul>
-          </div>
+          {this.todosSection()}
         </div>
       </Transition>
     );

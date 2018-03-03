@@ -117,6 +117,7 @@ declare module "meteor/accounts-base" {
 
     function verifyEmail(token: string, func: any): any;
     function sendVerificationEmail(id: string): any;
+    function config(options: any): any;
   }
 }
 
