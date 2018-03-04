@@ -50,28 +50,9 @@ export default class ProfileForm extends React.Component<IProps, IState> {
     profileObj: PropTypes.object
   };
 
-  /*
-  PropTypes.shape({
-      _id: PropTypes.string,
-      fname: PropTypes.string,
-      initial: PropTypes.string,
-      lname: PropTypes.string,
-      street1: PropTypes.string,
-      street2: PropTypes.string,
-      city: PropTypes.string,
-      region: PropTypes.string,
-      postcode: PropTypes.string,
-      country: PropTypes.string,
-      verificationEmailSent: PropTypes.number,
-      new: PropTypes.bool,
-      createdAt: PropTypes.date,
-      owner: PropTypes.string
-    })
-    */
-
   componentDidMount() {
     jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
-      trigger: "custom", // default is 'hover' which is no good here
+      trigger: "custom",
       animation: "slide",
       theme: "tooltipster-light",
       zIndex: 1400
@@ -84,7 +65,6 @@ export default class ProfileForm extends React.Component<IProps, IState> {
         element.tooltipster("open");
       },
       success: function success(label, element) {
-        //console.log(`SUCCESS (jquery validate) element=[${element.id}]`);
         jquery(`#${element.id}`).tooltipster("close");
       },
       submitHandler: form => {
@@ -93,34 +73,11 @@ export default class ProfileForm extends React.Component<IProps, IState> {
     });
   }
 
-  /*
-      jquery.validator.addMethod(
-      "valueNotEquals",
-      function valueNotEquals(value, element, arg) {
-        return arg !== value;
-      },
-      "Value must not equal arg."
-    );
-      rules: {
-        country: {
-          valueNotEquals: ''
-        },
-        region: {
-          valueNotEquals: ''
-        }
-      },
-      messages: {
-        country: { valueNotEquals: "Please select an item!" },
-        region: { valueNotEquals: "Please select an item!" }
-      },
-      */
-
   handleSetStateUpstream(sVar, sVal) {
     this.props.handleSetState(sVar, sVal);
   }
 
   handleSubmit() {
-    //e.preventDefault();
     this.setState({
       disableSubmit: true
     });

@@ -1,7 +1,6 @@
 import { Meteor } from "meteor/meteor";
-//import { Session } from 'meteor/session';
 import * as React from "react";
-import * as PropTypes from 'prop-types';
+import * as PropTypes from "prop-types";
 import { Accounts } from "meteor/accounts-base";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { withRouter } from "react-router-dom";
@@ -10,7 +9,6 @@ import QRCode from "react-qr-code";
 import { Alert } from "reactstrap";
 import Transition from "../../partials/Transition";
 import RegistrationForm from "../../forms/RegistrationForm";
-//import { createProfile } from "../../../api/profiles/methods";
 import * as ProfileMethods from "../../../api/profiles/methods";
 import * as AuthMethods from "../../../api/auth/methods";
 import * as Library from "../../../modules/library";
@@ -29,7 +27,6 @@ interface IState {
   password2: string;
 }
 
-
 class Register extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
@@ -40,20 +37,16 @@ class Register extends React.Component<IProps, IState> {
     };
     this.registerUser = this.registerUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
-
-    let objData = JSON.stringify(this.props);
-    console.log(`Register: objData: [${objData}]`);
   }
 
   static propTypes = {
     enhancedAuth: PropTypes.bool,
-    history: ReactRouterPropTypes.history,
+    history: ReactRouterPropTypes.history
   };
 
   componentDidUpdate() {}
 
   sendVerificationEmail(id) {
-
     let authFields = {
       id: id
     };
@@ -63,25 +56,8 @@ class Register extends React.Component<IProps, IState> {
       if (err) {
         Library.modalErrorAlert(err.reason);
         console.log(`sendVerificationEmail error`, err);
-      } else {
-        console.log(`sendVerificationEmail success`);
       }
     });
-
-    /*
-    Meteor.call("user.sendVerificationEmail", (error, response) => {
-      if (error) {
-        console.warn(error);
-        swal({
-          title: "Verification email not sent.",
-          text: "There was a problem sending the verification email.",
-          showConfirmButton: true,
-          type: "error"
-        });
-      }
-      console.log(`sendVerificationEmail: done. response =[${response}]`);
-    });
-    */
   }
 
   handleChange(e) {
@@ -92,14 +68,7 @@ class Register extends React.Component<IProps, IState> {
     this.setState({ [id]: value });
   }
 
-  registerUserZ(event) {
-    console.log(`FORM SUBMIT >> EMAIL =  ${this.state.email}`);
-  }
-
   registerUser(event) {
-    //event.preventDefault();
-    //console.log(`FORM SUBMIT >> EMAIL =  ${this.state.email}`);
-
     let email = this.state.email.trim();
     let password1 = this.state.password1.trim();
     let password2 = this.state.password2.trim();
@@ -124,16 +93,15 @@ class Register extends React.Component<IProps, IState> {
             return Library.modalErrorAlert(err.reason);
           } else {
             let profileFields = {
-              fname: "Adolf",
-              initial: "K",
-              lname: "Hitler"
+              fname: "",
+              initial: "",
+              lname: ""
             };
 
             ProfileMethods.createProfile.call(profileFields, (err, id) => {
               if (err) {
                 Library.modalErrorAlert(err.reason);
               } else {
-                //console.log(`profile successfully created`);
                 this.sendVerificationEmail(id);
               }
             });
@@ -149,16 +117,10 @@ class Register extends React.Component<IProps, IState> {
                 console.log(`createAuth error: [${err.reason}]`);
               } else {
                 console.log(`auth successfully created. res = [${id}]`);
-               
               }
             });
 
-
-            //console.log("Successfully created account!");
-            //this.sendVerificationEmail(0);
-
             if (this.props.enhancedAuth) {
-              //this.props.history.push("/");
               this.props.history.push("/authenticate");
             } else {
               this.props.history.push("/");
@@ -176,32 +138,9 @@ class Register extends React.Component<IProps, IState> {
     }
   }
 
-  /*
-
-  verificationNotice() {
-    if (this.props.verificationEmailSent) {
-      return (
-        <div className="messages">
-          <Alert color="success">
-            A verification email has been sent. Please check your email and
-            click on the verification link.
-          </Alert>
-        </div>
-      );
-    }
-  }
-
-  */
-
-
   getLayout() {
     let layout: any;
-    let form = (
-      <RegistrationForm
-        handleChange={this.handleChange}
-        handleSubmit={this.registerUser}
-      />
-    );
+    let form = <RegistrationForm handleChange={this.handleChange} handleSubmit={this.registerUser} />;
 
     layout = form;
 

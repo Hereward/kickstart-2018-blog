@@ -12,7 +12,6 @@ import Transition from "../../partials/Transition";
 import ProfileForm from "../../forms/ProfileForm";
 import * as ProfileMethods from "../../../api/profiles/methods";
 import * as Library from "../../../modules/library";
-//import * as Icon from "../../../modules/icons";
 import { EditIcon, CancelEditIcon } from "../../../modules/icons";
 
 import UploadForm from "../../forms/UploadForm";
@@ -44,12 +43,7 @@ class Profile extends React.Component<IProps, IState> {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSetState = this.handleSetState.bind(this);
-    //this.updateProfileImage = this.updateProfileImage.bind(this);
-    //let fieldsObj = this.fieldMapper("init");
-    //let stateObj = Object.assign({}, fieldsObj, { editImage: false });
-
-    this.state = this.fieldMapper("init") as any; //this.fieldsToObject();
-    console.log(`ProfileIndex constructor`, this.state, this.props);
+    this.state = this.fieldMapper("init") as any;
   }
 
   fieldMapper(type, props = "") {
@@ -81,28 +75,12 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   initState(props) {
-    let obj = this.fieldMapper("props", props); //this.fieldsToProps(props);
+    let obj = this.fieldMapper("props", props); 
     this.setState(obj);
   }
 
-  /*
-  updateProfileImage(imageID) {
-    let profileFields = { id: this.props.profile._id, image_id: imageID };
-
-    ProfileMethods.updateProfileImage.call(profileFields, err => {
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        console.log(`ProfileMethods.updateProfileImage failed`, err);
-      } else {
-        //this.setEditor(false);
-      }
-    });
-
-  }
-  */
-
   handleSubmit() {
-    let profileFields = this.fieldMapper("method"); //this.fieldsToMethod();
+    let profileFields = this.fieldMapper("method"); 
 
     ProfileMethods.updateProfile.call(profileFields, err => {
       if (err) {
@@ -139,9 +117,8 @@ class Profile extends React.Component<IProps, IState> {
     this.setState({ editProfile: state });
   }
 
-
   format(value, type) {
-    if (type === 'date') {
+    if (type === "date") {
       return dateFormat(value, "dd mmmm yyyy");
     } else {
       return value;
@@ -209,8 +186,6 @@ class Profile extends React.Component<IProps, IState> {
     return layout;
   }
 
-  // <UploadForm {...this.props} />
-
   renderImage() {
     let layout: any;
     if (this.props.profile) {
@@ -232,7 +207,6 @@ class Profile extends React.Component<IProps, IState> {
         );
       } else if (this.props.myImages && this.props.myImages[0]) {
         let fileCursor = this.props.myImages[0];
-        console.log(`renderImage`, fileCursor, this.props.myImages);
         let link = Images.findOne({ _id: fileCursor._id }).link();
 
         layout = (
@@ -256,22 +230,6 @@ class Profile extends React.Component<IProps, IState> {
 
     return layout;
   }
-
-  /*
-  iconEdit(type = "editProfile") {
-    return (
-      <IconButton
-        type="button"
-        tooltip="Edit"
-        onClick={() => {
-          this.setState({ [type]: true });
-        }}
-      >
-        <EditorModeEdit />
-      </IconButton>
-    );
-  }
-  */
 
   getLayout() {
     let layout: any;
@@ -297,7 +255,7 @@ class Profile extends React.Component<IProps, IState> {
               method: "concat"
             })}
             <ul className="list-group list-group-flush">
-              {this.getItems({ label: "DOB", items: ["dob"], format: 'date' })}
+              {this.getItems({ label: "DOB", items: ["dob"], format: "date" })}
               {this.getItems({ items: ["street1", "street2"] })}
               {this.getItems({ items: ["city"] })}
               {this.getItems({
@@ -334,117 +292,3 @@ export default withRouter(
     return { myImages };
   })(Profile)
 );
-
-/*
-interface IState {
-  fname: string;
-  initial: string;
-  lname: string;
-  street1: string;
-  street2: string;
-  city: string;
-  region: string;
-  postcode: string;
-  country: string;
-  editProfile: boolean;
-}
-*/
-
-/* {
-      id: this.props.profile._id,
-      fname: this.state.fname,
-      initial: this.state.initial,
-      lname: this.state.lname,
-      street1: this.state.street1,
-      street2: this.state.street2,
-      city: this.state.city,
-      region: this.state.region,
-      postcode: this.state.postcode,
-      country: this.state.country
-    };
-    */
-
-//console.log(`Profile initState`, obj, this.state);
-/*
-    this.setState({
-      fname: props.fname,
-      initial: props.initial,
-      lname: props.lname,
-      street1: props.street1,
-      street2: props.street2,
-      city: props.city,
-      region: props.region,
-      postcode: props.postcode,
-      country: props.country
-    });
-    */
-
-/*
-  customTagItem(key, el, cl, it) {
-    const CustomTag = el;
-    let layout = <CustomTag key={key} className={cl}>{it.trim()}</CustomTag>;
-    return layout;
-  }
-  */
-
-//      <li className={iProps.eClass}>{this.props.profile[item]}</li>
-// layout.push(<li className={iProps.eClass}>{content.trim()}</li>);
-
-/*
-  getItemsz(items: any[], method:string='push', eClass:string='list-group-item') {
-    //let layout = <div>hello</div>;
-
-    
-    let layout = [];
-    let content = '';
-    items.forEach(function iterateItem(item) {
-      if (this.props.profile[item]) {
-        if (method === 'push') {
-          layout.push(<li className='list-group-item'>{this.props.profile[item]}</li>);
-        } else if  (method === 'concat') {
-          content += `${this.props.profile[item]} `;
-        }
-      }
-    }.bind(this));
-
-    if (eClass === 'card-header') {
-      layout.push(<div className={eClass}>{content.trim()}</div>);
-    } else if (method === 'concat') {
-      layout.push(<li className={eClass}>{content.trim()}</li>);
-    }
-    
-
-    //console.log(`getItem`, item, this.props.profile[item]);
-    //layout.push((this.props.profile[item]) ?
-    //<li className='list-group-item'>{this.props.profile[item]}</li> : '');
-    return layout;
-  }
-  */
-
-/*
-         {this.getItems(['street1','street2'])}
-              {this.getItems(['city'])}
-              {this.getItems(['region','postcode'], 'concat')}
-              {this.getItems(['country'])}
- */
-
-/*
-  {this.getItem('street2')}
-              {this.getItem('city')}
-              {this.getItem('region')}
-              {this.getItem('postcode')}
-              {this.getItem('country')}
-              */
-
-/*
-
-  <SingleWidgetForm
-          handleChange={this.handleChange}
-          handleSubmit={this.handleSubmit}
-          name='fname'
-          type='input'
-          label='First Name'
-          data={this.props.profile}
-        />
-
-        */

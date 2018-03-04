@@ -1,12 +1,6 @@
-// ///<reference path="../../../index.d.ts"/>
-//import { Meteor } from "meteor/meteor";
-//import { Email } from "meteor/email";
 import { Accounts } from "meteor/accounts-base";
 import "./api";
 
-//let process = {env: {MAIL_URL: 'jam'}};
-
-//Meteor.startup(() => {
 Accounts.config({
   loginExpirationInDays: 0.16
 });
@@ -21,4 +15,3 @@ let env = `smtp://${encodeURIComponent(smtp.username)}:${encodeURIComponent(smtp
 
 console.log(`SERVER ENV =[${env}]`);
 process.env.MAIL_URL = env;
-//});

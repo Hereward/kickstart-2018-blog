@@ -1,26 +1,4 @@
-/*global Bert */
-
-/*
-interface IAuth {
-    isAcceptable(s: string): boolean;
-}
-
-class Auth implements IAuth {
-    constructor(props) {
-        //super(props);
-      }
-
-    isAcceptable(s: string) {
-        return s.length === 5 && numberRegexp.test(s);
-    }
-}
-
-export { Auth };
-*/  
-
-
 export function invalidAuthCodeAlert(error) {
-
   let message: string;
   let title: string;
   let obj = arguments[0];
@@ -68,7 +46,6 @@ export function modalErrorAlert(params: any) {
     title = arguments[2] || "Oops, something went wrong!";
     detail = arguments[0] || "Please try again.";
   }
-  // customDetail='', customMessage='', customTitle=''
 
   if (message) {
     text += message;
@@ -89,7 +66,6 @@ export function modalErrorAlert(params: any) {
 }
 
 export function dashBoardTip(props) {
-  //console.log(`dashBoardTip SignedIn=[${props.signedIn}]`);
   let verifiedFlag: boolean;
   let tip: string;
   if (!props.enhancedAuth || !props.authData) {
@@ -98,7 +74,6 @@ export function dashBoardTip(props) {
       ? "Your account is verified."
       : "Your email address is not verified. ";
   } else {
-    //console.log(`props.authData.verified`,props.authData.verified);
     verifiedFlag = props.signedIn && props.authData.verified && props.EmailVerified;
     tip = verifiedFlag ? "Your session was verified." : "Unverified session: ";
 
@@ -121,7 +96,6 @@ export function userModelessAlert(type, props) {
   if (!props.signedIn) { return; }
 
   let objData = JSON.stringify(props);
-  //console.log(`userModelessAlert [${type}] [${objData}]`);
 
   let msg = "";
   let alertType = "";

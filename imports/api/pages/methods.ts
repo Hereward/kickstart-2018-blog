@@ -6,10 +6,7 @@ import { Pages } from "./publish";
 
 const authCheck = (userId, methodName) => {
   if (!userId) {
-    throw new Meteor.Error(
-      `not-authorized [${methodName}]`,
-      "Must be logged in to access this function."
-    );
+    throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
   }
 };
 
@@ -19,7 +16,7 @@ export const createPage = new ValidatedMethod({
   validate: new SimpleSchema({
     name: { type: String },
     heading: { type: String },
-    body: { type: String },
+    body: { type: String }
   }).validator(),
 
   run(fields) {
@@ -27,9 +24,9 @@ export const createPage = new ValidatedMethod({
     authCheck("pages.create", this.userId);
 
     let id = Pages.insert({
-      name: '',
-      heading: '',
-      body: '',
+      name: "",
+      heading: "",
+      body: "",
       createdAt: new Date(),
       owner: this.userId
     });
@@ -39,14 +36,12 @@ export const createPage = new ValidatedMethod({
   }
 });
 
-
-
 export const updatePage = new ValidatedMethod({
   name: "pages.update",
   validate: new SimpleSchema({
     id: { type: String },
     heading: { type: String },
-    body: { type: String },
+    body: { type: String }
   }).validator(),
 
   run(fields) {
@@ -56,7 +51,7 @@ export const updatePage = new ValidatedMethod({
     Pages.update(fields.id, {
       $set: {
         heading: fields.heading,
-        body: fields.body,
+        body: fields.body
       }
     });
 

@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
 import { Accounts } from "meteor/accounts-base";
-import * as PropTypes from 'prop-types';
+import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
 import * as React from "react";
 import { withRouter } from "react-router-dom";
@@ -10,9 +10,6 @@ import * as AuthMethods from "../../../api/auth/methods";
 import Transition from "../../partials/Transition";
 import * as Library from "../../../modules/library";
 
-//  
-//     enhancedAuth: PropTypes.boolean,
-// signedIn: PropTypes.boolean
 interface IProps {
   enhancedAuth: boolean;
   history: any;
@@ -23,26 +20,19 @@ interface IProps {
 
 interface IState {}
 
-
 class VerifyEmail extends React.Component<IProps, IState> {
   token: string;
 
   constructor(props) {
     super(props);
     this.checkToken = this.checkToken.bind(this);
-    //let boo = jquery(location).attr("href");
-    let url = window.location.href; //jquery(location).attr("href");
+    let url = window.location.href;
     this.token = url.substr(url.lastIndexOf("/") + 1);
-    console.log(`constructor props`, this.props);
   }
 
-  componentDidUpdate() {
+  componentDidUpdate() {}
 
-  }
-
-  componentWillReceiveProps(nextProps) {
-   
-  }
+  componentWillReceiveProps(nextProps) {}
 
   componentWillMount() {
     this.checkToken();
@@ -50,19 +40,16 @@ class VerifyEmail extends React.Component<IProps, IState> {
 
   static propTypes = {
     history: ReactRouterPropTypes.history,
-    sillyProp: PropTypes.string,
+    sillyProp: PropTypes.string
   };
 
-  // 
+  //
   checkToken() {
     Accounts.verifyEmail(
       this.token,
       function verified(err) {
         if (!err) {
-          //Library.modalSuccessAlert({ message: "Your email was verified." });
-
           if (this.props.enhancedAuth) {
-
             AuthMethods.setVerified.call({ verified: false }, (err, res) => {
               if (err) {
                 Library.modalErrorAlert(err.reason);
@@ -73,7 +60,6 @@ class VerifyEmail extends React.Component<IProps, IState> {
             this.props.history.push("/authenticate");
           } else {
             this.props.history.push("/");
-            console.log("password reset: redirect to /");
           }
         } else {
           Library.modalErrorAlert({
@@ -86,7 +72,6 @@ class VerifyEmail extends React.Component<IProps, IState> {
       }.bind(this)
     );
   }
-  //export default class SignIn extends Component {
 
   getLayout() {
     return <div className="lead">Verifying....</div>;
@@ -106,5 +91,3 @@ export default withRouter(
     return {};
   })(VerifyEmail)
 );
-
-

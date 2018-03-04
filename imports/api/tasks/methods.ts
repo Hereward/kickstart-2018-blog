@@ -33,60 +33,46 @@ export const remove = new ValidatedMethod({
     taskId: { type: String }
   }).validator(),
   run(fields) {
-    console.log(`tasks.remove SERVER [${fields.taskId}]`);
     task = Tasks.findOne(fields.taskId);
-    console.log(JSON.stringify(task));
-    
+
     if (task.private && task.owner !== this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    
+
     Tasks.remove(fields.taskId);
-    console.log(`tasks.remove SERVER - DONE!`);
   }
 });
-
 
 export const setChecked = new ValidatedMethod({
   name: "tasks.setChecked",
   validate: new SimpleSchema({
-    taskId: {type: String},
-    checked: {type: Boolean}
+    taskId: { type: String },
+    checked: { type: Boolean }
   }).validator(),
   run(fields) {
-    console.log(`tasks.setChecked SERVER [${fields.taskId}] [${fields.checked}]`);
-    
     task = Tasks.findOne(fields.taskId);
-    console.log(JSON.stringify(task));
-    
+
     if (task.private && task.owner !== this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    
+
     Tasks.update(fields.taskId, { $set: { checked: fields.checked } });
-    console.log(`tasks.setChecked - DONE!`);
   }
 });
-
 
 export const setPrivate = new ValidatedMethod({
   name: "tasks.setPrivate",
   validate: new SimpleSchema({
-    taskId: {type: String},
-    private: {type: Boolean}
+    taskId: { type: String },
+    private: { type: Boolean }
   }).validator(),
   run(fields) {
-    console.log(`tasks.setPrivate SERVER [${fields.taskId}] [${fields.private}]`);
-    
     task = Tasks.findOne(fields.taskId);
-    console.log(JSON.stringify(task));
-    
+
     if (task.private && task.owner !== this.userId) {
       throw new Meteor.Error("not-authorized");
     }
-    
+
     Tasks.update(fields.taskId, { $set: { private: fields.private } });
-    console.log(`tasks.setPrivate SERVER - DONE!`);
   }
 });
-

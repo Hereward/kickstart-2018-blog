@@ -1,13 +1,7 @@
-/*global Bert */
-
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import * as PropTypes from "prop-types";
-
 import ReactRouterPropTypes from "react-router-prop-types";
-
-// import * as Bert from "meteor/themeteorchef:bert";
-
 import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import styled from "styled-components";
@@ -60,31 +54,6 @@ interface IState {
   collapsed: boolean;
 }
 
-//import { browserHistory } from 'react-router';
-/*
-const VerifiedIndicator = styled.div`
-  border-radius: 50%;
-  height: 1rem;
-  width: 1rem;
-  display: inline-block;
-  position: relative;
-  top: 0.2rem;
-  background-color: ${props => (props["data-verified"] ? "lime" : "red")};
-`;
-*/
-
-/*
-const VerifiedIndicatorWrapper = styled.div`
-  height: 1rem;
-  width: 1rem;
-  display: inline-block;
-  position: relative;
-  top: 0.2rem;
-  color: white;
-  background-color: ${props => (props["data-verified"] ? "lime" : "red")};
-`;
-*/
-
 const VerifiedIndicator = function vfi(verified) {
   let tag: any;
   let style: any;
@@ -113,8 +82,6 @@ class Navigation extends React.Component<IProps, IState> {
       isOpen: false,
       collapsed: true
     };
-
-    console.log(`Navigation`, this.props, this.state);
   }
 
   componentWillReceiveProps() {}
@@ -122,7 +89,6 @@ class Navigation extends React.Component<IProps, IState> {
   componentWillUpdate(nextProps) {}
 
   componentDidUpdate() {
-    //console.log(`componentDidUpdate`);
     if (this.verifyEmailNotificationRequired()) {
       Library.userModelessAlert("verifyEmail", this.props);
     }
@@ -176,7 +142,6 @@ class Navigation extends React.Component<IProps, IState> {
       }
     });
     Meteor.logout(() => {
-      //console.log("Successfull log out!");
       this.props.history.push("/");
     });
   }
@@ -241,7 +206,7 @@ class Navigation extends React.Component<IProps, IState> {
     let verifiedFlag = tipObj.verified;
     let verified = (
       <span>
-        <span className="d-none d-sm-inline">{this.props.emailDashDisplay}</span>{' '}
+        <span className="d-none d-sm-inline">{this.props.emailDashDisplay}</span>{" "}
         <div className="d-inline-block">
           {VerifiedIndicator(verifiedFlag)}
           <UncontrolledTooltip placement="right" target="VerifiedIndicator">
@@ -298,10 +263,8 @@ export default withRouter(
     let userDataHandle = Meteor.subscribe("userData");
     let authDataReady = Meteor.subscribe("enhancedAuth");
     let authData: any;
-    //authData = {verified: false};
     if (Meteor.user()) {
       if (authDataReady) {
-        //console.log(`Loading Auth Data`);
         authData = Auth.findOne({ owner: Meteor.userId() });
       }
     }

@@ -2,7 +2,6 @@ import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import { _ } from "meteor/underscore";
 import Image from "../partials/Image";
-//import * as ProfileMethods from "../../api/profiles/methods";
 
 interface IProps {
   Images: any;
@@ -32,10 +31,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
       progress: 0,
       inProgress: false
     };
-    console.log(`UploadForm constructor`, this.props);
   }
-
-
 
   getImageFromServer() {
     console.log("getImageFromServer", this.getImageFromServerURLObj.value);
@@ -46,14 +42,11 @@ export default class UploadForm extends React.Component<IProps, IState> {
   getFromServer(e) {}
 
   uploadIt(e) {
-    //"use strict";
     e.preventDefault();
 
     let self = this;
 
     if (e.currentTarget.files && e.currentTarget.files[0]) {
-      // We upload only one file, in case
-      // there was multiple files selected
       let file = e.currentTarget.files[0];
 
       if (file) {
@@ -85,21 +78,10 @@ export default class UploadForm extends React.Component<IProps, IState> {
           console.log("On end File Object: ", fileObj);
         });
 
-        uploadInstance.on("uploaded", function uploadOnUploaded(
-          error,
-          fileObj
-        ) {
-          //console.log("uploaded: ", fileObj);
+        uploadInstance.on("uploaded", function uploadOnUploaded(error, fileObj) {
           console.log(`uploaded image: [${self.props.profile._id}]`, self.props.profile, fileObj._id);
-          Meteor.call("profileImage.update", {id: self.props.profile._id, image_id: fileObj._id});
+          Meteor.call("profileImage.update", { id: self.props.profile._id, image_id: fileObj._id });
 
-          //self.props.updateImage(fileObj._id);
-          //self.updateResolution(fileObj);
-
-          // Remove the filename from the upload box
-          //self.refs["fileinput"].value = "";
-
-          // Reset our state for the next file
           self.setState({
             uploading: [],
             progress: 0,
@@ -111,10 +93,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
           console.log("Error during upload: " + error);
         });
 
-        uploadInstance.on("progress", function uploadProgress(
-          progress,
-          fileObj
-        ) {
+        uploadInstance.on("progress", function uploadProgress(progress, fileObj) {
           console.log("Upload Percentage: " + progress);
           // Update our progress bar
           self.setState({
@@ -127,8 +106,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
     }
   }
 
-  // This is our progress bar, bootstrap styled
-  // Remove this function if not needed
   showUploads() {
     console.log("**********************************", this.state.uploading);
 
@@ -146,9 +123,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
               role="progressbar"
               className="progress-bar"
             >
-              <span className="sr-only">
-                {this.state.progress}% Complete (success){" "}
-              </span>
+              <span className="sr-only">{this.state.progress}% Complete (success) </span>
               <span>{this.state.progress}%</span>
             </div>
           </div>
@@ -159,19 +134,10 @@ export default class UploadForm extends React.Component<IProps, IState> {
 
   render() {
     if (!this.props.loading) {
-      //"use strict";
       let showit = "";
-
-      //let fileCursors = this.data.docs;
       let fileCursors = this.props.myImages;
-
-      // Run through each file that the user has stored
-      // (make sure the subscription only sends files owned by this user)
-
       if (fileCursors) {
         showit = fileCursors.map((aFile, key) => {
-          // console.log('A file: ', aFile.link(), aFile.get('name'));
-
           let link = this.props.Images.findOne({ _id: aFile._id }).link(); //The "view/download" link
 
           // Send out components that show details of each file
@@ -193,7 +159,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
       }
 
       return (
-        <div className='upload-controls'>
+        <div className="upload-controls">
           <div className="form-group">
             <div className="custom-file">
               <input
@@ -216,7 +182,9 @@ export default class UploadForm extends React.Component<IProps, IState> {
                 className="form-control"
                 type="text"
                 id="getImageFromServerURL"
-                ref={(input) => { this.getImageFromServerURLObj = input;}}
+                ref={input => {
+                  this.getImageFromServerURLObj = input;
+                }}
                 placeholder="Enter image URL"
               />
             </div>
@@ -230,7 +198,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
               >
                 Get web image
               </button>
-             
             </div>
           </div>
 

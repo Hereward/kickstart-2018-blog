@@ -45,7 +45,6 @@ export default withTracker(() => {
   }
 
   let emailDashDisplay = " - Guest";
-  //let authVerified = false;
   let EmailVerified = false;
   let signedIn = false;
   let profile: any;
@@ -75,4 +74,3 @@ export default withTracker(() => {
   };
 })(App);
 
-// && typeof Meteor.user().enhancedAuth !== "undefined"

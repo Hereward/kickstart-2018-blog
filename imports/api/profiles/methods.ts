@@ -6,10 +6,7 @@ import { Profiles } from "./publish";
 
 const authCheck = (userId, methodName) => {
   if (!userId) {
-    throw new Meteor.Error(
-      `not-authorized [${methodName}]`,
-      "Must be logged in to access this function."
-    );
+    throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
   }
 };
 
@@ -27,17 +24,17 @@ export const createProfile = new ValidatedMethod({
     authCheck("profiles.create", this.userId);
 
     let id = Profiles.insert({
-      fname: '',
-      initial: '',
-      lname: '',
-      dob:'',
-      street1: '',
-      street2: '',
-      city: '',
-      region: '',
-      postcode: '',
-      country: '',
-      image_id: '',
+      fname: "",
+      initial: "",
+      lname: "",
+      dob: "",
+      street1: "",
+      street2: "",
+      city: "",
+      region: "",
+      postcode: "",
+      country: "",
+      image_id: "",
       verificationEmailSent: 0,
       new: true,
       createdAt: new Date(),
@@ -53,8 +50,7 @@ export const updateProfileImage = new ValidatedMethod({
   name: "profileImage.update",
   validate: new SimpleSchema({
     id: { type: String },
-    image_id: { type: String },
-  
+    image_id: { type: String }
   }).validator(),
 
   run(fields) {
@@ -129,13 +125,12 @@ export const sendVerificationEmail = new ValidatedMethod({
       let emailResServer = Accounts.sendVerificationEmail(this.userId);
       if (!emailResServer) {
         verificationEmailSent = 2;
-        //throw new Meteor.Error("Could not send verification email");
+        throw new Meteor.Error("Could not send verification email");
       }
     }
 
     Profiles.update(fields.id, {
       $set: { verificationEmailSent: verificationEmailSent }
     });
-    console.log(`profiles.sendVerificationEmail - DONE!`);
   }
 });

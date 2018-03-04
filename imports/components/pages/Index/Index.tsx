@@ -2,12 +2,10 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as ReactDOM from "react-dom";
 import Checkbox from "material-ui/Checkbox";
-
 import { Tasks } from "../../../api/tasks/publish";
 import Task from "../../partials/Task";
 import PageContent from "../../partials/PageContent";
 import Transition from "../../partials/Transition";
-
 import * as Methods from "../../../api/tasks/methods";
 import * as Library from "../../../modules/library";
 import * as Icon from "../../../modules/icons";
@@ -52,30 +50,22 @@ class Index extends React.Component<IProps, IState> {
   }
 
   handleSetState(sVar, sVal) {
-    //console.log(`handleSetState (About)`, sVar, sVal);
     this.setState({ [sVar]: sVal });
   }
 
   handleSubmitTodos(event) {
     event.preventDefault();
 
-    // Find the text field via the React ref
-    const text = this.state.textInput; //ReactDOM.findDOMNode(this.state.textInput).value.trim();
+    const text = this.state.textInput;
 
     let taskFields = { text: text };
 
     Methods.create.call(taskFields, (err, res) => {
-      //console.log("createTask.call");
       if (err) {
         Library.modalErrorAlert(err.reason);
-      } else {
-        //console.log(`task successfully created`);
       }
     });
 
-    // Clear form
-    //ReactDOM.findDOMNode(this.textInputDOM).value = "";
-    //this.textInputDOM.value = "";
     this.setState({ textInput: "" });
   }
 
@@ -96,7 +86,6 @@ class Index extends React.Component<IProps, IState> {
   renderTasks() {
     let filteredTasks = this.props.tasks;
 
-    //console.log(filteredTasks);
     return filteredTasks.map(task => {
       const currentUserId = this.props.currentUser && this.props.currentUser._id;
       const showPrivateButton = task.owner === currentUserId;
@@ -180,8 +169,6 @@ export default withTracker(() => {
 
   let query = Tasks.find({}, { sort: { createdAt: -1 } });
   count = query.count();
-  //console.log(`COUNT = ${count}`);
-  //tasks = Tasks.find({}, { sort: { createdAt: -1 } }).fetch();
 
   let page: any;
   let PagesDataReady = Meteor.subscribe("pages");

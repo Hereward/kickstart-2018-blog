@@ -5,8 +5,6 @@ import * as PropTypes from "prop-types";
 import IconButton from "material-ui/IconButton";
 import ActionCheckCircle from "material-ui/svg-icons/action/check-circle";
 import NavigationCancel from "material-ui/svg-icons/navigation/cancel";
-
-//import BlockUi from "react-block-ui";
 import { Link } from "react-router-dom";
 import "react-block-ui/style.css";
 import "tooltipster";
@@ -29,11 +27,8 @@ export default class SingleWidgetForm extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
-    //this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.submitMe = this.handleChange.bind(this);
-
-    //this.state = {};
   }
 
   static propTypes = {
@@ -44,8 +39,8 @@ export default class SingleWidgetForm extends React.Component<IProps, IState> {
 
   componentDidMount() {
     jquery(`#${this.props.name}`).tooltipster({
-      trigger: "custom", // default is 'hover' which is no good here
-      onlyOne: true // allow multiple tips to be open at a time
+      trigger: "custom",
+      onlyOne: true
     });
 
     let FormID = `${this.props.name}Form`;
@@ -65,16 +60,6 @@ export default class SingleWidgetForm extends React.Component<IProps, IState> {
     });
   }
 
-  /*
-  handleSubmit(e) {
-    e.preventDefault();
-    jQuery(`#${this.props.name}`).tooltipster('content', 'boo');
-    console.log("fuck you.");
-    //this.setState({});
-    //this.props.handleSubmit(e);
-  }
-  */
-
   handleChange(e) {
     this.props.handleChange(e);
   }
@@ -92,12 +77,7 @@ export default class SingleWidgetForm extends React.Component<IProps, IState> {
     };
     let buttonStyle = { width: "auto", height: "auto", padding: 0 };
     return (
-      <IconButton
-        style={buttonStyle}
-        type="submit"
-        iconStyle={iconStyle}
-        tooltip="Save"
-      >
+      <IconButton style={buttonStyle} type="submit" iconStyle={iconStyle} tooltip="Save">
         <ActionCheckCircle />
       </IconButton>
     );
@@ -118,8 +98,6 @@ export default class SingleWidgetForm extends React.Component<IProps, IState> {
     );
   }
 
-  // onSubmit={this.handleSubmit}
-
   render() {
     return (
       <div>
@@ -133,9 +111,7 @@ export default class SingleWidgetForm extends React.Component<IProps, IState> {
                 id={this.props.name}
                 name={this.props.name}
                 placeholder={this.props.label}
-                defaultValue={
-                  this.props.data ? this.props.data[this.props.name] : ""
-                }
+                defaultValue={this.props.data ? this.props.data[this.props.name] : ""}
                 required
               />
             </div>
@@ -148,13 +124,3 @@ export default class SingleWidgetForm extends React.Component<IProps, IState> {
     );
   }
 }
-
-/*
-        <button type="submit" className="btn btn-default">
-                save
-              </button>
-              */
-
-//onClick={this.submitMe}
-
-//<label htmlFor={this.props.name}>{this.props.label}</label>

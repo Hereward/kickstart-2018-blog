@@ -20,8 +20,6 @@ export default class CountryWidget extends React.Component<IProps, IState> {
       country: this.props.dataObj.country,
       region: this.props.dataObj.region
     };
-
-    //console.log(`Widget`, this.props);
   }
 
   static propTypes = {
@@ -29,12 +27,7 @@ export default class CountryWidget extends React.Component<IProps, IState> {
     default: PropTypes.string
   };
 
-  componentDidMount() {
-    if (this.props.dataObj) {
-      //console.log(`Widget componentDidMount:`, this.props.dataObj);
-      //this.props.setDefaultState
-    }
-  }
+  componentDidMount() {}
 
   handleChange(e) {
     this.props.handleChange(e);
@@ -43,14 +36,12 @@ export default class CountryWidget extends React.Component<IProps, IState> {
   selectCountry(val, event) {
     console.log(`selectCountry`, val);
     this.setState({ country: val });
-    //this.props.handleSetState("country", val);
     this.props.handleChange(event);
   }
 
   selectRegion(val, event) {
     console.log(`selectRegion`, val);
     this.setState({ region: val });
-    //this.props.handleSetState("region", val);
     this.props.handleChange(event);
   }
 

@@ -21,8 +21,6 @@ export const EditIcon = function EditIcon(props: {onClick: any; stateName: any; 
 }
 
 export const CancelEditIcon = function CancelEditIcon(props: {onClick: any; stateName: any; style?: any; className?: any}) {
-  //console.log(`CancelEditIcon`,props.voffset);
-  //let style = props.voffset ? {top: props.voffset} : {};
   return (
     <IconButton
       style={props.style}
@@ -38,51 +36,3 @@ export const CancelEditIcon = function CancelEditIcon(props: {onClick: any; stat
   );
 }
 
-/*
-export function edit(props: {onClick: any; stateName: any}) {
-    return (
-        <IconButton
-          type="button"
-          tooltip="Edit"
-          onClick={() => {
-              props.onClick(props.stateName, true);
-          }}
-        >
-          <EditorModeEdit />
-        </IconButton>
-      );
-
-}
-
-
-export function cancelEdit(props: {onClick: any; stateName: any}) {
-  return (
-      <IconButton
-        type="button"
-        tooltip="Cancel"
-        onClick={() => {
-            props.onClick(props.stateName, false);
-        }}
-      >
-        <EditorCancel />
-      </IconButton>
-    );
-
-}
-*/
-
-/*
-edit(type = "editProfile") {
-    return (
-      <IconButton
-        type="button"
-        tooltip="Edit"
-        onClick={() => {
-          this.setState({ [type]: true });
-        }}
-      >
-        <EditorModeEdit />
-      </IconButton>
-    );
-  }
-  */

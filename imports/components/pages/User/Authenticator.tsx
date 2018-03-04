@@ -1,5 +1,4 @@
 import { Meteor } from "meteor/meteor";
-//import { Session } from 'meteor/session';
 import * as speakeasy from "speakeasy";
 import ReactRouterPropTypes from "react-router-prop-types";
 import * as PropTypes from "prop-types";
@@ -82,8 +81,6 @@ class Authenticator extends React.Component<IProps, IState> {
       currentValidToken: "",
       disableSubmit: false
     };
-
-    console.log(`Authenticator constructor: showQRcode= [${showQRcode}]`, this.props, this.state);
   }
 
   static propTypes = {
@@ -177,7 +174,6 @@ class Authenticator extends React.Component<IProps, IState> {
         this.setState({
           disableSubmit: false
         });
-    
       } else {
         console.log(`verifyToken: Authenticator> push('/')`);
         this.props.history.push("/");
@@ -301,7 +297,6 @@ class Authenticator extends React.Component<IProps, IState> {
 export default withRouter(
   withTracker(() => {
     let authData: any;
-    //authData = { private_key: null };
     Meteor.subscribe("userData");
     let authDataReady = Meteor.subscribe("enhancedAuth");
 
@@ -316,4 +311,3 @@ export default withRouter(
     return { authData: authData };
   })(Authenticator)
 );
-//boo

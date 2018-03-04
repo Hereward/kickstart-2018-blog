@@ -1,9 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Meteor } from "meteor/meteor";
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import App from "../../components/layouts/App/App";
-import { addMeta } from './meta';
+import { addMeta } from "./meta";
 
 class Launch extends React.Component {
   constructor(props) {
@@ -11,7 +11,11 @@ class Launch extends React.Component {
   }
 
   render() {
-    return <MuiThemeProvider><App /></MuiThemeProvider>;
+    return (
+      <MuiThemeProvider>
+        <App />
+      </MuiThemeProvider>
+    );
   }
 }
 

@@ -74,11 +74,23 @@ export default class PageForm extends React.Component<IProps, IState> {
     pageObj: PropTypes.object
   };
 
+  preventDefault(e) {
+    e.preventDefault();
+  }
+
   componentDidMount() {
+    jquery(`#${this.formID}`).bind("keypress", function(e) {
+      if (e.keyCode == 13) {
+        return false;
+      }
+    });
+  }
+
+  disableReturnKey(state) {
     jquery(window).keydown(function(event) {
       if (event.keyCode == 13) {
         event.preventDefault();
-        return false;
+        return !state;
       }
     });
   }
@@ -92,6 +104,7 @@ export default class PageForm extends React.Component<IProps, IState> {
     this.setState({
       disableSubmit: true
     });
+    //this.disableReturnKey(false);
     this.props.handleSubmit();
   }
 

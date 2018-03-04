@@ -1,3 +1,4 @@
+/*
 import { Meteor } from "meteor/meteor";
 import { check } from 'meteor/check';
 
@@ -32,7 +33,6 @@ Meteor.methods({
       }
     });
 
-    //console.log(`mySecret = [${key}] CVT = [${currentValidToken}] MYTOKEN = ${myToken} VERIFIED= [${verified}]`);
 
     return verified;
   },
@@ -76,6 +76,7 @@ Meteor.methods({
 
   }
 });
+*/
 
 
 

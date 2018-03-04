@@ -1,7 +1,6 @@
 import * as PropTypes from "prop-types";
 import * as React from "react";
 import * as classnames from "classnames";
-//import { Tasks } from "../../api/tasks/publish";
 import * as Methods from "../../api/tasks/methods";
 import * as Library from "../../modules/library";
 
@@ -12,12 +11,9 @@ interface IProps {
   hide: boolean;
 }
 
-// Task component - represents a single todo item
 export default class Task extends React.Component<IProps> {
   constructor(props) {
     super(props);
-
-    //console.log('ZZZZZZZ SUB TASK:', this.props.task);
   }
 
   static propTypes = {
@@ -48,9 +44,6 @@ export default class Task extends React.Component<IProps> {
   }
 
   deleteThisTask() {
-    //console.log(`deleteThisTask.call [${this.props.task._id}]`);
-    //Meteor.call("tasks.remove", this.props.task._id);
-
     let fields = { taskId: this.props.task._id };
 
     Methods.remove.call(fields, (err, res) => {
@@ -58,7 +51,6 @@ export default class Task extends React.Component<IProps> {
         Library.modalErrorAlert(err.reason);
         console.log(`error`, err);
       } else {
-        //console.log(`task successfully removed`);
       }
     });
   }
@@ -66,7 +58,6 @@ export default class Task extends React.Component<IProps> {
   getLayout() {}
 
   render() {
-    //console.log(`TASK ID = [${this.props.task._id}]`);
     const taskClassName = classnames({
       checked: this.props.task.checked,
       private: this.props.task.private,
@@ -75,10 +66,7 @@ export default class Task extends React.Component<IProps> {
 
     return (
       <li className={taskClassName}>
-        <div className="container">
           <div className="row">
-            
-
             <div className="col-auto">
               <input
                 type="checkbox"
@@ -105,20 +93,11 @@ export default class Task extends React.Component<IProps> {
               ""
             )}
 
-            
-
             <div className="col-12 col-md-auto">
-              <span className="text">
-                {this.props.taskLabel}
-              </span>
+              <span className="text">{this.props.taskLabel}</span>
             </div>
-
-            
           </div>
-        </div>
       </li>
     );
   }
 }
-
-// <div className="w-100"></div>

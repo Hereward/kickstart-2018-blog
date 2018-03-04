@@ -1,7 +1,5 @@
-//import React from 'react';
 import * as React from "react";
 import * as CSSTransitionGroup from "react-transition-group/CSSTransitionGroup";
-//import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 const Transition = props => (
   <CSSTransitionGroup
