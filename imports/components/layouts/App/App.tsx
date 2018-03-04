@@ -44,18 +44,18 @@ export default withTracker(() => {
     enhancedAuth = false;
   }
 
-  let Email = " - Guest";
+  let emailDashDisplay = " - Guest";
   //let authVerified = false;
   let EmailVerified = false;
   let signedIn = false;
   let profile: any;
 
   if (Meteor.loggingIn()) {
-    Email = ` - logging in...`;
+    emailDashDisplay = ` - logging in...`;
   } else if (Meteor.user()) {
     EmailVerified = Meteor.user().emails[0].verified;
     signedIn = true;
-    Email = ` - ${Meteor.user().emails[0].address}`;
+    emailDashDisplay = ` - ${Meteor.user().emails[0].address}`;
 
     if (ProfilesDataReady) {
       profile = Profiles.findOne({ owner: Meteor.userId() });
@@ -65,7 +65,7 @@ export default withTracker(() => {
 
   return {
     signedIn: signedIn,
-    Email: Email,
+    emailDashDisplay: emailDashDisplay,
     MainTitle: Meteor.settings.public.MainTitle,
     ShortTitle: Meteor.settings.public.ShortTitle,
     enhancedAuth: enhancedAuth,

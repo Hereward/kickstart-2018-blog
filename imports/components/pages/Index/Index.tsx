@@ -121,7 +121,7 @@ class Index extends React.Component<IProps, IState> {
             type="text"
             ref={textInput => (this.textInputDOM = textInput)}
             id="textInput"
-            placeholder="Type here &amp; hit return to add new tasks"
+            placeholder="Type new tasks here &amp; hit return"
             value={this.state.textInput}
             onChange={this.handleChange}
           />

@@ -75,24 +75,50 @@ export default class Task extends React.Component<IProps> {
 
     return (
       <li className={taskClassName}>
-        <button className="delete" onClick={this.deleteThisTask.bind(this)}>
-          &times;
-        </button>
+        <div className="container">
+          <div className="row">
+            
 
-        <input type="checkbox" readOnly checked={!!this.props.task.checked} onClick={this.toggleChecked.bind(this)} />
+            <div className="col-auto">
+              <input
+                type="checkbox"
+                className="checkbox"
+                readOnly
+                checked={!!this.props.task.checked}
+                onClick={this.toggleChecked.bind(this)}
+              />
+            </div>
 
-        {this.props.showPrivateButton ? (
-          <button className="toggle-private" onClick={this.togglePrivate.bind(this)}>
-            {this.props.task.private ? "Private" : "Public"}
-          </button>
-        ) : (
-          ""
-        )}
+            <div className="col-auto">
+              <button className="delete" onClick={this.deleteThisTask.bind(this)}>
+                &times;
+              </button>
+            </div>
 
-        <span className="text">
-          <strong>ID: [{this.props.task._id}]</strong>: [{this.props.taskLabel}]
-        </span>
+            {this.props.showPrivateButton ? (
+              <div className="col-auto">
+                <button className="toggle-private" onClick={this.togglePrivate.bind(this)}>
+                  {this.props.task.private ? "Private" : "Public"}
+                </button>
+              </div>
+            ) : (
+              ""
+            )}
+
+            
+
+            <div className="col-12 col-md-auto">
+              <span className="text">
+                {this.props.taskLabel}
+              </span>
+            </div>
+
+            
+          </div>
+        </div>
       </li>
     );
   }
 }
+
+// <div className="w-100"></div>

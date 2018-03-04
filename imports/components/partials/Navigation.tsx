@@ -38,7 +38,7 @@ interface IProps {
   history: any;
   signedIn: any;
   ShortTitle: any;
-  Email: any;
+  emailDashDisplay: any;
   authVerified: boolean;
   EmailVerified: boolean;
   enhancedAuth: boolean;
@@ -145,7 +145,7 @@ class Navigation extends React.Component<IProps, IState> {
     EmailVerified: PropTypes.bool,
     signedIn: PropTypes.bool,
     enhancedAuth: PropTypes.bool,
-    Email: PropTypes.string,
+    emailDashDisplay: PropTypes.string,
     ShortTitle: PropTypes.string,
     history: ReactRouterPropTypes.history,
     loading: PropTypes.bool,
@@ -236,31 +236,19 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   authVerifiedLayout() {
-    //let verifiedFlag = false;
-    //if (!this.props.enhancedAuth || this.props.authData) {
     let tipObj = Library.dashBoardTip(this.props);
     let tip = tipObj.tip;
     let verifiedFlag = tipObj.verified;
-
-    //}
-    //const tipObj = Library.dashBoardTip(this.props);
-    //const tip = tipObj.tip;
-    //const verifiedFlag = tipObj.verified;
-    /*
-    <VerifiedIndicator
-          data-verified={verifiedFlag}
-          id="VerifiedIndicator"
-        />
-        */
-
     let verified = (
-      <div className="d-inline-block">
-        {VerifiedIndicator(verifiedFlag)}
-
-        <UncontrolledTooltip placement="right" target="VerifiedIndicator">
-          {tip}
-        </UncontrolledTooltip>
-      </div>
+      <span>
+        <span className="d-none d-sm-inline">{this.props.emailDashDisplay}</span>{' '}
+        <div className="d-inline-block">
+          {VerifiedIndicator(verifiedFlag)}
+          <UncontrolledTooltip placement="right" target="VerifiedIndicator">
+            {tip}
+          </UncontrolledTooltip>
+        </div>
+      </span>
     );
     return verified;
   }
@@ -271,7 +259,7 @@ class Navigation extends React.Component<IProps, IState> {
         <Navbar color="dark" expand="md" className="main-nav" dark>
           <NavbarBrand>
             <span className="app-title">{this.props.ShortTitle}</span>
-            {this.props.Email} {this.props.signedIn === true ? this.authVerifiedLayout() : ""}
+            {this.props.signedIn === true ? this.authVerifiedLayout() : ""}
           </NavbarBrand>
           <NavbarToggler onClick={this.toggleNavbar} />
           <Collapse isOpen={!this.state.collapsed} navbar>

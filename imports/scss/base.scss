@@ -50,10 +50,7 @@ header {
   color: white;
 }
 
-nav.main-nav {
-  padding-left: 4rem;
-  padding-right: 4rem;
-}
+
 
 nav.main-nav .dropdown-menu {
   background-color: #343a40;
@@ -107,6 +104,11 @@ div.about h1 {
   text-align: center;
 }
 
+nav.main-nav {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .main-nav .dropdown-menu {
   padding: 0;
   margin-left: 0.4rem;
@@ -151,6 +153,11 @@ div.about h1 {
     width: 512px;
     height: 288px;
   }
+
+  nav.main-nav {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }
 
 @media (min-width: 768px) {
@@ -169,6 +176,11 @@ div.about h1 {
 
   h2 {
     font-size: 1.7rem;
+  }
+
+  nav.main-nav {
+    padding-left: 4rem;
+    padding-right: 4rem;
   }
 }
 
