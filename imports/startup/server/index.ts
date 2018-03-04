@@ -1,9 +1,12 @@
+/// <reference path="../../../index.d.ts" />
 import { Accounts } from "meteor/accounts-base";
 import "./api";
 
+/*
 Accounts.config({
-  loginExpirationInDays: 0.16
+  loginExpirationInDays: 5
 });
+*/
 
 Accounts.urls.resetPassword = token => Meteor.absoluteUrl(`forgot-password-reset/${token}`);
 Accounts.urls.verifyEmail = token => Meteor.absoluteUrl(`verify-email/${token}`);
