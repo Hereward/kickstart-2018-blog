@@ -2,8 +2,8 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
+import RaisedButton from "material-ui/RaisedButton";
 
-//import "jquery-validation";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
@@ -21,6 +21,7 @@ interface IProps {
 
 interface IState {
   body: any;
+  disableSubmit: boolean;
 }
 
 export default class PageForm extends React.Component<IProps, IState> {
@@ -61,10 +62,9 @@ export default class PageForm extends React.Component<IProps, IState> {
     this.handleSetStateUpstream = this.handleSetStateUpstream.bind(this);
 
     this.state = {
-      body: ""
+      body: "",
+      disableSubmit: false
     };
-
-    //console.log(`ProfileForm`, this.props, this.state);
   }
 
   static propTypes = {
@@ -84,13 +84,14 @@ export default class PageForm extends React.Component<IProps, IState> {
   }
 
   handleSetStateUpstream(content) {
-    //console.log(`handleSetStateUpstream`, content, 'body');
-
     this.props.handleSetState("body", content);
   }
 
   handleSubmit(e) {
     e.preventDefault();
+    this.setState({
+      disableSubmit: true
+    });
     this.props.handleSubmit();
   }
 
@@ -132,33 +133,11 @@ export default class PageForm extends React.Component<IProps, IState> {
             />
           </div>
 
-          <button type="submit" className="btn btn-default">
-            Submit
-          </button>
+          <div className="form-group">
+            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+          </div>
         </form>
       </div>
     );
   }
 }
-
-// {this.getWidget({ name: "region", label: "Region/State" })}
-//  {this.getWidget({ name: "country", label: "Country" })}
-
-/*
- {
-        _id: string;
-        fname: string;
-        initial: string;
-        lname: string;
-        street1: string;
-        street2: string;
-        city: string;
-        region: string;
-        postcode: string;
-        country: string;
-        verificationEmailSent: number,
-        new: boolean,
-        createdAt: string;
-        owner: string;
-      };
-      */

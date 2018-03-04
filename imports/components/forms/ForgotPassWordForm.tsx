@@ -1,12 +1,12 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
+import RaisedButton from "material-ui/RaisedButton";
 //import BlockUi from "react-block-ui";
 import { Link } from "react-router-dom";
 import "react-block-ui/style.css";
 import * as jquery from "jquery";
 import "jquery-validation";
-
 
 interface IProps {
   handleChange: any;
@@ -19,7 +19,7 @@ interface IState {
   blocking: boolean;
 }
 
-export default class ForgotPassWordForm extends React.Component<IProps,IState> {
+export default class ForgotPassWordForm extends React.Component<IProps, IState> {
   formID: string = "ForgotPassWordForm";
 
   constructor(props) {
@@ -38,7 +38,7 @@ export default class ForgotPassWordForm extends React.Component<IProps,IState> {
   componentDidMount() {
     console.log(`ComponentDidMount`);
     jquery(`#${this.formID}`).validate({
-      submitHandler: (form) => {
+      submitHandler: form => {
         this.props.handleSubmit();
       }
     });
@@ -64,41 +64,34 @@ export default class ForgotPassWordForm extends React.Component<IProps,IState> {
         <h2>Forgot Your Password ?</h2>
 
         <p>
-          Let&#8217;s recover it! Please enter your email address below. You
-          will receive an email with further instructions.
+          Let&#8217;s recover it! Please enter your email address below. You will receive an email with further
+          instructions.
         </p>
 
-        
-          <form id={this.formID}>
-            <div className="form-group">
-              <label htmlFor="email">Email address</label>
-              <input
-                type="email"
-                onChange={this.handleChange}
-                className="form-control"
-                id="email"
-                name="email"
-                placeholder="Email"
-                required
-              />
-            </div>
+        <form id={this.formID}>
+          <div className="form-group">
+            <label htmlFor="email">Email address</label>
+            <input
+              type="email"
+              onChange={this.handleChange}
+              className="form-control"
+              id="email"
+              name="email"
+              placeholder="Email"
+              required
+            />
+          </div>
 
-            <div className="form-group">
-              <button
-                disabled={this.state.disableSubmit}
-                type="submit"
-                className="btn btn-default"
-              >
-                {this.state.submitText}
-              </button>
-            </div>
+          <div className="form-group">
+            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+          </div>
 
-            <div className="form-group">
-              <Link href="/" to="/register">
-                Click here to register...
-              </Link>
-            </div>
-          </form>
+          <div className="form-group">
+            <Link href="/" to="/register">
+              Click here to register...
+            </Link>
+          </div>
+        </form>
       </div>
     );
   }

@@ -3,6 +3,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
 import "jquery-validation";
+import RaisedButton from "material-ui/RaisedButton";
 
 interface IProps {
   handleChange: any;
@@ -10,8 +11,7 @@ interface IProps {
 }
 
 interface IState {
-  DisableSubmit: boolean;
-  SubmitText: string;
+  disableSubmit: boolean;
 }
 
 export default class RegistrationForm extends React.Component<IProps, IState> {
@@ -22,6 +22,9 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.state = {
+      disableSubmit: false
+    };
   }
 
   static propTypes = {
@@ -40,6 +43,9 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
 
   handleSubmit(e) {
     e.preventDefault();
+    this.setState({
+      disableSubmit: true
+    });
     this.props.handleSubmit(e);
   }
 
@@ -89,9 +95,9 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
             />
           </div>
 
-          <button type="submit" className="btn btn-default">
-            Submit
-          </button>
+          <div className="form-group">
+            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+          </div>
         </form>
       </div>
     );

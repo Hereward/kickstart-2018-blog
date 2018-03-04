@@ -1,6 +1,7 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
+import RaisedButton from 'material-ui/RaisedButton';
 import * as jquery from "jquery";
 import "jquery-validation";
 
@@ -10,8 +11,7 @@ interface IProps {
 }
 
 interface IState {
-  DisableSubmit: boolean;
-  SubmitText: string;
+  disableSubmit: boolean;
 }
 
 export default class ForgotPassWordResetForm extends React.Component<IProps,IState> {
@@ -24,8 +24,7 @@ export default class ForgotPassWordResetForm extends React.Component<IProps,ISta
     this.handleChange = this.handleChange.bind(this);
 
     this.state = {
-      DisableSubmit: false,
-      SubmitText: "Submit"
+      disableSubmit: false,
     };
   }
 
@@ -40,7 +39,7 @@ export default class ForgotPassWordResetForm extends React.Component<IProps,ISta
 
   handleSubmit(e) {
     e.preventDefault();
-    this.setState({ DisableSubmit: true, SubmitText: "processing..." });
+    this.setState({ disableSubmit: true });
     this.props.handleSubmit(e);
   }
 
@@ -78,22 +77,13 @@ export default class ForgotPassWordResetForm extends React.Component<IProps,ISta
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={this.state.DisableSubmit}
-            className="btn btn-default"
-          >
-            {this.state.SubmitText}
-          </button>
+          <div className="form-group">
+            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+          </div>
         </form>
       </div>
     );
   }
 }
 
-/*
-ForgotPassWordResetForm.propTypes = {
-  handleSubmit: PropTypes.func,
-  handleChange: PropTypes.func,
-};
-*/
+

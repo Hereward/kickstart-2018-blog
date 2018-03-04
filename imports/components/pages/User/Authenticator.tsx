@@ -9,6 +9,7 @@ import { withRouter } from "react-router-dom";
 import styled from "styled-components";
 import Loader from "react-loader-spinner";
 import { Alert, Button, Form, FormGroup, Label, Input, FormText } from "reactstrap";
+import RaisedButton from "material-ui/RaisedButton";
 
 import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
@@ -45,6 +46,7 @@ interface IState {
   showQRcode: boolean;
   authCode: string;
   currentValidToken: string;
+  disableSubmit: boolean;
 }
 
 class Authenticator extends React.Component<IProps, IState> {
@@ -63,7 +65,7 @@ class Authenticator extends React.Component<IProps, IState> {
     }
 
     this.handleQRClick = this.handleQRClick.bind(this);
-    this.handleVerifyClick = this.handleVerifyClick.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.checkTokens = this.checkTokens.bind(this);
     this.renderExpiredTokens = this.renderExpiredTokens.bind(this);
@@ -77,7 +79,8 @@ class Authenticator extends React.Component<IProps, IState> {
     this.state = {
       showQRcode: showQRcode,
       authCode: "",
-      currentValidToken: ""
+      currentValidToken: "",
+      disableSubmit: false
     };
 
     console.log(`Authenticator constructor: showQRcode= [${showQRcode}]`, this.props, this.state);
@@ -137,7 +140,11 @@ class Authenticator extends React.Component<IProps, IState> {
     return QRcode;
   }
 
-  handleVerifyClick() {
+  handleSubmit(e) {
+    e.preventDefault();
+    this.setState({
+      disableSubmit: true
+    });
     this.verifyToken();
   }
 
@@ -167,8 +174,10 @@ class Authenticator extends React.Component<IProps, IState> {
       if (err) {
         Library.invalidAuthCodeAlert(err);
         console.log(`verifyToken error`, err);
-      } else if (!verified) {
-        //return Library.modalErrorAlert({ title: "Invalid Code", message: "Please try again." });
+        this.setState({
+          disableSubmit: false
+        });
+    
       } else {
         console.log(`verifyToken: Authenticator> push('/')`);
         this.props.history.push("/");
@@ -255,7 +264,7 @@ class Authenticator extends React.Component<IProps, IState> {
       <div>
         <Transition>
           <h2>Verify Authorisation Code</h2>
-          <Form>
+          <Form onSubmit={this.handleSubmit}>
             <FormGroup>
               <Label for="authCode">Please enter the 6 digit authorisation code:</Label>
               <Input
@@ -266,7 +275,9 @@ class Authenticator extends React.Component<IProps, IState> {
                 placeholder="Enter the 6 digit authorisation code"
               />
             </FormGroup>
-            <Button onClick={this.handleVerifyClick}>Submit</Button>
+            <FormGroup>
+              <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+            </FormGroup>
           </Form>
 
           {this.showCode()}

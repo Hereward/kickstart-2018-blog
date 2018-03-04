@@ -2,6 +2,7 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
+import RaisedButton from "material-ui/RaisedButton";
 import "jquery-validation";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
@@ -20,6 +21,7 @@ interface IProps {
 interface IState {
   country: string;
   region: string;
+  disableSubmit: boolean;
 }
 
 export default class ProfileForm extends React.Component<IProps, IState> {
@@ -34,7 +36,8 @@ export default class ProfileForm extends React.Component<IProps, IState> {
 
     this.state = {
       country: this.props.profileObj.country,
-      region: this.props.profileObj.region
+      region: this.props.profileObj.region,
+      disableSubmit: false
     };
 
     console.log(`ProfileForm`, this.props, this.state);
@@ -118,6 +121,9 @@ export default class ProfileForm extends React.Component<IProps, IState> {
 
   handleSubmit() {
     //e.preventDefault();
+    this.setState({
+      disableSubmit: true
+    });
     this.props.handleSubmit();
   }
 
@@ -128,12 +134,7 @@ export default class ProfileForm extends React.Component<IProps, IState> {
   getWidget(props: any) {
     let widgetType = props.widgetType ? props.widgetType : "simple";
     return (
-      <Widget
-        widgetType={widgetType}
-        handleChange={this.handleChange}
-        dataObj={this.props.profileObj}
-        wProps={props}
-      />
+      <Widget widgetType={widgetType} handleChange={this.handleChange} dataObj={this.props.profileObj} wProps={props} />
     );
   }
 
@@ -164,40 +165,15 @@ export default class ProfileForm extends React.Component<IProps, IState> {
           })}
           {this.getWidget({ name: "city", label: "City", required: false })}
 
-          <CountryWidget
-            handleChange={this.handleChange}
-            dataObj={this.props.profileObj}
-          />
+          <CountryWidget handleChange={this.handleChange} dataObj={this.props.profileObj} />
 
           {this.getWidget({ name: "postcode", label: "Postal Code" })}
 
-          <button type="submit" className="btn btn-default">
-            Submit
-          </button>
+          <div className="form-group">
+            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+          </div>
         </form>
       </div>
     );
   }
 }
-
-// {this.getWidget({ name: "region", label: "Region/State" })}
-//  {this.getWidget({ name: "country", label: "Country" })}
-
-/*
- {
-        _id: string;
-        fname: string;
-        initial: string;
-        lname: string;
-        street1: string;
-        street2: string;
-        city: string;
-        region: string;
-        postcode: string;
-        country: string;
-        verificationEmailSent: number,
-        new: boolean,
-        createdAt: string;
-        owner: string;
-      };
-      */
