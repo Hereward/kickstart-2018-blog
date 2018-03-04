@@ -201,6 +201,10 @@ declare namespace JSX {
   }
 }
 
+interface JQueryStatic<TElement extends Node = HTMLElement> {
+  inactivityTimeout: any;
+}
+
 interface JQuery {
   /**
    * Remove the specified attributes from the first matched element and return them.

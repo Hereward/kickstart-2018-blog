@@ -5,8 +5,10 @@ import ReactRouterPropTypes from "react-router-prop-types";
 import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import styled from "styled-components";
+import * as jquery from "jquery";
 import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
 import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
+import timeOut from "../../modules/timeout";
 
 import {
   Collapse,
@@ -84,7 +86,12 @@ class Navigation extends React.Component<IProps, IState> {
     };
   }
 
-  componentWillReceiveProps() {}
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.signedIn && nextProps.signedIn !== this.props.signedIn) {
+      console.log(`Launching timeout script`);
+      timeOut({logoutFunc: this.logOut, on: true});
+    }
+  }
 
   componentWillUpdate(nextProps) {}
 
@@ -94,7 +101,9 @@ class Navigation extends React.Component<IProps, IState> {
     }
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    
+  }
 
   verifyEmailNotificationRequired() {
     return this.props.signedIn && this.props.profile && (!this.props.enhancedAuth || this.props.authData);
@@ -134,7 +143,8 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   logOut(event) {
-    event.preventDefault();
+    //event.preventDefault();
+    //timeOut({on: false});
     AuthMethods.setVerified.call({ verified: false }, (err, res) => {
       if (err) {
         Library.modalErrorAlert(err.reason);

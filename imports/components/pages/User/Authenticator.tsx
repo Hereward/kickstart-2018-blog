@@ -117,11 +117,9 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 
   setTimer() {
-    console.log(`set timer A`);
+    
     if (this.props.authData) {
-      console.log(`set timer B`);
       if (this.props.authData.private_key && !this.timerWasSet) {
-        console.log(`set timer C`);
         this.timerID = setInterval(() => this.checkTokens(this.props.authData.private_key), 2000);
         this.timerWasSet = true;
       }
