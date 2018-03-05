@@ -231,7 +231,7 @@ class Navigation extends React.Component<IProps, IState> {
   navBar() {
     return (
       <div>
-        <Navbar color="dark" expand="md" className="main-nav" dark>
+        <Navbar color="dark" expand="md" className="main-nav fixed-top" dark>
           <NavbarBrand>
             <span className="app-title">{this.props.ShortTitle}</span>
             {this.props.signedIn === true ? this.authVerifiedLayout() : ""}

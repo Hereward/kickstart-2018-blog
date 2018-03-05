@@ -3,7 +3,7 @@ import * as React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import Header from "../../partials/Header";
-import Main from "../../routes/Main";
+import MainRouter from "../../routes/Main";
 import { Profiles } from "../../../api/profiles/publish";
 
 interface IProps {
@@ -12,8 +12,8 @@ interface IProps {
   Email: string;
   MainTitle: string;
   ShortTitle: string;
-  authVerified: boolean,
-  EmailVerified: boolean,
+  authVerified: boolean;
+  EmailVerified: boolean;
 }
 
 class App extends React.Component<IProps> {
@@ -23,13 +23,12 @@ class App extends React.Component<IProps> {
   render() {
     return (
       <BrowserRouter>
-        <div>
-          <div className="container-fluid header">
+        <div className="router-parent d-flex flex-column">
             <Header {...this.props} />
-          </div>
-          <div className="container main">
-          <Main {...this.props} />
-          </div>
+          <main className="container main mb-auto">
+            <MainRouter {...this.props} />
+          </main>
+          <footer className="mt-auto">{Meteor.settings.public.footerText}</footer>
         </div>
       </BrowserRouter>
     );
@@ -59,7 +58,6 @@ export default withTracker(() => {
     if (ProfilesDataReady) {
       profile = Profiles.findOne({ owner: Meteor.userId() });
     }
-
   }
 
   return {
@@ -70,7 +68,6 @@ export default withTracker(() => {
     enhancedAuth: enhancedAuth,
     EmailVerified: EmailVerified,
     profile: profile,
-    sillyProp: 'banana'
+    sillyProp: "banana"
   };
 })(App);
-

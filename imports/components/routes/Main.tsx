@@ -27,8 +27,8 @@ const AuthRoute = ({ component: Component, redirect, condition, cProps, ...rest 
   />
 );
 
-const Main = props => (
-  <main>
+const MainRouter = props => (
+
     <Switch>
       <Route exact path="/" component={Index} />
       <Route path="/about" render={() => <About {...props} />} />
@@ -52,7 +52,7 @@ const Main = props => (
       <AuthRoute path="/register" cProps={props} component={Register} condition={!Meteor.user()} redirect="/" />
       <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={Meteor.user()} redirect="/" />
     </Switch>
-  </main>
+
 );
 
-export default Main;
+export default MainRouter;
