@@ -189,8 +189,12 @@ export const setVerified = new ValidatedMethod({
     let authRecord: any;
     authRecord = Auth.findOne({ owner: ownerId });
 
-    Auth.update(authRecord._id, { $set: { verified: fields.verified } });
-    console.log(`auth.setVerified - DONE!`);
+    if (authRecord) {
+      Auth.update(authRecord._id, { $set: { verified: fields.verified } });
+      console.log(`auth.setVerified - DONE!`);
+    } else {
+      console.log(`auth.setVerified - No auth record found.`);
+    }
   }
 });
 

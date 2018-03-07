@@ -89,7 +89,7 @@ class Navigation extends React.Component<IProps, IState> {
   componentWillReceiveProps(nextProps) {
     if (nextProps.signedIn && nextProps.signedIn !== this.props.signedIn) {
       console.log(`Launching timeout script`);
-      timeOut({logoutFunc: this.logOut, on: true});
+      timeOut({ logoutFunc: this.logOut, on: true });
     }
   }
 
@@ -101,9 +101,7 @@ class Navigation extends React.Component<IProps, IState> {
     }
   }
 
-  componentDidMount() {
-    
-  }
+  componentDidMount() {}
 
   verifyEmailNotificationRequired() {
     return this.props.signedIn && this.props.profile && (!this.props.enhancedAuth || this.props.authData);
@@ -142,7 +140,7 @@ class Navigation extends React.Component<IProps, IState> {
     });
   }
 
-  logOut(event) {
+  logOut() {
     //event.preventDefault();
     //timeOut({on: false});
     AuthMethods.setVerified.call({ verified: false }, (err, res) => {

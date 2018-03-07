@@ -141,3 +141,23 @@ export function userModelessAlert(type, props) {
   }
 }
 
+export function setCookie(name, value, sec) {
+  if (sec) {
+    var date = new Date();
+    date.setTime(date.getTime() + sec * 1000);
+    var expires = "; expires=" + date.toUTCString();
+  } else var expires = "";
+  let cookie = name + "=" + value + expires + "; path=/";
+  document.cookie = cookie;
+  return cookie;
+};
+
+export function getCookie(name) {
+  var value = "; " + document.cookie;
+  var parts = value.split("; " + name + "=");
+  if (parts.length == 2)
+    return parts
+      .pop()
+      .split(";")
+      .shift();
+};
