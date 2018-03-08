@@ -3,6 +3,7 @@ import * as React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import Header from "../../partials/Header";
+import Footer from "../../partials/Footer";
 import MainRouter from "../../routes/Main";
 import { Profiles } from "../../../api/profiles/publish";
 
@@ -24,11 +25,11 @@ class App extends React.Component<IProps> {
     return (
       <BrowserRouter>
         <div className="router-parent d-flex flex-column">
-            <Header {...this.props} />
-          <main className="container main mb-auto">
+          <Header {...this.props} />
+          <main className="container main">
             <MainRouter {...this.props} />
           </main>
-          <footer className="mt-auto">{Meteor.settings.public.footerText}</footer>
+          <Footer {...this.props} />
         </div>
       </BrowserRouter>
     );

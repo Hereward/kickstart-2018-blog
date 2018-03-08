@@ -10,10 +10,10 @@ export default function timeOut(tProps: { logoutFunc?: any; on: boolean }) {
 
   var defaults = {
     //how long to wait (in seconds) before showing inactivity notification
-    inactivityWait: 3600, //default 10 minutes
+    inactivityWait: Meteor.settings.public.session.inactivityWait, //default 10 minutes
 
     //how long to show inactivity dialog (in seconds) before automatically logging out.
-    dialogWait: 60, //default 1 minute
+    dialogWait: Meteor.settings.public.session.dialogWait, //default 1 minute
 
     //when to reset timer
     bindEvents:
