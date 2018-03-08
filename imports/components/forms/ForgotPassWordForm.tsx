@@ -7,6 +7,9 @@ import { Link } from "react-router-dom";
 import "react-block-ui/style.css";
 import * as jquery from "jquery";
 import "jquery-validation";
+import "tooltipster";
+import "tooltipster/dist/css/tooltipster.bundle.min.css";
+import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 
 interface IProps {
   handleChange: any;
@@ -21,11 +24,11 @@ interface IState {
 
 export default class ForgotPassWordForm extends React.Component<IProps, IState> {
   formID: string = "ForgotPassWordForm";
+  baseCSSClass: string = "form-control tooltipster required";
 
   constructor(props) {
     super(props);
 
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
 
     this.state = {
@@ -36,23 +39,29 @@ export default class ForgotPassWordForm extends React.Component<IProps, IState> 
   }
 
   componentDidMount() {
+    jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
+      trigger: "custom",
+      animation: "slide",
+      theme: "tooltipster-light",
+      zIndex: 1400
+    });
     console.log(`ComponentDidMount`);
     jquery(`#${this.formID}`).validate({
+      errorPlacement: function ep(error, element) {
+        let errorString = jquery(error).text();
+        element.tooltipster("content", errorString);
+        element.tooltipster("open");
+      },
       submitHandler: form => {
+        this.setState({ disableSubmit: true });
         this.props.handleSubmit();
+      },
+      success: function success(label, element) {
+        jquery(`#${element.id}`).tooltipster("close");
       }
     });
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
-    this.setState({
-      disableSubmit: true,
-      submitText: "processing...",
-      blocking: true
-    });
-    this.props.handleSubmit(e);
-  }
 
   handleChange(e) {
     this.props.handleChange(e);
@@ -70,15 +79,14 @@ export default class ForgotPassWordForm extends React.Component<IProps, IState> 
 
         <form id={this.formID}>
           <div className="form-group">
-            <label htmlFor="email">Email address</label>
+            <label htmlFor="email">Email Address:</label>
             <input
               type="email"
               onChange={this.handleChange}
-              className="form-control"
+              className={this.baseCSSClass}
               id="email"
               name="email"
-              placeholder="Email"
-              required
+              placeholder=""
             />
           </div>
 

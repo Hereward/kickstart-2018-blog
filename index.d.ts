@@ -104,22 +104,7 @@ declare module "react-quill" {
 */
 
 
-declare module "meteor/accounts-base" {
-  namespace Accounts {
-    function createUser(
-      options: {
-        username?: string;
-        email?: string;
-        password?: string;
-      },
-      callback?: Function
-    ): string;
 
-    function verifyEmail(token: string, func: any): any;
-    function sendVerificationEmail(id: string): any;
-    function config(options: any): any;
-  }
-}
 
 declare module "meteor/meteor" {
   var process: any;
@@ -161,10 +146,21 @@ declare class SimpleSchema {
   validator(): any;
 }
 
+
 declare module "meteor/accounts-base" {
   namespace Accounts {
+
     var urls: URLS;
     var emailTemplates: EmailTemplates;
+
+    function createUser(
+      options: {
+        username?: string;
+        email?: string;
+        password?: string;
+      },
+      callback?: Function
+    ): string;
 
     function forgotPassword(
       options: {
@@ -178,6 +174,16 @@ declare module "meteor/accounts-base" {
       newPassword: string,
       callback?: Function
     ): void;
+
+    function changePassword(
+      oldPassword: string,
+      newPassword: string,
+      callback?: Function
+    ): void;
+
+    function verifyEmail(token: string, func: any): any;
+    function sendVerificationEmail(id: string): any;
+    function config(options: any): any;
   }
 }
 

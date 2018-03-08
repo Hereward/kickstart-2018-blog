@@ -1,3 +1,4 @@
+///<reference path="../../../index.d.ts"/>
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
@@ -7,6 +8,7 @@ import "jquery-validation";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
+import Widget from "./Widget";
 
 interface IProps {
   handleChange: any;
@@ -17,8 +19,8 @@ interface IState {
   disableSubmit: boolean;
 }
 
-export default class ForgotPassWordResetForm extends React.Component<IProps, IState> {
-  formID: string = "ForgotPassWordResetForm";
+export default class ChangePasswordForm extends React.Component<IProps, IState> {
+  formID: string = "ChangePasswordForm";
   baseCSSClass: string = "form-control tooltipster required";
 
   constructor(props) {
@@ -38,6 +40,7 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
       theme: "tooltipster-light",
       zIndex: 1400
     });
+
     jquery(`#${this.formID}`).validate({
       errorPlacement: function ep(error, element) {
         let errorString = jquery(error).text();
@@ -45,10 +48,10 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
         element.tooltipster("open");
       },
       rules: {
-        password2: {
-          equalTo: "#password1"
+        confirmNewPassword: {
+          equalTo: "#newPassword"
         },
-        password1: {
+        newPassword: {
           minlength: 6
         }
       },
@@ -62,6 +65,7 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
     });
   }
 
+
   handleChange(e) {
     this.props.handleChange(e);
   }
@@ -69,28 +73,39 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
   render() {
     return (
       <div>
-        <h2>Password Reset</h2>
+        <h2>Change Password</h2>
         <form id={this.formID}>
           <div className="form-group">
-            <label htmlFor="password1">Password</label>
+            <label htmlFor="oldPassword">Old Password:</label>
             <input
               onChange={this.handleChange}
               type="password"
               className={this.baseCSSClass}
-              id="password1"
-              name="password1"
-              placeholder="Password"
+              id="oldPassword"
+              name="oldPassword"
+              placeholder=""
             />
           </div>
           <div className="form-group">
-            <label htmlFor="password2">Confirm Password</label>
+            <label htmlFor="newPassword">New Password:</label>
             <input
               onChange={this.handleChange}
               type="password"
               className={this.baseCSSClass}
-              id="password2"
-              name="password2"
-              placeholder="Confirm Password"
+              id="newPassword"
+              name="newPassword"
+              placeholder=""
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="confirmNewPassword">Confirm New Password:</label>
+            <input
+              onChange={this.handleChange}
+              type="password"
+              className={this.baseCSSClass}
+              id="confirmNewPassword"
+              name="confirmNewPassword"
+              placeholder=""
             />
           </div>
 

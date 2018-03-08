@@ -1,4 +1,5 @@
-import { Meteor } from "meteor/meteor";
+///<reference path="../../../../index.d.ts"/>
+//import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
@@ -6,7 +7,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import * as React from "react";
 import { Link, withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
-import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
+import ChangePasswordForm from "../../forms/ChangePasswordForm";
 import * as Library from "../../../modules/library";
 import * as AuthMethods from "../../../api/auth/methods";
 
@@ -17,27 +18,23 @@ interface IProps {
 }
 
 interface IState {
-  password1: string;
-  password2: string;
-  email: string;
+  oldPassword: string;
+  newPassword: string;
 }
 
-class ForgotPassWordReset extends React.Component<IProps, IState> {
-  token: string;
+class ChangePassword extends React.Component<IProps, IState> {
 
   constructor(props) {
     super(props);
 
     let url = window.location.href;
-    this.token = url.substr(url.lastIndexOf("/") + 1);
 
     this.state = {
-      password1: "",
-      password2: "",
-      email: ""
+      oldPassword: '',
+      newPassword: '',
     };
 
-    this.resetPassword = this.resetPassword.bind(this);
+    this.changePassword = this.changePassword.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -56,30 +53,29 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    let form = <ForgotPassWordResetForm handleChange={this.handleChange} handleSubmit={this.resetPassword} />;
+    let form = <ChangePasswordForm handleChange={this.handleChange} handleSubmit={this.changePassword} />;
 
     return form;
   }
 
-  resetPassword() {
-    console.log(`FORM SUBMIT >> EMAIL =  ${this.state.email}`);
+  isValidPassword(password) {
+    if (password.length >= 6) {
+      return true;
+    } else {
+      return Library.modalErrorAlert({ message: "Please try again.", title: "Password is too short." });
+    }
+  }
 
-    let password1 = this.state.password1.trim();
-    let password2 = this.state.password2.trim();
+  changePassword() {
 
-    let isValidPassword = function isValidPassword(password1, password2) {
-      if (password1 === password2) {
-        return password1.length >= 6 ? true : false;
-      } else {
-        return Library.modalErrorAlert({ message: "Please try again.", title: "Passwords don't match." });
-      }
-    };
+    let newPassword = this.state.newPassword.trim();
+    let oldPassword = this.state.oldPassword.trim();
 
-    if (isValidPassword(password1, password2)) {
-      Accounts.resetPassword(
-        this.token,
-        password1,
-        function reset(err) {
+    if (this.isValidPassword(newPassword)) {
+      Accounts.changePassword(
+        oldPassword,
+        newPassword,
+        function setVerified(err) {
           if (!err) {
             AuthMethods.setVerified.call({ verified: false }, (err, res) => {
               if (err) {
@@ -88,7 +84,7 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
               }
             });
 
-            Library.modalSuccessAlert({ message: "Your password was reset." });
+            Library.modalSuccessAlert({ message: "Your password was changed!" });
 
             if (this.props.enhancedAuth) {
               console.log("password reset: redirect to /authenticate");
@@ -98,7 +94,7 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
               console.log("password reset: redirect to /");
             }
           } else {
-            Library.modalErrorAlert({ reason: err, title: "Password reset failed." });
+            Library.modalErrorAlert({ message: err.reason, title: "Password change failed." });
 
             console.log(err);
           }
@@ -124,5 +120,5 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
 export default withRouter(
   withTracker(({ params }) => {
     return {};
-  })(ForgotPassWordReset)
+  })(ChangePassword)
 );

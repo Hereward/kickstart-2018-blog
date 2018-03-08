@@ -181,6 +181,11 @@ class Navigation extends React.Component<IProps, IState> {
             Profile
           </NavLink>
         </DropdownItem>
+        <DropdownItem>
+          <NavLink tag={Link} to="/change-password">
+            Change Password
+          </NavLink>
+        </DropdownItem>
         {this.getAuthLink()}
       </DropdownMenu>
     );
