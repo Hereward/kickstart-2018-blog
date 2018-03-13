@@ -50,7 +50,7 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
         element.tooltipster("open");
       },
       submitHandler: form => {
-        this.props.handleSubmit();
+        this.handleSubmit();
       },
       success: function success(label, element) {
         jquery(`#${element.id}`).tooltipster("close");
@@ -58,13 +58,14 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
     });
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
+
+  handleSubmit() {
     this.setState({
       disableSubmit: true
     });
-    this.props.handleSubmit(e);
+    this.props.handleSubmit();
   }
+
 
   handleChange(e) {
     this.props.handleChange(e);
@@ -84,7 +85,6 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
               id="email"
               name="email"
               placeholder="Email"
-              required
             />
           </div>
           <div className="form-group">
@@ -96,7 +96,6 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
               id="password1"
               name="password1"
               placeholder="Password"
-              required
             />
           </div>
           <div className="form-group">
@@ -108,7 +107,6 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
               id="password2"
               name="password2"
               placeholder="Confirm Password"
-              required
             />
           </div>
 

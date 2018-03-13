@@ -52,7 +52,6 @@ interface IProps {
 }
 
 interface IState {
-  isOpen: boolean;
   collapsed: boolean;
 }
 
@@ -73,38 +72,49 @@ const VerifiedIndicator = function vfi(verified) {
 declare var Bert: any;
 
 class Navigation extends React.Component<IProps, IState> {
+  emailNotifySent: boolean;
   constructor(props) {
     super(props);
-
     this.toggleNavbar = this.toggleNavbar.bind(this);
-
-    this.toggle = this.toggle.bind(this);
+    this.closeNavbar = this.closeNavbar.bind(this);
     this.logOut = this.logOut.bind(this);
     this.state = {
-      isOpen: false,
       collapsed: true
     };
+    this.emailNotifySent = false;
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.signedIn && nextProps.signedIn !== this.props.signedIn) {
       console.log(`Launching timeout script`);
       timeOut({ logoutFunc: this.logOut, on: true });
+      //Library.userModelessAlert("verifyEmail", nextProps);
     }
   }
 
   componentWillUpdate(nextProps) {}
 
   componentDidUpdate() {
-    if (this.verifyEmailNotificationRequired()) {
-      Library.userModelessAlert("verifyEmail", this.props);
+    let notify = this.verifyEmailNotificationRequired();
+    if (notify) {
+      this.emailNotifySent = Library.userModelessAlert("verifyEmail", this.props);
     }
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    console.log(`Navigation DID MOUNT`);
+  }
 
   verifyEmailNotificationRequired() {
-    return this.props.signedIn && this.props.profile && (!this.props.enhancedAuth || this.props.authData);
+    console.log(`verifyEmailNotificationRequired`, this.emailNotifySent, this.props.signedIn, this.props.profile, this.props.enhancedAuth);
+    return !this.emailNotifySent && this.props.signedIn && this.props.profile && (!this.props.enhancedAuth || this.props.authData);
+  }
+
+  closeNavbar() {
+    console.log(`closeNavbar`, this.state.collapsed);
+    if (!this.state.collapsed) {
+      this.setState({ collapsed: true });
+    }
   }
 
   toggleNavbar() {
@@ -134,12 +144,6 @@ class Navigation extends React.Component<IProps, IState> {
     })
   };
 
-  toggle() {
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
-  }
-
   logOut() {
     //event.preventDefault();
     //timeOut({on: false});
@@ -150,6 +154,7 @@ class Navigation extends React.Component<IProps, IState> {
       }
     });
     Meteor.logout(() => {
+      this.emailNotifySent = false;
       this.props.history.push("/");
     });
   }
@@ -171,17 +176,17 @@ class Navigation extends React.Component<IProps, IState> {
   getAuthLayout() {
     let SignedInLayout = (
       <DropdownMenu>
-        <DropdownItem>
+        <DropdownItem onClick={this.closeNavbar}>
           <NavLink tag={Link} to="#" onClick={this.logOut}>
             Sign Out
           </NavLink>
         </DropdownItem>
-        <DropdownItem>
+        <DropdownItem onClick={this.closeNavbar}>
           <NavLink tag={Link} to="/profile">
             Profile
           </NavLink>
         </DropdownItem>
-        <DropdownItem>
+        <DropdownItem onClick={this.closeNavbar}>
           <NavLink tag={Link} to="/change-password">
             Change Password
           </NavLink>
@@ -192,17 +197,17 @@ class Navigation extends React.Component<IProps, IState> {
 
     let SignedOutLayout = (
       <DropdownMenu>
-        <DropdownItem>
+        <DropdownItem onClick={this.closeNavbar}>
           <NavLink tag={Link} to="/register">
             Register
           </NavLink>
         </DropdownItem>
-        <DropdownItem>
+        <DropdownItem onClick={this.closeNavbar}>
           <NavLink tag={Link} to="/signin">
             Sign In
           </NavLink>
         </DropdownItem>
-        <DropdownItem>
+        <DropdownItem onClick={this.closeNavbar}>
           <NavLink tag={Link} to="/forgot-password">
             Forgot Password
           </NavLink>
@@ -242,12 +247,12 @@ class Navigation extends React.Component<IProps, IState> {
           <NavbarToggler onClick={this.toggleNavbar} />
           <Collapse isOpen={!this.state.collapsed} navbar>
             <Nav className="ml-auto" navbar>
-              <NavItem>
+              <NavItem onClick={this.closeNavbar}>
                 <NavLink tag={Link} to="/">
                   Home
                 </NavLink>
               </NavItem>
-              <NavItem>
+              <NavItem onClick={this.closeNavbar}>
                 <NavLink tag={Link} to="About">
                   About
                 </NavLink>

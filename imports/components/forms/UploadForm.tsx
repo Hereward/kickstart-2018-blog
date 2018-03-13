@@ -117,8 +117,8 @@ export default class UploadForm extends React.Component<IProps, IState> {
           <div className="progress progress-bar-default">
             <div
               style={{ width: this.state.progress + "%" }}
-              aria-valuemax="100"
-              aria-valuemin="0"
+              aria-valuemax={100}
+              aria-valuemin={0}
               aria-valuenow={this.state.progress || 0}
               role="progressbar"
               className="progress-bar"
@@ -131,6 +131,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
       );
     }
   }
+
 
   render() {
     if (!this.props.loading) {

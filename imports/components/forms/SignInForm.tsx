@@ -6,16 +6,17 @@ import "jquery-validation";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
-import RaisedButton from 'material-ui/RaisedButton';
+import RaisedButton from "material-ui/RaisedButton";
 //import BlockUi from "react-block-ui";
 
 interface IProps {
   handleSubmit: any;
   handleChange: any;
+  allowSubmit: boolean;
 }
 
 interface IState {
-  DisableSubmit: boolean;
+  disableSubmit: boolean;
   SubmitText: string;
 }
 
@@ -30,7 +31,7 @@ export default class SignInForm extends React.Component<IProps, IState> {
     this.handleChange = this.handleChange.bind(this);
 
     this.state = {
-      DisableSubmit: false,
+      disableSubmit: false,
       SubmitText: "Submit"
     };
   }
@@ -39,6 +40,7 @@ export default class SignInForm extends React.Component<IProps, IState> {
     handleSubmit: PropTypes.func,
     handleChange: PropTypes.func
   };
+
 
 
   componentDidMount() {
@@ -54,8 +56,8 @@ export default class SignInForm extends React.Component<IProps, IState> {
         element.tooltipster("content", errorString);
         element.tooltipster("open");
       },
-      submitHandler: (form) => {
-        this.props.handleSubmit();
+      submitHandler: form => {
+        this.handleSubmit();
       },
       success: function success(label, element) {
         jquery(`#${element.id}`).tooltipster("close");
@@ -63,10 +65,10 @@ export default class SignInForm extends React.Component<IProps, IState> {
     });
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
-    //this.setState({ DisableSubmit: true, SubmitText: "processing..." });
-    this.props.handleSubmit(e);
+
+  handleSubmit() {
+    //this.setState({disableSubmit: true});
+    this.props.handleSubmit();
   }
 
   handleChange(e) {
@@ -81,7 +83,6 @@ export default class SignInForm extends React.Component<IProps, IState> {
           <div className="form-group">
             <label htmlFor="email">Email address</label>
             <input
-              required
               name="email"
               onChange={this.handleChange}
               type="email"
@@ -94,7 +95,6 @@ export default class SignInForm extends React.Component<IProps, IState> {
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
-              required
               name="password"
               onChange={this.handleChange}
               type="password"
@@ -104,9 +104,13 @@ export default class SignInForm extends React.Component<IProps, IState> {
             />
           </div>
 
-          
           <div className="form-group">
-            <RaisedButton disabled={this.state.DisableSubmit} type="submit" primary={true} label={this.state.SubmitText} />
+            <RaisedButton
+              disabled={!this.props.allowSubmit}
+              type="submit"
+              primary={true}
+              label={this.state.SubmitText}
+            />
           </div>
 
           <div className="form-group">
@@ -124,17 +128,3 @@ export default class SignInForm extends React.Component<IProps, IState> {
     );
   }
 }
-
-/*
-
-<div className="form-group">
-            <button
-              type="submit"
-              disabled={this.state.DisableSubmit}
-              className="btn btn-default"
-            >
-              {this.state.SubmitText}
-            </button>
-          </div>
-
-          */

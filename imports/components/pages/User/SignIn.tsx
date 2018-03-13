@@ -19,6 +19,7 @@ interface IProps {
 interface IState {
   email: string;
   password: string;
+  allowSubmit: boolean
 }
 
 const user: any = Meteor.user();
@@ -31,7 +32,8 @@ class SignIn extends React.Component<IProps, IState> {
     this.handleChange = this.handleChange.bind(this);
     this.state = {
       password: "",
-      email: ""
+      email: "",
+      allowSubmit: true
     };
   }
 
@@ -58,7 +60,7 @@ class SignIn extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    let form = <SignInForm handleChange={this.handleChange} handleSubmit={this.SignInUser} />;
+    let form = <SignInForm allowSubmit={this.state.allowSubmit} handleChange={this.handleChange} handleSubmit={this.SignInUser} />;
 
     if (!this.props.signedIn) {
       return form;
@@ -68,8 +70,10 @@ class SignIn extends React.Component<IProps, IState> {
   }
 
   SignInUser() {
+    this.setState({allowSubmit: false});
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
       if (error) {
+        this.setState({allowSubmit: true});
         return Library.modalErrorAlert({ detail: error.reason, title: "Sign In Failed" });
       } else if (this.props.enhancedAuth) {
         let authFields = {

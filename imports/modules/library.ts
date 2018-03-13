@@ -93,6 +93,7 @@ export function dashBoardTip(props) {
 }
 
 export function userModelessAlert(type, props) {
+  console.log(`userModelessAlert`,type);
   if (!props.signedIn) { return; }
 
   let objData = JSON.stringify(props);
@@ -101,9 +102,10 @@ export function userModelessAlert(type, props) {
   let alertType = "";
   let icon = "fa-magic";
   let title = "";
-  let hideDelay = 2000;
+  let hideDelay = 7000;
   let allowAlert = false;
   if (type === "verifyEmail") {
+    console.log(`verifyEmail Alert`, props.signedIn, props.authData.verified, props.profile.verificationEmailSent, props.EmailVerified);
     if (
       props.signedIn &&
       props.authData.verified &&
@@ -139,6 +141,7 @@ export function userModelessAlert(type, props) {
       message: msg
     });
   }
+  return allowAlert;
 }
 
 export function setCookie(name, value, sec) {

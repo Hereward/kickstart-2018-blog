@@ -4,8 +4,8 @@
   "scripts": {
     "start": "meteor --settings .deploy/settings-development.json",
     "flow": "flow",
-    "deploy": "mup deploy --config=mup.js --settings=settings-development.json --verbose",
-    "deploy-cache": "mup deploy --config=mup.js --settings=settings-development.json --cached-build --verbose"
+    "deploy": "mup deploy --config=.deploy/mup.js --settings=.deploy/settings-development.json --verbose",
+    "deploy-cache": "mup deploy --config=.deploy/mup.js --settings=.deploy/settings-development.json --cached-build --verbose"
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.40",
