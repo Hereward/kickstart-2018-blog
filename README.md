@@ -3,11 +3,13 @@
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 TODO: Put more badges here.
 
-> A boiler plate platform for creating kickass meteor projects. 
+> A starter platform for Meteor projects. 
 
-This repository is intended to be starting point for meteor web app projects. It uses a collection of packages which I found helpful and innovative. 
+This project is intended to be starting point for meteor web app projects. It uses a collection of packages which I found helpful and innovative. 
 
-It contains a complete user registration process using custom templates including email verification and (optionally) 2 factor authentication.
+All code is in Typescript. The front-end is React.
+
+The project contains a complete user registration process using custom templates including email verification and (optionally) 2 factor authentication.
 
 The project uses both Bootstrap 4 and Material UI design elements.
 

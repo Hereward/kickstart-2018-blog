@@ -1,5 +1,6 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
+import { Link } from "react-router-dom";
 import * as ReactDOM from "react-dom";
 import Checkbox from "material-ui/Checkbox";
 import { Tasks } from "../../../api/tasks/publish";
@@ -152,8 +153,18 @@ class Index extends React.Component<IProps, IState> {
   render() {
     return (
       <Transition>
-        <div className="container">
-          <PageContent page={this.props.page} />
+        <div>
+          <div className="page-content">
+            <h1>A starter platform for Meteor projects</h1>
+            <div>
+              <p>This project is intended to be starting point for meteor web app projects. It uses a collection of packages which I found helpful and innovative.</p>
+              <p>All code is in Typescript. The front-end is React.</p>
+              <p>The project contains a complete user registration process using custom templates including email verification and (optionally) 2 factor authentication.</p>
+              <p>The project uses both Bootstrap 4 and Material UI design elements.</p>
+              <p>The Home page also contains an implementation of the simple todos example from the Meteor Guide.</p>
+              <p>For more information please visit the: <Link  to="https://github.com/Hereward/meteor-react-kickstart-2018">github page</Link>.</p>
+            </div>
+          </div>
           {this.todosSection()}
         </div>
       </Transition>
