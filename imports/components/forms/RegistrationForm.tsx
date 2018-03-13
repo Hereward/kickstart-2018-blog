@@ -3,6 +3,9 @@ import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
 import "jquery-validation";
+import "tooltipster";
+import "tooltipster/dist/css/tooltipster.bundle.min.css";
+import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import RaisedButton from "material-ui/RaisedButton";
 
 interface IProps {
@@ -16,6 +19,7 @@ interface IState {
 
 export default class RegistrationForm extends React.Component<IProps, IState> {
   formID: string = "RegistrationForm";
+  baseCSSClass: string = "form-control tooltipster required";
 
   constructor(props) {
     super(props);
@@ -33,10 +37,23 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
   };
 
   componentDidMount() {
-    console.log(`ComponentDidMount`);
+    jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
+      trigger: "custom",
+      animation: "slide",
+      theme: "tooltipster-light",
+      zIndex: 1400
+    });
     jquery(`#${this.formID}`).validate({
+      errorPlacement: function ep(error, element) {
+        let errorString = jquery(error).text();
+        element.tooltipster("content", errorString);
+        element.tooltipster("open");
+      },
       submitHandler: form => {
         this.props.handleSubmit();
+      },
+      success: function success(label, element) {
+        jquery(`#${element.id}`).tooltipster("close");
       }
     });
   }
@@ -63,7 +80,7 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
             <input
               onChange={this.handleChange}
               type="email"
-              className="form-control"
+              className={this.baseCSSClass}
               id="email"
               name="email"
               placeholder="Email"
@@ -75,7 +92,7 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
             <input
               onChange={this.handleChange}
               type="password"
-              className="form-control"
+              className={this.baseCSSClass}
               id="password1"
               name="password1"
               placeholder="Password"
@@ -87,7 +104,7 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
             <input
               onChange={this.handleChange}
               type="password"
-              className="form-control"
+              className={this.baseCSSClass}
               id="password2"
               name="password2"
               placeholder="Confirm Password"

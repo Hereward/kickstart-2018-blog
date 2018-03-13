@@ -225,6 +225,15 @@ class Profile extends React.Component<IProps, IState> {
             />
           </div>
         );
+      } else {
+        layout = (
+          <div className="profile-image-holder">
+            <h2>
+              Image <EditIcon onClick={this.handleSetState} stateName="editImage" />
+            </h2>
+          </div>
+        );
+
       }
     }
 

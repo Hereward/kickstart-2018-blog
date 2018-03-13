@@ -3,6 +3,9 @@ import { Link } from "react-router-dom";
 import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
 import "jquery-validation";
+import "tooltipster";
+import "tooltipster/dist/css/tooltipster.bundle.min.css";
+import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import RaisedButton from 'material-ui/RaisedButton';
 //import BlockUi from "react-block-ui";
 
@@ -18,6 +21,7 @@ interface IState {
 
 export default class SignInForm extends React.Component<IProps, IState> {
   formID: string = "SignInForm";
+  baseCSSClass: string = "form-control tooltipster required";
 
   constructor(props) {
     super(props);
@@ -38,10 +42,23 @@ export default class SignInForm extends React.Component<IProps, IState> {
 
 
   componentDidMount() {
-    console.log(`ComponentDidMount`);
+    jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
+      trigger: "custom",
+      animation: "slide",
+      theme: "tooltipster-light",
+      zIndex: 1400
+    });
     jquery(`#${this.formID}`).validate({
+      errorPlacement: function ep(error, element) {
+        let errorString = jquery(error).text();
+        element.tooltipster("content", errorString);
+        element.tooltipster("open");
+      },
       submitHandler: (form) => {
         this.props.handleSubmit();
+      },
+      success: function success(label, element) {
+        jquery(`#${element.id}`).tooltipster("close");
       }
     });
   }
@@ -68,7 +85,7 @@ export default class SignInForm extends React.Component<IProps, IState> {
               name="email"
               onChange={this.handleChange}
               type="email"
-              className="form-control"
+              className={this.baseCSSClass}
               id="email"
               placeholder="Email"
             />
@@ -81,7 +98,7 @@ export default class SignInForm extends React.Component<IProps, IState> {
               name="password"
               onChange={this.handleChange}
               type="password"
-              className="form-control"
+              className={this.baseCSSClass}
               id="password"
               placeholder="Password"
             />

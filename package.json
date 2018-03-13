@@ -2,7 +2,7 @@
   "name": "meteor-react-kickstart-2018",
   "private": true,
   "scripts": {
-    "start": "meteor --settings settings-development.json",
+    "start": "meteor --settings .deploy/settings-development.json",
     "flow": "flow"
   },
   "dependencies": {

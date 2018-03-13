@@ -4,6 +4,8 @@
 # Meteor
 settings-production.json
 settings-development.json
+.deploy/settings-development.json
+.deploy/mup.js
 
 ### Windows ###
 # Windows image file caches
