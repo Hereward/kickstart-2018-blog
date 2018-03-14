@@ -2,6 +2,7 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
 import RaisedButton from "material-ui/RaisedButton";
+import * as Validation from "../../modules/validation";
 import * as jquery from "jquery";
 import "jquery-validation";
 import "tooltipster";
@@ -32,6 +33,7 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
   }
 
   componentDidMount() {
+    
     jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
       trigger: "custom",
       animation: "slide",

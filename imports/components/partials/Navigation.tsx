@@ -60,10 +60,10 @@ const VerifiedIndicator = function vfi(verified) {
   let style: any;
 
   if (verified) {
-    style = { verticalAlign: "text-top", color: "lime" };
+    style = { verticalAlign: "text-top", color: "lime", marginTop:"1px"};
     tag = <ActionVerifiedUser style={style} />;
   } else {
-    style = { verticalAlign: "middle", color: "red" };
+    style = { verticalAlign: "text-top", color: "red", marginTop:"1px" };
     tag = <ActionHighlightOff style={style} />;
   }
   return <div id="VerifiedIndicator">{tag}</div>;
@@ -106,8 +106,19 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   verifyEmailNotificationRequired() {
-    console.log(`verifyEmailNotificationRequired`, this.emailNotifySent, this.props.signedIn, this.props.profile, this.props.enhancedAuth);
-    return !this.emailNotifySent && this.props.signedIn && this.props.profile && (!this.props.enhancedAuth || this.props.authData);
+    console.log(
+      `verifyEmailNotificationRequired`,
+      this.emailNotifySent,
+      this.props.signedIn,
+      this.props.profile,
+      this.props.enhancedAuth
+    );
+    return (
+      !this.emailNotifySent &&
+      this.props.signedIn &&
+      this.props.profile &&
+      (!this.props.enhancedAuth || this.props.authData)
+    );
   }
 
   closeNavbar() {
@@ -223,15 +234,15 @@ class Navigation extends React.Component<IProps, IState> {
     let tip = tipObj.tip;
     let verifiedFlag = tipObj.verified;
     let verified = (
-      <span>
-        <span className="d-none d-sm-inline">{this.props.emailDashDisplay}</span>{" "}
+      <div className="d-inline-block">
+        <div className="d-none d-sm-inline">{this.props.emailDashDisplay}</div>{" "}
         <div className="d-inline-block">
           {VerifiedIndicator(verifiedFlag)}
           <UncontrolledTooltip placement="right" target="VerifiedIndicator">
             {tip}
           </UncontrolledTooltip>
         </div>
-      </span>
+      </div>
     );
     return verified;
   }
@@ -240,10 +251,10 @@ class Navigation extends React.Component<IProps, IState> {
     return (
       <div>
         <Navbar color="dark" expand="md" className="main-nav fixed-top" dark>
-          <NavbarBrand>
-            <span className="app-title">{this.props.ShortTitle}</span>
+          <div className="navbar-brand">
+            {this.props.ShortTitle}{" "}
             {this.props.signedIn === true ? this.authVerifiedLayout() : ""}
-          </NavbarBrand>
+          </div>
           <NavbarToggler onClick={this.toggleNavbar} />
           <Collapse isOpen={!this.state.collapsed} navbar>
             <Nav className="ml-auto" navbar>

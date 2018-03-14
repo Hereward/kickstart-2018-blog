@@ -3,6 +3,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
 import RaisedButton from "material-ui/RaisedButton";
+import * as Validation from "../../modules/validation";
 
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";

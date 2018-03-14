@@ -25,6 +25,7 @@ interface IState {
   email: string;
   password1: string;
   password2: string;
+  allowSubmit: boolean;
 }
 
 class Register extends React.Component<IProps, IState> {
@@ -33,7 +34,8 @@ class Register extends React.Component<IProps, IState> {
     this.state = {
       email: "",
       password1: "",
-      password2: ""
+      password2: "",
+      allowSubmit: true
     };
     this.registerUser = this.registerUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
@@ -69,6 +71,7 @@ class Register extends React.Component<IProps, IState> {
   }
 
   registerUser(event) {
+    this.setState({allowSubmit: false});
     let email = this.state.email.trim();
     let password1 = this.state.password1.trim();
     let password2 = this.state.password2.trim();
@@ -77,6 +80,7 @@ class Register extends React.Component<IProps, IState> {
       if (password1 === password2) {
         return password1.length >= 6 ? true : false;
       } else {
+        this.setState({allowSubmit: true});
         return Library.modalErrorAlert("Passwords don't match");
       }
     };
@@ -90,6 +94,7 @@ class Register extends React.Component<IProps, IState> {
         err => {
           if (err) {
             console.log(`Error: ${err.reason}`);
+            this.setState({allowSubmit: true});
             return Library.modalErrorAlert(err.reason);
           } else {
             let profileFields = {
@@ -100,6 +105,7 @@ class Register extends React.Component<IProps, IState> {
 
             ProfileMethods.createProfile.call(profileFields, (err, id) => {
               if (err) {
+                this.setState({allowSubmit: true});
                 Library.modalErrorAlert(err.reason);
               } else {
                 this.sendVerificationEmail(id);
@@ -113,6 +119,7 @@ class Register extends React.Component<IProps, IState> {
             AuthMethods.createAuth.call(authFields, (err, id) => {
               console.log("createAuth.call", authFields);
               if (err) {
+                this.setState({allowSubmit: true});
                 Library.modalErrorAlert(err.reason);
                 console.log(`createAuth error: [${err.reason}]`);
               } else {
@@ -140,7 +147,7 @@ class Register extends React.Component<IProps, IState> {
 
   getLayout() {
     let layout: any;
-    let form = <RegistrationForm handleChange={this.handleChange} handleSubmit={this.registerUser} />;
+    let form = <RegistrationForm allowSubmit={this.state.allowSubmit} handleChange={this.handleChange} handleSubmit={this.registerUser} />;
 
     layout = form;
 

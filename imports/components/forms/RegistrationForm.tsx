@@ -1,16 +1,20 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
+/*
 import * as jquery from "jquery";
 import "jquery-validation";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
+*/
 import RaisedButton from "material-ui/RaisedButton";
+import * as Validation from "../../modules/validation";
 
 interface IProps {
   handleChange: any;
   handleSubmit: any;
+  allowSubmit: boolean;
 }
 
 interface IState {
@@ -37,10 +41,12 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
   };
 
   componentDidMount() {
+    Validation.validate(this);
+    /*
     jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
       trigger: "custom",
       animation: "slide",
-      theme: "tooltipster-light",
+      theme: "tooltipster-shadow",
       zIndex: 1400
     });
     jquery(`#${this.formID}`).validate({
@@ -56,13 +62,11 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
         jquery(`#${element.id}`).tooltipster("close");
       }
     });
+    */
   }
 
 
   handleSubmit() {
-    this.setState({
-      disableSubmit: true
-    });
     this.props.handleSubmit();
   }
 
@@ -111,7 +115,7 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
           </div>
 
           <div className="form-group">
-            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+            <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
           </div>
         </form>
       </div>

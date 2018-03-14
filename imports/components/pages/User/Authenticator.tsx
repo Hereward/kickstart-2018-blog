@@ -117,7 +117,6 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 
   setTimer() {
-    
     if (this.props.authData) {
       if (this.props.authData.private_key && !this.timerWasSet) {
         this.timerID = setInterval(() => this.checkTokens(this.props.authData.private_key), 2000);
@@ -129,7 +128,10 @@ class Authenticator extends React.Component<IProps, IState> {
   getQRCodeLayout() {
     let QRcode = (
       <div className="QRcode">
-        <img alt="QR Code" src={this.props.authData.QRCodeURL} />
+        <div>
+          <img alt="QR Code" src={this.props.authData.QRCodeURL} />
+        </div>
+        <div className="private-key">{this.props.authData.private_key}</div>
       </div>
     );
     return QRcode;
@@ -228,12 +230,11 @@ class Authenticator extends React.Component<IProps, IState> {
       <Transition>
         <div>
           <h2>Register For 2 Factor Authentication</h2>
-          <p className="lead">
-            In order to use the full range of our services you will need to use 2 factor authentication.
-          </p>
+          <p className="lead">In order to use the full range of our services you will need to use 2 factor authentication.</p>
+          <p className="lead">Below you will see a graphical QR code followed by the private key text string.</p>
           <div>{this.props.authData.QRCodeURL ? this.getQRCodeLayout() : this.getLoadingPlaceHolder()}</div>
 
-          <p className="lead">Please scan the above QR code in Google Authenticator.</p>
+          <p className="lead">Please scan the QR code or manually enter the private key into Google Authenticator.</p>
           <Button id="QRDone" onClick={this.handleQRClick}>
             Click Here When Done
           </Button>

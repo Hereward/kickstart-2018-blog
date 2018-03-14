@@ -1,12 +1,15 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
-import * as jquery from "jquery";
+//import * as jquery from "jquery";
 import RaisedButton from "material-ui/RaisedButton";
+import * as Validation from "../../modules/validation";
+/*
 import "jquery-validation";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
+*/
 import Widget from "./Widget";
 import CountryWidget from "./CountryWidget";
 import DateWidget from "./DateWidget";
@@ -51,6 +54,8 @@ export default class ProfileForm extends React.Component<IProps, IState> {
   };
 
   componentDidMount() {
+    Validation.validate(this);
+    /*
     jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
       trigger: "custom",
       animation: "slide",
@@ -71,6 +76,7 @@ export default class ProfileForm extends React.Component<IProps, IState> {
         this.handleSubmit();
       }
     });
+    */
   }
 
   handleSetStateUpstream(sVar, sVal) {

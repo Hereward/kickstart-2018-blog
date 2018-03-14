@@ -7,10 +7,15 @@ import ActionCheckCircle from "material-ui/svg-icons/action/check-circle";
 import NavigationCancel from "material-ui/svg-icons/navigation/cancel";
 import { Link } from "react-router-dom";
 import "react-block-ui/style.css";
+import * as Validation from "../../modules/validation";
+import * as jquery from "jquery";
+
+/*
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
-import * as jquery from "jquery";
+
 import "jquery-validation";
+*/
 
 interface IProps {
   handleChange: any;
@@ -38,6 +43,8 @@ export default class SingleWidgetForm extends React.Component<IProps, IState> {
   };
 
   componentDidMount() {
+    Validation.validate(this);
+    /*
     jquery(`#${this.props.name}`).tooltipster({
       trigger: "custom",
       onlyOne: true
@@ -58,6 +65,7 @@ export default class SingleWidgetForm extends React.Component<IProps, IState> {
         this.props.handleSubmit(this.props.name);
       }
     });
+    */
   }
 
   handleChange(e) {
