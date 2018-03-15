@@ -284,7 +284,7 @@ class Profile extends React.Component<IProps, IState> {
 
   render() {
     let layout = this.getLayout();
-    return <Transition>{layout}</Transition>;
+    return <Transition><div className="container page-content">{layout}</div></Transition>;
   }
 }
 

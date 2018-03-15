@@ -10,7 +10,7 @@ const Transition = props => (
     transitionLeaveTimeout={400}
     transitionAppear={true}
   >
-    <div>{props.children}</div>
+    {props.children}
   </CSSTransitionGroup>
 );
 

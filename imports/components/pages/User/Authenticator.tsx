@@ -208,7 +208,7 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    let layout = <div>{this.state.showQRcode ? this.QRLayout() : this.verifyLayout()}</div>;
+    let layout = <div className="container page-content">{this.state.showQRcode ? this.QRLayout() : this.verifyLayout()}</div>;
     return layout;
   }
 

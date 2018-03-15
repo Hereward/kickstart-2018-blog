@@ -151,7 +151,7 @@ class Register extends React.Component<IProps, IState> {
 
     layout = form;
 
-    return <div>{layout}</div>;
+    return <div className="container page-content">{layout}</div>;
   }
 
   render() {

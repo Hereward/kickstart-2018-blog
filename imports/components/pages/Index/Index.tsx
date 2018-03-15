@@ -11,6 +11,7 @@ import * as Methods from "../../../api/tasks/methods";
 import * as Library from "../../../modules/library";
 import * as Icon from "../../../modules/icons";
 import { Pages } from "../../../api/pages/publish";
+import HomeContent from "../../partials/Home";
 
 declare var DocHead: any;
 
@@ -130,15 +131,17 @@ class Index extends React.Component<IProps, IState> {
 
   todosSection() {
     let tasks: any;
+    let loggedOutMsg = !Meteor.user() ? <p><em>This section will become active when you are logged in to your account.</em></p> : '';
     tasks = this.props.taskCount ? <div>Loading...</div> : <div />;
 
     if (this.props.tasks) {
       tasks = this.renderTasks();
     }
     let todosLayout = (
-      <div className="todos">
+      <div>
         <div className="todos-top-section">
           <h2>Simple Todos App</h2>
+          {loggedOutMsg}
           <div className="todos-form-wrapper">
             {this.getCheckBox()}
             {this.getForm()}
@@ -147,26 +150,14 @@ class Index extends React.Component<IProps, IState> {
         <ul>{tasks}</ul>
       </div>
     );
-    return Meteor.user() ? todosLayout : "";
+    return todosLayout;
   }
 
   render() {
     return (
       <Transition>
-        <div>
-          <div className="page-content">
-            <h1>A starter platform for Meteor projects</h1>
-            <div>
-              <p>This project is intended to be starting point for meteor web app projects. It uses a collection of packages which I found helpful and innovative.</p>
-              <p>All code is in Typescript. The front-end is React.</p>
-              <p>The project contains a complete user registration process using custom templates including email verification and (optionally) 2 factor authentication.</p>
-              <p>The project uses both Bootstrap 4 and Material UI design elements.</p>
-              <p>The Home page also contains an implementation of the simple todos example from the Meteor Guide.</p>
-              <p>For more information please visit the: <Link  to="https://github.com/Hereward/meteor-react-kickstart-2018">github page</Link>.</p>
-            </div>
-          </div>
-          {this.todosSection()}
-        </div>
+          <HomeContent />
+          <div className="container todos">{this.todosSection()}</div>
       </Transition>
     );
   }

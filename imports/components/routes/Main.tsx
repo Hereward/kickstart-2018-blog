@@ -29,38 +29,36 @@ const AuthRoute = ({ component: Component, redirect, condition, cProps, ...rest 
 );
 
 const MainRouter = props => (
-
-    <Switch>
-      <Route exact path="/" component={Index} />
-      <Route path="/about" render={() => <About {...props} />} />
-      <Route path="/profile" render={() => <Profile {...props} />} />
-      <Route path="/verify-email" render={() => <VerifyEmail {...props} />} />
-      <AuthRoute
-        path="/forgot-password"
-        cProps={props}
-        component={ForgotPassWord}
-        condition={!Meteor.user()}
-        redirect="/"
-      />
-      <AuthRoute path="/signin" cProps={props} component={SignIn} condition={!Meteor.user()} redirect="/" />
-      <AuthRoute
-        path="/forgot-password-reset"
-        cProps={props}
-        component={ForgotPassWordReset}
-        condition={!Meteor.user()}
-        redirect="/"
-      />
-      <AuthRoute
-        path="/change-password"
-        cProps={props}
-        component={ChangePassword}
-        condition={Meteor.user()}
-        redirect="/"
-      />
-      <AuthRoute path="/register" cProps={props} component={Register} condition={!Meteor.user()} redirect="/" />
-      <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={Meteor.user()} redirect="/" />
-    </Switch>
-
+  <Switch>
+    <Route exact path="/" component={Index} />
+    <Route path="/about" render={() => <About {...props} />} />
+    <Route path="/profile" render={() => <Profile {...props} />} />
+    <Route path="/verify-email" render={() => <VerifyEmail {...props} />} />
+    <AuthRoute
+      path="/forgot-password"
+      cProps={props}
+      component={ForgotPassWord}
+      condition={!Meteor.user()}
+      redirect="/"
+    />
+    <AuthRoute path="/signin" cProps={props} component={SignIn} condition={!Meteor.user()} redirect="/" />
+    <AuthRoute
+      path="/forgot-password-reset"
+      cProps={props}
+      component={ForgotPassWordReset}
+      condition={!Meteor.user()}
+      redirect="/"
+    />
+    <AuthRoute
+      path="/change-password"
+      cProps={props}
+      component={ChangePassword}
+      condition={Meteor.user()}
+      redirect="/"
+    />
+    <AuthRoute path="/register" cProps={props} component={Register} condition={!Meteor.user()} redirect="/" />
+    <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={Meteor.user()} redirect="/" />
+  </Switch>
 );
 
 export default MainRouter;

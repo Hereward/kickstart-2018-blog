@@ -155,7 +155,7 @@ export default class PageContent extends React.Component<IProps, IState> {
 
   render() {
     let layout = this.getLayout();
-    return <div className="page-content">{layout}</div>;
+    return <div className="container page-content">{layout}</div>;
   }
 }
 

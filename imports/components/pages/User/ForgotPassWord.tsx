@@ -81,7 +81,7 @@ class ForgotPassWord extends React.Component<IProps, IState> {
   render() {
     return (
       <Transition>
-        <div>{this.getLayout()}</div>
+        <div className="container page-content">{this.getLayout()}</div>
       </Transition>
     );
   }

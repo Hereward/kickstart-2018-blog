@@ -8,18 +8,14 @@ body {
   /* background-color: #343a40; */
 }
 
-#VerifiedIndicator {
-  
-}
+
+// #VerifiedIndicator {}
 
 .tooltipster-sidetip.tooltipster-shadow.tooltipster-shadow-customized .tooltipster-content {
 	color: lightcoral;
 }
 
-.tooltipster-sidetip.tooltipster-shadow.tooltipster-shadow-customized .tooltipster-box {
-  //background:#F4F6F6;
-  //border: 1px solid red;
-}
+//.tooltipster-sidetip.tooltipster-shadow.tooltipster-shadow-customized .tooltipster-box {}
 
 
 .private-key {
@@ -38,8 +34,6 @@ header {
 }
 
 main {
-  margin-top: 3.5rem;
-  min-height: 30rem;
   background-color: white;
 }
 
@@ -75,7 +69,8 @@ h2 {
 }
 
 .page-content {
-  margin-bottom: 2rem;
+  margin-top: 4rem;
+  /* margin-bottom: 2rem; */
 }
 
 .profile-details {

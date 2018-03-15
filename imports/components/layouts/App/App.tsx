@@ -26,7 +26,7 @@ class App extends React.Component<IProps> {
       <BrowserRouter>
         <div className="router-parent d-flex flex-column">
           <Header {...this.props} />
-          <main className="container main">
+          <main>
             <MainRouter {...this.props} />
           </main>
           <Footer {...this.props} />
