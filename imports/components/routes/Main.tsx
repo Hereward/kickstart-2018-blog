@@ -41,7 +41,7 @@ const MainRouter = props => (
       condition={!Meteor.user()}
       redirect="/"
     />
-    <AuthRoute path="/signin" cProps={props} component={SignIn} condition={!Meteor.user()} redirect="/" />
+    <Route path="/signin" render={() => <SignIn {...props} />} />
     <AuthRoute
       path="/forgot-password-reset"
       cProps={props}

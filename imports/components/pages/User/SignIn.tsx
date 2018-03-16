@@ -19,7 +19,7 @@ interface IProps {
 interface IState {
   email: string;
   password: string;
-  allowSubmit: boolean
+  allowSubmit: boolean;
 }
 
 const user: any = Meteor.user();
@@ -60,20 +60,33 @@ class SignIn extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    let form = <SignInForm allowSubmit={this.state.allowSubmit} handleChange={this.handleChange} handleSubmit={this.SignInUser} />;
+    let form = (
+      <SignInForm
+        allowSubmit={this.state.allowSubmit}
+        handleChange={this.handleChange}
+        handleSubmit={this.SignInUser}
+      />
+    );
 
     if (!this.props.signedIn) {
       return form;
     } else {
-      return <div>Already signed in.</div>;
+      return (
+        <div>
+          <h2>Signed In</h2>
+          <div>
+            You are signed in as <strong>{Meteor.user().emails[0].address}</strong>.
+          </div>
+        </div>
+      );
     }
   }
 
   SignInUser() {
-    this.setState({allowSubmit: false});
+    this.setState({ allowSubmit: false });
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
       if (error) {
-        this.setState({allowSubmit: true});
+        this.setState({ allowSubmit: true });
         return Library.modalErrorAlert({ detail: error.reason, title: "Sign In Failed" });
       } else if (this.props.enhancedAuth) {
         let authFields = {
