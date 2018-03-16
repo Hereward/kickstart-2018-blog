@@ -13,7 +13,7 @@ if (Meteor.isServer) {
       Pages.insert({
         name: "about",
         heading: "About Page",
-        body: "<div> This is the About page.</>",
+        body: "<div> This is the About page. You can edit it when logged in to your account.</>",
         createdAt: new Date(),
         owner: ""
       });
