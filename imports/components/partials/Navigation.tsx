@@ -9,6 +9,7 @@ import * as jquery from "jquery";
 import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
 import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
 import timeOut from "../../modules/timeout";
+import * as PageMethods from "../../api/pages/methods";
 
 import {
   Collapse,
@@ -166,6 +167,7 @@ class Navigation extends React.Component<IProps, IState> {
     });
     Meteor.logout(() => {
       this.emailNotifySent = false;
+      PageMethods.refreshDefaultContent();
       this.props.history.push("/");
     });
   }

@@ -8,6 +8,7 @@ import * as AuthMethods from "../../../api/auth/methods";
 import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
 import SignInForm from "../../forms/SignInForm";
+import * as PageMethods from "../../../api/pages/methods";
 
 interface IProps {
   history: any;
@@ -88,21 +89,30 @@ class SignIn extends React.Component<IProps, IState> {
       if (error) {
         this.setState({ allowSubmit: true });
         return Library.modalErrorAlert({ detail: error.reason, title: "Sign In Failed" });
-      } else if (this.props.enhancedAuth) {
-        let authFields = {
-          verified: false
-        };
-
-        AuthMethods.setVerified.call(authFields, (err, res) => {
-          if (err) {
-            Library.modalErrorAlert(err.reason);
-            console.log(`setVerified error`, err);
-          } else {
-            this.props.history.push("/authenticate");
-          }
-        });
       } else {
-        this.props.history.push("/");
+        console.log(`Sign In Succesful`);
+        //PageMethods.refreshDefaultContent();
+        let destination = '';
+
+        if (this.props.enhancedAuth) {
+          let authFields = {
+            verified: false
+          };
+
+          AuthMethods.setVerified.call(authFields, (err, res) => {
+            if (err) {
+              Library.modalErrorAlert(err.reason);
+              console.log(`setVerified error`, err);
+            } else {
+              destination = "/authenticate";
+            }
+          });
+        } else {
+          destination = "/";
+        }
+
+        this.props.history.push(destination);
+        PageMethods.refreshDefaultContent();
       }
     });
   }

@@ -10,6 +10,23 @@ const authCheck = (userId, methodName) => {
   }
 };
 
+export const refreshDefaultContent = () => {
+  console.log(`refreshDefaultContent`);
+  wipeContent.call({}, err => {
+    if (err) {
+      console.log(`wipeContent failed`, err);
+    } else {
+      setDefaultContent.call({ name: "about" }, err => {
+        if (err) {
+          console.log(`refreshDefaultContent - setDefaultContent (about) failed`, err);
+        }
+      });
+    }
+  });
+
+ 
+};
+
 export const createPage = new ValidatedMethod({
   name: "pages.create",
 
@@ -56,6 +73,60 @@ export const updatePage = new ValidatedMethod({
     });
 
     console.log(`pages.update - DONE!`);
+    return true;
+  }
+});
+
+export const wipeContent = new ValidatedMethod({
+  name: "pages.wipeContent",
+  validate: new SimpleSchema({}).validator(),
+  run() {
+    if (!this.isSimulation) {
+      Pages.remove({});
+
+      Pages.insert({
+        name: "about",
+        heading: "",
+        body: "",
+        createdAt: new Date(),
+        owner: ""
+      });
+      console.log(`pages.wipeContent - DONE!`);
+      return true;
+    }
+  }
+});
+
+export const setDefaultContent = new ValidatedMethod({
+  name: "pages.setDefaultContent",
+  validate: new SimpleSchema({
+    name: { type: String }
+  }).validator(),
+
+  run(fields) {
+    //console.log(`pages.setDefaultContent`);
+    let heading = "";
+    let body = "";
+    //authCheck("pages.setDefaultContent", this.userId);
+
+    if (fields.name === "about") {
+      heading = Meteor.settings.public.defaultContent.about.heading;
+      body = Meteor.settings.public.defaultContent.about.body;
+    } else if (fields.name === "home") {
+      heading = "Home Page";
+      body = "<p>This is the Home page.</p>";
+    }
+
+    Pages.update(
+      { name: fields.name },
+      {
+        name: fields.name,
+        heading: heading,
+        body: body
+      }
+    );
+
+    console.log(`pages.setDefaultContent (${fields.name}) - DONE!`);
     return true;
   }
 });

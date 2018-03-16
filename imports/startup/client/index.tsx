@@ -6,6 +6,7 @@ import App from "../../components/layouts/App/App";
 import { addMeta } from "./meta";
 import * as Library from "../../modules/library";
 import * as AuthMethods from "../../api/auth/methods";
+import * as PageMethods from "../../api/pages/methods";
 
 class Launch extends React.Component {
   constructor(props) {
@@ -43,6 +44,7 @@ function checkSessionCookie() {
         }
       });
       Meteor.logout();
+      PageMethods.refreshDefaultContent();
     }
 
     cookie = Library.setCookie("resume", "true", false);

@@ -7,23 +7,16 @@ if (Meteor.isServer) {
   Meteor.publish("pages", function pagesPublication() {
     return Pages.find();
   });
-
-  Meteor.startup(function() {
-    if (Pages.find().count() === 0) {
-      Pages.insert({
-        name: "about",
-        heading: "About Page",
-        body: "<div> This is the About page. You can edit it when logged in to your account.</>",
-        createdAt: new Date(),
-        owner: ""
-      });
-      Pages.insert({
-        name: "home",
-        heading: "Home Page",
-        body: "<div> This is the Home page.</>",
-        createdAt: new Date(),
-        owner: ""
-      });
-    }
-  });
+  Pages.remove({});
+  if (Pages.find().count() === 0) {
+    console.log(`startup - clearing default content`);
+    
+    Pages.insert({
+      name: "about",
+      heading: Meteor.settings.public.defaultContent.about.heading,
+      body: Meteor.settings.public.defaultContent.about.body,
+      createdAt: new Date(),
+      owner: ""
+    });
+  }
 }
