@@ -8,7 +8,7 @@ import * as AuthMethods from "../../../api/auth/methods";
 import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
 import SignInForm from "../../forms/SignInForm";
-import * as PageMethods from "../../../api/pages/methods";
+import * as ContentManagement from "../../../modules/contentManagement";
 
 interface IProps {
   history: any;
@@ -85,14 +85,15 @@ class SignIn extends React.Component<IProps, IState> {
 
   SignInUser() {
     this.setState({ allowSubmit: false });
+    let destination = '';
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
       if (error) {
         this.setState({ allowSubmit: true });
         return Library.modalErrorAlert({ detail: error.reason, title: "Sign In Failed" });
       } else {
         console.log(`Sign In Succesful`);
-        //PageMethods.refreshDefaultContent();
-        let destination = '';
+        //ContentManagement.refreshDefaultContent();
+        
 
         if (this.props.enhancedAuth) {
           let authFields = {
@@ -105,6 +106,7 @@ class SignIn extends React.Component<IProps, IState> {
               console.log(`setVerified error`, err);
             } else {
               destination = "/authenticate";
+              this.props.history.push(destination);
             }
           });
         } else {
@@ -112,7 +114,7 @@ class SignIn extends React.Component<IProps, IState> {
         }
 
         this.props.history.push(destination);
-        PageMethods.refreshDefaultContent();
+        //PageMethods.refreshDefaultContent();
       }
     });
   }

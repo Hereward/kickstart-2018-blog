@@ -9,7 +9,7 @@ import * as jquery from "jquery";
 import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
 import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
 import timeOut from "../../modules/timeout";
-import * as PageMethods from "../../api/pages/methods";
+import * as ContentManagement from "../../modules/contentManagement";
 
 import {
   Collapse,
@@ -61,10 +61,10 @@ const VerifiedIndicator = function vfi(verified) {
   let style: any;
 
   if (verified) {
-    style = { verticalAlign: "text-top", color: "lime", marginTop:"1px"};
+    style = { verticalAlign: "text-top", color: "lime", marginTop: "1px" };
     tag = <ActionVerifiedUser style={style} />;
   } else {
-    style = { verticalAlign: "text-top", color: "red", marginTop:"1px" };
+    style = { verticalAlign: "text-top", color: "red", marginTop: "1px" };
     tag = <ActionHighlightOff style={style} />;
   }
   return <div id="VerifiedIndicator">{tag}</div>;
@@ -165,9 +165,10 @@ class Navigation extends React.Component<IProps, IState> {
         console.log(`setVerified error`, err);
       }
     });
+
+    ContentManagement.refreshDefaultContent();
     Meteor.logout(() => {
       this.emailNotifySent = false;
-      PageMethods.refreshDefaultContent();
       this.props.history.push("/");
     });
   }
@@ -254,8 +255,7 @@ class Navigation extends React.Component<IProps, IState> {
       <div>
         <Navbar color="dark" expand="md" className="main-nav fixed-top" dark>
           <div className="navbar-brand">
-            {this.props.ShortTitle}{" "}
-            {this.props.signedIn === true ? this.authVerifiedLayout() : ""}
+            {this.props.ShortTitle} {this.props.signedIn === true ? this.authVerifiedLayout() : ""}
           </div>
           <NavbarToggler onClick={this.toggleNavbar} />
           <Collapse isOpen={!this.state.collapsed} navbar>

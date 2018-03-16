@@ -8,4 +8,9 @@ if (Meteor.isServer) {
       $or: [{ private: { $ne: true } }, { owner: this.userId }]
     });
   });
+
+  Meteor.startup(function() {
+    Tasks.remove({});
+    console.log(`startup (tasks) - clearing default content`);
+  });
 }

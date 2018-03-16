@@ -11,20 +11,18 @@ const authCheck = (userId, methodName) => {
 };
 
 export const refreshDefaultContent = () => {
-  console.log(`refreshDefaultContent`);
+  console.log(`Pages - refreshDefaultContent`);
   wipeContent.call({}, err => {
     if (err) {
-      console.log(`wipeContent failed`, err);
+      console.log(`pages wipeContent failed`, err);
     } else {
       setDefaultContent.call({ name: "about" }, err => {
         if (err) {
-          console.log(`refreshDefaultContent - setDefaultContent (about) failed`, err);
+          console.log(`Pages - refreshDefaultContent - setDefaultContent (about) failed`, err);
         }
       });
     }
   });
-
- 
 };
 
 export const createPage = new ValidatedMethod({
@@ -112,9 +110,6 @@ export const setDefaultContent = new ValidatedMethod({
     if (fields.name === "about") {
       heading = Meteor.settings.public.defaultContent.about.heading;
       body = Meteor.settings.public.defaultContent.about.body;
-    } else if (fields.name === "home") {
-      heading = "Home Page";
-      body = "<p>This is the Home page.</p>";
     }
 
     Pages.update(

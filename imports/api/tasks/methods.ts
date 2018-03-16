@@ -4,6 +4,28 @@ import { Tasks } from "./publish";
 
 let task: any;
 
+export const refreshDefaultContent = () => {
+  console.log(`Tasks - refreshDefaultContent`);
+  wipeContent.call({}, err => {
+    if (err) {
+      console.log(`tasks wipeContent failed`, err);      
+    }
+  });
+};
+
+export const wipeContent = new ValidatedMethod({
+  name: "tasks.wipeContent",
+  validate: new SimpleSchema({}).validator(),
+  run() {
+    if (!this.isSimulation) {
+      console.log(`tasks.wipeContent`,this.userId)
+      Tasks.remove({owner: this.userId});
+      console.log(`tasks.wipeContent - DONE!`);
+      return true;
+    }
+  }
+});
+
 export const create = new ValidatedMethod({
   name: "tasks.create",
   validate: new SimpleSchema({
