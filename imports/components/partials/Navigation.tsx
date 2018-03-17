@@ -166,7 +166,7 @@ class Navigation extends React.Component<IProps, IState> {
       }
     });
 
-    ContentManagement.refreshDefaultContent();
+    //ContentManagement.refreshDefaultContent();
     Meteor.logout(() => {
       this.emailNotifySent = false;
       this.props.history.push("/");

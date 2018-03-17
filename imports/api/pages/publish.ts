@@ -10,7 +10,7 @@ if (Meteor.isServer) {
 
   Meteor.startup(function() {
     Pages.remove({});
-    console.log(`startup (pages) - clearing default content`);
+    console.log(`startup (pages) - clearing content`);
 
     Pages.insert({
       name: "about",

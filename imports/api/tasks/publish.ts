@@ -11,6 +11,6 @@ if (Meteor.isServer) {
 
   Meteor.startup(function() {
     Tasks.remove({});
-    console.log(`startup (tasks) - clearing default content`);
+    console.log(`startup (tasks) - clearing content`);
   });
 }

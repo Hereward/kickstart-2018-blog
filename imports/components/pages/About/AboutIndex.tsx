@@ -15,13 +15,19 @@ class About extends React.Component<IProps> {
     super(props);
   }
 
+
+  createMarkup(html) {
+    return { __html: html };
+  }
+
   defaultLayout() {
     let layout = (
       <div className="container page-content">
-        <h1>About Page</h1>
-        <div>This is the About page. You can edit it when logged in to your account.</div>
+        <h1>{Meteor.settings.public.defaultContent.about.heading}</h1>
+        <div dangerouslySetInnerHTML={this.createMarkup(Meteor.settings.public.defaultContent.about.body)} />
       </div>
     );
+    return layout;
   }
 
   // {Meteor.user() ? <PageContent page={this.props.page} /> : <div className="container page-content">Boo</div>}
@@ -29,7 +35,7 @@ class About extends React.Component<IProps> {
   render() {
     return (
       <Transition>
-        <PageContent page={this.props.page} />
+        {Meteor.user() ? <PageContent page={this.props.page} /> : this.defaultLayout()}
       </Transition>
     );
   }

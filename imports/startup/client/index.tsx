@@ -44,7 +44,7 @@ function checkSessionCookie() {
         }
       });
       Meteor.logout();
-      ContentManagement.refreshDefaultContent();
+      //ContentManagement.refreshDefaultContent();
     }
 
     cookie = Library.setCookie("resume", "true", false);

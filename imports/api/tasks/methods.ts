@@ -19,7 +19,7 @@ export const wipeContent = new ValidatedMethod({
   run() {
     if (!this.isSimulation) {
       console.log(`tasks.wipeContent`,this.userId)
-      Tasks.remove({owner: this.userId});
+      Tasks.remove({owner: this.userId, private: false});
       console.log(`tasks.wipeContent - DONE!`);
       return true;
     }
