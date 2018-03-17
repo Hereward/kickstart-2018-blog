@@ -91,6 +91,7 @@ class Index extends React.Component<IProps, IState> {
     return filteredTasks.map(task => {
       const currentUserId = this.props.currentUser && this.props.currentUser._id;
       const showPrivateButton = task.owner === currentUserId;
+      const allowDelete = task.owner === currentUserId;
 
       return (
         <Task
@@ -98,6 +99,7 @@ class Index extends React.Component<IProps, IState> {
           key={task._id}
           taskLabel={task.text}
           showPrivateButton={showPrivateButton}
+          allowDelete={allowDelete}
           hide={this.state.hideCompleted && task.checked}
         />
       );
@@ -131,7 +133,13 @@ class Index extends React.Component<IProps, IState> {
 
   todosSection() {
     let tasks: any;
-    let loggedOutMsg = !Meteor.user() ? <p><em>This section will become active when you are logged in to your account.</em></p> : '';
+    let loggedOutMsg = !Meteor.user() ? (
+      <p>
+        <em>You can add and remove tasks here when you are logged in to your account.</em>
+      </p>
+    ) : (
+      ""
+    );
     tasks = this.props.taskCount ? <div>Loading...</div> : <div />;
 
     if (this.props.tasks) {
@@ -156,8 +164,8 @@ class Index extends React.Component<IProps, IState> {
   render() {
     return (
       <Transition>
-          <HomeContent />
-          <div className="container todos">{this.todosSection()}</div>
+        <HomeContent />
+        <div className="container todos">{this.todosSection()}</div>
       </Transition>
     );
   }

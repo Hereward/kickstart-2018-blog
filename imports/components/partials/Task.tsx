@@ -8,6 +8,7 @@ interface IProps {
   task: { _id: string; checked: any; private: any };
   taskLabel: string;
   showPrivateButton: boolean;
+  allowDelete: boolean;
   hide: boolean;
 }
 
@@ -20,6 +21,7 @@ export default class Task extends React.Component<IProps> {
     task: PropTypes.object,
     taskLabel: PropTypes.string,
     showPrivateButton: PropTypes.bool,
+    allowDelete: PropTypes.bool,
     hide: PropTypes.bool
   };
 
@@ -66,37 +68,41 @@ export default class Task extends React.Component<IProps> {
 
     return (
       <li className={taskClassName}>
-          <div className="row">
-            <div className="col-auto">
-              <input
-                type="checkbox"
-                className="checkbox"
-                readOnly
-                checked={!!this.props.task.checked}
-                onClick={this.toggleChecked.bind(this)}
-              />
-            </div>
+        <div className="row">
+          <div className="col-auto">
+            <input
+              type="checkbox"
+              className="checkbox"
+              readOnly
+              checked={!!this.props.task.checked}
+              onClick={this.toggleChecked.bind(this)}
+            />
+          </div>
 
+          {this.props.allowDelete ? (
             <div className="col-auto">
               <button className="delete" onClick={this.deleteThisTask.bind(this)}>
                 &times;
               </button>
             </div>
+          ) : (
+            ""
+          )}
 
-            {this.props.showPrivateButton ? (
-              <div className="col-auto">
-                <button className="toggle-private" onClick={this.togglePrivate.bind(this)}>
-                  {this.props.task.private ? "Private" : "Public"}
-                </button>
-              </div>
-            ) : (
-              ""
-            )}
-
-            <div className="col-12 col-md-auto">
-              <span className="text">{this.props.taskLabel}</span>
+          {this.props.showPrivateButton ? (
+            <div className="col-auto">
+              <button className="toggle-private" onClick={this.togglePrivate.bind(this)}>
+                {this.props.task.private ? "Private" : "Public"}
+              </button>
             </div>
+          ) : (
+            ""
+          )}
+
+          <div className="col-12 col-md-auto">
+            <span className="text">{this.props.taskLabel}</span>
           </div>
+        </div>
       </li>
     );
   }
