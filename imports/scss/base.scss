@@ -8,15 +8,13 @@ body {
   /* background-color: #343a40; */
 }
 
-
 // #VerifiedIndicator {}
 
 .tooltipster-sidetip.tooltipster-shadow.tooltipster-shadow-customized .tooltipster-content {
-	color: lightcoral;
+  color: lightcoral;
 }
 
 //.tooltipster-sidetip.tooltipster-shadow.tooltipster-shadow-customized .tooltipster-box {}
-
 
 .private-key {
   margin-left: 1rem;
@@ -59,9 +57,15 @@ footer {
 .ql-video {
 }
 
+.display-4 {
+  font-size: 2rem;
+  font-weight: 400;
+}
+
+
 h1,
 .h1 {
-  font-size: 2rem;
+  font-size: 1.7rem;
 }
 
 h2 {
@@ -174,7 +178,7 @@ nav.main-nav {
   font-size: 1rem;
   font-weight: bold;
   color: white;
- // color: rgba(0, 0, 0, 0.9);
+  // color: rgba(0, 0, 0, 0.9);
 }
 
 .main-nav .app-title {
@@ -204,6 +208,10 @@ nav.main-nav {
 }
 
 @media (min-width: 992px) {
+  .display-4 {
+    font-size: 3.5rem;
+    font-weight: 300;
+  }
   .ql-video {
     width: 896px;
     height: 504px;

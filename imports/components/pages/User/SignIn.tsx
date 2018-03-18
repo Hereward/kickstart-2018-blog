@@ -85,16 +85,12 @@ class SignIn extends React.Component<IProps, IState> {
 
   SignInUser() {
     this.setState({ allowSubmit: false });
-    let destination = '';
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
       if (error) {
         this.setState({ allowSubmit: true });
         return Library.modalErrorAlert({ detail: error.reason, title: "Sign In Failed" });
       } else {
         console.log(`Sign In Succesful`);
-        //ContentManagement.refreshDefaultContent();
-        
-
         if (this.props.enhancedAuth) {
           let authFields = {
             verified: false
@@ -105,16 +101,12 @@ class SignIn extends React.Component<IProps, IState> {
               Library.modalErrorAlert(err.reason);
               console.log(`setVerified error`, err);
             } else {
-              destination = "/authenticate";
-              this.props.history.push(destination);
+              this.props.history.push('/authenticate');
             }
           });
         } else {
-          destination = "/";
+          this.props.history.push('/');
         }
-
-        this.props.history.push(destination);
-        //PageMethods.refreshDefaultContent();
       }
     });
   }

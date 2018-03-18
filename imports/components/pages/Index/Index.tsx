@@ -146,7 +146,7 @@ class Index extends React.Component<IProps, IState> {
       tasks = this.renderTasks();
     }
     let todosLayout = (
-      <div>
+      <div className="todos">
         <div className="todos-top-section">
           <h2>Simple Todos App</h2>
           {loggedOutMsg}
@@ -165,7 +165,7 @@ class Index extends React.Component<IProps, IState> {
     return (
       <Transition>
         <HomeContent />
-        <div className="container todos">{this.todosSection()}</div>
+        <div className="container">{this.todosSection()}</div>
       </Transition>
     );
   }
