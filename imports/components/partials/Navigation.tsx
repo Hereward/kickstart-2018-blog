@@ -61,10 +61,10 @@ const VerifiedIndicator = function vfi(verified) {
   let style: any;
 
   if (verified) {
-    style = { verticalAlign: "text-top", color: "lime", marginTop: "-1px" };
+    style = { verticalAlign: "text-top", color: "lime", marginTop: "0px" };
     tag = <ActionVerifiedUser style={style} />;
   } else {
-    style = { verticalAlign: "text-top", color: "red", marginTop: "-1px" };
+    style = { verticalAlign: "text-top", color: "red", marginTop: "0px" };
     tag = <ActionHighlightOff style={style} />;
   }
   return <div id="VerifiedIndicator">{tag}</div>;
@@ -91,6 +91,7 @@ class Navigation extends React.Component<IProps, IState> {
       timeOut({ logoutFunc: this.logOut, on: true });
       //Library.userModelessAlert("verifyEmail", nextProps);
     }
+    
   }
 
   componentWillUpdate(nextProps) {}
@@ -104,6 +105,7 @@ class Navigation extends React.Component<IProps, IState> {
 
   componentDidMount() {
     console.log(`Navigation DID MOUNT`);
+    
   }
 
   verifyEmailNotificationRequired() {
@@ -123,6 +125,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   closeNavbar() {
+    //e.preventDefault();
     console.log(`closeNavbar`, this.state.collapsed);
     if (!this.state.collapsed) {
       this.setState({ collapsed: true });
@@ -168,6 +171,7 @@ class Navigation extends React.Component<IProps, IState> {
 
     //ContentManagement.refreshDefaultContent();
     Meteor.logout(() => {
+      this.closeNavbar();
       this.emailNotifySent = false;
       this.props.history.push("/");
     });
@@ -177,10 +181,8 @@ class Navigation extends React.Component<IProps, IState> {
     if (this.props.enhancedAuth) {
       if (this.props.authData && !this.props.authData.verified) {
         return (
-          <DropdownItem>
-            <NavLink tag={Link} to="/authenticate">
-              Authenticator
-            </NavLink>
+          <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/authenticate">
+            Authenticator
           </DropdownItem>
         );
       }
@@ -190,41 +192,33 @@ class Navigation extends React.Component<IProps, IState> {
   getAuthLayout() {
     let SignedInLayout = (
       <DropdownMenu>
-        <DropdownItem onClick={this.closeNavbar}>
-          <NavLink tag={Link} to="#" onClick={this.logOut}>
-            Sign Out
-          </NavLink>
+        <DropdownItem onClick={this.logOut} tag={Link} to="#" className="nav-link">
+          Sign Out
         </DropdownItem>
-        <DropdownItem onClick={this.closeNavbar}>
-          <NavLink tag={Link} to="/profile">
-            Profile
-          </NavLink>
+
+        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/profile">
+          Profile
         </DropdownItem>
-        <DropdownItem onClick={this.closeNavbar}>
-          <NavLink tag={Link} to="/change-password">
-            Change Password
-          </NavLink>
+
+        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/change-password">
+          Change Password
         </DropdownItem>
+
         {this.getAuthLink()}
       </DropdownMenu>
     );
 
     let SignedOutLayout = (
       <DropdownMenu>
-        <DropdownItem onClick={this.closeNavbar}>
-          <NavLink tag={Link} to="/register">
-            Register
-          </NavLink>
+        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/register">
+          Register
         </DropdownItem>
-        <DropdownItem onClick={this.closeNavbar}>
-          <NavLink tag={Link} to="/signin">
-            Sign In
-          </NavLink>
+
+        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/signin">
+          Sign In
         </DropdownItem>
-        <DropdownItem onClick={this.closeNavbar}>
-          <NavLink tag={Link} to="/forgot-password">
-            Forgot Password
-          </NavLink>
+        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/forgot-password">
+          Forgot Password
         </DropdownItem>
       </DropdownMenu>
     );
@@ -260,17 +254,16 @@ class Navigation extends React.Component<IProps, IState> {
           <NavbarToggler onClick={this.toggleNavbar} />
           <Collapse isOpen={!this.state.collapsed} navbar>
             <Nav className="ml-auto" navbar>
-              <NavItem onClick={this.closeNavbar}>
-                <NavLink tag={Link} to="/">
+              <NavItem>
+                <NavLink onClick={this.closeNavbar} tag={Link} to="/">
                   Home
                 </NavLink>
               </NavItem>
-              <NavItem onClick={this.closeNavbar}>
-                <NavLink tag={Link} to="About">
+              <NavItem>
+                <NavLink onClick={this.closeNavbar} tag={Link} to="About">
                   About
                 </NavLink>
               </NavItem>
-
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
                   Members
