@@ -61,11 +61,11 @@ const VerifiedIndicator = function vfi(verified) {
   let style: any;
 
   if (verified) {
-    style = { verticalAlign: "text-top", color: "lime", marginTop: "0px" };
-    tag = <ActionVerifiedUser style={style} />;
+    //style = { verticalAlign: "text-top", color: "lime", marginTop: "0px" };
+    tag = <ActionVerifiedUser className="action-verified-user" />;
   } else {
-    style = { verticalAlign: "text-top", color: "red", marginTop: "0px" };
-    tag = <ActionHighlightOff style={style} />;
+    //style = { verticalAlign: "text-top", color: "red", marginTop: "0px" };
+    tag = <ActionHighlightOff className="action-highlight-off" />;
   }
   return <div id="VerifiedIndicator">{tag}</div>;
 };

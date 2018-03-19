@@ -8,6 +8,21 @@ body {
   /* background-color: #343a40; */
 }
 
+.action-highlight-off {
+  vertical-align: middle !important;
+  color: red !important;
+  height: 20px !important;
+  margin-top: -2px !important;
+}
+
+.action-verified-user {
+  vertical-align: middle !important;
+  color: lime !important;
+  height: 20px !important;
+  margin-top: -2px !important;
+}
+
+
 .navbar-dark .navbar-nav .nav-link {
   color: rgba(255, 255, 255, 0.5) !important;
 }
@@ -213,6 +228,10 @@ nav.main-nav {
 }
 
 @media (min-width: 768px) {
+  .action-highlight-off, .action-verified-user {
+    height: 24px !important;
+    //margin-top: 0 !important;
+  }
 }
 
 @media (min-width: 992px) {
