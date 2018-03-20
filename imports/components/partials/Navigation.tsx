@@ -6,10 +6,16 @@ import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import styled from "styled-components";
 import * as jquery from "jquery";
+import "tooltipster";
+import "tooltipster/dist/css/tooltipster.bundle.min.css";
+import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
+import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
 import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
 import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
 import timeOut from "../../modules/timeout";
 import * as ContentManagement from "../../modules/contentManagement";
+
+
 
 import {
   Collapse,
@@ -30,6 +36,7 @@ import {
 import * as AuthMethods from "../../api/auth/methods";
 import { Auth } from "../../api/auth/publish";
 import * as Library from "../../modules/library";
+import * as Tooltips from "../../modules/tooltips";
 
 interface IProps {
   history: any;
@@ -54,6 +61,8 @@ interface IProps {
 
 interface IState {
   collapsed: boolean;
+  tip: string;
+  verified: boolean;
 }
 
 const VerifiedIndicator = function vfi(verified) {
@@ -73,6 +82,9 @@ const VerifiedIndicator = function vfi(verified) {
 declare var Bert: any;
 
 class Navigation extends React.Component<IProps, IState> {
+  tipInitialised: boolean = false;
+  clearTip: boolean = false;
+
   emailNotifySent: boolean;
   constructor(props) {
     super(props);
@@ -80,7 +92,9 @@ class Navigation extends React.Component<IProps, IState> {
     this.closeNavbar = this.closeNavbar.bind(this);
     this.logOut = this.logOut.bind(this);
     this.state = {
-      collapsed: true
+      collapsed: true,
+      verified: false,
+      tip: ""
     };
     this.emailNotifySent = false;
   }
@@ -89,23 +103,64 @@ class Navigation extends React.Component<IProps, IState> {
     if (nextProps.signedIn && nextProps.signedIn !== this.props.signedIn) {
       console.log(`Launching timeout script`);
       timeOut({ logoutFunc: this.logOut, on: true });
-      //Library.userModelessAlert("verifyEmail", nextProps);
     }
+      
+    //this.initTipData(nextProps);
     
   }
 
   componentWillUpdate(nextProps) {}
 
   componentDidUpdate() {
+    console.log(`componentDidUpdate`, this.clearTip, this.state.tip, this.tipInitialised);
     let notify = this.verifyEmailNotificationRequired();
     if (notify) {
       this.emailNotifySent = Library.userModelessAlert("verifyEmail", this.props);
     }
+
+    Tooltips.set('verified', this.props);
+    /*
+    if (Meteor.user() && this.state.tip && !this.tipInitialised) {
+      console.log("FUCKY");
+      this.initTip();
+    }
+    */
   }
+
+  /*
+  initTipData(props) {
+    console.log(`initTipData`, props);
+    let tipObj = Library.dashBoardTip(props);
+    if (tipObj.tip) {
+      this.setState({ verified: tipObj.verified, tip: tipObj.tip });
+    }
+  }
+
+  initTip(clearTip=false) {
+    let tipContent = "";
+    console.log(`initTip ${clearTip}[] [${tipContent}] [${this.state.tip}]`);
+    if (clearTip) {
+      tipContent = "";
+      jquery(".tooltipstered").tooltipster("destroy");
+      //this.clearTip = false;
+      //this.tipInitialised = true;
+    } else {
+      //console.log(`FUCK`);
+      tipContent = this.state.tip;
+      jquery(`.tooltipster-nav`).tooltipster({
+        trigger: "hover",
+        animation: "slide",
+        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
+        zIndex: 50000,
+        content: tipContent
+      });
+      this.tipInitialised = true;
+    }
+  }
+  */
 
   componentDidMount() {
     console.log(`Navigation DID MOUNT`);
-    
   }
 
   verifyEmailNotificationRequired() {
@@ -172,6 +227,12 @@ class Navigation extends React.Component<IProps, IState> {
     //ContentManagement.refreshDefaultContent();
     Meteor.logout(() => {
       this.closeNavbar();
+      Tooltips.unset('verified');
+      //this.tipInitialised = false;
+      //this.clearTip = true;
+      //this.initTip(true);
+      //this.initTipData(this.props);
+      //this.setState({verified: false, tip: ''});
       this.emailNotifySent = false;
       this.props.history.push("/");
     });
@@ -227,18 +288,11 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   authVerifiedLayout() {
-    let tipObj = Library.dashBoardTip(this.props);
-    let tip = tipObj.tip;
-    let verifiedFlag = tipObj.verified;
+    let obj = Tooltips.dashBoardTip(this.props);
     let verified = (
       <div className="d-inline-block">
         <div className="d-none d-sm-inline">{this.props.emailDashDisplay}</div>{" "}
-        <div className="d-inline-block">
-          {VerifiedIndicator(verifiedFlag)}
-          <UncontrolledTooltip placement="right" target="VerifiedIndicator">
-            {tip}
-          </UncontrolledTooltip>
-        </div>
+        {obj.tip ? <div className="d-inline-block">{VerifiedIndicator(obj.verified)}</div> : ''}
       </div>
     );
     return verified;
@@ -248,8 +302,8 @@ class Navigation extends React.Component<IProps, IState> {
     return (
       <div>
         <Navbar color="dark" expand="md" className="main-nav fixed-top" dark>
-          <div className="navbar-brand">
-            {this.props.ShortTitle} {this.props.signedIn === true ? this.authVerifiedLayout() : ""}
+          <div className="navbar-brand verified">
+            {this.props.ShortTitle} {this.authVerifiedLayout()}
           </div>
           <NavbarToggler onClick={this.toggleNavbar} />
           <Collapse isOpen={!this.state.collapsed} navbar>

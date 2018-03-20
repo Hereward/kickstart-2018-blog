@@ -67,12 +67,17 @@ export function modalErrorAlert(params: any) {
 
 export function dashBoardTip(props) {
   let verifiedFlag: boolean;
-  let tip: string;
-  if (!props.enhancedAuth || !props.authData) {
+  let tip: string ="tip not set";
+  if (!props.signedIn) {
+    tip = '';
+  } else if (props.enhancedAuth === false) {
+    console.log(`dashBoardTip`, props);
     verifiedFlag = props.signedIn && props.EmailVerified;
-    let tip = verifiedFlag
+    tip = verifiedFlag
       ? "Your account is verified."
       : "Your email address is not verified. ";
+  } else if (!props.authData) {
+    tip = '';
   } else {
     verifiedFlag = props.signedIn && props.authData.verified && props.EmailVerified;
     tip = verifiedFlag ? "Your session was verified." : "Unverified session: ";
@@ -81,11 +86,12 @@ export function dashBoardTip(props) {
       tip += "Not signed in.";
     } else {
       if (!props.EmailVerified) {
-        tip += "Email address not verified";
+        tip += "Email address not verified.";
       }
 
       if (!props.authData.verified) {
-        tip += ", session does not have 2 factor authentication.";
+        tip += (props.EmailVerified) ? '' : ' ';
+        tip += "Session does not have 2 factor authentication.";
       }
     }
   }
