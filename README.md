@@ -43,7 +43,7 @@ This is not a complete list - it includes only the major packages used.
 
 ## Table of Contents
 
-- [2FA Security](#security)
+- [2FA Security](#2FA)
 - [Install](#install)
 - [Deploy](#deploy)
 - [Settings](#settings)
