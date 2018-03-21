@@ -49,6 +49,7 @@ This is not a complete list - it includes only the major packages used.
 - [2FA Security](#2FA)
 - [Session Timeout](#timeout)
 - [Install](#install)
+- [Run](#run)
 - [Deploy](#deploy)
 - [Settings](#settings)
 - [NPM Function Calls](#npm)
@@ -90,6 +91,10 @@ The project has a session timeout feature, with some settings which are configur
 ## <a name="install"></a>Install
 
 Installation is done in the standard way - refer to Meteor docs for examples.
+
+## <a name="run"></a>Run
+
+You need to specify a settings file when you run Meteor otherwise there will be runtime errors. See [NPM Function Calls](#npm) section below.
 
 ## <a name="deploy"></a>Deploy
 
