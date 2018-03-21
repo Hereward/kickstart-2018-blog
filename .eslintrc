@@ -87,6 +87,8 @@
     "func-names": "warn",
     "eqeqeq": "warn",
     "radix": "warn",
+    "no-redeclare": "warn",
+    "block-scoped-var": "warn",
     "react/no-unused-state": "react/no-unused-state",
     "semi": ["error", "always"],
     "prefer-arrow-callback": ["warn",
