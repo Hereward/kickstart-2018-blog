@@ -29,6 +29,7 @@ The Profile page features a form for uploading personal data as well as an image
 This is not a complete list - it includes only the major packages used. 
 
 * React
+* React Router 4
 * Typescript
 * Bootstrap 4
 * Material UI
@@ -43,7 +44,10 @@ This is not a complete list - it includes only the major packages used.
 
 ## Table of Contents
 
+- [Coding Style](#style)
+- [File Structure](#structure)
 - [2FA Security](#2FA)
+- [Session Timeout](#timeout)
 - [Install](#install)
 - [Deploy](#deploy)
 - [Settings](#settings)
@@ -51,11 +55,37 @@ This is not a complete list - it includes only the major packages used.
 - [Maintainers](#maintainers)
 - [License](#license)
 
+## <a name="style"></a>Coding Style
+
+The approach I've followed is that which is recommended by the ReactJS guidelines. Composition is preferred over inheritance and dynamic features are controlled using props, state and lifecycle methods.
+
+## <a name="style"></a>File Structure
+
+The project code all resides inside the imports directory. I have divided components into different groups in a way that seems intuitive to me:
+
+* forms
+* layouts
+* pages
+* partials
+* routes
+
+There is a separate 'modules' folder which contains a number of function libraries. These are imported into the project components as needed:
+
+* icons.tsx
+* library.ts
+* timeout.ts
+* tooltips.ts
+* validation.ts
+
 ## <a name="2FA"></a>2FA Security
 
 2 Factor authentication is becoming increasingly necessary in apps and websites these days. This project uses the Speakeasy package and is configured to work with Google 2FA.
 
-[Github:](https://github.com/speakeasyjs/speakeasy)
+More info: https://github.com/speakeasyjs/speakeasy
+
+## <a name="timeout"></a>Session Timeout
+
+The project has a session timeout feature, with some settings which are configurable in the settings file. There is also a session cookie used to automatically log out users when the browser session is closed.
 
 ## <a name="install"></a>Install
 
@@ -64,6 +94,8 @@ Installation is done in the standard way - refer to Meteor docs for examples.
 ## <a name="deploy"></a>Deploy
 
 A sample configuration for the Meteor Up package is provided. The config files are stored in .deploy in the project root.
+
+More info: http://meteor-up.com/
 
 ## <a name="settings"></a>Settings
 
@@ -79,8 +111,7 @@ In the package.json file you will find 3 NPM function names:
 
 ## <a name="maintainers"></a>Maintainers
 
-[@hereward](https://github.com/hereward)
-
+Hereward: https://github.com/hereward
 
 ## License
 
