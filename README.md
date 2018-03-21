@@ -51,7 +51,7 @@ This is not a complete list - it includes only the major packages used.
 - [Maintainers](#maintainers)
 - [License](#license)
 
-## 2FA Security
+<a name="2FA"></a>2FA Security
 
 2 Factor authentication is becoming increasingly necessary in apps and websites these days. This project uses the Speakeasy package and is configured to work with Google 2FA.
 
