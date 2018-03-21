@@ -6,9 +6,10 @@ import IconButton from "material-ui/IconButton";
 import ActionCheckCircle from "material-ui/svg-icons/action/check-circle";
 import NavigationCancel from "material-ui/svg-icons/navigation/cancel";
 import { Link } from "react-router-dom";
+import * as jquery from "jquery";
 import "react-block-ui/style.css";
 import * as Validation from "../../modules/validation";
-import * as jquery from "jquery";
+
 
 interface IProps {
   handleChange: any;

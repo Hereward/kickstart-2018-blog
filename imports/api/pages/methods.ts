@@ -10,8 +10,55 @@ const authCheck = (userId, methodName) => {
   }
 };
 
+export const setDefaultContent = new ValidatedMethod({
+  name: "pages.setDefaultContent",
+  validate: new SimpleSchema({
+    name: { type: String }
+  }).validator(),
+
+  run(fields) {
+    let heading = "";
+    let body = "";
+
+    if (fields.name === "about") {
+      heading = Meteor.settings.public.defaultContent.about.heading;
+      body = Meteor.settings.public.defaultContent.about.body;
+    }
+
+    Pages.update(
+      { name: fields.name },
+      {
+        name: fields.name,
+        heading: heading,
+        body: body
+      }
+    );
+
+    return true;
+  }
+});
+
+export const wipeContent = new ValidatedMethod({
+  name: "pages.wipeContent",
+  validate: new SimpleSchema({}).validator(),
+  run() {
+    if (!this.isSimulation) {
+      Pages.remove({});
+
+      Pages.insert({
+        name: "about",
+        heading: "",
+        body: "",
+        createdAt: new Date(),
+        owner: ""
+      });
+      return true;
+    }
+  }
+});
+
+
 export const refreshDefaultContent = () => {
-  console.log(`Pages - refreshDefaultContent`);
   wipeContent.call({}, err => {
     if (err) {
       console.log(`pages wipeContent failed`, err);
@@ -35,7 +82,6 @@ export const createPage = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    console.log(`pages.create`);
     authCheck("pages.create", this.userId);
 
     let id = Pages.insert({
@@ -46,7 +92,6 @@ export const createPage = new ValidatedMethod({
       owner: this.userId
     });
 
-    console.log(`pages.create - DONE!`);
     return id;
   }
 });
@@ -60,7 +105,6 @@ export const updatePage = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    console.log(`pages.update`);
     authCheck("pages.update", this.userId);
 
     Pages.update(fields.id, {
@@ -70,58 +114,9 @@ export const updatePage = new ValidatedMethod({
       }
     });
 
-    console.log(`pages.update - DONE!`);
     return true;
   }
 });
 
-export const wipeContent = new ValidatedMethod({
-  name: "pages.wipeContent",
-  validate: new SimpleSchema({}).validator(),
-  run() {
-    if (!this.isSimulation) {
-      Pages.remove({});
 
-      Pages.insert({
-        name: "about",
-        heading: "",
-        body: "",
-        createdAt: new Date(),
-        owner: ""
-      });
-      console.log(`pages.wipeContent - DONE!`);
-      return true;
-    }
-  }
-});
 
-export const setDefaultContent = new ValidatedMethod({
-  name: "pages.setDefaultContent",
-  validate: new SimpleSchema({
-    name: { type: String }
-  }).validator(),
-
-  run(fields) {
-    //console.log(`pages.setDefaultContent`);
-    let heading = "";
-    let body = "";
-    //authCheck("pages.setDefaultContent", this.userId);
-
-    if (fields.name === "about") {
-      heading = Meteor.settings.public.defaultContent.about.heading;
-      body = Meteor.settings.public.defaultContent.about.body;
-    }
-
-    Pages.update(
-      { name: fields.name },
-      {
-        name: fields.name,
-        heading: heading,
-        body: body
-      }
-    );
-
-    console.log(`pages.setDefaultContent (${fields.name}) - DONE!`);
-    return true;
-  }
-});

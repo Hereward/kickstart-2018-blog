@@ -12,8 +12,7 @@ import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-side
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
 import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
 import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
-import timeOut from "../../modules/timeout";
-import * as ContentManagement from "../../modules/contentManagement";
+
 
 import {
   Collapse,
@@ -30,6 +29,9 @@ import {
   Tooltip,
   UncontrolledTooltip
 } from "reactstrap";
+
+import timeOut from "../../modules/timeout";
+import * as ContentManagement from "../../modules/contentManagement";
 
 import * as AuthMethods from "../../api/auth/methods";
 import { Auth } from "../../api/auth/publish";

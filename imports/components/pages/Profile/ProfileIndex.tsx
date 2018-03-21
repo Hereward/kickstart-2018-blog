@@ -43,7 +43,10 @@ class Profile extends React.Component<IProps, IState> {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSetState = this.handleSetState.bind(this);
-    this.state = this.fieldMapper("init") as any;
+    let mapped: any;
+    mapped = this.fieldMapper("init");
+    this.state = mapped;
+    //this.state = this.fieldMapper("init") as any;
   }
 
   fieldMapper(type, props = "") {

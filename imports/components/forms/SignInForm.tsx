@@ -1,9 +1,8 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import * as PropTypes from "prop-types";
-
-import * as Validation from "../../modules/validation";
 import RaisedButton from "material-ui/RaisedButton";
+import * as Validation from "../../modules/validation";
 
 interface IProps {
   handleSubmit: any;

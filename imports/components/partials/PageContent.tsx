@@ -5,16 +5,13 @@ import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import { Pages } from "../../api/pages/publish";
 import Transition from "../partials/Transition";
-import * as Icon from "../../modules/icons";
-import { EditIcon, CancelEditIcon } from "../../modules/icons";
+
 import PageForm from "../forms/PageForm";
-//import EditorModeEdit from "material-ui/svg-icons/editor/mode-edit";
 
 import * as PageMethods from "../../api/pages/methods";
 import * as Library from "../../modules/library";
-//import * as ReactQuill from "react-quill";
-//const ReactQuill = require("react-quill");
-//import "react-quill/dist/quill.snow.css";
+import * as Icon from "../../modules/icons";
+//import { EditIcon, CancelEditIcon } from "../../modules/icons";
 
 interface IProps {
   page: any;
@@ -32,8 +29,10 @@ export default class PageContent extends React.Component<IProps, IState> {
     this.handleChange = this.handleChange.bind(this);
     this.handleSetState = this.handleSetState.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.state = this.fieldMapper("init") as any;
-    //this.state = Object.assign({}, this.state, extraStates);
+    let mapped: any;
+    mapped = this.fieldMapper("init");
+    this.state = mapped;
+    //this.state = this.fieldMapper("init") as any;
   }
 
   fieldMapper(type, props = "") {
@@ -71,20 +70,12 @@ export default class PageContent extends React.Component<IProps, IState> {
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let id = target.id;
-    //console.log(`About Page HandleChange`, value, id);
     this.setState({ [id]: value });
   }
 
   handleSetState(sVar, sVal) {
-    //console.log(`handleSetState (About)`, sVar, sVal);
     this.setState({ [sVar]: sVal });
   }
-
-  /*
-  handleChange(value) {
-    this.setState({ body: value });
-  }
-  */
 
   handleSubmit() {
     let pageFields = this.fieldMapper("method");
@@ -115,7 +106,7 @@ export default class PageContent extends React.Component<IProps, IState> {
   }
 
   editLink() {
-    return (Meteor.user()) ? <EditIcon onClick={this.handleSetState} stateName="edit" /> : '';
+    return Meteor.user() ? <Icon.EditIcon onClick={this.handleSetState} stateName="edit" /> : "";
   }
 
   getLayout() {
@@ -126,7 +117,7 @@ export default class PageContent extends React.Component<IProps, IState> {
         layout = (
           <div>
             <h2>
-              Edit Page <CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="edit" />
+              Edit Page <Icon.CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="edit" />
             </h2>
             <div>{this.editLayout()}</div>
           </div>
@@ -151,34 +142,8 @@ export default class PageContent extends React.Component<IProps, IState> {
     return layout;
   }
 
-  //  {Icon.edit({ onClick: this.handleSetState, stateName: "edit" })}
-
   render() {
     let layout = this.getLayout();
     return <div className="container page-content">{layout}</div>;
   }
 }
-
-/*
-export default withRouter(
-  withTracker(props => {
-    let page: any;
-    if (props.pageName) {
-      let PagesDataReady = Meteor.subscribe("pages");
-      if (PagesDataReady) {
-        page = Pages.findOne({ name: props.pageName });
-      }
-    }
-   
-    return { page: page };
-  })(PageContent)
-);
-*/
-
-/*
-ForgotPassWord.propTypes = {
-  signedIn: PropTypes.bool,
-  EnhancedAuth: PropTypes.bool,
-  history: ReactRouterPropTypes.history
-};
-*/

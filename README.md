@@ -54,11 +54,24 @@ This is not a complete list - it includes only the major packages used.
 - [Settings](#settings)
 - [NPM Function Calls](#npm)
 - [Maintainers](#maintainers)
+- [VS Code Extensions](#VSextensions)
 - [License](#license)
 
 ## <a name="style"></a>Coding Style
 
 The approach I've followed is that which is recommended by the ReactJS guidelines. Composition is preferred over inheritance and dynamic features are controlled using props, state and lifecycle methods.
+
+Official React docs: https://reactjs.org/docs/hello-world.html
+
+I have converted all code to Typescript. This is made possible using the barbatus/typescript package.
+
+Github: https://github.com/barbatus/typescript
+
+Developing in Typescript can be a little tricky due to missing type definitions and also bugs in the IDE. 
+
+In addition to the npm types packages, the project includes a custom type definition file (index.d.ts) where I have added random type definitions in order to silence the Typescript compiler. 
+
+I use Microsoft VS Code with a number of extensions as noted below.
 
 ## <a name="style"></a>File Structure
 
@@ -117,6 +130,14 @@ In the package.json file you will find 3 NPM function names:
 ## <a name="maintainers"></a>Maintainers
 
 Hereward: https://github.com/hereward
+
+## <a name="VSextensions"></a>VS Code Extensions
+
+I have been using both the ESLint and TSLint packages. The project contains a .eslintrc file which contains config settings that I found useful. 
+
+I'm also using the Prettier code formatter.
+
+I have also experimented with the Flow package.
 
 ## License
 

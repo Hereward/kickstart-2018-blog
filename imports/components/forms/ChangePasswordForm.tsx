@@ -3,21 +3,22 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
 import RaisedButton from "material-ui/RaisedButton";
-import * as Validation from "../../modules/validation";
 import * as jquery from "jquery";
 import "jquery-validation";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
+import * as Validation from "../../modules/validation";
 import Widget from "./Widget";
 
 interface IProps {
   handleChange: any;
   handleSubmit: any;
+  allowSubmit: boolean;
 }
 
 interface IState {
-  disableSubmit: boolean;
+
 }
 
 export default class ChangePasswordForm extends React.Component<IProps, IState> {
@@ -29,9 +30,7 @@ export default class ChangePasswordForm extends React.Component<IProps, IState> 
 
     this.handleChange = this.handleChange.bind(this);
 
-    this.state = {
-      disableSubmit: false
-    };
+   
   }
 
   componentDidMount() {
@@ -57,7 +56,6 @@ export default class ChangePasswordForm extends React.Component<IProps, IState> 
         }
       },
       submitHandler: form => {
-        this.setState({ disableSubmit: true });
         this.props.handleSubmit();
       },
       success: function success(label, element) {
@@ -110,7 +108,7 @@ export default class ChangePasswordForm extends React.Component<IProps, IState> 
           </div>
 
           <div className="form-group">
-            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+            <RaisedButton  disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
           </div>
         </form>
       </div>

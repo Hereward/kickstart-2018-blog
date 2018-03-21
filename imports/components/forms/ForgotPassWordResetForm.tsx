@@ -2,12 +2,12 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
 import RaisedButton from "material-ui/RaisedButton";
-import * as Validation from "../../modules/validation";
 import * as jquery from "jquery";
 import "jquery-validation";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
+import * as Validation from "../../modules/validation";
 
 interface IProps {
   handleChange: any;

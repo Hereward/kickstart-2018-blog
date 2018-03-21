@@ -4,27 +4,24 @@ import { Tasks } from "./publish";
 
 let task: any;
 
-export const refreshDefaultContent = () => {
-  console.log(`Tasks - refreshDefaultContent`);
-  wipeContent.call({}, err => {
-    if (err) {
-      console.log(`tasks wipeContent failed`, err);      
-    }
-  });
-};
-
 export const wipeContent = new ValidatedMethod({
   name: "tasks.wipeContent",
   validate: new SimpleSchema({}).validator(),
   run() {
     if (!this.isSimulation) {
-      console.log(`tasks.wipeContent`,this.userId)
-      Tasks.remove({owner: this.userId, private: false});
-      console.log(`tasks.wipeContent - DONE!`);
+      Tasks.remove({ owner: this.userId, private: false });
       return true;
     }
   }
 });
+
+export const refreshDefaultContent = () => {
+  wipeContent.call({}, err => {
+    if (err) {
+      console.log(`tasks wipeContent failed`, err);
+    }
+  });
+};
 
 export const create = new ValidatedMethod({
   name: "tasks.create",
@@ -33,7 +30,6 @@ export const create = new ValidatedMethod({
   }).validator(),
   run(fields) {
     let text = fields.text;
-    console.log(`tasks.create SERVER - [${text}] id=[${this.userId}]`);
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
     }
@@ -45,7 +41,6 @@ export const create = new ValidatedMethod({
       checked: false,
       username: Meteor.users.findOne(this.userId).username
     });
-    console.log(`tasks.create SERVER - DONE!`);
   }
 });
 

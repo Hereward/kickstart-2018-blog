@@ -3,10 +3,11 @@ import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
 import RaisedButton from "material-ui/RaisedButton";
-import Widget from "./Widget";
-const ReactQuill = require("react-quill");
 import "react-quill/dist/quill.snow.css";
 import * as Icon from "../../modules/icons";
+import Widget from "./Widget";
+
+const ReactQuill = require("react-quill");
 
 interface IProps {
   handleChange: any;
@@ -75,16 +76,16 @@ export default class PageForm extends React.Component<IProps, IState> {
   }
 
   componentDidMount() {
-    jquery(`#${this.formID}`).bind("keypress", function(e) {
-      if (e.keyCode == 13) {
+    jquery(`#${this.formID}`).bind("keypress", function kp(e) {
+      if (e.keyCode === 13) {
         return false;
       }
     });
   }
 
   disableReturnKey(state) {
-    jquery(window).keydown(function(event) {
-      if (event.keyCode == 13) {
+    jquery(window).keydown(function drk(event) {
+      if (event.keyCode === 13) {
         event.preventDefault();
         return !state;
       }
@@ -96,6 +97,7 @@ export default class PageForm extends React.Component<IProps, IState> {
   }
 
   handleSubmit(e) {
+    console.log(`PAGE SUBMIT`);
     e.preventDefault();
     this.setState({
       disableSubmit: true
@@ -136,7 +138,7 @@ export default class PageForm extends React.Component<IProps, IState> {
               onChange={this.handleSetStateUpstream}
               modules={this.modules}
               formats={this.formats}
-              theme={"snow"}
+              theme="snow"
             />
           </div>
 

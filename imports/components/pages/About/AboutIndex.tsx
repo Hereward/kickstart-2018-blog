@@ -1,8 +1,8 @@
 import { Meteor } from "meteor/meteor";
-import * as React from "react";
-import Transition from "../../partials/Transition";
 import { withRouter } from "react-router-dom";
+import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
+import Transition from "../../partials/Transition";
 import { Pages } from "../../../api/pages/publish";
 import PageContent from "../../partials/PageContent";
 
@@ -30,7 +30,6 @@ class About extends React.Component<IProps> {
     return layout;
   }
 
-  // {Meteor.user() ? <PageContent page={this.props.page} /> : <div className="container page-content">Boo</div>}
 
   render() {
     return (

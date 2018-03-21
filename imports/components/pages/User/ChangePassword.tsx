@@ -20,18 +20,19 @@ interface IProps {
 interface IState {
   oldPassword: string;
   newPassword: string;
+  allowSubmit: boolean;
 }
 
 class ChangePassword extends React.Component<IProps, IState> {
-
   constructor(props) {
     super(props);
 
     let url = window.location.href;
 
     this.state = {
-      oldPassword: '',
-      newPassword: '',
+      oldPassword: "",
+      newPassword: "",
+      allowSubmit: true
     };
 
     this.changePassword = this.changePassword.bind(this);
@@ -53,7 +54,13 @@ class ChangePassword extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    let form = <ChangePasswordForm handleChange={this.handleChange} handleSubmit={this.changePassword} />;
+    let form = (
+      <ChangePasswordForm
+        allowSubmit={this.state.allowSubmit}
+        handleChange={this.handleChange}
+        handleSubmit={this.changePassword}
+      />
+    );
 
     return form;
   }
@@ -67,7 +74,7 @@ class ChangePassword extends React.Component<IProps, IState> {
   }
 
   changePassword() {
-
+    this.setState({ allowSubmit: false });
     let newPassword = this.state.newPassword.trim();
     let oldPassword = this.state.oldPassword.trim();
 
@@ -94,6 +101,7 @@ class ChangePassword extends React.Component<IProps, IState> {
               console.log("password reset: redirect to /");
             }
           } else {
+            this.setState({ allowSubmit: true });
             Library.modalErrorAlert({ message: err.reason, title: "Password change failed." });
 
             console.log(err);

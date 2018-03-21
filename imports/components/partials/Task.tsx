@@ -52,7 +52,6 @@ export default class Task extends React.Component<IProps> {
       if (err) {
         Library.modalErrorAlert(err.reason);
         console.log(`error`, err);
-      } else {
       }
     });
   }

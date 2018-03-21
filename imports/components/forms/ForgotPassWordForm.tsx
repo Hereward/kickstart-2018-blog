@@ -79,4 +79,3 @@ export default class ForgotPassWordForm extends React.Component<IProps, IState> 
   }
 }
 
-//<BlockUi tag="div" blocking={this.state.blocking}>
