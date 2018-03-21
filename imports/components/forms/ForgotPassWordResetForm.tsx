@@ -12,10 +12,10 @@ import * as Validation from "../../modules/validation";
 interface IProps {
   handleChange: any;
   handleSubmit: any;
+  allowSubmit: boolean;
 }
 
 interface IState {
-  disableSubmit: boolean;
 }
 
 export default class ForgotPassWordResetForm extends React.Component<IProps, IState> {
@@ -26,10 +26,6 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
     super(props);
 
     this.handleChange = this.handleChange.bind(this);
-
-    this.state = {
-      disableSubmit: false
-    };
   }
 
   componentDidMount() {
@@ -55,7 +51,6 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
         }
       },
       submitHandler: form => {
-        this.setState({ disableSubmit: true });
         this.props.handleSubmit();
       },
       success: function success(label, element) {
@@ -97,7 +92,7 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
           </div>
 
           <div className="form-group">
-            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+            <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
           </div>
         </form>
       </div>

@@ -20,6 +20,7 @@ interface IState {
   password1: string;
   password2: string;
   email: string;
+  allowSubmit: boolean;
 }
 
 class ForgotPassWordReset extends React.Component<IProps, IState> {
@@ -34,7 +35,8 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
     this.state = {
       password1: "",
       password2: "",
-      email: ""
+      email: "",
+      allowSubmit: true
     };
 
     this.resetPassword = this.resetPassword.bind(this);
@@ -56,13 +58,13 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    let form = <ForgotPassWordResetForm handleChange={this.handleChange} handleSubmit={this.resetPassword} />;
+    let form = <ForgotPassWordResetForm allowSubmit={this.state.allowSubmit} handleChange={this.handleChange} handleSubmit={this.resetPassword} />;
 
     return form;
   }
 
   resetPassword() {
-    console.log(`FORM SUBMIT >> EMAIL =  ${this.state.email}`);
+    this.setState({ allowSubmit: false });
 
     let password1 = this.state.password1.trim();
     let password2 = this.state.password2.trim();
@@ -71,6 +73,7 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
       if (password1 === password2) {
         return password1.length >= 6 ? true : false;
       } else {
+        this.setState({ allowSubmit: true });
         return Library.modalErrorAlert({ message: "Please try again.", title: "Passwords don't match." });
       }
     };
@@ -98,6 +101,7 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
               console.log("password reset: redirect to /");
             }
           } else {
+            this.setState({ allowSubmit: true });
             Library.modalErrorAlert({ reason: err, title: "Password reset failed." });
 
             console.log(err);

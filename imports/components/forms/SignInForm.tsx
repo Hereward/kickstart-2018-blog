@@ -11,7 +11,6 @@ interface IProps {
 }
 
 interface IState {
-  disableSubmit: boolean;
   SubmitText: string;
 }
 
@@ -26,7 +25,6 @@ export default class SignInForm extends React.Component<IProps, IState> {
     this.handleChange = this.handleChange.bind(this);
 
     this.state = {
-      disableSubmit: false,
       SubmitText: "Submit"
     };
   }

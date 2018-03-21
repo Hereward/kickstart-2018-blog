@@ -9,6 +9,7 @@ import * as Validation from "../../modules/validation";
 interface IProps {
   handleChange: any;
   handleSubmit: any;
+  allowSubmit: boolean;
 }
 
 interface IState {
@@ -35,6 +36,10 @@ export default class ForgotPassWordForm extends React.Component<IProps, IState> 
 
   componentDidMount() {
     Validation.validate(this);
+  }
+
+  handleSubmit() {
+    this.props.handleSubmit();
   }
 
   handleChange(e) {
@@ -65,7 +70,7 @@ export default class ForgotPassWordForm extends React.Component<IProps, IState> 
           </div>
 
           <div className="form-group">
-            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+            <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
           </div>
 
           <div className="form-group">

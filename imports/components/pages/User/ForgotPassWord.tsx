@@ -18,6 +18,7 @@ interface IProps {
 
 interface IState {
   email: string;
+  allowSubmit: boolean;
 }
 
 class ForgotPassWord extends React.Component<IProps, IState> {
@@ -28,7 +29,8 @@ class ForgotPassWord extends React.Component<IProps, IState> {
     this.handleChange = this.handleChange.bind(this);
 
     this.state = {
-      email: ""
+      email: '',
+      allowSubmit: true
     };
   }
 
@@ -45,7 +47,7 @@ class ForgotPassWord extends React.Component<IProps, IState> {
 
   getLayout() {
     if (!this.props.signedIn) {
-      return <ForgotPassWordForm handleChange={this.handleChange} handleSubmit={this.handleSubmit} />;
+      return <ForgotPassWordForm allowSubmit={this.state.allowSubmit} handleChange={this.handleChange} handleSubmit={this.handleSubmit} />;
     } else {
       return <div>Already signed in.</div>;
     }
@@ -53,12 +55,14 @@ class ForgotPassWord extends React.Component<IProps, IState> {
 
   sendResetPassWordLink() {
     let email = this.state.email;
+    this.setState({ allowSubmit: false });
 
     console.log(`Sending reset forgot password email: [${email}]`);
     Accounts.forgotPassword(
       { email: email },
       function fp(e, r) {
         if (e) {
+          this.setState({ allowSubmit: true });
           let msg = "";
           console.log(e.reason);
           if (e.reason === "User not found") {

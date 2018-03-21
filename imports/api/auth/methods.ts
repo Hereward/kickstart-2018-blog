@@ -64,7 +64,7 @@ export const createAuth = new ValidatedMethod({
     if (!this.isSimulation) {
       secret = speakeasy.generateSecret({
         length: 20,
-        name: `Personal Web Wallet: ${email}`
+        name: `Meteor KickStart: ${email}`
       });
       key = secret.base32;
 
