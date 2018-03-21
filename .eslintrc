@@ -42,7 +42,7 @@
       }
     ],
     "import/newline-after-import": [2],
-    "import/prefer-default-export": "warn",
+    "import/prefer-default-export": "off",
     "import/extensions": [0],
     "import/no-absolute-path": [0],
     "import/no-extraneous-dependencies": [0],

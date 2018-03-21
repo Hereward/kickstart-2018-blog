@@ -2,11 +2,13 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
 import RaisedButton from "material-ui/RaisedButton";
+/*
 import * as jquery from "jquery";
 import "jquery-validation";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
+*/
 import * as Validation from "../../modules/validation";
 
 interface IProps {
@@ -29,7 +31,19 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
   }
 
   componentDidMount() {
+
+    let rules = {
+      password2: {
+        equalTo: "#password1"
+      },
+      password1: {
+        minlength: 6
+      }
+    };
+
+    Validation.validate(this, rules);
     
+    /*
     jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
       trigger: "custom",
       animation: "slide",
@@ -57,6 +71,7 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
         jquery(`#${element.id}`).tooltipster("close");
       }
     });
+    */
   }
 
   handleChange(e) {
