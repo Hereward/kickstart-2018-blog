@@ -51,25 +51,25 @@ This is not a complete list - it includes only the major packages used.
 - [Maintainers](#maintainers)
 - [License](#license)
 
-<a name="2FA"></a>2FA Security
+## <a name="2FA"></a>2FA Security
 
 2 Factor authentication is becoming increasingly necessary in apps and websites these days. This project uses the Speakeasy package and is configured to work with Google 2FA.
 
 [Github:](https://github.com/speakeasyjs/speakeasy)
 
-## Install
+## <a name="install"></a>Install
 
 Installation is done in the standard way - refer to Meteor docs for examples.
 
-## Deploy
+## <a name="deploy"></a>Deploy
 
 A sample configuration for the Meteor Up package is provided. The config files are stored in .deploy in the project root.
 
-## Settings
+## <a name="settings"></a>Settings
 
 Meteor settings files are stored in the .deploy folder. There is a production and a development version.
 
-## NPM Function Calls
+## <a name="npm"></a>NPM Function Calls
 
 In the package.json file you will find 3 NPM function names:
 
@@ -77,7 +77,7 @@ In the package.json file you will find 3 NPM function names:
 * deploy - this will deploy the app (you need to configure mup deploy first)
 * deploy-cache - this will deploy a cached version of the app (useful when changing config settings only)
 
-## Maintainers
+## <a name="maintainers"></a>Maintainers
 
 [@hereward](https://github.com/hereward)
 
