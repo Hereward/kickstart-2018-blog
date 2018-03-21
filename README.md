@@ -43,13 +43,13 @@ This is not a complete list - it includes only the major packages used.
 
 ## Table of Contents
 
-- [2FA Security](#Security)
-- [Install](#Install)
-- [Deploy](#Deploy)
-- [Settings](#Settings)
-- [NPM Function Calls](#NPM Function Calls)
-- [Maintainers](#Maintainers)
-- [License](#License)
+- [2FA Security](#security)
+- [Install](#install)
+- [Deploy](#deploy)
+- [Settings](#settings)
+- [NPM Function Calls](#npm)
+- [Maintainers](#maintainers)
+- [License](#license)
 
 ## 2FA Security
 
