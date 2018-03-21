@@ -19,10 +19,10 @@ const HomeContent = props => (
         <p>The About page features the Quill rich text editor.</p>
         <p>The Profile page features a form for uploading personal data as well as an image.</p>
         <p>The project uses both Bootstrap 4 and Material UI design elements.</p>
-        <p>The Home page also contains an implementation of the simple todos example from the <Link to="https://www.meteor.com/tutorials/react/creating-an-app">Meteor Guide</Link>.</p>
+        <p>The Home page also contains an implementation of the simple todos example from the <a href="https://www.meteor.com/tutorials/react/creating-an-app">Meteor Guide</a>.</p>
         <p>
           For full documentation please visit the{" "}
-          <Link to="https://github.com/Hereward/meteor-react-kickstart-2018">Github Repository</Link>.
+          <a href="https://github.com/Hereward/meteor-react-kickstart-2018">Github Repository</a>.
         </p>
       </div>
     </div>
