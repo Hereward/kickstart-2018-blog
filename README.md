@@ -1,4 +1,4 @@
-# meteor-react-typescript-kickstart-2018
+# Meteor/React Kickstart 2018
 
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
