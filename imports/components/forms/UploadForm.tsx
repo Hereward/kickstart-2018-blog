@@ -34,7 +34,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
   }
 
   getImageFromServer() {
-    console.log("getImageFromServer", this.getImageFromServerURLObj.value);
     let url = this.getImageFromServerURLObj.value.trim();
     Meteor.call("getImage", this.props.profile._id, url);
   }
@@ -71,15 +70,15 @@ export default class UploadForm extends React.Component<IProps, IState> {
 
         // These are the event functions, don't need most of them, it shows where we are in the process
         uploadInstance.on("start", function uploadOnStart() {
-          console.log("Starting");
+          //console.log("Starting");
         });
 
         uploadInstance.on("end", function uploadEnd(error, fileObj) {
-          console.log("On end File Object: ", fileObj);
+          //console.log("On end File Object: ", fileObj);
         });
 
         uploadInstance.on("uploaded", function uploadOnUploaded(error, fileObj) {
-          console.log(`uploaded image: [${self.props.profile._id}]`, self.props.profile, fileObj._id);
+          //console.log(`uploaded image: [${self.props.profile._id}]`, self.props.profile, fileObj._id);
           Meteor.call("profileImage.update", { id: self.props.profile._id, image_id: fileObj._id });
 
           self.setState({
@@ -94,7 +93,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
         });
 
         uploadInstance.on("progress", function uploadProgress(progress, fileObj) {
-          console.log("Upload Percentage: " + progress);
+          //console.log("Upload Percentage: " + progress);
           // Update our progress bar
           self.setState({
             progress: progress
@@ -107,7 +106,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
   }
 
   showUploads() {
-    console.log("**********************************", this.state.uploading);
+    //console.log("**********************************", this.state.uploading);
 
     if (!_.isEmpty(this.state.uploading)) {
       return (
@@ -131,7 +130,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
       );
     }
   }
-
 
   render() {
     if (!this.props.loading) {

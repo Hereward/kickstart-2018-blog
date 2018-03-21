@@ -49,7 +49,6 @@ export function dashBoardTip(props) {
 export function set(type, props) {
   let tipObj = dashBoardTip(props);
   if (tipObj.tip) {
-    //jquery(`.${type}`).tooltipster({content: ''});
     let initialised = jquery(`.${type}`).hasClass("tooltipstered");
     if (initialised) {
         jquery(`.${type}`).tooltipster('destroy');

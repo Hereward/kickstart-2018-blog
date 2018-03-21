@@ -34,7 +34,7 @@ export default class ChangePasswordForm extends React.Component<IProps, IState> 
     };
   }
 
-  componentDidMount() {    
+  componentDidMount() {
     jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
       trigger: "custom",
       animation: "slide",
@@ -65,7 +65,6 @@ export default class ChangePasswordForm extends React.Component<IProps, IState> 
       }
     });
   }
-
 
   handleChange(e) {
     this.props.handleChange(e);

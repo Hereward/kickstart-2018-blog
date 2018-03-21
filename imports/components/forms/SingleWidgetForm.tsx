@@ -10,13 +10,6 @@ import "react-block-ui/style.css";
 import * as Validation from "../../modules/validation";
 import * as jquery from "jquery";
 
-/*
-import "tooltipster";
-import "tooltipster/dist/css/tooltipster.bundle.min.css";
-
-import "jquery-validation";
-*/
-
 interface IProps {
   handleChange: any;
   handleSubmit: any;
@@ -44,28 +37,6 @@ export default class SingleWidgetForm extends React.Component<IProps, IState> {
 
   componentDidMount() {
     Validation.validate(this);
-    /*
-    jquery(`#${this.props.name}`).tooltipster({
-      trigger: "custom",
-      onlyOne: true
-    });
-
-    let FormID = `${this.props.name}Form`;
-
-    jquery(`#${FormID}`).validate({
-      errorPlacement: function ep(error, element) {
-        let errorString = jquery(error).text();
-        element.tooltipster("content", errorString);
-        element.tooltipster("open");
-      },
-      success: function success(label, element) {
-        jquery(`#${element.id}`).tooltipster("close");
-      },
-      submitHandler: form => {
-        this.props.handleSubmit(this.props.name);
-      }
-    });
-    */
   }
 
   handleChange(e) {

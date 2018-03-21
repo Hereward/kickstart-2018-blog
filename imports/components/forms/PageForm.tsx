@@ -3,11 +3,6 @@ import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
 import RaisedButton from "material-ui/RaisedButton";
-import * as Validation from "../../modules/validation";
-
-import "tooltipster";
-import "tooltipster/dist/css/tooltipster.bundle.min.css";
-import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import Widget from "./Widget";
 const ReactQuill = require("react-quill");
 import "react-quill/dist/quill.snow.css";
@@ -105,7 +100,6 @@ export default class PageForm extends React.Component<IProps, IState> {
     this.setState({
       disableSubmit: true
     });
-    //this.disableReturnKey(false);
     this.props.handleSubmit();
   }
 
@@ -114,7 +108,6 @@ export default class PageForm extends React.Component<IProps, IState> {
   }
 
   handleSetState(sVar, sVal) {
-    //console.log(`handleSetState (About)`, sVar, sVal);
     this.setState({ [sVar]: sVal });
   }
 

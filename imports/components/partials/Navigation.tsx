@@ -15,8 +15,6 @@ import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
 import timeOut from "../../modules/timeout";
 import * as ContentManagement from "../../modules/contentManagement";
 
-
-
 import {
   Collapse,
   Navbar,
@@ -70,10 +68,8 @@ const VerifiedIndicator = function vfi(verified) {
   let style: any;
 
   if (verified) {
-    //style = { verticalAlign: "text-top", color: "lime", marginTop: "0px" };
     tag = <ActionVerifiedUser className="action-verified-user" />;
   } else {
-    //style = { verticalAlign: "text-top", color: "red", marginTop: "0px" };
     tag = <ActionHighlightOff className="action-highlight-off" />;
   }
   return <div id="VerifiedIndicator">{tag}</div>;
@@ -101,76 +97,24 @@ class Navigation extends React.Component<IProps, IState> {
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.signedIn && nextProps.signedIn !== this.props.signedIn) {
-      console.log(`Launching timeout script`);
       timeOut({ logoutFunc: this.logOut, on: true });
     }
-      
-    //this.initTipData(nextProps);
-    
   }
 
   componentWillUpdate(nextProps) {}
 
   componentDidUpdate() {
-    console.log(`componentDidUpdate`, this.clearTip, this.state.tip, this.tipInitialised);
     let notify = this.verifyEmailNotificationRequired();
     if (notify) {
       this.emailNotifySent = Library.userModelessAlert("verifyEmail", this.props);
     }
 
-    Tooltips.set('verified', this.props);
-    /*
-    if (Meteor.user() && this.state.tip && !this.tipInitialised) {
-      console.log("FUCKY");
-      this.initTip();
-    }
-    */
+    Tooltips.set("verified", this.props);
   }
 
-  /*
-  initTipData(props) {
-    console.log(`initTipData`, props);
-    let tipObj = Library.dashBoardTip(props);
-    if (tipObj.tip) {
-      this.setState({ verified: tipObj.verified, tip: tipObj.tip });
-    }
-  }
-
-  initTip(clearTip=false) {
-    let tipContent = "";
-    console.log(`initTip ${clearTip}[] [${tipContent}] [${this.state.tip}]`);
-    if (clearTip) {
-      tipContent = "";
-      jquery(".tooltipstered").tooltipster("destroy");
-      //this.clearTip = false;
-      //this.tipInitialised = true;
-    } else {
-      //console.log(`FUCK`);
-      tipContent = this.state.tip;
-      jquery(`.tooltipster-nav`).tooltipster({
-        trigger: "hover",
-        animation: "slide",
-        theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-        zIndex: 50000,
-        content: tipContent
-      });
-      this.tipInitialised = true;
-    }
-  }
-  */
-
-  componentDidMount() {
-    console.log(`Navigation DID MOUNT`);
-  }
+  componentDidMount() {}
 
   verifyEmailNotificationRequired() {
-    console.log(
-      `verifyEmailNotificationRequired`,
-      this.emailNotifySent,
-      this.props.signedIn,
-      this.props.profile,
-      this.props.enhancedAuth
-    );
     return (
       !this.emailNotifySent &&
       this.props.signedIn &&
@@ -180,8 +124,6 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   closeNavbar() {
-    //e.preventDefault();
-    console.log(`closeNavbar`, this.state.collapsed);
     if (!this.state.collapsed) {
       this.setState({ collapsed: true });
     }
@@ -215,24 +157,16 @@ class Navigation extends React.Component<IProps, IState> {
   };
 
   logOut() {
-    //event.preventDefault();
-    //timeOut({on: false});
     AuthMethods.setVerified.call({ verified: false }, (err, res) => {
       if (err) {
         Library.modalErrorAlert(err.reason);
-        console.log(`setVerified error`, err);
       }
     });
 
-    //ContentManagement.refreshDefaultContent();
     Meteor.logout(() => {
       this.closeNavbar();
-      Tooltips.unset('verified');
-      //this.tipInitialised = false;
-      //this.clearTip = true;
-      //this.initTip(true);
-      //this.initTipData(this.props);
-      //this.setState({verified: false, tip: ''});
+      Tooltips.unset("verified");
+
       this.emailNotifySent = false;
       this.props.history.push("/");
     });
@@ -292,7 +226,7 @@ class Navigation extends React.Component<IProps, IState> {
     let verified = (
       <div className="d-inline-block">
         <div className="d-none d-sm-inline">{this.props.emailDashDisplay}</div>{" "}
-        {obj.tip ? <div className="d-inline-block">{VerifiedIndicator(obj.verified)}</div> : ''}
+        {obj.tip ? <div className="d-inline-block">{VerifiedIndicator(obj.verified)}</div> : ""}
       </div>
     );
     return verified;

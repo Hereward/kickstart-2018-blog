@@ -3,7 +3,7 @@ export function invalidAuthCodeAlert(error) {
   let title: string;
   let obj = arguments[0];
   message = obj.reason || "Operation completed sucessfully.";
-  title = (error.error === 'invalidCode') ? 'Invalid Code' : 'Account Locked';
+  title = error.error === "invalidCode" ? "Invalid Code" : "Account Locked";
 
   swal({
     title: title,
@@ -12,7 +12,6 @@ export function invalidAuthCodeAlert(error) {
     type: "error"
   });
 }
-
 
 export function modalSuccessAlert(params: any) {
   let message: string;
@@ -67,17 +66,14 @@ export function modalErrorAlert(params: any) {
 
 export function dashBoardTip(props) {
   let verifiedFlag: boolean;
-  let tip: string ="tip not set";
+  let tip: string = "tip not set";
   if (!props.signedIn) {
-    tip = '';
+    tip = "";
   } else if (props.enhancedAuth === false) {
-    console.log(`dashBoardTip`, props);
     verifiedFlag = props.signedIn && props.EmailVerified;
-    tip = verifiedFlag
-      ? "Your account is verified."
-      : "Your email address is not verified. ";
+    tip = verifiedFlag ? "Your account is verified." : "Your email address is not verified. ";
   } else if (!props.authData) {
-    tip = '';
+    tip = "";
   } else {
     verifiedFlag = props.signedIn && props.authData.verified && props.EmailVerified;
     tip = verifiedFlag ? "Your session was verified." : "Unverified session: ";
@@ -90,7 +86,7 @@ export function dashBoardTip(props) {
       }
 
       if (!props.authData.verified) {
-        tip += (props.EmailVerified) ? '' : ' ';
+        tip += props.EmailVerified ? "" : " ";
         tip += "Session does not have 2 factor authentication.";
       }
     }
@@ -99,8 +95,9 @@ export function dashBoardTip(props) {
 }
 
 export function userModelessAlert(type, props) {
-  console.log(`userModelessAlert`,type);
-  if (!props.signedIn) { return; }
+  if (!props.signedIn) {
+    return;
+  }
 
   let objData = JSON.stringify(props);
 
@@ -111,7 +108,6 @@ export function userModelessAlert(type, props) {
   let hideDelay = 7000;
   let allowAlert = false;
   if (type === "verifyEmail") {
-    console.log(`verifyEmail Alert`, props.signedIn, props.authData.verified, props.profile.verificationEmailSent, props.EmailVerified);
     if (
       props.signedIn &&
       props.authData.verified &&
@@ -159,7 +155,7 @@ export function setCookie(name, value, sec) {
   let cookie = name + "=" + value + expires + "; path=/";
   document.cookie = cookie;
   return cookie;
-};
+}
 
 export function getCookie(name) {
   var value = "; " + document.cookie;
@@ -169,4 +165,4 @@ export function getCookie(name) {
       .pop()
       .split(";")
       .shift();
-};
+}

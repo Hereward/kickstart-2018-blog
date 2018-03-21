@@ -1,15 +1,8 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
-//import * as jquery from "jquery";
 import RaisedButton from "material-ui/RaisedButton";
 import * as Validation from "../../modules/validation";
-/*
-import "jquery-validation";
-import "tooltipster";
-import "tooltipster/dist/css/tooltipster.bundle.min.css";
-import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
-*/
 import Widget from "./Widget";
 import CountryWidget from "./CountryWidget";
 import DateWidget from "./DateWidget";
@@ -42,8 +35,6 @@ export default class ProfileForm extends React.Component<IProps, IState> {
       region: this.props.profileObj.region,
       disableSubmit: false
     };
-
-    console.log(`ProfileForm`, this.props, this.state);
   }
 
   static propTypes = {
@@ -55,28 +46,6 @@ export default class ProfileForm extends React.Component<IProps, IState> {
 
   componentDidMount() {
     Validation.validate(this);
-    /*
-    jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
-      trigger: "custom",
-      animation: "slide",
-      theme: "tooltipster-light",
-      zIndex: 1400
-    });
-
-    jquery(`#${this.formID}`).validate({
-      errorPlacement: function ep(error, element) {
-        let errorString = jquery(error).text();
-        element.tooltipster("content", errorString);
-        element.tooltipster("open");
-      },
-      success: function success(label, element) {
-        jquery(`#${element.id}`).tooltipster("close");
-      },
-      submitHandler: form => {
-        this.handleSubmit();
-      }
-    });
-    */
   }
 
   handleSetStateUpstream(sVar, sVal) {

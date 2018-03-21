@@ -1,16 +1,9 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import * as PropTypes from "prop-types";
-/*
-import * as jquery from "jquery";
-import "jquery-validation";
-import "tooltipster";
-import "tooltipster/dist/css/tooltipster.bundle.min.css";
-import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
-*/
+
 import * as Validation from "../../modules/validation";
 import RaisedButton from "material-ui/RaisedButton";
-//import BlockUi from "react-block-ui";
 
 interface IProps {
   handleSubmit: any;
@@ -44,36 +37,11 @@ export default class SignInForm extends React.Component<IProps, IState> {
     handleChange: PropTypes.func
   };
 
-
-
   componentDidMount() {
     Validation.validate(this);
-    /*
-    jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
-      trigger: "custom",
-      animation: "slide",
-      theme: "tooltipster-light",
-      zIndex: 1400
-    });
-    jquery(`#${this.formID}`).validate({
-      errorPlacement: function ep(error, element) {
-        let errorString = jquery(error).text();
-        element.tooltipster("content", errorString);
-        element.tooltipster("open");
-      },
-      submitHandler: form => {
-        this.handleSubmit();
-      },
-      success: function success(label, element) {
-        jquery(`#${element.id}`).tooltipster("close");
-      }
-    });
-    */
   }
 
-
   handleSubmit() {
-    //this.setState({disableSubmit: true});
     this.props.handleSubmit();
   }
 

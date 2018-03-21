@@ -57,11 +57,6 @@ export default class DateWidget extends React.Component<IProps, IState> {
     jquery(`#${this.props.name}`).tooltipster("close");
   };
 
-  handleChangeZ(date) {
-    let dateString = dateFormat(date, "yyyy-mm-dd");
-    console.log(`Date handleChange: [${dateString}]`, date);
-  }
-
   date() {
     let layout = (
       <div className="form-group">
