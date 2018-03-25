@@ -89,7 +89,15 @@ I personally use Microsoft VS Code with a number of extensions as noted below.
 
 ## <a name="style"></a>File Structure
 
-The project code all resides inside the imports directory. I have divided components into different groups in a way that seems intuitive to me:
+All project code resides in the imports folders which contains separate folders as follows:
+
+* api
+* components
+* modules
+* scss
+* startup
+
+I have divided components into different groups in a way that seems intuitive to me:
 
 * forms
 * layouts
