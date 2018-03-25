@@ -139,6 +139,10 @@ More info: https://github.com/speakeasyjs/speakeasy
 
 ## <a name="install"></a>Install
 
+1. Clone the github repository
+1. Configure the Meteor settings file [(more info)](#settings)
+1. From command line run: meteor npm install
+
 Installation is done in the standard way - refer to Meteor docs for examples.
 
 ## <a name="run"></a>Run
