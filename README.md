@@ -24,6 +24,8 @@ The About page features the Quill rich text editor.
 
 The Profile page features a form for uploading personal data as well as an image.
 
+The project has a session timeout feature, with some settings which are configurable in the settings file. There is also a session cookie used to automatically log out users when the browser session is closed.
+
 ## Included Packages
 
 This is not a complete list - it includes only the major packages used. 
@@ -49,7 +51,6 @@ This is not a complete list - it includes only the major packages used.
 - [File Structure](#structure)
 - [Meteor Settings](#settings)
 - [2FA Security](#2FA)
-- [Session Timeout](#timeout)
 - [Install](#install)
 - [Run](#run)
 - [Deploy](#deploy)
@@ -123,10 +124,6 @@ Meteor settings files should be stored in the .deploy folder. A template file is
 2 Factor authentication is becoming increasingly necessary in apps and websites these days. This project uses the Speakeasy package and is configured to work with Google 2FA.
 
 More info: https://github.com/speakeasyjs/speakeasy
-
-## <a name="timeout"></a>Session Timeout
-
-The project has a session timeout feature, with some settings which are configurable in the settings file. There is also a session cookie used to automatically log out users when the browser session is closed.
 
 ## <a name="install"></a>Install
 
