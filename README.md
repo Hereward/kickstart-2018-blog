@@ -107,7 +107,10 @@ There is a separate 'modules' folder which contains a number of function librari
 
 ## <a name="settings"></a>Meteor Settngs
 
-Meteor settings files are stored in the .deploy folder. There is a production and a development version.
+Meteor settings files should be stored in the .deploy folder. A template file is provided. You should have as a minimum a production and a staging version. These files should be excluded from git, and the following file names have been added to the inlcuded .gitignore file:
+
+* settings-production.json
+* settings-development.json
 
 * **enhancedAuth** - use these settings to enable/disable 2 factor authentication. Note: changing this setting after initial build may cause problems.
 * **session** - use these settings to control the session timeout features.
