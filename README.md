@@ -157,10 +157,6 @@ In the package.json file you will find 3 NPM function names:
 * **deploy** - this will deploy the app (you need to configure mup deploy first)
 * **deploy-cache** - this will deploy a cached version of the app (useful when changing config settings only)
 
-## <a name="maintainers"></a>Maintainers
-
-Hereward: https://github.com/hereward
-
 ## <a name="VSextensions"></a>VS Code Extensions
 
 I have been using both the ESLint and TSLint packages. The project contains a .eslintrc file which contains config settings that I found useful. 
@@ -191,6 +187,10 @@ The Speakeasy functions will fail if your system clock is not accurate to within
 Developing in Typescript can be tricky due to missing type definitions and also bugs in the IDE. 
 
 In addition to the npm types packages, the project includes a custom type definition file (index.d.ts) where I have added random type declaratios in order to silence the Typescript compiler. If you find you are missing type declarations you can add them here.
+
+## <a name="maintainers"></a>Maintainers
+
+Hereward: https://github.com/hereward
 
 ## <a name="license"></a>License
 
