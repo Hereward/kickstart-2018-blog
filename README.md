@@ -91,7 +91,7 @@ I personally use Microsoft VS Code with a number of extensions as noted below.
 
 All project code resides in the imports folders which contains separate folders as follows:
 
-* **api** (Meteor publications & vlaidated methods)
+* **api** (Meteor publications & validated methods)
 * **components** (React components)
 * **modules** (code libraries)
 * **scss** (custom scss declarations)
