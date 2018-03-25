@@ -2,7 +2,7 @@
 
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
-> A starter platform for Meteor projects. 
+> **A starter platform for Meteor projects.**
 
 This project is intended to be starting point for meteor web app projects. It uses a collection of packages which I found helpful and innovative. 
 
