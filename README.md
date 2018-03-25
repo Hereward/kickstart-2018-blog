@@ -14,9 +14,9 @@ The project uses both Bootstrap 4 and Material UI design elements.
 
 There are 3 pages in the default site, with a built-in rich text editor (Quill):
 
-* Home
-* About
-* Profile
+* **Home**
+* **About**
+* **Profile**
 
 The Home page contains an implementation of the simple todos example from the Meteor Guide.<br/>More info: https://www.meteor.com/tutorials/react/creating-an-app
 
