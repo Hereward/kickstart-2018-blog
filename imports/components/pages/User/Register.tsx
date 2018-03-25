@@ -70,22 +70,24 @@ class Register extends React.Component<IProps, IState> {
     this.setState({ [id]: value });
   }
 
+  isValidPassword(password1, password2) {
+    if (password1 === password2) {
+      return password1.length >= 6 ? true : false;
+    } else {
+      this.setState({ allowSubmit: true });
+      return Library.modalErrorAlert("Passwords don't match");
+    }
+  }
+
   registerUser(event) {
-    this.setState({allowSubmit: false});
+    this.setState({ allowSubmit: false });
     let email = this.state.email.trim();
     let password1 = this.state.password1.trim();
     let password2 = this.state.password2.trim();
 
-    let isValidPassword = function isValidPassword(password1, password2) {
-      if (password1 === password2) {
-        return password1.length >= 6 ? true : false;
-      } else {
-        this.setState({allowSubmit: true});
-        return Library.modalErrorAlert("Passwords don't match");
-      }
-    };
+    let isValidPassword = this.isValidPassword(password1, password2);
 
-    if (isValidPassword(password1, password2)) {
+    if (isValidPassword) {
       Accounts.createUser(
         {
           email: email,
@@ -147,7 +149,13 @@ class Register extends React.Component<IProps, IState> {
 
   getLayout() {
     let layout: any;
-    let form = <RegistrationForm allowSubmit={this.state.allowSubmit} handleChange={this.handleChange} handleSubmit={this.registerUser} />;
+    let form = (
+      <RegistrationForm
+        allowSubmit={this.state.allowSubmit}
+        handleChange={this.handleChange}
+        handleSubmit={this.registerUser}
+      />
+    );
 
     layout = form;
 

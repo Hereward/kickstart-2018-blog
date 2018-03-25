@@ -46,6 +46,7 @@ interface IProps {
   enhancedAuth: boolean;
   loading: boolean;
   profile: any;
+  location: any;
   authData: {
     _id: string;
     verified: boolean;
@@ -81,7 +82,7 @@ class Navigation extends React.Component<IProps, IState> {
   tipInitialised: boolean = false;
   clearTip: boolean = false;
 
-  emailNotifySent: boolean;
+  emailVerifyPrompted: boolean;
   constructor(props) {
     super(props);
     this.toggleNavbar = this.toggleNavbar.bind(this);
@@ -92,7 +93,8 @@ class Navigation extends React.Component<IProps, IState> {
       verified: false,
       tip: ""
     };
-    this.emailNotifySent = false;
+    this.emailVerifyPrompted = false;
+    console.log(`Navigation`, this.props);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -106,7 +108,7 @@ class Navigation extends React.Component<IProps, IState> {
   componentDidUpdate() {
     let notify = this.verifyEmailNotificationRequired();
     if (notify) {
-      this.emailNotifySent = Library.userModelessAlert("verifyEmail", this.props);
+      this.emailVerifyPrompted = Library.userModelessAlert("verifyEmail", this.props);
     }
 
     Tooltips.set("verified", this.props);
@@ -116,7 +118,8 @@ class Navigation extends React.Component<IProps, IState> {
 
   verifyEmailNotificationRequired() {
     return (
-      !this.emailNotifySent &&
+      this.props.location.pathname === '/' &&
+      !this.emailVerifyPrompted &&
       this.props.signedIn &&
       this.props.profile &&
       (!this.props.enhancedAuth || this.props.authData)
@@ -181,7 +184,7 @@ class Navigation extends React.Component<IProps, IState> {
       this.closeNavbar();
       Tooltips.unset("verified");
 
-      this.emailNotifySent = false;
+      //this.emailVerifyPrompted = false;
       this.props.history.push("/");
     });
   }

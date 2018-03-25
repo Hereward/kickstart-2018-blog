@@ -35,7 +35,15 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
   };
 
   componentDidMount() {
-    Validation.validate(this);
+    let rules = {
+      password2: {
+        equalTo: "#password1"
+      },
+      password1: {
+        minlength: 6
+      }
+    };
+    Validation.validate(this, rules);
   }
 
   handleSubmit() {

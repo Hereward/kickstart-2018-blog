@@ -147,6 +147,7 @@ class Authenticator extends React.Component<IProps, IState> {
 
   handleQRClick() {
     this.setState({ showQRcode: false });
+    this.setTimer();
   }
 
   handleChange(e) {
