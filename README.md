@@ -144,8 +144,6 @@ More info: https://github.com/speakeasyjs/speakeasy
 1. Configure the Meteor settings file [(more info)](#settings)
 1. In your shell, navigate to the project folder & run: **meteor npm install**
 
-Installation is done in the standard way - refer to Meteor docs for examples.
-
 ## <a name="run"></a>Run
 
 You need to specify a settings file when you run Meteor otherwise there will be runtime errors. See [NPM Function Calls](#npm) section below.
