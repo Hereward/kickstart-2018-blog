@@ -91,7 +91,7 @@ I personally use Microsoft VS Code with a number of extensions as noted below.
 
 ## <a name="structure"></a>File Structure
 
-All project code resides in the imports folders which contains separate folders as follows:
+All project code resides in the imports folder, which contains separate folders as follows:
 
 * **api** (Meteor publications & validated methods)
 * **components** (React components)
