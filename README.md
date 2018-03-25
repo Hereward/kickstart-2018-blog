@@ -115,7 +115,9 @@ There is a separate 'modules' folder which contains a number of function librari
 
 ## <a name="settings"></a>Meteor Settngs
 
-Meteor settings files should be stored in the .deploy folder. A template file is provided. You should have as a minimum a production and a staging version. These files should be excluded from git, and the following file names have been added to the inlcuded .gitignore file:
+Meteor settings files should be stored in the .deploy folder. A template file is provided. You should have as a minimum a production and a staging version. These files should be excluded from git.
+
+The following file names have been added to the included .gitignore file:
 
 * settings-production.json
 * settings-development.json
