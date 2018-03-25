@@ -112,6 +112,8 @@ Meteor settings files should be stored in the .deploy folder. A template file is
 * settings-production.json
 * settings-development.json
 
+### Configurable Settings 
+
 * **enhancedAuth** - use these settings to enable/disable 2 factor authentication. Note: changing this setting after initial build may cause problems.
 * **session** - use these settings to control the session timeout features.
 * **smtp** - populate these settings with your SMTP server configuration
