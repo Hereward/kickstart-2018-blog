@@ -91,11 +91,11 @@ I personally use Microsoft VS Code with a number of extensions as noted below.
 
 All project code resides in the imports folders which contains separate folders as follows:
 
-* api
-* components
-* modules
-* scss
-* startup
+* **api** (Meteor publications & vlaidated methods)
+* **components** (React components)
+* **modules** (code libraries)
+* **scss** (custom scss declarations)
+* **startup** (startup for client & server)
 
 I have divided components into different groups in a way that seems intuitive to me:
 
