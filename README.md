@@ -18,7 +18,7 @@ There are 3 pages in the default site, with a built-in rich text editor (Quill):
 * About
 * Profile
 
-The Home page contains an implementation of the simple todos example from the Meteor Guide. <br/><br/>More info: https://www.meteor.com/tutorials/react/creating-an-app
+The Home page contains an implementation of the simple todos example from the Meteor Guide.<br/>More info: https://www.meteor.com/tutorials/react/creating-an-app
 
 The About page features the Quill rich text editor.
 
