@@ -5,7 +5,8 @@ import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
 
-export function validate(context, rules: any = "") {
+export function validate(context: any, rules: any = "") {
+  
   let validationRules = rules ? rules : {};
   jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
     trigger: "custom",
@@ -19,7 +20,7 @@ export function validate(context, rules: any = "") {
       element.tooltipster("content", errorString);
       element.tooltipster("open");
     },
-    rules: validationRules,
+    rules: {validationRules},
     submitHandler: form => {
       context.handleSubmit();
     },

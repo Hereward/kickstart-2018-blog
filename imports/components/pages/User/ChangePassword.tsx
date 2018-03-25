@@ -74,6 +74,7 @@ class ChangePassword extends React.Component<IProps, IState> {
   }
 
   changePassword() {
+    console.log(`changePassword`);
     this.setState({ allowSubmit: false });
     let newPassword = this.state.newPassword.trim();
     let oldPassword = this.state.oldPassword.trim();

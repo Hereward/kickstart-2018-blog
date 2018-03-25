@@ -26,6 +26,7 @@ export default class ForgotPassWordForm extends React.Component<IProps, IState> 
     super(props);
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = {
       disableSubmit: false,
