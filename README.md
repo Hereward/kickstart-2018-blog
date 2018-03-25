@@ -87,7 +87,7 @@ The project uses Meteor's "validated methods" package for managing data - provid
 
 I personally use Microsoft VS Code with a number of extensions as noted below.
 
-## <a name="style"></a>File Structure
+## <a name="structure"></a>File Structure
 
 All project code resides in the imports folders which contains separate folders as follows:
 
