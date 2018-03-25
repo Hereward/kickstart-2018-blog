@@ -53,7 +53,6 @@ This is not a complete list - it includes only the major packages used.
 - [Install](#install)
 - [Run](#run)
 - [Deploy](#deploy)
-- [Settings](#settings)
 - [NPM Function Calls](#npm)
 - [Maintainers](#maintainers)
 - [VS Code Extensions](#VSextensions)
