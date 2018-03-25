@@ -107,11 +107,11 @@ There is a separate 'modules' folder which contains a number of function librari
 
 ## <a name="settings"></a>Meteor Settngs
 
-Meteor settings file is loacted in .deploy.
+Meteor settings files are stored in the .deploy folder. There is a production and a development version.
 
-* enhancedAuth - use these settings to enable/disable 2 factor authentication. Note: changing this setting after initial build may cause problems.
-* session - use these settings to control the session timeout features.
-* smtp - populate these settings with your SMTP server configuration
+* **enhancedAuth** - use these settings to enable/disable 2 factor authentication. Note: changing this setting after initial build may cause problems.
+* **session** - use these settings to control the session timeout features.
+* **smtp** - populate these settings with your SMTP server configuration
 
 
 ## <a name="2FA"></a>2FA Security
@@ -138,17 +138,13 @@ A sample configuration for the Meteor Up package is provided. The config files a
 
 More info: http://meteor-up.com/
 
-## <a name="settings"></a>Settings
-
-Meteor settings files are stored in the .deploy folder. There is a production and a development version.
-
 ## <a name="npm"></a>NPM Function Calls
 
 In the package.json file you will find 3 NPM function names:
 
-* start - this launches meteor with the development settings file.
-* deploy - this will deploy the app (you need to configure mup deploy first)
-* deploy-cache - this will deploy a cached version of the app (useful when changing config settings only)
+* **start** - this launches meteor with the development settings file.
+* **deploy** - this will deploy the app (you need to configure mup deploy first)
+* **deploy-cache** - this will deploy a cached version of the app (useful when changing config settings only)
 
 ## <a name="maintainers"></a>Maintainers
 
