@@ -1,3 +1,5 @@
+import { Meteor } from "meteor/meteor";
+
 export function invalidAuthCodeAlert(error) {
   let message: string;
   let title: string;
@@ -64,11 +66,13 @@ export function modalErrorAlert(params: any) {
   });
 }
 
+/*
 export function dashBoardTip(props) {
   let verifiedFlag: boolean;
   let tip: string = "tip not set";
   if (!props.signedIn) {
     tip = "";
+    
   } else if (props.enhancedAuth === false) {
     verifiedFlag = props.signedIn && props.EmailVerified;
     tip = verifiedFlag ? "Your account is verified." : "Your email address is not verified. ";
@@ -93,13 +97,15 @@ export function dashBoardTip(props) {
   }
   return { verified: verifiedFlag, tip: tip };
 }
+*/
 
 export function userModelessAlert(type, props) {
-  if (!props.signedIn) {
+  if (!Meteor.user()) {
     return;
   }
 
-  let objData = JSON.stringify(props);
+  //let objData = JSON.stringify(props);
+  let emailVerified = (Meteor.user()) ? Meteor.user().emails[0].verified : false;
 
   let msg = "";
   let alertType = "";
@@ -109,10 +115,10 @@ export function userModelessAlert(type, props) {
   let allowAlert = false;
   if (type === "verifyEmail") {
     if (
-      props.signedIn &&
+      Meteor.user() &&
       props.authData.verified &&
       props.profile.verificationEmailSent === 1 &&
-      !props.EmailVerified
+      !emailVerified
     ) {
       allowAlert = true;
       title = "Check Your Email";
@@ -120,10 +126,10 @@ export function userModelessAlert(type, props) {
         "A verification email has been sent to your nominated email account. Please check your email and click on the verification link.";
       alertType = "warning";
     } else if (
-      props.signedIn &&
+      Meteor.user() &&
       props.authData.verified &&
       props.profile.verificationEmailSent === 2 &&
-      !props.EmailVerified
+      !emailVerified
     ) {
       allowAlert = true;
       title = "Verification email could not be sent";

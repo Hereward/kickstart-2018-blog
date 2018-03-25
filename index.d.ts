@@ -36,8 +36,6 @@ declare namespace Meteor.User {
 
 
 
-
-
 //        profile?: Object;
 
 /*
@@ -108,6 +106,7 @@ declare module "react-quill" {
 
 declare module "meteor/meteor" {
   var process: any;
+  
   namespace Meteor {
     interface User {
       _id?: string;
@@ -119,6 +118,7 @@ declare module "meteor/meteor" {
       verificationEmailSent?: number;
       enhancedAuth: any;
     }
+
   }
 }
 

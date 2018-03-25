@@ -15,7 +15,6 @@
     }
   },
   "private": {
-    "ptest": "Hello Private",
     "smtp": {
       "username": "xxxxx",
       "password": "xxxxx",

@@ -14,7 +14,6 @@ interface IProps {
   MainTitle: string;
   ShortTitle: string;
   authVerified: boolean;
-  EmailVerified: boolean;
 }
 
 class App extends React.Component<IProps> {
@@ -44,17 +43,15 @@ export default withTracker(() => {
     enhancedAuth = false;
   }
 
-  let emailDashDisplay = " - Guest";
-  let EmailVerified = false;
+  //let emailDashDisplay = " - Guest";
   let signedIn = false;
   let profile: any;
 
   if (Meteor.loggingIn()) {
-    emailDashDisplay = ` - logging in...`;
+    //emailDashDisplay = ` - logging in...`;
   } else if (Meteor.user()) {
-    EmailVerified = Meteor.user().emails[0].verified;
     signedIn = true;
-    emailDashDisplay = ` - ${Meteor.user().emails[0].address}`;
+    //emailDashDisplay = ` - ${Meteor.user().emails[0].address}`;
 
     if (ProfilesDataReady) {
       profile = Profiles.findOne({ owner: Meteor.userId() });
@@ -63,11 +60,9 @@ export default withTracker(() => {
 
   return {
     signedIn: signedIn,
-    emailDashDisplay: emailDashDisplay,
     MainTitle: Meteor.settings.public.MainTitle,
     ShortTitle: Meteor.settings.public.ShortTitle,
     enhancedAuth: enhancedAuth,
-    EmailVerified: EmailVerified,
     profile: profile,
     sillyProp: "banana"
   };

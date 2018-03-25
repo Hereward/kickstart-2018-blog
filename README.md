@@ -44,8 +44,10 @@ This is not a complete list - it includes only the major packages used.
 
 ## Table of Contents
 
+- [Key Features](#features)
 - [Coding Style](#style)
 - [File Structure](#structure)
+- [Meteor Settings](#settings)
 - [2FA Security](#2FA)
 - [Session Timeout](#timeout)
 - [Install](#install)
@@ -55,7 +57,21 @@ This is not a complete list - it includes only the major packages used.
 - [NPM Function Calls](#npm)
 - [Maintainers](#maintainers)
 - [VS Code Extensions](#VSextensions)
+- [Roadmap](#roadmap)
+- [Troubleshooting](#troubleshooting)
 - [License](#license)
+
+## <a name="features"></a>Key Features
+
+* Customisable user registration forms & processes
+* Email verification
+* 2 factor authentication
+* Forgot password
+* Change password
+* User profile with image upload
+* Rich text editor
+* Configurable session timeout
+* Deployment template
 
 ## <a name="style"></a>Coding Style
 
@@ -67,11 +83,9 @@ I have converted all code to Typescript. This is made possible using the barbatu
 
 Github: https://github.com/barbatus/typescript
 
-Developing in Typescript can be a little tricky due to missing type definitions and also bugs in the IDE. 
+The project uses Meteor's "validated methods" package for managing data - providing a robust and flexible framework for building database apis. More info: https://guide.meteor.com/methods.html#validated-method
 
-In addition to the npm types packages, the project includes a custom type definition file (index.d.ts) where I have added random type definitions in order to silence the Typescript compiler. 
-
-I use Microsoft VS Code with a number of extensions as noted below.
+I personally use Microsoft VS Code with a number of extensions as noted below.
 
 ## <a name="style"></a>File Structure
 
@@ -90,6 +104,15 @@ There is a separate 'modules' folder which contains a number of function librari
 * timeout.ts
 * tooltips.ts
 * validation.ts
+
+## <a name="settings"></a>Meteor Settngs
+
+Meteor settings file is loacted in .deploy.
+
+* enhancedAuth - use these settings to enable/disable 2 factor authentication. Note: changing this setting after initial build may cause problems.
+* session - use these settings to control the session timeout features.
+* smtp - populate these settings with your SMTP server configuration
+
 
 ## <a name="2FA"></a>2FA Security
 
@@ -139,6 +162,29 @@ I'm also using the Prettier code formatter.
 
 I have also experimented with the Flow package.
 
-## License
+## <a name="roadmap"></a>Roadmap
+
+Planned additions to this project include:
+
+* Server side rendering
+* User groups & permissions
+* Admin panel
+* Blog
+
+## <a name="troubleshooting"></a>Troubleshooting
+
+If the client is offline and the server is remote the automatic session timeout may fail. I have attempted to fix this problem by adding this extra line to the logout function:
+```javascript
+Meteor["connection"].setUserId(null);
+```
+This is an undocumented property. If it causes problems feel free to remove that line.
+
+The Speakeasy functions will fail if your system clock is not accurate to within a few seconds. Use an internet time checker (eg. https://time.is/) to calibrate your system clock.
+
+Developing in Typescript can be tricky due to missing type definitions and also bugs in the IDE. 
+
+In addition to the npm types packages, the project includes a custom type definition file (index.d.ts) where I have added random type declaratios in order to silence the Typescript compiler. If you find you are missing type declarations you can add them here.
+
+## <a name="license"></a>License
 
 MIT © 2018 Hereward Fenton

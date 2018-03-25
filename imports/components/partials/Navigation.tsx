@@ -5,6 +5,7 @@ import ReactRouterPropTypes from "react-router-prop-types";
 import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import styled from "styled-components";
+import { Session } from 'meteor/session';
 import * as jquery from "jquery";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
@@ -12,7 +13,6 @@ import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-side
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
 import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
 import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
-
 
 import {
   Collapse,
@@ -42,9 +42,7 @@ interface IProps {
   history: any;
   signedIn: any;
   ShortTitle: any;
-  emailDashDisplay: any;
   authVerified: boolean;
-  EmailVerified: boolean;
   enhancedAuth: boolean;
   loading: boolean;
   profile: any;
@@ -139,10 +137,8 @@ class Navigation extends React.Component<IProps, IState> {
 
   static propTypes = {
     authVerified: PropTypes.bool,
-    EmailVerified: PropTypes.bool,
     signedIn: PropTypes.bool,
     enhancedAuth: PropTypes.bool,
-    emailDashDisplay: PropTypes.string,
     ShortTitle: PropTypes.string,
     history: ReactRouterPropTypes.history,
     loading: PropTypes.bool,
@@ -158,14 +154,30 @@ class Navigation extends React.Component<IProps, IState> {
     })
   };
 
-  logOut() {
-    AuthMethods.setVerified.call({ verified: false }, (err, res) => {
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-      }
-    });
+  emailDashDisplay() {
+    let display: string = ' - Guest';
+    if (Meteor.loggingIn()) {
+      display = ` - logging in...`;
+    } else if (Meteor.user()) {
+      //let EmailVerified = Meteor.user().emails[0].verified;
+      display = ` - ${Meteor.user().emails[0].address}`;
+    }
 
+    return display;
+  
+  }
+
+  logOut() {
+    Meteor["connection"].setUserId(null);
     Meteor.logout(() => {
+      AuthMethods.setVerified.call({ verified: false }, (err, res) => {
+        if (err) {
+          Library.modalErrorAlert(err.reason);
+        }
+      });
+
+      //Session.set('loggedOut', true);
+
       this.closeNavbar();
       Tooltips.unset("verified");
 
@@ -220,18 +232,18 @@ class Navigation extends React.Component<IProps, IState> {
       </DropdownMenu>
     );
 
-    return this.props.signedIn ? SignedInLayout : SignedOutLayout;
+    return Meteor.user() ? SignedInLayout : SignedOutLayout;
   }
 
   authVerifiedLayout() {
     let obj = Tooltips.dashBoardTip(this.props);
-    let verified = (
+    let verifiedLayout = (
       <div className="d-inline-block">
-        <div className="d-none d-sm-inline">{this.props.emailDashDisplay}</div>{" "}
+        <div className="d-none d-sm-inline">{this.emailDashDisplay()}</div>{" "}
         {obj.tip ? <div className="d-inline-block">{VerifiedIndicator(obj.verified)}</div> : ""}
       </div>
     );
-    return verified;
+    return verifiedLayout;
   }
 
   navBar() {

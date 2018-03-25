@@ -21,24 +21,26 @@ const tip = {
 };
 
 export function dashBoardTip(props) {
-  let verifiedFlag: boolean;
+  let emailVerified = (Meteor.user()) ? Meteor.user().emails[0].verified : false;
+  let verifiedFlag: boolean = false;
   let message: any;
   if (!Meteor.user()) {
     message = '';
   } else if (props.enhancedAuth === false) {
-    message = props.EmailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
+    verifiedFlag = emailVerified;
+    message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
   } else if (!props.authData) {
     message = '';
   } else {
-    verifiedFlag =  props.authData.verified && props.EmailVerified;
+    verifiedFlag =  props.authData.verified && emailVerified;
     message = verifiedFlag ? tip.verified.enhanced.verified : tip.verified.enhanced.unverified;
 
-    if (!props.EmailVerified) {
+    if (!emailVerified) {
         message += tip.verified.enhanced.email;
     }
 
     if (!props.authData.verified) {
-        message += props.EmailVerified ? '' : ' ';
+        message += emailVerified ? '' : ' ';
         message += tip.verified.enhanced.auth2FA;
     }
   }

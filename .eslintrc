@@ -80,6 +80,7 @@
     "dot-notation": "off",
     "no-useless-escape": "off",
     "react/jsx-no-bind":"off",
+    "meteor/no-session":"off",
     "vars-on-top": "warn",
     "one-var": "warn",
     "no-var": "warn",
