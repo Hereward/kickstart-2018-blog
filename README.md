@@ -6,7 +6,7 @@
 
 **DEMO WEBSITE: https://kickstart2018.eyeofthetiger.asia/**
 
-This project is intended to be starting point for Meteor web app projects. It uses a collection of packages which I found helpful. 
+This project is intended to be a starting point for Meteor web app projects. It uses a collection of packages which I found helpful. 
 
 All code is in Typescript. The front-end is React.
 
