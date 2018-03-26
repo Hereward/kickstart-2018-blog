@@ -5,13 +5,10 @@ import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import { Pages } from "../../api/pages/publish";
 import Transition from "../partials/Transition";
-
 import PageForm from "../forms/PageForm";
-
 import * as PageMethods from "../../api/pages/methods";
 import * as Library from "../../modules/library";
 import * as Icon from "../../modules/icons";
-//import { EditIcon, CancelEditIcon } from "../../modules/icons";
 
 interface IProps {
   page: any;
@@ -32,7 +29,6 @@ export default class PageContent extends React.Component<IProps, IState> {
     let mapped: any;
     mapped = this.fieldMapper("init");
     this.state = mapped;
-    //this.state = this.fieldMapper("init") as any;
   }
 
   fieldMapper(type, props = "") {
@@ -117,7 +113,8 @@ export default class PageContent extends React.Component<IProps, IState> {
         layout = (
           <div>
             <h2>
-              Edit Page <Icon.CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="edit" />
+              Edit Page{" "}
+              <Icon.CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="edit" />
             </h2>
             <div>{this.editLayout()}</div>
           </div>

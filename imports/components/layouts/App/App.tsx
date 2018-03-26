@@ -43,16 +43,11 @@ export default withTracker(() => {
     enhancedAuth = false;
   }
 
-  //let emailDashDisplay = " - Guest";
   let signedIn = false;
   let profile: any;
 
-  if (Meteor.loggingIn()) {
-    //emailDashDisplay = ` - logging in...`;
-  } else if (Meteor.user()) {
+  if (Meteor.user()) {
     signedIn = true;
-    //emailDashDisplay = ` - ${Meteor.user().emails[0].address}`;
-
     if (ProfilesDataReady) {
       profile = Profiles.findOne({ owner: Meteor.userId() });
     }

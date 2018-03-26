@@ -5,7 +5,7 @@ import ReactRouterPropTypes from "react-router-prop-types";
 import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import styled from "styled-components";
-import { Session } from 'meteor/session';
+import { Session } from "meteor/session";
 import * as jquery from "jquery";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
@@ -118,7 +118,7 @@ class Navigation extends React.Component<IProps, IState> {
 
   verifyEmailNotificationRequired() {
     return (
-      this.props.location.pathname === '/' &&
+      this.props.location.pathname === "/" &&
       !this.emailVerifyPrompted &&
       this.props.signedIn &&
       this.props.profile &&
@@ -158,16 +158,14 @@ class Navigation extends React.Component<IProps, IState> {
   };
 
   emailDashDisplay() {
-    let display: string = ' - Guest';
+    let display: string = " - Guest";
     if (Meteor.loggingIn()) {
       display = ` - logging in...`;
     } else if (Meteor.user()) {
-      //let EmailVerified = Meteor.user().emails[0].verified;
       display = ` - ${Meteor.user().emails[0].address}`;
     }
 
     return display;
-  
   }
 
   logOut() {
@@ -179,12 +177,9 @@ class Navigation extends React.Component<IProps, IState> {
         }
       });
 
-      //Session.set('loggedOut', true);
-
       this.closeNavbar();
       Tooltips.unset("verified");
 
-      //this.emailVerifyPrompted = false;
       this.props.history.push("/");
     });
   }
