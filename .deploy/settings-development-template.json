@@ -12,7 +12,11 @@
     "session": {
       "inactivityWait": 3600,
       "dialogWait": 60
-    }
+    },
+    "staleSessionInactivityTimeout": 7200000,
+    "staleSessionHeartbeatInterval": 720000,
+    "staleSessionPurgeInterval": 600000,
+    "staleSessionActivityEvents": "mousemove click keydown"
   },
   "private": {
     "smtp": {
