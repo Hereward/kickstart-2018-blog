@@ -26,9 +26,29 @@ The About page features the Quill rich text editor.
 
 The Profile page features a form for uploading personal data as well as an image.
 
-The project has a session timeout feature, with some settings which are configurable in the settings file. There is also a session cookie used to automatically log out users when the browser session is closed.
+The project has session timeout features, with some settings which are configurable in the settings file. 
 
-## Included Packages
+## Table of Contents
+
+- [Included Packages](#packages)
+- [Key Features](#features)
+- [Coding Style](#style)
+- [File Structure](#structure)
+- [Meteor Settings](#settings)
+- [2FA Security](#2FA)
+- [Session Timeout](#timeout)
+- [Install](#install)
+- [Run](#run)
+- [Deploy](#deploy)
+- [NPM Function Calls](#npm)
+- [Maintainers](#maintainers)
+- [VS Code Extensions](#VSextensions)
+- [Roadmap](#roadmap)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
+
+
+## <a name="packages"></a>Included Packages
 
 This is not a complete list - it includes only the major packages used. 
 
@@ -45,24 +65,6 @@ This is not a complete list - it includes only the major packages used.
 * Simple Schema
 * Styled Components
 * Meteor Up
-
-## Table of Contents
-
-- [Key Features](#features)
-- [Coding Style](#style)
-- [File Structure](#structure)
-- [Meteor Settings](#settings)
-- [2FA Security](#2FA)
-- [Session Timeout](#timeout)
-- [Install](#install)
-- [Run](#run)
-- [Deploy](#deploy)
-- [NPM Function Calls](#npm)
-- [Maintainers](#maintainers)
-- [VS Code Extensions](#VSextensions)
-- [Roadmap](#roadmap)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
 
 ## <a name="features"></a>Key Features
 
@@ -131,6 +133,12 @@ The following file names have been added to the included .gitignore file:
 * **session** - use these settings to control the session timeout features.
 * **smtp** - populate these settings with your SMTP server configuration
 
+#### stale-session config settings 
+(see package [docmentation](https://github.com/lindleycb/meteor-stale-session) for an explanation)
+* staleSessionInactivityTimeout
+* staleSessionHeartbeatInterval
+* staleSessionPurgeInterval
+* staleSessionActivityEvents
 
 ## <a name="2FA"></a>2FA Security
 
