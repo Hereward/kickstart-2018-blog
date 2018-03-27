@@ -133,7 +133,7 @@ The following file names have been added to the included .gitignore file:
 * **session** - use these settings to control the session timeout features.
 * **smtp** - populate these settings with your SMTP server configuration
 
-#### stale-session config settings 
+#### stale-session config settings:
 (see package [docmentation](https://github.com/lindleycb/meteor-stale-session) for an explanation)
 * staleSessionInactivityTimeout
 * staleSessionHeartbeatInterval
@@ -149,7 +149,7 @@ By default Meteor sessions stay active indefinitely, as the user session data is
 
 * **Session cookie** - a session cookie ("resume") is set on client startup. If the cookie already exists the normal program flow will proceed, and users will remain logged into their sessions. If the cookie is not found then the current user will be logged out.
 * **Client side timeout** - a client side script runs periodically to check user activity. The thresholds for this script can be set in [Meteor Settings](#settings).
-* **Server side timeout** - Experimentally, this project also uses a package which performs server side session timeouts(https://github.com/lindleycb/meteor-stale-session). Settings for this package can be set in [Meteor Settings](#settings).
+* **Server side timeout** - Experimentally, this project also uses a package which performs server side session timeouts (https://github.com/lindleycb/meteor-stale-session). Settings for this package can be set in [Meteor Settings](#settings).
 
 ## <a name="install"></a>Install
 
