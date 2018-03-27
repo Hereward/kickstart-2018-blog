@@ -144,6 +144,8 @@ The following file names have been added to the included .gitignore file:
 
 2 Factor authentication is becoming increasingly necessary in apps and websites these days. This project uses the Speakeasy package and is configured to work with Google 2FA.
 
+Github: https://github.com/speakeasyjs/speakeasy
+
 ## <a name="timeout"></a>Session Timeout
 By default Meteor sessions stay active indefinitely, as the user session data is stored in server side login tokens. There is an Accounts.config setting (loginExpirationInDays), however this creates bad UX since users could be logged out while interacting with the app. This project uses several different methods to handle stale sessions and perform automatic log off.
 
