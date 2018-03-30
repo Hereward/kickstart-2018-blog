@@ -1,6 +1,6 @@
 /// <reference path="../../../index.d.ts" />
 import { Accounts } from "meteor/accounts-base";
-import { keepAliveUserSession }  from "../../api/sessions/methods";
+import { keepAliveUserSession } from "../../api/sessions/methods";
 import "./api";
 
 /*
@@ -13,14 +13,16 @@ Accounts.urls.resetPassword = token => Meteor.absoluteUrl(`forgot-password-reset
 Accounts.urls.verifyEmail = token => Meteor.absoluteUrl(`verify-email/${token}`);
 Accounts.emailTemplates.from = "Meteor Kickstart <postmaster@mg.truthnews.com.au>";
 
-Accounts.onLogin((user) => {
+Accounts.onLogin(user => {
   let id = user.user._id;
   console.log(`Login`, Meteor.userId(), id);
-  keepAliveUserSession.call({id: id}, (err, res) => {
-    if (err) {
-      console.log(`keepAliveUserSession onLogin error`, err.reason);
-    }
-  });
+  if (Meteor.settings.public.session.timeOutOn === true) {
+    keepAliveUserSession.call({ id: id, activityDetected: false }, (err, res) => {
+      if (err) {
+        console.log(`keepAliveUserSession onLogin error`, err.reason);
+      }
+    });
+  }
 });
 
 Accounts.onLogout(() => {
