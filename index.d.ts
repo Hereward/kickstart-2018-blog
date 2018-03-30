@@ -184,6 +184,8 @@ declare module "meteor/accounts-base" {
     function verifyEmail(token: string, func: any): any;
     function sendVerificationEmail(id: string): any;
     function config(options: any): any;
+    function onLogin(options: any): any;
+    function onLogout(options: any): any;
   }
 }
 

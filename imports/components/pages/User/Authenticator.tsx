@@ -26,7 +26,6 @@ const LoadingPlaceHolder = styled.div`
 `;
 
 interface IProps {
-  signedIn: boolean;
   history: any;
   boojam: string;
   authData: {
@@ -84,7 +83,6 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 
   static propTypes = {
-    signedIn: PropTypes.bool,
     history: ReactRouterPropTypes.history,
     authData: PropTypes.shape({
       _id: PropTypes.string,
@@ -98,9 +96,7 @@ class Authenticator extends React.Component<IProps, IState> {
     })
   };
 
-  componentWillMount() {
-    console.log(`componentWillMount`, this.props.authData);
-  }
+  componentWillMount() {}
 
   componentDidUpdate() {}
 
@@ -297,7 +293,7 @@ class Authenticator extends React.Component<IProps, IState> {
 export default withRouter(
   withTracker(() => {
     let authData: any;
-    Meteor.subscribe("userData");
+    //Meteor.subscribe("userData");
     let authDataReady = Meteor.subscribe("enhancedAuth");
 
     if (Meteor.user()) {

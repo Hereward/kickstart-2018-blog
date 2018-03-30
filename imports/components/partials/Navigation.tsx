@@ -30,23 +30,24 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 
-import timeOut from "../../modules/timeout";
+//import timeOut from "../../modules/timeout";
 import * as ContentManagement from "../../modules/contentManagement";
 
 import * as AuthMethods from "../../api/auth/methods";
 import { Auth } from "../../api/auth/publish";
+import { userSessions } from "../../api/sessions/publish";
+import * as SessionMethods from "../../api/sessions/methods";
 import * as Library from "../../modules/library";
 import * as Tooltips from "../../modules/tooltips";
 
 interface IProps {
   history: any;
-  signedIn: any;
   ShortTitle: any;
   authVerified: boolean;
   enhancedAuth: boolean;
-  loading: boolean;
   profile: any;
   location: any;
+  userSession: any;
   authData: {
     _id: string;
     verified: boolean;
@@ -98,9 +99,8 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.signedIn && nextProps.signedIn !== this.props.signedIn) {
-      timeOut({ logoutFunc: this.logOut, on: true });
-    }
+    //timeOut({ logoutFunc: this.logOut, on: true });
+    //userSession
   }
 
   componentWillUpdate(nextProps) {}
@@ -117,10 +117,11 @@ class Navigation extends React.Component<IProps, IState> {
   componentDidMount() {}
 
   verifyEmailNotificationRequired() {
+    //console.log(`verifyEmailNotificationRequired`, this.props.location.pathname, this.emailVerifyPrompted, Meteor.user(), this.props.profile, this.props.authData);
     return (
       this.props.location.pathname === "/" &&
       !this.emailVerifyPrompted &&
-      this.props.signedIn &&
+      Meteor.user() &&
       this.props.profile &&
       (!this.props.enhancedAuth || this.props.authData)
     );
@@ -140,11 +141,9 @@ class Navigation extends React.Component<IProps, IState> {
 
   static propTypes = {
     authVerified: PropTypes.bool,
-    signedIn: PropTypes.bool,
     enhancedAuth: PropTypes.bool,
     ShortTitle: PropTypes.string,
     history: ReactRouterPropTypes.history,
-    loading: PropTypes.bool,
     profile: PropTypes.any,
     authData: PropTypes.shape({
       _id: PropTypes.string,
@@ -169,18 +168,24 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   logOut() {
+    //console.log(`boojam`);
+    this.emailVerifyPrompted = false;
     Meteor["connection"].setUserId(null);
-    Meteor.logout(() => {
-      AuthMethods.setVerified.call({ verified: false }, (err, res) => {
-        if (err) {
-          Library.modalErrorAlert(err.reason);
-        }
+    SessionMethods.destroySession.call({}, (err, res) => {
+      Meteor.logout(() => {
+        /*
+        AuthMethods.setVerified.call({ verified: false }, (err, res) => {
+          if (err) {
+            Library.modalErrorAlert(err.reason);
+          }
+        });
+        */
+
+        this.closeNavbar();
+        Tooltips.unset("verified");
+
+        this.props.history.push("/");
       });
-
-      this.closeNavbar();
-      Tooltips.unset("verified");
-
-      this.props.history.push("/");
     });
   }
 
@@ -278,21 +283,28 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   render() {
+    if (this.props.userSession && this.props.userSession.expired === true) {
+      this.logOut();
+    }
     return this.navBar();
   }
 }
 
 export default withRouter(
   withTracker(({ params }) => {
-    let userDataHandle = Meteor.subscribe("userData");
+    //let userDataHandle = Meteor.subscribe("userData");
     let authDataReady = Meteor.subscribe("enhancedAuth");
+    let sessionDataReady = Meteor.subscribe("userSessions");
     let authData: any;
+    let userSession: any;
     if (Meteor.user()) {
       if (authDataReady) {
         authData = Auth.findOne({ owner: Meteor.userId() });
       }
+      if (sessionDataReady) {
+        userSession = userSessions.findOne({ owner: Meteor.userId() });
+      }
     }
-    let loading = !userDataHandle.ready();
-    return { loading: loading, authData: authData };
+    return { authData: authData, userSession: userSession };
   })(Navigation)
 );

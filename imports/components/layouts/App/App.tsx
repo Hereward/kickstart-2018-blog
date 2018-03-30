@@ -43,22 +43,20 @@ export default withTracker(() => {
     enhancedAuth = false;
   }
 
-  let signedIn = false;
+  //let signedIn = false;
   let profile: any;
 
   if (Meteor.user()) {
-    signedIn = true;
+    //signedIn = true;
     if (ProfilesDataReady) {
       profile = Profiles.findOne({ owner: Meteor.userId() });
     }
   }
 
   return {
-    signedIn: signedIn,
     MainTitle: Meteor.settings.public.MainTitle,
     ShortTitle: Meteor.settings.public.ShortTitle,
     enhancedAuth: enhancedAuth,
-    profile: profile,
-    sillyProp: "banana"
+    profile: profile
   };
 })(App);

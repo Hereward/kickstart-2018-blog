@@ -5,6 +5,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import * as React from "react";
 import { Link, withRouter, Redirect } from "react-router-dom";
 import * as AuthMethods from "../../../api/auth/methods";
+import * as SessionMethods from "../../../api/sessions/methods";
 import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
 import SignInForm from "../../forms/SignInForm";
@@ -14,7 +15,6 @@ interface IProps {
   history: any;
   AuthVerified: boolean;
   enhancedAuth: boolean;
-  signedIn: boolean;
 }
 
 interface IState {
@@ -41,7 +41,6 @@ class SignIn extends React.Component<IProps, IState> {
   componentWillMount() {}
 
   componentDidMount() {
-    console.log(`componentDidMount SignIn. SignedIn =[${this.props.signedIn}]`);
   }
 
   componentWillReceiveProps(nextProps) {}
@@ -49,7 +48,6 @@ class SignIn extends React.Component<IProps, IState> {
   static propTypes = {
     history: ReactRouterPropTypes.history,
     enhancedAuth: PropTypes.bool,
-    signedIn: PropTypes.bool
   };
 
   handleChange(e) {
@@ -69,7 +67,7 @@ class SignIn extends React.Component<IProps, IState> {
       />
     );
 
-    if (!this.props.signedIn) {
+    if (!Meteor.user()) {
       return form;
     } else {
       return (
@@ -101,9 +99,21 @@ class SignIn extends React.Component<IProps, IState> {
               Library.modalErrorAlert(err.reason);
               console.log(`setVerified error`, err);
             } else {
-              this.props.history.push('/authenticate');
+              SessionMethods.createUserSession.call({}, (err, res) => {
+                //console.log(`SessionMethods.createUserSession result`, res);
+                if (err) {
+                  console.log(`createSession error: [${err.reason}]`, err);
+                  Library.modalErrorAlert(err.reason);
+                } else {
+                  //Meteor.call("UserSession.keepAlive");
+                  this.props.history.push('/authenticate');
+                }
+              });
+              
             }
           });
+
+
         } else {
           this.props.history.push('/');
         }
@@ -122,7 +132,7 @@ class SignIn extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(({ params }) => {
-    Meteor.subscribe("userData");
+    //Meteor.subscribe("userData");
     return {};
   })(SignIn)
 );

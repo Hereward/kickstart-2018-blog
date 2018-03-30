@@ -12,6 +12,7 @@ import RegistrationForm from "../../forms/RegistrationForm";
 import * as ProfileMethods from "../../../api/profiles/methods";
 import * as AuthMethods from "../../../api/auth/methods";
 import * as Library from "../../../modules/library";
+import * as SessionMethods from "../../../api/sessions/methods";
 
 import SignInForm from "../../forms/SignInForm";
 
@@ -99,6 +100,14 @@ class Register extends React.Component<IProps, IState> {
             this.setState({allowSubmit: true});
             return Library.modalErrorAlert(err.reason);
           } else {
+
+            SessionMethods.createUserSession.call({}, (err, res) => {
+              if (err) {
+                console.log(`createSession error: [${err.reason}]`, err);
+                return Library.modalErrorAlert(err.reason);
+              }
+            });
+
             let profileFields = {
               fname: "",
               initial: "",
@@ -128,6 +137,8 @@ class Register extends React.Component<IProps, IState> {
                 console.log(`auth successfully created. res = [${id}]`);
               }
             });
+
+           
 
             if (this.props.enhancedAuth) {
               this.props.history.push("/authenticate");

@@ -20,7 +20,7 @@ export const createProfile = new ValidatedMethod({
   }).validator(),
 
   run() {
-    console.log(`profiles.create`);
+    //console.log(`profiles.create START`);
     authCheck("profiles.create", this.userId);
 
     let id = Profiles.insert({
@@ -41,7 +41,7 @@ export const createProfile = new ValidatedMethod({
       owner: this.userId
     });
 
-    console.log(`profiles.create - DONE!`);
+    //console.log(`profiles.create - DONE!`);
     return id;
   }
 });
@@ -54,7 +54,7 @@ export const updateProfileImage = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    console.log(`profileImage.update`);
+    //console.log(`profileImage.update`);
     authCheck("profiles.update", this.userId);
 
     Profiles.update(fields.id, {
@@ -63,7 +63,7 @@ export const updateProfileImage = new ValidatedMethod({
       }
     });
 
-    console.log(`profileImage.update - DONE!`);
+    //console.log(`profileImage.update - DONE!`);
     return true;
   }
 });
@@ -85,7 +85,7 @@ export const updateProfile = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    console.log(`profiles.update`);
+    //console.log(`profiles.update`);
     authCheck("profiles.update", this.userId);
 
     Profiles.update(fields.id, {
@@ -104,7 +104,7 @@ export const updateProfile = new ValidatedMethod({
       }
     });
 
-    console.log(`profiles.update - DONE!`);
+    //console.log(`profiles.update - DONE!`);
     return true;
   }
 });

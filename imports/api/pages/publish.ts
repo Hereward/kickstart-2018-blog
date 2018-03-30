@@ -8,9 +8,8 @@ if (Meteor.isServer) {
     return Pages.find();
   });
 
-  Meteor.startup(function() {
+  Meteor.startup(function pagesStart() {
     Pages.remove({});
-    console.log(`startup (pages) - clearing content`);
 
     Pages.insert({
       name: "about",

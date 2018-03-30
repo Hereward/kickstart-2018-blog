@@ -7,5 +7,4 @@ if (Meteor.isServer) {
   Meteor.publish("enhancedAuth", function authPublication() {
     return Auth.find({owner: this.userId});
   });
-  console.log(`Publish Auth (publish.ts)`);
 }

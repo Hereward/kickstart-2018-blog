@@ -93,7 +93,7 @@ class ForgotPassWord extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(({ params }) => {
-    Meteor.subscribe("userData");
+    //Meteor.subscribe("userData");
     return {};
   })(ForgotPassWord)
 );

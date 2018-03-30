@@ -2,13 +2,20 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session";
+import * as jquery from "jquery";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import App from "../../components/layouts/App/App";
 import { addMeta } from "./meta";
 import * as Library from "../../modules/library";
 import * as AuthMethods from "../../api/auth/methods";
 import * as ContentManagement from "../../modules/contentManagement";
+import { keepAliveUserSession } from "../../api/sessions/methods";
 
+let activityDetected = false;
+let activityEvents = "mousemove click keydown";
+let heartbeatInterval = 5 * 60 * 1000;
+
+/*
 function checkSessionCookie() {
   let cookie: any;
   cookie = Library.getCookie("resume");
@@ -28,6 +35,7 @@ function checkSessionCookie() {
     cookie = Library.setCookie("resume", "true", false);
   }
 }
+*/
 
 class Launch extends React.Component {
   constructor(props) {
@@ -44,7 +52,23 @@ class Launch extends React.Component {
 }
 
 Meteor.startup(() => {
-  checkSessionCookie();
+  //checkSessionCookie();
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
   addMeta();
+  Meteor.setInterval(function keepAlive() {
+    //console.log(`keepAlive !`, Meteor.userId(), activityDetected);
+    if (Meteor.userId() && activityDetected) {
+      keepAliveUserSession.call({ id: Meteor.userId() }, (err, res) => {
+        if (err) {
+          console.log(`keepAliveUserSession client error`, err.reason);
+        }
+      });
+      activityDetected = false;
+    }
+  }, heartbeatInterval);
+
+  jquery(document).on(activityEvents, function monitorActivity() {
+    activityDetected = true;
+    //console.log(`activityDetected !`);
+  });
 });

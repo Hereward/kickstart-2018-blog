@@ -172,7 +172,7 @@ class Index extends React.Component<IProps, IState> {
 }
 
 export default withTracker(() => {
-  Meteor.subscribe("userData");
+  //Meteor.subscribe("userData");
   let tasksDataReady = Meteor.subscribe("tasks");
   let tasks: any;
   let count = 0;
