@@ -169,7 +169,7 @@ class Navigation extends React.Component<IProps, IState> {
   logOut() {
     //console.log(`boojam`);
     this.emailVerifyPrompted = false;
-    Meteor["connection"].setUserId(null);
+    //Meteor["connection"].setUserId(null);
     SessionMethods.destroySession.call({}, (err, res) => {
       Meteor.logout(() => {
         /*
