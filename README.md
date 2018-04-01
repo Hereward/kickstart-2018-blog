@@ -194,14 +194,6 @@ Planned additions to this project include:
 
 ## <a name="troubleshooting"></a>Troubleshooting
 
-If the client is offline and the server is remote the automatic session timeout may fail. I have attempted to fix this problem by adding this extra line to the logout function:
-
-```javascript
-Meteor["connection"].setUserId(null);
-```
-
-This is an undocumented property. If it causes problems feel free to remove that line.
-
 The Speakeasy functions will fail if your system clock is not accurate to within a few seconds. Use an internet time checker (eg. https://time.is/) to calibrate your system clock.
 
 Developing in Typescript can be tricky due to missing type definitions and also bugs in the IDE.
