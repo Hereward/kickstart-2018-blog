@@ -146,11 +146,9 @@ Github: https://github.com/speakeasyjs/speakeasy
 
 ## <a name="timeout"></a>Session Timeout
 
-By default Meteor sessions stay active indefinitely, as the user session data is stored in server side login tokens. There is an Accounts.config setting (loginExpirationInDays), however this creates bad UX since users could be logged out while interacting with the app. This project uses several different methods to handle stale sessions and perform automatic log off.
+By default Meteor sessions stay active indefinitely, as the user session data is stored in server side login tokens. There is an Accounts.config setting (loginExpirationInDays), however this creates bad UX since users could be logged out while interacting with the app. This project uses a combination of client side activity monitoring and server method calls to ensure that users are logged out after being inactive for a configurable period of time.
 
-* **Session cookie** - a session cookie ("resume") is set on client startup. If the cookie already exists the normal program flow will proceed, and users will remain logged into their sessions. If the cookie is not found then the current user will be logged out.
-* **Client side timeout** - a client side script runs periodically to check user activity. The thresholds for this script can be set in [Meteor Settings](#settings).
-* **Server side timeout** - Experimentally, this project also uses a package which performs server side session timeouts (https://github.com/lindleycb/meteor-stale-session). Settings for this package can be set in [Meteor Settings](#settings).
+Settings for these features can be set in [Meteor Settings](#settings).
 
 ## <a name="install"></a>Install
 
