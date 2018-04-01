@@ -128,15 +128,15 @@ The following file names have been added to the included .gitignore file:
 
 #### configurable settings:
 
-* `enhancedAuth` - use these settings to enable/disable 2 factor authentication. Note: changing this setting after initial build may cause problems.
-* `session` - use these settings to control the session timeout features.
+* `enhancedAuth` - use these settings to enable/disable 2 factor authentication. Note: changing this setting after initial build may cause problems
+* `session` - use these settings to control the session timeout features
 * `smtp` - populate these settings with your SMTP server configuration
 
 #### explanation of session properties:
 
-* `heartbeatInterval (integer)` - interval between activity detection messages sent to server (ms - default: 300000).
-* `inactivityTimeout (integer)` - length of time before inactive users are logged out (ms - default: 3600000).
-* `timeOutOn (boolean)` - turn on or off the timeout feature (default: true).
+* `heartbeatInterval (integer)` - interval between activity detection messages sent to server (ms - default: 300000)
+* `inactivityTimeout (integer)` - length of time before inactive users are logged out (ms - default: 3600000)
+* `timeOutOn (boolean)` - turn on or off the timeout feature (default: true)
 
 ## <a name="2FA"></a>2FA Security
 
