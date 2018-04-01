@@ -171,7 +171,7 @@ More info: http://meteor-up.com/
 
 In the package.json file you will find 3 NPM function names:
 
-* **start** - this launches meteor with the development settings file.
+* **start** - this launches meteor with the development settings file
 * **deploy** - this will deploy the app (you need to configure mup deploy first)
 * **deploy-cache** - this will deploy a cached version of the app (useful when changing config settings only)
 
