@@ -6,7 +6,7 @@
 
 **DEMO WEBSITE: https://kickstart2018.eyeofthetiger.asia/**
 
-This project is intended to be a starting point for Meteor web app projects. It uses a collection of packages which I found helpful. 
+This project is intended to be a starting point for Meteor web app projects. It uses a collection of packages which I found helpful.
 
 All code is in Typescript. The front-end is React.
 
@@ -26,31 +26,30 @@ The About page features the Quill rich text editor.
 
 The Profile page features a form for uploading personal data as well as an image.
 
-The project has session timeout features, with some settings which are configurable in the settings file. 
+The project has session timeout features, with some settings which are configurable in the settings file.
 
 ## Table of Contents
 
-- [Included Packages](#packages)
-- [Key Features](#features)
-- [Coding Style](#style)
-- [File Structure](#structure)
-- [Meteor Settings](#settings)
-- [2FA Security](#2FA)
-- [Session Timeout](#timeout)
-- [Install](#install)
-- [Run](#run)
-- [Deploy](#deploy)
-- [NPM Function Calls](#npm)
-- [Maintainers](#maintainers)
-- [VS Code Extensions](#VSextensions)
-- [Roadmap](#roadmap)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
-
+* [Included Packages](#packages)
+* [Key Features](#features)
+* [Coding Style](#style)
+* [File Structure](#structure)
+* [Meteor Settings](#settings)
+* [2FA Security](#2FA)
+* [Session Timeout](#timeout)
+* [Install](#install)
+* [Run](#run)
+* [Deploy](#deploy)
+* [NPM Function Calls](#npm)
+* [Maintainers](#maintainers)
+* [VS Code Extensions](#VSextensions)
+* [Roadmap](#roadmap)
+* [Troubleshooting](#troubleshooting)
+* [License](#license)
 
 ## <a name="packages"></a>Included Packages
 
-This is not a complete list - it includes only the major packages used. 
+This is not a complete list - it includes only the major packages used.
 
 * React
 * React Router 4
@@ -129,16 +128,15 @@ The following file names have been added to the included .gitignore file:
 
 #### configurable settings:
 
-* **enhancedAuth** - use these settings to enable/disable 2 factor authentication. Note: changing this setting after initial build may cause problems.
-* **session** - use these settings to control the session timeout features.
-* **smtp** - populate these settings with your SMTP server configuration
+* `enhancedAuth` - use these settings to enable/disable 2 factor authentication. Note: changing this setting after initial build may cause problems.
+* `session` - use these settings to control the session timeout features.
+* `smtp` - populate these settings with your SMTP server configuration
 
-#### stale-session config settings:
-(see package [docmentation](https://github.com/lindleycb/meteor-stale-session) for an explanation)
-* staleSessionInactivityTimeout
-* staleSessionHeartbeatInterval
-* staleSessionPurgeInterval
-* staleSessionActivityEvents
+#### session timeout settings:
+
+* `heartbeatInterval` - interval between activity detection messages sent to server (ms - default: 300000).
+* `inactivityTimeout` - length of time before inactive users are logged out (ms - default: 3600000).
+* `timeOutOn` - Turn on or off the timeout feature (default: true).
 
 ## <a name="2FA"></a>2FA Security
 
@@ -147,6 +145,7 @@ The following file names have been added to the included .gitignore file:
 Github: https://github.com/speakeasyjs/speakeasy
 
 ## <a name="timeout"></a>Session Timeout
+
 By default Meteor sessions stay active indefinitely, as the user session data is stored in server side login tokens. There is an Accounts.config setting (loginExpirationInDays), however this creates bad UX since users could be logged out while interacting with the app. This project uses several different methods to handle stale sessions and perform automatic log off.
 
 * **Session cookie** - a session cookie ("resume") is set on client startup. If the cookie already exists the normal program flow will proceed, and users will remain logged into their sessions. If the cookie is not found then the current user will be logged out.
@@ -180,7 +179,7 @@ In the package.json file you will find 3 NPM function names:
 
 ## <a name="VSextensions"></a>VS Code Extensions
 
-I have been using both the ESLint and TSLint packages. The project contains a .eslintrc file which contains config settings that I found useful. 
+I have been using both the ESLint and TSLint packages. The project contains a .eslintrc file which contains config settings that I found useful.
 
 I'm also using the Prettier code formatter.
 
@@ -198,14 +197,16 @@ Planned additions to this project include:
 ## <a name="troubleshooting"></a>Troubleshooting
 
 If the client is offline and the server is remote the automatic session timeout may fail. I have attempted to fix this problem by adding this extra line to the logout function:
+
 ```javascript
 Meteor["connection"].setUserId(null);
 ```
+
 This is an undocumented property. If it causes problems feel free to remove that line.
 
 The Speakeasy functions will fail if your system clock is not accurate to within a few seconds. Use an internet time checker (eg. https://time.is/) to calibrate your system clock.
 
-Developing in Typescript can be tricky due to missing type definitions and also bugs in the IDE. 
+Developing in Typescript can be tricky due to missing type definitions and also bugs in the IDE.
 
 In addition to the npm types packages, the project includes a custom type definition file (index.d.ts) where I have added random type declaratios in order to silence the Typescript compiler. If you find you are missing type declarations you can add them here.
 

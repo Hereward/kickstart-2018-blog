@@ -8,6 +8,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import IconButton from "material-ui/IconButton";
 import EditorModeEdit from "material-ui/svg-icons/editor/mode-edit";
 import * as dateFormat from "dateformat";
+import { Alert, Button } from "reactstrap";
 import Transition from "../../partials/Transition";
 import ProfileForm from "../../forms/ProfileForm";
 import * as ProfileMethods from "../../../api/profiles/methods";
@@ -31,6 +32,7 @@ interface IProps {
 interface IState {
   editImage: boolean;
   editProfile: boolean;
+  disableVerify: boolean;
 }
 
 class Profile extends React.Component<IProps, IState> {
@@ -43,6 +45,7 @@ class Profile extends React.Component<IProps, IState> {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSetState = this.handleSetState.bind(this);
+    this.sendVerificationEmail = this.sendVerificationEmail.bind(this);
     let mapped: any;
     mapped = this.fieldMapper("init");
     this.state = mapped;
@@ -55,6 +58,7 @@ class Profile extends React.Component<IProps, IState> {
       this.fieldsArray.forEach(element => (obj[element] = ""));
       obj["editProfile"] = false;
       obj["editImage"] = false;
+      obj["disableVerify"] = false;
     } else if (type === "props") {
       this.fieldsArray.forEach(element => (obj[element] = props[element]));
     } else if (type === "method") {
@@ -78,12 +82,12 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   initState(props) {
-    let obj = this.fieldMapper("props", props); 
+    let obj = this.fieldMapper("props", props);
     this.setState(obj);
   }
 
   handleSubmit() {
-    let profileFields = this.fieldMapper("method"); 
+    let profileFields = this.fieldMapper("method");
 
     ProfileMethods.updateProfile.call(profileFields, err => {
       if (err) {
@@ -91,6 +95,26 @@ class Profile extends React.Component<IProps, IState> {
         console.log(`ProfileMethods.updateProfile failed`, err);
       } else {
         this.setEditor(false);
+      }
+    });
+  }
+
+  sendVerificationEmail() {
+    let id = Meteor.userId();
+    this.setState({ disableVerify: true });
+    console.log(`sendVerificationEmail NOW`, id);
+
+    ProfileMethods.sendVerificationEmail.call({ id: id }, (err, res) => {
+      //console.log("sendVerificationEmail.call", authFields);
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        this.setState({ disableVerify: false });
+        console.log(`sendVerificationEmail error`, err);
+      } else {
+        Library.modalSuccessAlert({
+          message:
+            "A verification email has been sent to your nominated email account. Please check your email and click on the verification link."
+        });
       }
     });
   }
@@ -189,6 +213,27 @@ class Profile extends React.Component<IProps, IState> {
     return layout;
   }
 
+  renderNotification() {
+    let layout: any;
+    layout = "";
+
+    if (Meteor.user()) {
+      let verified = Meteor.user().emails[0].verified;
+      if (!verified) {
+        layout = (
+          <Alert color="warning">
+            <strong>WARNING!</strong> Your email address is not verified. <hr />{" "}
+            <Button disabled={this.state.disableVerify} onClick={this.sendVerificationEmail} size="sm" color="primary">
+              Verify Now
+            </Button>
+          </Alert>
+        );
+      }
+    }
+
+    return layout;
+  }
+
   renderImage() {
     let layout: any;
     if (this.props.profile) {
@@ -236,7 +281,6 @@ class Profile extends React.Component<IProps, IState> {
             </h2>
           </div>
         );
-
       }
     }
 
@@ -253,9 +297,7 @@ class Profile extends React.Component<IProps, IState> {
       layout = (
         <div>
           <h1>Profile</h1>
-
           {this.renderImage()}
-
           <h2>
             Personal Details <EditIcon onClick={this.handleSetState} stateName="editProfile" />
           </h2>
@@ -287,7 +329,14 @@ class Profile extends React.Component<IProps, IState> {
 
   render() {
     let layout = this.getLayout();
-    return <Transition><div className="container page-content">{layout}</div></Transition>;
+    return (
+      <Transition>
+        <div className="container page-content">
+          {this.renderNotification()}
+          {layout}
+        </div>
+      </Transition>
+    );
   }
 }
 

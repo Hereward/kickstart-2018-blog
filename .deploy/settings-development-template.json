@@ -10,13 +10,10 @@
       "displayCode": true
     },
     "session": {
-      "inactivityWait": 3600,
-      "dialogWait": 60
-    },
-    "staleSessionInactivityTimeout": 3600000,
-    "staleSessionHeartbeatInterval": 180000,
-    "staleSessionPurgeInterval": 60000,
-    "staleSessionActivityEvents": "mousemove click keydown"
+      "heartbeatInterval": 300000,
+      "inactivityTimeout": 3600000,
+      "timeOutOn": true
+    }
   },
   "private": {
     "smtp": {

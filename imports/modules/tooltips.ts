@@ -66,5 +66,8 @@ export function set(type, props) {
 }
 
 export function unset(type) {
-  jquery(`.${type}`).tooltipster("destroy");
+  let initialised = jquery(`.${type}`).hasClass("tooltipstered");
+  if (initialised) {
+      jquery(`.${type}`).tooltipster('destroy');
+  }
 }

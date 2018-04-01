@@ -51,10 +51,16 @@ Meteor.startup(() => {
   //checkSessionCookie();
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
   addMeta();
-  if (Meteor.settings.public.session.timeOutOn === true) {
+
+  let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
+  console.log(`timeOutOn=[${timeOutOn}]`);
+  if (timeOutOn === true) {
+    let heartbeatInterval = Meteor.settings.public.session.heartbeatInterval || 300000;
+    let inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
     let activityDetected = false;
+    console.log(`heartbeatInterval=[${heartbeatInterval}] inactivityTimeout=[${inactivityTimeout}]`);
+
     let activityEvents = "mousemove click keydown";
-    let heartbeatInterval = Meteor.settings.public.session.heartbeatInterval;
     Meteor.setInterval(function keepAlive() {
       //console.log(`keepAlive !`, Meteor.userId(), activityDetected);
       if (Meteor.userId()) {

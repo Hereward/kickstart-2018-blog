@@ -22,7 +22,7 @@ export const createUserSession = new ValidatedMethod({
     authCheck("UserSession.create", this.userId);
 
     let inactivityTimeout: any;
-    inactivityTimeout = Meteor.settings.public.session.inactivityTimeout;
+    inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
     //inactivityTimeout = 3600000;
 
     let now = new Date();
@@ -87,16 +87,12 @@ export const keepAliveUserSession = new ValidatedMethod({
     //console.log(`session.create start`);
     //console.log(`UserSession.keepAlive EXECUTED`);
     authCheck("UserSession.keepAlive", fields.id);
-
     let inactivityTimeout: any;
-    inactivityTimeout = Meteor.settings.public.session.inactivityTimeout;
-
-    inactivityTimeout = 3600000;
+    inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
+    //inactivityTimeout = 3600000;
     let now: any;
     now = new Date();
-
     let id = "";
-
     let sessionRecord: any;
     sessionRecord = userSessions.findOne({ owner: fields.id });
 

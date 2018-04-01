@@ -55,7 +55,7 @@ class Register extends React.Component<IProps, IState> {
     };
 
     ProfileMethods.sendVerificationEmail.call(authFields, (err, res) => {
-      console.log("sendVerificationEmail.call", authFields);
+      //console.log("sendVerificationEmail.call", authFields);
       if (err) {
         Library.modalErrorAlert(err.reason);
         console.log(`sendVerificationEmail error`, err);
