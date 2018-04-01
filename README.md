@@ -154,7 +154,7 @@ Settings for these features can be set in [Meteor Settings](#settings).
 
 1. Install Meteor runtime & dependencies (https://www.meteor.com/install)
 1. Clone the github repository
-1. Configure the [(Meteor settings file)](#settings)
+1. Configure the [Meteor settings file](#settings)
 1. In your shell, navigate to the project folder & run: **meteor npm install**
 
 ## <a name="run"></a>Run
