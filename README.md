@@ -134,9 +134,9 @@ The following file names have been added to the included .gitignore file:
 
 #### explanation of session properties:
 
-* `heartbeatInterval` - interval between activity detection messages sent to server (ms - default: 300000).
-* `inactivityTimeout` - length of time before inactive users are logged out (ms - default: 3600000).
-* `timeOutOn` - Turn on or off the timeout feature (default: true).
+* `heartbeatInterval (integer)` - interval between activity detection messages sent to server (ms - default: 300000).
+* `inactivityTimeout (integer)` - length of time before inactive users are logged out (ms - default: 3600000).
+* `timeOutOn (boolean)` - Turn on or off the timeout feature (default: true).
 
 ## <a name="2FA"></a>2FA Security
 
