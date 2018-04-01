@@ -132,7 +132,7 @@ The following file names have been added to the included .gitignore file:
 * `session` - use these settings to control the session timeout features.
 * `smtp` - populate these settings with your SMTP server configuration
 
-#### session timeout settings:
+#### explanation of session properties:
 
 * `heartbeatInterval` - interval between activity detection messages sent to server (ms - default: 300000).
 * `inactivityTimeout` - length of time before inactive users are logged out (ms - default: 3600000).
