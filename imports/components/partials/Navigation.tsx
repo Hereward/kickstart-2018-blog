@@ -147,12 +147,15 @@ class Navigation extends React.Component<IProps, IState> {
   };
 
   emailDashDisplay() {
-    let display: string = " - Guest";
-    if (User.data()) {
-      display = ` - ${User.data().emails[0].address}`;
+    let display: string;
+    if (this.props.userSession && !this.props.userSession.expired) {
+      if (User.data()) {
+        display = ` - ${User.data().emails[0].address}`;
+      }
     } else if (Meteor.loggingIn()) {
       display = ` - logging in...`;
     }
+
     return display;
   }
 
