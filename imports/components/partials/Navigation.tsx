@@ -234,7 +234,7 @@ class Navigation extends React.Component<IProps, IState> {
     let verifiedLayout = (
       <div className="d-inline-block">
         <div className="d-none d-sm-inline">{emailDashDisplay}</div>{" "}
-        {this.props.userData && emailDashDisplay ? <div className="d-inline-block">{VerifiedIndicator(obj.verified)}</div> : ""}
+        {!this.props.loggingIn && this.props.userData && emailDashDisplay ? <div className="d-inline-block">{VerifiedIndicator(obj.verified)}</div> : ""}
       </div>
     );
     return verifiedLayout;
