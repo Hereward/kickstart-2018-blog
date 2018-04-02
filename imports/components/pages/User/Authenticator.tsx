@@ -102,7 +102,7 @@ class Authenticator extends React.Component<IProps, IState> {
   componentDidUpdate() {}
 
   componentWillReceiveProps(nextProps) {
-    this.setTimer();
+    this.setTimer(nextProps);
   }
 
   componentDidMount() {
@@ -113,12 +113,22 @@ class Authenticator extends React.Component<IProps, IState> {
     clearInterval(this.timerID);
   }
 
-  setTimer() {
-    if (this.props.authData) {
-      if (this.props.authData.private_key && !this.timerWasSet) {
-        this.timerID = setInterval(() => this.checkTokens(this.props.authData.private_key), 2000);
+  setTimer(nextProps: any = '') {
+    let props: any;
+    if (nextProps) {
+      props = nextProps;
+    } else {
+      props = this.props;
+    }
+
+    if (props.authData) {
+      console.log(`Authenticator setTimer - authData`, props.authData);
+      if (props.authData.private_key && !this.timerWasSet) {
+        this.timerID = Meteor.setInterval(() => this.checkTokens(props.authData.private_key), 2000);
         this.timerWasSet = true;
       }
+    } else {
+      console.log(`Authenticator setTimer - NO AUTH DATA!`);
     }
   }
 
@@ -206,7 +216,9 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    let layout = <div className="container page-content">{this.state.showQRcode ? this.QRLayout() : this.verifyLayout()}</div>;
+    let layout = (
+      <div className="container page-content">{this.state.showQRcode ? this.QRLayout() : this.verifyLayout()}</div>
+    );
     return layout;
   }
 
@@ -228,7 +240,9 @@ class Authenticator extends React.Component<IProps, IState> {
       <Transition>
         <div>
           <h2>Register For 2 Factor Authentication</h2>
-          <p className="lead">In order to use the full range of our services you will need to use 2 factor authentication.</p>
+          <p className="lead">
+            In order to use the full range of our services you will need to use 2 factor authentication.
+          </p>
           <p className="lead">Below you will see a graphical QR code followed by the private key text string.</p>
           <div>{this.props.authData.QRCodeURL ? this.getQRCodeLayout() : this.getLoadingPlaceHolder()}</div>
 

@@ -9,3 +9,8 @@ export function data() {
     const user = Meteor.user();
     return user;
 }
+
+export function loggingIn() {
+  const loggingIn = Meteor.loggingIn();
+  return loggingIn;
+}

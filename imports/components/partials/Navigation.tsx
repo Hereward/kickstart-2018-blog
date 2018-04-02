@@ -43,6 +43,7 @@ interface IProps {
   location: any;
   userSession: any;
   userData: any;
+  loggingIn: boolean;
   authData: {
     _id: string;
     verified: boolean;
@@ -133,6 +134,8 @@ class Navigation extends React.Component<IProps, IState> {
   static propTypes = {
     authVerified: PropTypes.bool,
     enhancedAuth: PropTypes.bool,
+    userSession: PropTypes.any,
+    loggingIn: PropTypes.bool,
     ShortTitle: PropTypes.string,
     history: ReactRouterPropTypes.history,
     profile: PropTypes.any,
@@ -157,7 +160,7 @@ class Navigation extends React.Component<IProps, IState> {
       display = ` - ${this.props.userData.emails[0].address}`;
     } else if (this.props.userSession && this.props.userSession.expired) {
       display = ` - expired session`;
-    } else if (Meteor.loggingIn()) {
+    } else if (this.props.loggingIn) {
       display = ` - logging in...`;
     }
 
@@ -227,10 +230,11 @@ class Navigation extends React.Component<IProps, IState> {
 
   authVerifiedLayout() {
     let obj = Tooltips.dashBoardTip(this.props);
+    let emailDashDisplay = this.emailDashDisplay();
     let verifiedLayout = (
       <div className="d-inline-block">
-        <div className="d-none d-sm-inline">{this.emailDashDisplay()}</div>{" "}
-        {obj.tip ? <div className="d-inline-block">{VerifiedIndicator(obj.verified)}</div> : ""}
+        <div className="d-none d-sm-inline">{emailDashDisplay}</div>{" "}
+        {this.props.userData && emailDashDisplay ? <div className="d-inline-block">{VerifiedIndicator(obj.verified)}</div> : ""}
       </div>
     );
     return verifiedLayout;
@@ -285,16 +289,19 @@ export default withRouter(
     let authData: any;
     let userSession: any;
     let userData: any;
-    userData = User.data();
+    
+    let loggingIn: boolean;
+    loggingIn = User.loggingIn();
 
-    if (sessionDataReady) {
-      userSession = userSessions.findOne({ owner: User.id() });
-    }
     if (User.id()) {
+      userData = User.data();
+      if (sessionDataReady) {
+        userSession = userSessions.findOne({ owner: User.id() });
+      }
       if (authDataReady) {
         authData = Auth.findOne({ owner: User.id() });
       }
     }
-    return { authData: authData, userSession: userSession, userData: userData };
+    return { authData: authData, userSession: userSession, userData: userData, loggingIn: loggingIn };
   })(Navigation)
 );
