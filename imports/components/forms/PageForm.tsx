@@ -126,6 +126,7 @@ export default class PageForm extends React.Component<IProps, IState> {
       return (
         <div className="pageLoader">
           <Loader type="Oval" color="red" height="200" width="200" />
+          <p className="lead">processing</p>
         </div>
       );
     } else {
