@@ -14,6 +14,7 @@ import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
 import * as Methods from "../../../api/auth/methods";
 import { Auth } from "../../../api/auth/publish";
+import * as User from "../../../modules/user";
 
 const LoadingPlaceHolder = styled.div`
   border: 1px dashed Silver;
@@ -296,8 +297,8 @@ export default withRouter(
     //Meteor.subscribe("userData");
     let authDataReady = Meteor.subscribe("enhancedAuth");
 
-    if (Meteor.user()) {
-      let id = Meteor.userId();
+    if (User.id()) {
+      let id = User.id();
 
       if (authDataReady) {
         authData = Auth.findOne({ owner: id });

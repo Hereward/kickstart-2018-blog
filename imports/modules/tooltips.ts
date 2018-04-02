@@ -4,6 +4,7 @@ import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
+import * as User from "./user";
 
 const tip = {
   verified: {
@@ -21,10 +22,10 @@ const tip = {
 };
 
 export function dashBoardTip(props) {
-  let emailVerified = (Meteor.user()) ? Meteor.user().emails[0].verified : false;
+  let emailVerified = (User.data()) ? User.data().emails[0].verified : false;
   let verifiedFlag: boolean = false;
   let message: any;
-  if (!Meteor.user()) {
+  if (!User.id()) {
     message = '';
   } else if (props.enhancedAuth === false) {
     verifiedFlag = emailVerified;

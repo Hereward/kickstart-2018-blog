@@ -1,4 +1,4 @@
-import { Meteor } from "meteor/meteor";
+import * as User from "./user";
 
 export function invalidAuthCodeAlert(error) {
   let message: string;
@@ -67,11 +67,11 @@ export function modalErrorAlert(params: any) {
 }
 
 export function userModelessAlert(type, props) {
-  if (!Meteor.user()) {
+  if (!User.data()) {
     return;
   }
 
-  let emailVerified = (Meteor.user()) ? Meteor.user().emails[0].verified : false;
+  let emailVerified = User.data().emails[0].verified;
 
   let msg = "";
   let alertType = "";
@@ -81,7 +81,7 @@ export function userModelessAlert(type, props) {
   let allowAlert = false;
   if (type === "verifyEmail") {
     if (
-      Meteor.user() &&
+      User.id() &&
       props.authData.verified &&
       props.profile.verificationEmailSent === 1 &&
       !emailVerified
@@ -92,7 +92,7 @@ export function userModelessAlert(type, props) {
         "A verification email has been sent to your nominated email account. Please check your email and click on the verification link.";
       alertType = "warning";
     } else if (
-      Meteor.user() &&
+      User.id() &&
       props.authData.verified &&
       props.profile.verificationEmailSent === 2 &&
       !emailVerified

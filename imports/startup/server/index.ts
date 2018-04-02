@@ -27,7 +27,7 @@ Accounts.onLogin(user => {
 });
 
 Accounts.onLogout(user => {
-  let id = user.user._id;
+  let id = (user) ? user.user._id : 'undefined';
   console.log(`(Server) Logout`, id);
 });
 

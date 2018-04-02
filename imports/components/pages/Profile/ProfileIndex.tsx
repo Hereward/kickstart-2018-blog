@@ -20,6 +20,7 @@ import { Images } from "../../../api/images/methods";
 import Image from "../../partials/Image";
 
 import SignInForm from "../../forms/SignInForm";
+import * as User from "../../../modules/user";
 
 interface IProps {
   history: any;
@@ -100,7 +101,7 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   sendVerificationEmail() {
-    let id = Meteor.userId();
+    let id = User.id();
     this.setState({ disableVerify: true });
     console.log(`sendVerificationEmail NOW`, id);
 
@@ -217,8 +218,8 @@ class Profile extends React.Component<IProps, IState> {
     let layout: any;
     layout = "";
 
-    if (Meteor.user()) {
-      let verified = Meteor.user().emails[0].verified;
+    if (User.data()) {
+      let verified = User.data().emails[0].verified;
       if (!verified) {
         layout = (
           <Alert color="warning">

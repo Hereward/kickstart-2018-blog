@@ -9,6 +9,7 @@ import PageForm from "../forms/PageForm";
 import * as PageMethods from "../../api/pages/methods";
 import * as Library from "../../modules/library";
 import * as Icon from "../../modules/icons";
+import * as User from "../../modules/user";
 
 interface IProps {
   page: any;
@@ -102,7 +103,7 @@ export default class PageContent extends React.Component<IProps, IState> {
   }
 
   editLink() {
-    return Meteor.user() ? <Icon.EditIcon onClick={this.handleSetState} stateName="edit" /> : "";
+    return User.id() ? <Icon.EditIcon onClick={this.handleSetState} stateName="edit" /> : "";
   }
 
   getLayout() {

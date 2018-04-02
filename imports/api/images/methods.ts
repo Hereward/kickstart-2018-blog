@@ -3,6 +3,7 @@ import { check } from "meteor/check";
 import { FilesCollection } from "meteor/ostrio:files";
 import axios from "axios";
 import * as ProfileMethods from "./methods";
+import * as User from "../../modules/user";
 
 export const Images = new FilesCollection({
   debug: true,
@@ -25,7 +26,7 @@ Meteor.methods({
   RemoveFile(fileId) {
     check(fileId, String);
 
-    if (!Meteor.userId()) {
+    if (!User.id()) {
       throw new Meteor.Error("not-authorized");
     }
 

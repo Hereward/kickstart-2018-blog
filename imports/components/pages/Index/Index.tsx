@@ -12,6 +12,7 @@ import * as Library from "../../../modules/library";
 import * as Icon from "../../../modules/icons";
 import { Pages } from "../../../api/pages/publish";
 import HomeContent from "../../partials/Home";
+import * as User from "../../../modules/user";
 
 declare var DocHead: any;
 
@@ -133,7 +134,7 @@ class Index extends React.Component<IProps, IState> {
 
   todosSection() {
     let tasks: any;
-    let loggedOutMsg = !Meteor.user() ? (
+    let loggedOutMsg = !User.id() ? (
       <p>
         <em>You can add and remove tasks here when you are logged in to your account.</em>
       </p>
@@ -194,7 +195,7 @@ export default withTracker(() => {
     tasks: tasks,
     taskCount: count,
     incompleteCount: Tasks.find({ checked: { $ne: true } }).count(),
-    currentUser: Meteor.user(),
+    currentUser: User.data(),
     page: page
   };
 })(Index);

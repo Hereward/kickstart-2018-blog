@@ -10,6 +10,7 @@ import * as Library from "../../modules/library";
 import * as AuthMethods from "../../api/auth/methods";
 import * as ContentManagement from "../../modules/contentManagement";
 import { keepAliveUserSession } from "../../api/sessions/methods";
+import * as User from "../../modules/user";
 
 class Launch extends React.Component {
   constructor(props) {
@@ -37,8 +38,8 @@ Meteor.startup(() => {
 
     let activityEvents = "mousemove click keydown";
     Meteor.setInterval(function keepAlive() {
-      if (Meteor.userId()) {
-        keepAliveUserSession.call({ id: Meteor.userId(), activityDetected: activityDetected }, (err, res) => {
+      if (User.id()) {
+        keepAliveUserSession.call({ id: User.id(), activityDetected: activityDetected }, (err, res) => {
           if (err) {
             console.log(`keepAliveUserSession client error`, err.reason);
           }

@@ -1,5 +1,6 @@
 import * as jquery from "jquery";
 import { Meteor } from "meteor/meteor";
+import * as User from "./user";
 
 declare var store: any;
 
@@ -116,7 +117,7 @@ export default function timeOut(tProps: { logoutFunc?: any; on: boolean }) {
 
     if (now >= dialogCheck) {
       clear();
-      if (Meteor.user()) {
+      if (User.id()) {
         
         toggleDialog();
       } else {
@@ -145,7 +146,7 @@ export default function timeOut(tProps: { logoutFunc?: any; on: boolean }) {
     // Time has exceeded.  Time to log out.
     if (now >= logoutCheck) {
         
-        if (Meteor.user()) {
+        if (User.id()) {
             clear();
             console.log(`logging out due to inactivity`);
             tProps.logoutFunc();

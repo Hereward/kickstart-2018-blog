@@ -5,6 +5,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import Transition from "../../partials/Transition";
 import { Pages } from "../../../api/pages/publish";
 import PageContent from "../../partials/PageContent";
+import * as User from "../../../modules/user";
 
 interface IProps {
   page: any;
@@ -34,7 +35,7 @@ class About extends React.Component<IProps> {
   render() {
     return (
       <Transition>
-        {Meteor.user() ? <PageContent page={this.props.page} /> : this.defaultLayout()}
+        {User.id() ? <PageContent page={this.props.page} /> : this.defaultLayout()}
       </Transition>
     );
   }

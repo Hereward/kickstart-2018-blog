@@ -10,6 +10,7 @@ import SignIn from "../pages/User/SignIn";
 import VerifyEmail from "../pages/User/VerifyEmail";
 import ForgotPassWordReset from "../pages/User/ForgotPassWordReset";
 import ChangePassword from "../pages/User/ChangePassword";
+import * as User from "../../modules/user";
 
 const AuthRoute = ({ component: Component, redirect, condition, cProps, ...rest }) => (
   <Route
@@ -38,7 +39,7 @@ const MainRouter = props => (
       path="/forgot-password"
       cProps={props}
       component={ForgotPassWord}
-      condition={!Meteor.user()}
+      condition={!User.id()}
       redirect="/"
     />
     <Route path="/signin" render={() => <SignIn {...props} />} />
@@ -46,18 +47,18 @@ const MainRouter = props => (
       path="/forgot-password-reset"
       cProps={props}
       component={ForgotPassWordReset}
-      condition={!Meteor.user()}
+      condition={!User.id()}
       redirect="/"
     />
     <AuthRoute
       path="/change-password"
       cProps={props}
       component={ChangePassword}
-      condition={Meteor.user()}
+      condition={User.id()}
       redirect="/"
     />
-    <AuthRoute path="/register" cProps={props} component={Register} condition={!Meteor.user()} redirect="/" />
-    <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={Meteor.user()} redirect="/" />
+    <AuthRoute path="/register" cProps={props} component={Register} condition={!User.id()} redirect="/" />
+    <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={User.id()} redirect="/" />
   </Switch>
 );
 

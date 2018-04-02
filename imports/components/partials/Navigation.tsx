@@ -6,11 +6,6 @@ import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import styled from "styled-components";
 import { Session } from "meteor/session";
-import * as jquery from "jquery";
-import "tooltipster";
-import "tooltipster/dist/css/tooltipster.bundle.min.css";
-import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
-import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
 import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
 import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
 
@@ -37,6 +32,7 @@ import { userSessions } from "../../api/sessions/publish";
 import * as SessionMethods from "../../api/sessions/methods";
 import * as Library from "../../modules/library";
 import * as Tooltips from "../../modules/tooltips";
+import * as User from "../../modules/user";
 
 interface IProps {
   history: any;
@@ -115,7 +111,7 @@ class Navigation extends React.Component<IProps, IState> {
     return (
       this.props.location.pathname === "/" &&
       !this.emailVerifyPrompted &&
-      Meteor.user() &&
+      User.data() &&
       this.props.profile &&
       (!this.props.enhancedAuth || this.props.authData)
     );
@@ -152,8 +148,8 @@ class Navigation extends React.Component<IProps, IState> {
 
   emailDashDisplay() {
     let display: string = " - Guest";
-    if (Meteor.user()) {
-      display = ` - ${Meteor.user().emails[0].address}`;
+    if (User.data()) {
+      display = ` - ${User.data().emails[0].address}`;
     } else if (Meteor.loggingIn()) {
       display = ` - logging in...`;
     }
@@ -163,6 +159,7 @@ class Navigation extends React.Component<IProps, IState> {
   logOut() {
     this.emailVerifyPrompted = false;
     SessionMethods.destroySession.call({}, (err, res) => {
+      console.log(`Navigation logOut`, User.id());
       Meteor.logout(() => {
         this.closeNavbar();
         Tooltips.unset("verified");
@@ -217,7 +214,7 @@ class Navigation extends React.Component<IProps, IState> {
       </DropdownMenu>
     );
 
-    return Meteor.user() ? SignedInLayout : SignedOutLayout;
+    return User.id() ? SignedInLayout : SignedOutLayout;
   }
 
   authVerifiedLayout() {
@@ -279,12 +276,12 @@ export default withRouter(
     let sessionDataReady = Meteor.subscribe("userSessions");
     let authData: any;
     let userSession: any;
-    if (Meteor.user()) {
+    if (User.id()) {
       if (authDataReady) {
-        authData = Auth.findOne({ owner: Meteor.userId() });
+        authData = Auth.findOne({ owner: User.id() });
       }
       if (sessionDataReady) {
-        userSession = userSessions.findOne({ owner: Meteor.userId() });
+        userSession = userSessions.findOne({ owner: User.id() });
       }
     }
     return { authData: authData, userSession: userSession };

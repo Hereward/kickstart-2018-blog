@@ -2,6 +2,7 @@ import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import { _ } from "meteor/underscore";
 import Image from "../partials/Image";
+import * as User from "../../modules/user";
 
 interface IProps {
   Images: any;
@@ -54,7 +55,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
             file: file,
             meta: {
               locator: self.props.fileLocator,
-              userId: Meteor.userId() // Optional, used to check on server for file tampering
+              userId: User.id() // Optional, used to check on server for file tampering
             },
             streams: "dynamic",
             chunkSize: "dynamic",

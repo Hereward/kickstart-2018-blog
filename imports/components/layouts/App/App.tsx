@@ -6,6 +6,7 @@ import Header from "../../partials/Header";
 import Footer from "../../partials/Footer";
 import MainRouter from "../../routes/Main";
 import { Profiles } from "../../../api/profiles/publish";
+import * as User from "../../../modules/user";
 
 interface IProps {
   signedIn: boolean;
@@ -38,6 +39,7 @@ class App extends React.Component<IProps> {
 export default withTracker(() => {
   let ProfilesDataReady = Meteor.subscribe("profiles");
   let enhancedAuth: boolean = true;
+  let userId = User.id();
   let authData: any;
   if (Meteor.settings.public.enhancedAuth.active === 0) {
     enhancedAuth = false;
@@ -46,10 +48,10 @@ export default withTracker(() => {
   //let signedIn = false;
   let profile: any;
 
-  if (Meteor.user()) {
+  if (userId) {
     //signedIn = true;
     if (ProfilesDataReady) {
-      profile = Profiles.findOne({ owner: Meteor.userId() });
+      profile = Profiles.findOne({ owner: userId });
     }
   }
 

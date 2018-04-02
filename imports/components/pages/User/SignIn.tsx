@@ -10,6 +10,7 @@ import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
 import SignInForm from "../../forms/SignInForm";
 import * as ContentManagement from "../../../modules/contentManagement";
+import * as User from "../../../modules/user";
 
 interface IProps {
   history: any;
@@ -22,8 +23,6 @@ interface IState {
   password: string;
   allowSubmit: boolean;
 }
-
-const user: any = Meteor.user();
 
 class SignIn extends React.Component<IProps, IState> {
   constructor(props) {
@@ -67,14 +66,14 @@ class SignIn extends React.Component<IProps, IState> {
       />
     );
 
-    if (!Meteor.user()) {
+    if (!User.data()) {
       return form;
     } else {
       return (
         <div>
           <h2>Signed In</h2>
           <div>
-            You are signed in as <strong>{Meteor.user().emails[0].address}</strong>.
+            You are signed in as <strong>{User.data().emails[0].address}</strong>.
           </div>
         </div>
       );
@@ -100,12 +99,10 @@ class SignIn extends React.Component<IProps, IState> {
               console.log(`setVerified error`, err);
             } else {
               SessionMethods.createUserSession.call({}, (err, res) => {
-                //console.log(`SessionMethods.createUserSession result`, res);
                 if (err) {
                   console.log(`createSession error: [${err.reason}]`, err);
                   Library.modalErrorAlert(err.reason);
                 } else {
-                  //Meteor.call("UserSession.keepAlive");
                   this.props.history.push('/authenticate');
                 }
               });
@@ -132,7 +129,6 @@ class SignIn extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(({ params }) => {
-    //Meteor.subscribe("userData");
     return {};
   })(SignIn)
 );

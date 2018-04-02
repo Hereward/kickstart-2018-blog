@@ -13,6 +13,7 @@ import * as ProfileMethods from "../../../api/profiles/methods";
 import * as AuthMethods from "../../../api/auth/methods";
 import * as Library from "../../../modules/library";
 import * as SessionMethods from "../../../api/sessions/methods";
+import * as User from "../../../modules/user";
 
 import SignInForm from "../../forms/SignInForm";
 
@@ -124,7 +125,7 @@ class Register extends React.Component<IProps, IState> {
             });
 
             let authFields = {
-              owner: Meteor.userId()
+              owner: User.id()
             };
 
             AuthMethods.createAuth.call(authFields, (err, id) => {
