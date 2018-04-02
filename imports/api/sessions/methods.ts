@@ -91,7 +91,6 @@ export const keepAliveUserSession = new ValidatedMethod({
       if (diff > 0) {
         killSession.call({ id: fields.id }, () => {});
       } else if (fields.activityDetected) {
-        console.log(`UserSession.keepAlive - activityDetected`);
         let expires = new Date(Date.now() + inactivityTimeout);
         userSessions.update(
           { owner: fields.id },
