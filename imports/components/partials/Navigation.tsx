@@ -42,6 +42,7 @@ interface IProps {
   profile: any;
   location: any;
   userSession: any;
+  userData: any;
   authData: {
     _id: string;
     verified: boolean;
@@ -111,7 +112,7 @@ class Navigation extends React.Component<IProps, IState> {
     return (
       this.props.location.pathname === "/" &&
       !this.emailVerifyPrompted &&
-      User.data() &&
+      this.props.userData &&
       this.props.profile &&
       (!this.props.enhancedAuth || this.props.authData)
     );
@@ -148,10 +149,12 @@ class Navigation extends React.Component<IProps, IState> {
 
   emailDashDisplay() {
     let display: string;
-    if (this.props.userSession && !this.props.userSession.expired) {
-      if (User.data()) {
-        display = ` - ${User.data().emails[0].address}`;
-      }
+    if (this.props.userSession) {
+      console.log(`emailDashDisplay: this.props.userSession`, this.props.userSession);
+    }
+
+    if (this.props.userSession && !this.props.userSession.expired && this.props.userData) {
+      display = ` - ${this.props.userData.emails[0].address}`;
     } else if (this.props.userSession && this.props.userSession.expired) {
       display = ` - expired session`;
     } else if (Meteor.loggingIn()) {
@@ -281,14 +284,17 @@ export default withRouter(
     let sessionDataReady = Meteor.subscribe("userSessions");
     let authData: any;
     let userSession: any;
+    let userData: any;
+    userData = User.data();
+
+    if (sessionDataReady) {
+      userSession = userSessions.findOne({ owner: User.id() });
+    }
     if (User.id()) {
       if (authDataReady) {
         authData = Auth.findOne({ owner: User.id() });
       }
-      if (sessionDataReady) {
-        userSession = userSessions.findOne({ owner: User.id() });
-      }
     }
-    return { authData: authData, userSession: userSession };
+    return { authData: authData, userSession: userSession, userData: userData };
   })(Navigation)
 );
