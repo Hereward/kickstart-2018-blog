@@ -152,6 +152,8 @@ class Navigation extends React.Component<IProps, IState> {
       if (User.data()) {
         display = ` - ${User.data().emails[0].address}`;
       }
+    } else if (this.props.userSession && this.props.userSession.expired) {
+      display = ` - expired session`;
     } else if (Meteor.loggingIn()) {
       display = ` - logging in...`;
     }
