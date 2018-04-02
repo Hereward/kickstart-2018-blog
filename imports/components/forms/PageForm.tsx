@@ -3,6 +3,8 @@ import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
 import Loader from "react-loader-spinner";
+import * as BlockUi from "react-block-ui";
+import "react-block-ui/style.css";
 import RaisedButton from "material-ui/RaisedButton";
 import "react-quill/dist/quill.snow.css";
 import * as Icon from "../../modules/icons";
@@ -122,41 +124,32 @@ export default class PageForm extends React.Component<IProps, IState> {
   }
 
   render() {
-    if (this.state.disableSubmit) {
-      return (
-        <div className="pageLoader">
-          <Loader type="Oval" color="red" height="200" width="200" />
-          <p className="lead">processing</p>
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <form id={this.formID} onSubmit={this.handleSubmit}>
-            {this.getWidget({
-              name: "heading",
-              label: "Heading",
-              required: false
-            })}
+    return (
+      <BlockUi tag="div" blocking={this.state.disableSubmit}>
+        <form id={this.formID} onSubmit={this.handleSubmit}>
+          {this.getWidget({
+            name: "heading",
+            label: "Heading",
+            required: false
+          })}
 
-            <div className="form-group">
-              <label htmlFor="bodyText">Body Text:</label>
-              <ReactQuill
-                id="bodyText"
-                defaultValue={this.props.pageObj.body}
-                onChange={this.handleSetStateUpstream}
-                modules={this.modules}
-                formats={this.formats}
-                theme="snow"
-              />
-            </div>
+          <div className="form-group">
+            <label htmlFor="bodyText">Body Text:</label>
+            <ReactQuill
+              id="bodyText"
+              defaultValue={this.props.pageObj.body}
+              onChange={this.handleSetStateUpstream}
+              modules={this.modules}
+              formats={this.formats}
+              theme="snow"
+            />
+          </div>
 
-            <div className="form-group">
-              <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
-            </div>
-          </form>
-        </div>
-      );
-    }
+          <div className="form-group">
+            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+          </div>
+        </form>
+      </BlockUi>
+    );
   }
 }
