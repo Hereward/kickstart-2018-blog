@@ -8,6 +8,11 @@ body {
   /* background-color: #343a40; */
 }
 
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 .action-highlight-off {
   vertical-align: middle !important;
   color: red !important;
