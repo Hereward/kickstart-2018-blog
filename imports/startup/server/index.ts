@@ -15,7 +15,7 @@ Accounts.emailTemplates.from = "Meteor Kickstart <postmaster@mg.truthnews.com.au
 
 Accounts.onLogin(user => {
   let id = user.user._id;
-  console.log(`(Server) Login`, Meteor.userId(), id);
+  console.log(`(Server) Login`, id);
   let timeOutOn = (Meteor.settings.public.session.timeOutOn === false) ? false : true;
   if (timeOutOn) {
     keepAliveUserSession.call({ id: id, activityDetected: false }, (err, res) => {
@@ -26,8 +26,9 @@ Accounts.onLogin(user => {
   }
 });
 
-Accounts.onLogout(() => {
-  console.log(`(Server) Logout`, Meteor.userId());
+Accounts.onLogout(user => {
+  let id = user.user._id;
+  console.log(`(Server) Logout`, id);
 });
 
 let smtp = Meteor.settings.private.smtp;

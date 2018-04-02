@@ -17,14 +17,9 @@ export const createUserSession = new ValidatedMethod({
   validate: null,
 
   run() {
-    //console.log(`session.create start`);
-    //console.log(`SessionMethods.createUserSession EXECUTED`);
     authCheck("UserSession.create", this.userId);
-
     let inactivityTimeout: any;
     inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
-    //inactivityTimeout = 3600000;
-
     let now = new Date();
     let expires = new Date(Date.now() + inactivityTimeout);
 
@@ -40,7 +35,6 @@ export const createUserSession = new ValidatedMethod({
       owner: this.userId
     });
 
-    //console.log(`session.create - DONE! userId=[${this.userId}]`);
     return id;
   }
 });
@@ -52,9 +46,7 @@ export const killSession = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    //console.log(`session.kill`, fields.id);
     authCheck("session.kill", this.userId);
-    //let ownerId = this.userId;
     let sessionRecord: any;
 
     sessionRecord = userSessions.findOne({ owner: fields.id });
@@ -70,7 +62,6 @@ export const killSession = new ValidatedMethod({
       );
     }
 
-    //console.log(`session.kill`);
     return true;
   }
 });
@@ -80,16 +71,13 @@ export const keepAliveUserSession = new ValidatedMethod({
 
   validate: new SimpleSchema({
     id: { type: String },
-    activityDetected: {type: Boolean}
+    activityDetected: { type: Boolean }
   }).validator(),
 
   run(fields) {
-    //console.log(`session.create start`);
-    //console.log(`UserSession.keepAlive EXECUTED`);
     authCheck("UserSession.keepAlive", fields.id);
     let inactivityTimeout: any;
     inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
-    //inactivityTimeout = 3600000;
     let now: any;
     now = new Date();
     let id = "";
@@ -98,16 +86,12 @@ export const keepAliveUserSession = new ValidatedMethod({
 
     if (sessionRecord) {
       let diff = now - sessionRecord.expiresOn;
-      //console.log(`UserSession.keepAlive - sessionRecord found`, fields.id, now, sessionRecord.expiresOn);
-      console.log(`UserSession.keepAlive - diff =[${diff}]`);
+      console.log(`UserSession.keepAlive - activityDetected=[${fields.activityDetected}] id=[${fields.id}] diff=[${diff}]`);
 
       if (diff > 0) {
-        //console.log(`NEED TO KILL`);
-        //Meteor.call("UserSession.kill");
-        killSession.call({id: fields.id}, () => {});
-      } else if (fields.activityDetected){
+        killSession.call({ id: fields.id }, () => {});
+      } else if (fields.activityDetected) {
         console.log(`UserSession.keepAlive - activityDetected`);
-        //console.log(`KILL NOT REQUIRED`);
         let expires = new Date(Date.now() + inactivityTimeout);
         userSessions.update(
           { owner: fields.id },
@@ -129,11 +113,9 @@ export const destroySession = new ValidatedMethod({
   validate: null,
 
   run(fields) {
-    //console.log(`session.destroy`);
     authCheck("session.destroy", this.userId);
     let ownerId = this.userId;
     userSessions.remove({ owner: ownerId });
-    //console.log(`session.destroy`);
     return true;
   }
 });

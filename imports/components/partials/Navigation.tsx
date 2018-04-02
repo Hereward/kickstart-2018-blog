@@ -30,9 +30,7 @@ import {
   UncontrolledTooltip
 } from "reactstrap";
 
-//import timeOut from "../../modules/timeout";
 import * as ContentManagement from "../../modules/contentManagement";
-
 import * as AuthMethods from "../../api/auth/methods";
 import { Auth } from "../../api/auth/publish";
 import { userSessions } from "../../api/sessions/publish";
@@ -98,10 +96,7 @@ class Navigation extends React.Component<IProps, IState> {
     console.log(`Navigation`, this.props);
   }
 
-  componentWillReceiveProps(nextProps) {
-    //timeOut({ logoutFunc: this.logOut, on: true });
-    //userSession
-  }
+  componentWillReceiveProps(nextProps) {}
 
   componentWillUpdate(nextProps) {}
 
@@ -117,7 +112,6 @@ class Navigation extends React.Component<IProps, IState> {
   componentDidMount() {}
 
   verifyEmailNotificationRequired() {
-    //console.log(`verifyEmailNotificationRequired`, this.props.location.pathname, this.emailVerifyPrompted, Meteor.user(), this.props.profile, this.props.authData);
     return (
       this.props.location.pathname === "/" &&
       !this.emailVerifyPrompted &&
@@ -167,22 +161,11 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   logOut() {
-    //console.log(`boojam`);
     this.emailVerifyPrompted = false;
-    //Meteor["connection"].setUserId(null);
     SessionMethods.destroySession.call({}, (err, res) => {
       Meteor.logout(() => {
-        /*
-        AuthMethods.setVerified.call({ verified: false }, (err, res) => {
-          if (err) {
-            Library.modalErrorAlert(err.reason);
-          }
-        });
-        */
-
         this.closeNavbar();
         Tooltips.unset("verified");
-
         this.props.history.push("/");
       });
     });
@@ -283,6 +266,7 @@ class Navigation extends React.Component<IProps, IState> {
 
   render() {
     if (this.props.userSession && this.props.userSession.expired === true) {
+      console.log(`Navigation: props.userSession.expired === true`);
       this.logOut();
     }
     return this.navBar();
@@ -291,7 +275,6 @@ class Navigation extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(({ params }) => {
-    //let userDataHandle = Meteor.subscribe("userData");
     let authDataReady = Meteor.subscribe("enhancedAuth");
     let sessionDataReady = Meteor.subscribe("userSessions");
     let authData: any;
