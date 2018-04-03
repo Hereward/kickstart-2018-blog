@@ -73,7 +73,7 @@
     "jsx-a11y/label-has-for": "warn",
     "jsx-a11y/anchor-is-valid": "off",
     "no-restricted-globals": "warn",
-    "react/forbid-prop-types": "warn",
+    "react/forbid-prop-types": "off",
     "react/prop-types": "warn",
     "arrow-body-style": "warn",
     "prefer-rest-params": "warn",

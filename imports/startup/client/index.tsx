@@ -26,26 +26,36 @@ class Launch extends React.Component {
   }
 }
 
+const keepAlive = function keepAlive(activityDetected: any) {
+  //activityDetected = false;
+  if (User.id()) {
+    keepAliveUserSession.call({ id: User.id(), activityDetected: activityDetected }, (err, res) => {
+      if (err) {
+        console.log(`keepAliveUserSession client error`, err.reason);
+      }
+    });
+    activityDetected = false;
+  }
+  return activityDetected;
+};
+
 Meteor.startup(() => {
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
   addMeta();
 
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
   if (timeOutOn === true) {
+    keepAlive(false);
     let heartbeatInterval = Meteor.settings.public.session.heartbeatInterval || 300000;
     let inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
     let activityDetected = false;
 
     let activityEvents = "mousemove click keydown";
-    Meteor.setInterval(function keepAlive() {
-      if (User.id()) {
-        keepAliveUserSession.call({ id: User.id(), activityDetected: activityDetected }, (err, res) => {
-          if (err) {
-            console.log(`keepAliveUserSession client error`, err.reason);
-          }
-        });
-        activityDetected = false;
-      }
+    //Meteor.setInterval(keepAlive(activityDetected), heartbeatInterval);
+
+    setInterval(function keepMeAlive() {
+      keepAlive(activityDetected);
+      activityDetected = false;
     }, heartbeatInterval);
 
     jquery(document).on(activityEvents, function monitorActivity() {

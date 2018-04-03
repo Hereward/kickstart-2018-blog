@@ -35,7 +35,7 @@ export const createUserSession = new ValidatedMethod({
       owner: this.userId
     });
 
-    console.log(`createUserSession`, id);
+    console.log(`createUserSession sessionID=[${id}]`, this.userId);
 
     return id;
   }
@@ -55,7 +55,7 @@ export const killSession = new ValidatedMethod({
 
     sessionRecord = userSessions.findOne({ owner: fields.id });
     if (sessionRecord) {
-      console.log(`UserSession.kill - KILL NOW`, fields.id);
+      console.log(`UserSession.kill - KILL NOW - active=[${fields.active}]`, fields.id);
       userSessions.update(
         { owner: fields.id },
         {
@@ -67,6 +67,31 @@ export const killSession = new ValidatedMethod({
       );
     }
 
+    return true;
+  }
+});
+
+export const deActivateSession = new ValidatedMethod({
+  name: "UserSession.deActivate",
+
+  validate: null,
+
+  run() {
+    authCheck("session.deActivate", this.userId);
+    let sessionRecord: any;
+    sessionRecord = userSessions.findOne({ owner: this.userId });
+    if (sessionRecord) {
+      console.log(`UserSession.deActivateSession`);
+      userSessions.update(
+        { owner: this.userId },
+        {
+          $set: {
+            active: false,
+            expired: false
+          }
+        }
+      );
+    }
     return true;
   }
 });

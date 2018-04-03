@@ -43,6 +43,8 @@ interface IProps {
   location: any;
   userSession: any;
   userData: any;
+  sessionActive: boolean;
+  sessionExpired: boolean;
   loggingIn: boolean;
   authData: {
     _id: string;
@@ -135,6 +137,8 @@ class Navigation extends React.Component<IProps, IState> {
     authVerified: PropTypes.bool,
     enhancedAuth: PropTypes.bool,
     userSession: PropTypes.any,
+    sessionExpired: PropTypes.bool,
+    sessionActive: PropTypes.bool,
     loggingIn: PropTypes.bool,
     ShortTitle: PropTypes.string,
     history: ReactRouterPropTypes.history,
@@ -207,7 +211,7 @@ class Navigation extends React.Component<IProps, IState> {
     }
     */
 
-    if (this.props.userSession && !this.props.userSession.expired && this.props.userData) {
+    if (!this.props.sessionExpired && this.props.userData) {
       display = ` - ${this.props.userData.emails[0].address}`;
     } else if (this.props.loggingIn) {
       display = ` - logging in...`;
@@ -242,10 +246,31 @@ class Navigation extends React.Component<IProps, IState> {
     return verifiedLayout;
   }
 
+  logOutZ() {
+    if (User.id()) {
+      let id = User.id();
+      console.log(`Navigation logOut`, id);
+      this.emailVerifyPrompted = false;
+
+      Meteor.logout(() => {
+        this.closeNavbar();
+        Tooltips.unset("verified");
+        Accounts.logoutOtherClients();
+        SessionMethods.killSession.call({ id: id, active: false }, (err, res) => {
+          if (err) {
+            console.log(`killSession error`, err.reason);
+            Library.modalErrorAlert(err.reason);
+          }
+          this.props.history.push("/");
+        });
+      });
+    }
+  }
+
   logOut() {
     if (User.id()) {
       this.emailVerifyPrompted = false;
-      SessionMethods.killSession.call({ id: User.id(), active: false }, (err, res) => {
+      SessionMethods.deActivateSession.call({}, (err, res) => {
         if (err) {
           console.log(`killSession error`, err.reason);
           Library.modalErrorAlert(err.reason);
@@ -262,13 +287,16 @@ class Navigation extends React.Component<IProps, IState> {
     }
   }
 
-
-
   conditionalLogout() {
     if (User.id()) {
       let logout = false;
-      if (this.props.userSession && this.props.userSession.active === true && this.props.userSession.expired === true) {
-        console.log(`Navigation: conditionalLogout DONE!`, User.id());
+      if (this.props.sessionExpired && this.props.sessionActive) {
+        console.log(
+          `Navigation: conditionalLogout DONE! active=[${this.props.sessionActive}] expired=[${
+            this.props.sessionExpired
+          }]`,
+          User.id()
+        );
         logout = true;
       }
 
@@ -324,19 +352,34 @@ export default withRouter(
     let authData: any;
     let userSession: any;
     let userData: any;
+    let sessionActive: boolean = false;
+    let sessionExpired: boolean = false;
 
     let loggingIn: boolean;
     loggingIn = User.loggingIn();
+    userData = User.data();
 
-    if (User.id()) {
+    if (userData) {
       if (sessionDataReady) {
         userSession = userSessions.findOne({ owner: User.id() });
-        userData = User.data();
+        if (userSession) {
+          sessionActive = userSession.active;
+          sessionExpired = userSession.expired;
+        }
       }
       if (authDataReady) {
         authData = Auth.findOne({ owner: User.id() });
       }
     }
-    return { authData: authData, userSession: userSession, userData: userData, loggingIn: loggingIn };
+    
+
+    return {
+      authData: authData,
+      userSession: userSession,
+      userData: userData,
+      loggingIn: loggingIn,
+      sessionActive: sessionActive,
+      sessionExpired: sessionExpired
+    };
   })(Navigation)
 );
