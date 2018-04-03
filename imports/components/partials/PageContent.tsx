@@ -17,6 +17,7 @@ interface IProps {
 
 interface IState {
   edit: boolean;
+  allowSubmit: boolean;
 }
 
 export default class PageContent extends React.Component<IProps, IState> {
@@ -37,6 +38,7 @@ export default class PageContent extends React.Component<IProps, IState> {
     if (type === "init") {
       this.fieldsArray.forEach(element => (obj[element] = ""));
       obj["edit"] = false;
+      obj["allowSubmit"] = true;
     } else if (type === "props") {
       this.fieldsArray.forEach(element => (obj[element] = props[element]));
     } else if (type === "method") {
@@ -76,9 +78,10 @@ export default class PageContent extends React.Component<IProps, IState> {
 
   handleSubmit() {
     let pageFields = this.fieldMapper("method");
-
+    this.setState({ allowSubmit: false });
     PageMethods.updatePage.call(pageFields, err => {
       if (err) {
+        this.setState({ allowSubmit: true });
         Library.modalErrorAlert(err.reason);
         console.log(`ProfileMethods.updateProfile failed`, err);
       } else {
@@ -90,6 +93,7 @@ export default class PageContent extends React.Component<IProps, IState> {
   editLayout() {
     return (
       <PageForm
+        allowSubmit={this.state.allowSubmit}
         pageObj={this.props.page}
         handleChange={this.handleChange}
         handleSubmit={this.handleSubmit}

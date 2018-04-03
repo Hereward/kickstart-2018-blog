@@ -83,8 +83,8 @@ class SignIn extends React.Component<IProps, IState> {
   SignInUser() {
     this.setState({ allowSubmit: false });
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
+      this.setState({ allowSubmit: true });
       if (error) {
-        this.setState({ allowSubmit: true });
         return Library.modalErrorAlert({ detail: error.reason, title: "Sign In Failed" });
       } else {
         console.log(`Sign In Succesful`);

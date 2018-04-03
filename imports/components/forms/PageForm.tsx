@@ -17,6 +17,7 @@ interface IProps {
   handleSubmit: any;
   pageObj: any;
   handleSetState: any;
+  allowSubmit: boolean;
 }
 
 interface IState {
@@ -67,12 +68,14 @@ export default class PageForm extends React.Component<IProps, IState> {
     };
   }
 
+  /*
   static propTypes = {
     handleSubmit: PropTypes.func,
     handleChange: PropTypes.func,
     handleSetState: PropTypes.func,
     pageObj: PropTypes.object
   };
+  */
 
   preventDefault(e) {
     e.preventDefault();
@@ -125,7 +128,7 @@ export default class PageForm extends React.Component<IProps, IState> {
 
   render() {
     return (
-      <BlockUi tag="div" blocking={this.state.disableSubmit}>
+      <BlockUi tag="div" blocking={!this.props.allowSubmit}>
         <form id={this.formID} onSubmit={this.handleSubmit}>
           {this.getWidget({
             name: "heading",
@@ -146,7 +149,7 @@ export default class PageForm extends React.Component<IProps, IState> {
           </div>
 
           <div className="form-group">
-            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
+            <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
           </div>
         </form>
       </BlockUi>

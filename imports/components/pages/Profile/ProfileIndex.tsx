@@ -6,6 +6,7 @@ import ReactRouterPropTypes from "react-router-prop-types";
 import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import IconButton from "material-ui/IconButton";
+import * as BlockUi from "react-block-ui";
 import EditorModeEdit from "material-ui/svg-icons/editor/mode-edit";
 import * as dateFormat from "dateformat";
 import { Alert, Button } from "reactstrap";
@@ -34,6 +35,7 @@ interface IState {
   editImage: boolean;
   editProfile: boolean;
   disableVerify: boolean;
+  allowSubmit: boolean;
 }
 
 class Profile extends React.Component<IProps, IState> {
@@ -60,6 +62,7 @@ class Profile extends React.Component<IProps, IState> {
       obj["editProfile"] = false;
       obj["editImage"] = false;
       obj["disableVerify"] = false;
+      obj["allowSubmit"] = true;
     } else if (type === "props") {
       this.fieldsArray.forEach(element => (obj[element] = props[element]));
     } else if (type === "method") {
@@ -88,10 +91,12 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   handleSubmit() {
+    this.setState({ allowSubmit: false });
     let profileFields = this.fieldMapper("method");
 
     ProfileMethods.updateProfile.call(profileFields, err => {
       if (err) {
+        this.setState({ allowSubmit: true });
         Library.modalErrorAlert(err.reason);
         console.log(`ProfileMethods.updateProfile failed`, err);
       } else {
@@ -106,10 +111,10 @@ class Profile extends React.Component<IProps, IState> {
     console.log(`sendVerificationEmail NOW`, id);
 
     ProfileMethods.sendVerificationEmail.call({ id: id }, (err, res) => {
+      this.setState({ disableVerify: false });
       //console.log("sendVerificationEmail.call", authFields);
       if (err) {
         Library.modalErrorAlert(err.reason);
-        this.setState({ disableVerify: false });
         console.log(`sendVerificationEmail error`, err);
       } else {
         Library.modalSuccessAlert({
@@ -120,11 +125,13 @@ class Profile extends React.Component<IProps, IState> {
     });
   }
 
+  /*
   static propTypes = {
     enhancedAuth: PropTypes.bool,
     profile: PropTypes.object,
     history: ReactRouterPropTypes.history
   };
+  */
 
   componentDidUpdate() {}
 
@@ -161,6 +168,7 @@ class Profile extends React.Component<IProps, IState> {
           <CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="editProfile" />
         </h2>
         <ProfileForm
+          allowSubmit={this.state.allowSubmit}
           profileObj={this.props.profile}
           handleChange={this.handleChange}
           handleSubmit={this.handleSubmit}
@@ -222,12 +230,19 @@ class Profile extends React.Component<IProps, IState> {
       let verified = User.data().emails[0].verified;
       if (!verified) {
         layout = (
-          <Alert color="warning">
-            <strong>WARNING!</strong> Your email address is not verified. <hr />{" "}
-            <Button disabled={this.state.disableVerify} onClick={this.sendVerificationEmail} size="sm" color="primary">
-              Verify Now
-            </Button>
-          </Alert>
+          <BlockUi tag="div" blocking={this.state.disableVerify}>
+            <Alert color="warning">
+              <strong>WARNING!</strong> Your email address is not verified. <hr />{" "}
+              <Button
+                disabled={this.state.disableVerify}
+                onClick={this.sendVerificationEmail}
+                size="sm"
+                color="primary"
+              >
+                Verify Now
+              </Button>
+            </Alert>
+          </BlockUi>
         );
       }
     }

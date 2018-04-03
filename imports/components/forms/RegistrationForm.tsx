@@ -1,6 +1,7 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
+import * as BlockUi from "react-block-ui";
 
 import RaisedButton from "material-ui/RaisedButton";
 import * as Validation from "../../modules/validation";
@@ -58,45 +59,47 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
     return (
       <div>
         <h2>Register</h2>
-        <form id={this.formID}>
-          <div className="form-group">
-            <label htmlFor="email">Email address</label>
-            <input
-              onChange={this.handleChange}
-              type="email"
-              className={this.baseCSSClass}
-              id="email"
-              name="email"
-              placeholder="Email"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password1">Password</label>
-            <input
-              onChange={this.handleChange}
-              type="password"
-              className={this.baseCSSClass}
-              id="password1"
-              name="password1"
-              placeholder="Password"
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password2">Confirm Password</label>
-            <input
-              onChange={this.handleChange}
-              type="password"
-              className={this.baseCSSClass}
-              id="password2"
-              name="password2"
-              placeholder="Confirm Password"
-            />
-          </div>
+        <BlockUi tag="div" blocking={!this.props.allowSubmit}>
+          <form id={this.formID}>
+            <div className="form-group">
+              <label htmlFor="email">Email address</label>
+              <input
+                onChange={this.handleChange}
+                type="email"
+                className={this.baseCSSClass}
+                id="email"
+                name="email"
+                placeholder="Email"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="password1">Password</label>
+              <input
+                onChange={this.handleChange}
+                type="password"
+                className={this.baseCSSClass}
+                id="password1"
+                name="password1"
+                placeholder="Password"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="password2">Confirm Password</label>
+              <input
+                onChange={this.handleChange}
+                type="password"
+                className={this.baseCSSClass}
+                id="password2"
+                name="password2"
+                placeholder="Confirm Password"
+              />
+            </div>
 
-          <div className="form-group">
-            <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
-          </div>
-        </form>
+            <div className="form-group">
+              <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
+            </div>
+          </form>
+        </BlockUi>
       </div>
     );
   }

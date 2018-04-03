@@ -1,5 +1,6 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
+import * as BlockUi from "react-block-ui";
 import PropTypes from "prop-types";
 import RaisedButton from "material-ui/RaisedButton";
 import { Link } from "react-router-dom";
@@ -57,31 +58,32 @@ export default class ForgotPassWordForm extends React.Component<IProps, IState> 
           instructions.
         </p>
 
-        <form id={this.formID}>
-          <div className="form-group">
-            <label htmlFor="email">Email Address:</label>
-            <input
-              type="email"
-              onChange={this.handleChange}
-              className={this.baseCSSClass}
-              id="email"
-              name="email"
-              placeholder=""
-            />
-          </div>
+        <BlockUi tag="div" blocking={!this.props.allowSubmit}>
+          <form id={this.formID}>
+            <div className="form-group">
+              <label htmlFor="email">Email Address:</label>
+              <input
+                type="email"
+                onChange={this.handleChange}
+                className={this.baseCSSClass}
+                id="email"
+                name="email"
+                placeholder=""
+              />
+            </div>
 
-          <div className="form-group">
-            <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
-          </div>
+            <div className="form-group">
+              <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
+            </div>
 
-          <div className="form-group">
-            <Link href="/" to="/register">
-              Click here to register...
-            </Link>
-          </div>
-        </form>
+            <div className="form-group">
+              <Link href="/" to="/register">
+                Click here to register...
+              </Link>
+            </div>
+          </form>
+        </BlockUi>
       </div>
     );
   }
 }
-

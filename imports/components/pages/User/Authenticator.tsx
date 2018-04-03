@@ -9,7 +9,7 @@ import styled from "styled-components";
 import Loader from "react-loader-spinner";
 import { Alert, Button, Form, FormGroup, Label, Input, FormText } from "reactstrap";
 import RaisedButton from "material-ui/RaisedButton";
-
+import AuthenticatorForm from "../../forms/AuthenticatorForm";
 import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
 import * as Methods from "../../../api/auth/methods";
@@ -46,6 +46,7 @@ interface IState {
   authCode: string;
   currentValidToken: string;
   disableSubmit: boolean;
+  allowSubmit: boolean;
 }
 
 class Authenticator extends React.Component<IProps, IState> {
@@ -79,7 +80,8 @@ class Authenticator extends React.Component<IProps, IState> {
       showQRcode: showQRcode,
       authCode: "",
       currentValidToken: "",
-      disableSubmit: false
+      disableSubmit: false,
+      allowSubmit: true
     };
   }
 
@@ -113,7 +115,7 @@ class Authenticator extends React.Component<IProps, IState> {
     clearInterval(this.timerID);
   }
 
-  setTimer(nextProps: any = '') {
+  setTimer(nextProps: any = "") {
     let props: any;
     if (nextProps) {
       props = nextProps;
@@ -144,11 +146,9 @@ class Authenticator extends React.Component<IProps, IState> {
     return QRcode;
   }
 
-  handleSubmit(e) {
-    e.preventDefault();
-    this.setState({
-      disableSubmit: true
-    });
+  handleSubmit() {
+    //e.preventDefault();
+    this.setState({ allowSubmit: false });
     this.verifyToken();
   }
 
@@ -179,9 +179,7 @@ class Authenticator extends React.Component<IProps, IState> {
       if (err) {
         Library.invalidAuthCodeAlert(err);
         console.log(`verifyToken error`, err);
-        this.setState({
-          disableSubmit: false
-        });
+        this.setState({ allowSubmit: true });
       } else {
         console.log(`verifyToken: Authenticator> push('/')`);
         this.props.history.push("/");
@@ -268,28 +266,15 @@ class Authenticator extends React.Component<IProps, IState> {
 
   verifyLayout() {
     let layout = (
-      <div>
-        <Transition>
-          <h2>Verify Authorisation Code</h2>
-          <Form onSubmit={this.handleSubmit}>
-            <FormGroup>
-              <Label for="authCode">Please enter the 6 digit authorisation code:</Label>
-              <Input
-                onChange={this.handleChange}
-                type="text"
-                name="authCode"
-                id="authCode"
-                placeholder="Enter the 6 digit authorisation code"
-              />
-            </FormGroup>
-            <FormGroup>
-              <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
-            </FormGroup>
-          </Form>
+      <Transition>
+        <AuthenticatorForm
+          allowSubmit={this.state.allowSubmit}
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+        />
 
-          {this.showCode()}
-        </Transition>
-      </div>
+        {this.showCode()}
+      </Transition>
     );
     return layout;
   }

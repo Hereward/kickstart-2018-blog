@@ -1,5 +1,6 @@
 ///<reference path="../../../index.d.ts"/>
 import * as React from "react";
+import * as BlockUi from "react-block-ui";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
 import RaisedButton from "material-ui/RaisedButton";
@@ -50,45 +51,47 @@ export default class ChangePasswordForm extends React.Component<IProps, IState> 
     return (
       <div>
         <h2>Change Password</h2>
-        <form id={this.formID}>
-          <div className="form-group">
-            <label htmlFor="oldPassword">Old Password:</label>
-            <input
-              onChange={this.handleChange}
-              type="password"
-              className={this.baseCSSClass}
-              id="oldPassword"
-              name="oldPassword"
-              placeholder=""
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="newPassword">New Password:</label>
-            <input
-              onChange={this.handleChange}
-              type="password"
-              className={this.baseCSSClass}
-              id="newPassword"
-              name="newPassword"
-              placeholder=""
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="confirmNewPassword">Confirm New Password:</label>
-            <input
-              onChange={this.handleChange}
-              type="password"
-              className={this.baseCSSClass}
-              id="confirmNewPassword"
-              name="confirmNewPassword"
-              placeholder=""
-            />
-          </div>
+        <BlockUi tag="div" blocking={!this.props.allowSubmit}>
+          <form id={this.formID}>
+            <div className="form-group">
+              <label htmlFor="oldPassword">Old Password:</label>
+              <input
+                onChange={this.handleChange}
+                type="password"
+                className={this.baseCSSClass}
+                id="oldPassword"
+                name="oldPassword"
+                placeholder=""
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="newPassword">New Password:</label>
+              <input
+                onChange={this.handleChange}
+                type="password"
+                className={this.baseCSSClass}
+                id="newPassword"
+                name="newPassword"
+                placeholder=""
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="confirmNewPassword">Confirm New Password:</label>
+              <input
+                onChange={this.handleChange}
+                type="password"
+                className={this.baseCSSClass}
+                id="confirmNewPassword"
+                name="confirmNewPassword"
+                placeholder=""
+              />
+            </div>
 
-          <div className="form-group">
-            <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
-          </div>
-        </form>
+            <div className="form-group">
+              <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
+            </div>
+          </form>
+        </BlockUi>
       </div>
     );
   }

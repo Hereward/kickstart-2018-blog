@@ -2,6 +2,7 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import RaisedButton from "material-ui/RaisedButton";
+import * as BlockUi from "react-block-ui";
 import * as Validation from "../../modules/validation";
 import Widget from "./Widget";
 import CountryWidget from "./CountryWidget";
@@ -12,6 +13,7 @@ interface IProps {
   handleSubmit: any;
   profileObj: any;
   handleSetState: any;
+  allowSubmit: boolean;
 }
 
 interface IState {
@@ -37,12 +39,14 @@ export default class ProfileForm extends React.Component<IProps, IState> {
     };
   }
 
+  /*
   static propTypes = {
     handleSubmit: PropTypes.func,
     handleChange: PropTypes.func,
     handleSetState: PropTypes.func,
     profileObj: PropTypes.object
   };
+*/
 
   componentDidMount() {
     Validation.validate(this);
@@ -73,38 +77,40 @@ export default class ProfileForm extends React.Component<IProps, IState> {
   render() {
     return (
       <div>
-        <form id={this.formID}>
-          {this.getWidget({ name: "fname", label: "First Name" })}
-          {this.getWidget({
-            name: "initial",
-            required: false,
-            label: "Initial"
-          })}
-          {this.getWidget({ name: "lname", label: "Last Name" })}
-          <DateWidget
-            handleSetStateUpstream={this.handleSetStateUpstream}
-            handleChange={this.handleChange}
-            dataObj={this.props.profileObj}
-            name="dob"
-            label="Date of Birth"
-          />
+        <BlockUi tag="div" blocking={!this.props.allowSubmit}>
+          <form id={this.formID}>
+            {this.getWidget({ name: "fname", label: "First Name" })}
+            {this.getWidget({
+              name: "initial",
+              required: false,
+              label: "Initial"
+            })}
+            {this.getWidget({ name: "lname", label: "Last Name" })}
+            <DateWidget
+              handleSetStateUpstream={this.handleSetStateUpstream}
+              handleChange={this.handleChange}
+              dataObj={this.props.profileObj}
+              name="dob"
+              label="Date of Birth"
+            />
 
-          {this.getWidget({ name: "street1", label: "Street Address 1" })}
-          {this.getWidget({
-            name: "street2",
-            label: "Street Address 2",
-            required: false
-          })}
-          {this.getWidget({ name: "city", label: "City", required: false })}
+            {this.getWidget({ name: "street1", label: "Street Address 1" })}
+            {this.getWidget({
+              name: "street2",
+              label: "Street Address 2",
+              required: false
+            })}
+            {this.getWidget({ name: "city", label: "City", required: false })}
 
-          <CountryWidget handleChange={this.handleChange} dataObj={this.props.profileObj} />
+            <CountryWidget handleChange={this.handleChange} dataObj={this.props.profileObj} />
 
-          {this.getWidget({ name: "postcode", label: "Postal Code" })}
+            {this.getWidget({ name: "postcode", label: "Postal Code" })}
 
-          <div className="form-group">
-            <RaisedButton disabled={this.state.disableSubmit} type="submit" primary={true} label="Submit" />
-          </div>
-        </form>
+            <div className="form-group">
+              <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
+            </div>
+          </form>
+        </BlockUi>
       </div>
     );
   }

@@ -1,3 +1,4 @@
+///<reference path="../../../index.d.ts"/>
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import PropTypes from "prop-types";
@@ -13,8 +14,8 @@ interface IProps {
 
 interface IState {}
 
-export default class ForgotPassWordResetForm extends React.Component<IProps, IState> {
-  formID: string = "ForgotPassWordResetForm";
+export default class AuthenticatorForm extends React.Component<IProps, IState> {
+  formID: string = "AuthenticatorForm";
   baseCSSClass: string = "form-control tooltipster required";
 
   constructor(props) {
@@ -25,16 +26,7 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
   }
 
   componentDidMount() {
-    let rules = {
-      password2: {
-        equalTo: "#password1"
-      },
-      password1: {
-        minlength: 6
-      }
-    };
-
-    Validation.validate(this, rules);
+    Validation.validate(this);
   }
 
   handleChange(e) {
@@ -48,32 +40,20 @@ export default class ForgotPassWordResetForm extends React.Component<IProps, ISt
   render() {
     return (
       <div>
-        <h2>Password Reset</h2>
+        <h2>Verify Authorisation Code</h2>
         <BlockUi tag="div" blocking={!this.props.allowSubmit}>
           <form id={this.formID}>
             <div className="form-group">
-              <label htmlFor="password1">Password</label>
+              <label htmlFor="email">Please enter the 6 digit authorisation code:</label>
               <input
                 onChange={this.handleChange}
-                type="password"
+                type="text"
+                name="authCode"
+                id="authCode"
+                placeholder="Enter the 6 digit authorisation code"
                 className={this.baseCSSClass}
-                id="password1"
-                name="password1"
-                placeholder="Password"
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="password2">Confirm Password</label>
-              <input
-                onChange={this.handleChange}
-                type="password"
-                className={this.baseCSSClass}
-                id="password2"
-                name="password2"
-                placeholder="Confirm Password"
-              />
-            </div>
-
             <div className="form-group">
               <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
             </div>
