@@ -186,6 +186,7 @@ declare module "meteor/accounts-base" {
     function config(options: any): any;
     function onLogin(options: any): any;
     function onLogout(options: any): any;
+    function logoutOtherClients(): any;
   }
 }
 

@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
 import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
@@ -246,6 +247,7 @@ class Navigation extends React.Component<IProps, IState> {
     return verifiedLayout;
   }
 
+  /*
   logOutZ() {
     if (User.id()) {
       let id = User.id();
@@ -266,11 +268,12 @@ class Navigation extends React.Component<IProps, IState> {
       });
     }
   }
+  */
 
   logOut() {
     if (User.id()) {
       this.emailVerifyPrompted = false;
-      SessionMethods.deActivateSession.call({}, (err, res) => {
+      SessionMethods.destroySession.call({}, (err, res) => {
         if (err) {
           console.log(`killSession error`, err.reason);
           Library.modalErrorAlert(err.reason);
