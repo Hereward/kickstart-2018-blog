@@ -39,14 +39,13 @@ class SignIn extends React.Component<IProps, IState> {
 
   componentWillMount() {}
 
-  componentDidMount() {
-  }
+  componentDidMount() {}
 
   componentWillReceiveProps(nextProps) {}
 
   static propTypes = {
     history: ReactRouterPropTypes.history,
-    enhancedAuth: PropTypes.bool,
+    enhancedAuth: PropTypes.bool
   };
 
   handleChange(e) {
@@ -80,6 +79,7 @@ class SignIn extends React.Component<IProps, IState> {
     }
   }
 
+  
   SignInUser() {
     this.setState({ allowSubmit: false });
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
@@ -103,20 +103,63 @@ class SignIn extends React.Component<IProps, IState> {
                   console.log(`createSession error: [${err.reason}]`, err);
                   Library.modalErrorAlert(err.reason);
                 } else {
-                  this.props.history.push('/authenticate');
+                  this.props.history.push("/authenticate");
                 }
               });
-              
             }
           });
-
-
         } else {
-          this.props.history.push('/');
+          this.props.history.push("/");
         }
       }
     });
   }
+  
+/*
+  SignInUserZ() {
+    this.setState({ allowSubmit: false });
+    SessionMethods.createUserSession.call({}, (err, res) => {
+      if (err) {
+        console.log(`createSession error: [${err.reason}]`, err);
+        Library.modalErrorAlert(err.reason);
+      } else {
+        Meteor.loginWithPassword(this.state.email, this.state.password, error => {
+          if (error) {
+            console.log(`loginWithPassword error: [${err.reason}]`, err);
+            this.setState({ allowSubmit: true });
+            Library.modalErrorAlert({ detail: error.reason, title: "Sign In Failed" });
+
+            SessionMethods.destroySession.call({}, (err, res) => {
+              if (err) {
+                console.log(`destroySession error: [${err.reason}]`, err);
+                Library.modalErrorAlert(err.reason);
+              }
+              
+            });
+          } else {
+            console.log(`Sign In Succesful`);
+            if (this.props.enhancedAuth) {
+              let authFields = {
+                verified: false
+              };
+
+              AuthMethods.setVerified.call(authFields, (err, res) => {
+                if (err) {
+                  Library.modalErrorAlert(err.reason);
+                  console.log(`setVerified error`, err);
+                } else {
+                  this.props.history.push("/authenticate");
+                }
+              });
+            } else {
+              this.props.history.push("/");
+            }
+          }
+        });
+      }
+    });
+  }
+  */
 
   render() {
     return (
@@ -129,6 +172,7 @@ class SignIn extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(({ params }) => {
+    //let sessionDataReady = Meteor.subscribe("userSessions");
     return {};
   })(SignIn)
 );

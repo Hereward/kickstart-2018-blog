@@ -35,14 +35,18 @@ export const createUserSession = new ValidatedMethod({
       owner: this.userId
     });
 
+    console.log(`createUserSession`, id);
+
     return id;
   }
 });
 
+
 export const killSession = new ValidatedMethod({
   name: "UserSession.kill",
   validate: new SimpleSchema({
-    id: { type: String }
+    id: { type: String },
+    active: { type: Boolean }
   }).validator(),
 
   run(fields) {
@@ -56,7 +60,8 @@ export const killSession = new ValidatedMethod({
         { owner: fields.id },
         {
           $set: {
-            expired: true
+            expired: true,
+            active: fields.active
           }
         }
       );
@@ -89,7 +94,7 @@ export const keepAliveUserSession = new ValidatedMethod({
       console.log(`UserSession.keepAlive - activityDetected=[${fields.activityDetected}] id=[${fields.id}] diff=[${diff}]`);
 
       if (diff > 0) {
-        killSession.call({ id: fields.id }, () => {});
+        killSession.call({ id: fields.id, active: true }, () => {});
       } else if (fields.activityDetected) {
         let expires = new Date(Date.now() + inactivityTimeout);
         userSessions.update(

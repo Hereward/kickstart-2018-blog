@@ -150,35 +150,6 @@ class Navigation extends React.Component<IProps, IState> {
     })
   };
 
-  emailDashDisplay() {
-    let display: string;
-    if (this.props.userSession) {
-      console.log(`emailDashDisplay: this.props.userSession`, this.props.userSession);
-    }
-
-    if (this.props.userSession && !this.props.userSession.expired && this.props.userData) {
-      display = ` - ${this.props.userData.emails[0].address}`;
-    } else if (this.props.userSession && this.props.userSession.expired) {
-      display = ` - expired session`;
-    } else if (this.props.loggingIn) {
-      display = ` - logging in...`;
-    }
-
-    return display;
-  }
-
-  logOut() {
-    this.emailVerifyPrompted = false;
-    SessionMethods.destroySession.call({}, (err, res) => {
-      console.log(`Navigation logOut`, User.id());
-      Meteor.logout(() => {
-        this.closeNavbar();
-        Tooltips.unset("verified");
-        this.props.history.push("/");
-      });
-    });
-  }
-
   getAuthLink() {
     if (this.props.enhancedAuth) {
       if (this.props.authData && !this.props.authData.verified) {
@@ -225,19 +196,86 @@ class Navigation extends React.Component<IProps, IState> {
       </DropdownMenu>
     );
 
-    return User.id() ? SignedInLayout : SignedOutLayout;
+    return this.props.userData ? SignedInLayout : SignedOutLayout;
+  }
+
+  emailDashDisplay() {
+    let display: string;
+    /*
+    if (this.props.userSession) {
+      console.log(`emailDashDisplay: this.props.userSession`, this.props.userSession);
+    }
+    */
+
+    if (this.props.userSession && !this.props.userSession.expired && this.props.userData) {
+      display = ` - ${this.props.userData.emails[0].address}`;
+    } else if (this.props.loggingIn) {
+      display = ` - logging in...`;
+    }
+
+    return display;
+  }
+
+  getVerifiedIndicator() {
+    let layout: any;
+    let obj = Tooltips.dashBoardTip(this.props);
+
+    if (!this.props.loggingIn && this.props.userData) {
+      layout = <div className="d-inline-block">{VerifiedIndicator(obj.verified)}</div>;
+    }
+
+    return layout;
   }
 
   authVerifiedLayout() {
-    let obj = Tooltips.dashBoardTip(this.props);
+    //let obj = Tooltips.dashBoardTip(this.props);
+    let verifiedLayout: any;
     let emailDashDisplay = this.emailDashDisplay();
-    let verifiedLayout = (
-      <div className="d-inline-block">
-        <div className="d-none d-sm-inline">{emailDashDisplay}</div>{" "}
-        {!this.props.loggingIn && this.props.userData && emailDashDisplay ? <div className="d-inline-block">{VerifiedIndicator(obj.verified)}</div> : ""}
-      </div>
-    );
+    if (emailDashDisplay) {
+      verifiedLayout = (
+        <div className="d-inline-block">
+          <div className="d-none d-sm-inline">{emailDashDisplay}</div> {this.getVerifiedIndicator()}
+        </div>
+      );
+    }
+
     return verifiedLayout;
+  }
+
+  logOut() {
+    if (User.id()) {
+      this.emailVerifyPrompted = false;
+      SessionMethods.killSession.call({ id: User.id(), active: false }, (err, res) => {
+        if (err) {
+          console.log(`killSession error`, err.reason);
+          Library.modalErrorAlert(err.reason);
+        }
+        console.log(`Navigation logOut`, User.id());
+        Accounts.logoutOtherClients();
+        Meteor.logout(() => {
+          this.closeNavbar();
+          Tooltips.unset("verified");
+          //Meteor["connection"].setUserId(null);
+          this.props.history.push("/");
+        });
+      });
+    }
+  }
+
+
+
+  conditionalLogout() {
+    if (User.id()) {
+      let logout = false;
+      if (this.props.userSession && this.props.userSession.active === true && this.props.userSession.expired === true) {
+        console.log(`Navigation: conditionalLogout DONE!`, User.id());
+        logout = true;
+      }
+
+      if (logout) {
+        this.logOut();
+      }
+    }
   }
 
   navBar() {
@@ -274,10 +312,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   render() {
-    if (this.props.userSession && this.props.userSession.expired === true) {
-      console.log(`Navigation: props.userSession.expired === true`);
-      this.logOut();
-    }
+    this.conditionalLogout();
     return this.navBar();
   }
 }
@@ -289,14 +324,14 @@ export default withRouter(
     let authData: any;
     let userSession: any;
     let userData: any;
-    
+
     let loggingIn: boolean;
     loggingIn = User.loggingIn();
 
     if (User.id()) {
-      userData = User.data();
       if (sessionDataReady) {
         userSession = userSessions.findOne({ owner: User.id() });
+        userData = User.data();
       }
       if (authDataReady) {
         authData = Auth.findOne({ owner: User.id() });
