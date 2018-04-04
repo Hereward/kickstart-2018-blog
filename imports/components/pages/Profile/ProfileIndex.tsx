@@ -95,8 +95,8 @@ class Profile extends React.Component<IProps, IState> {
     let profileFields = this.fieldMapper("method");
 
     ProfileMethods.updateProfile.call(profileFields, err => {
+      this.setState({ allowSubmit: true });
       if (err) {
-        this.setState({ allowSubmit: true });
         Library.modalErrorAlert(err.reason);
         console.log(`ProfileMethods.updateProfile failed`, err);
       } else {

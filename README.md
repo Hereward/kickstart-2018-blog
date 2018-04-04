@@ -128,15 +128,18 @@ The following file names have been added to the included .gitignore file:
 
 #### configurable settings:
 
-* `enhancedAuth` - use these settings to enable/disable 2 factor authentication. Note: changing this setting after initial build may cause problems
-* `session` - use these settings to control the session timeout features
-* `smtp` - populate these settings with your SMTP server configuration
+`enhancedAuth` - use these settings to enable/disable 2 factor authentication & enable a deve Note: changing this setting after initial build may cause problems
+* `active` - Determines whther the app runs with 2FA
+* `maxAttempts` - Maximum number of failed attempts allowed
+* `displayCode` - For development, display the auth code on screen
 
-#### explanation of session properties:
-
+`session` - use these settings to control the session timeout features
 * `heartbeatInterval (integer)` - interval between activity detection messages sent to server (ms - default: 300000)
 * `inactivityTimeout (integer)` - length of time before inactive users are logged out (ms - default: 3600000)
 * `timeOutOn (boolean)` - turn on or off the timeout feature (default: true)
+
+`smtp` - populate these settings with your SMTP server configuration
+
 
 ## <a name="2FA"></a>2FA Security
 

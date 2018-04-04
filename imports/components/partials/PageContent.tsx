@@ -80,8 +80,8 @@ export default class PageContent extends React.Component<IProps, IState> {
     let pageFields = this.fieldMapper("method");
     this.setState({ allowSubmit: false });
     PageMethods.updatePage.call(pageFields, err => {
+      this.setState({ allowSubmit: true });
       if (err) {
-        this.setState({ allowSubmit: true });
         Library.modalErrorAlert(err.reason);
         console.log(`ProfileMethods.updateProfile failed`, err);
       } else {
