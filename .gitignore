@@ -4,6 +4,7 @@
 # Meteor
 settings-production.json
 settings-development.json
+settings-staging.json
 .deploy/settings-development.json
 .deploy/mup.js
 
