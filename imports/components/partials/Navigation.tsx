@@ -273,6 +273,7 @@ class Navigation extends React.Component<IProps, IState> {
   logOut() {
     if (User.id()) {
       this.emailVerifyPrompted = false;
+      this.closeNavbar();
       SessionMethods.destroySession.call({}, (err, res) => {
         if (err) {
           console.log(`killSession error`, err.reason);
@@ -281,7 +282,6 @@ class Navigation extends React.Component<IProps, IState> {
         console.log(`Navigation logOut`, User.id());
         Accounts.logoutOtherClients();
         Meteor.logout(() => {
-          this.closeNavbar();
           Tooltips.unset("verified");
           //Meteor["connection"].setUserId(null);
           this.props.history.push("/");
