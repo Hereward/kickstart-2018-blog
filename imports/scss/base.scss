@@ -26,6 +26,29 @@ img {
   height: auto;
 }
 
+.dashboard-spinner {
+  vertical-align: middle !important;
+  margin-top: -2px !important;
+  background-color: transparent !important;
+  display: inline-block !important;
+  position: relative !important;
+  margin-top: -4px !important;
+  box-shadow: none !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.dashboard-spinner circle {
+  stroke-width: 5 !important;
+}
+
+.notification-sync-problem {
+  vertical-align: middle !important;
+  color: orange !important;
+  height: 20px !important;
+  margin-top: -2px !important;
+}
+
 .action-highlight-off {
   vertical-align: middle !important;
   color: red !important;
@@ -250,6 +273,16 @@ nav.main-nav {
     height: 24px !important;
     //margin-top: 0 !important;
   }
+
+  .notification-sync-problem {
+    height: 24px !important;
+  }
+
+  .dashboard-spinner {
+    width: 24px !important;
+    height: 24px !important;
+  }
+  
 }
 
 @media (min-width: 992px) {

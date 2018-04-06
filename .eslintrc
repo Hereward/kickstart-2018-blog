@@ -88,6 +88,7 @@
     "func-names": "warn",
     "eqeqeq": "warn",
     "radix": "warn",
+    "strict": "warn",
     "no-redeclare": "warn",
     "block-scoped-var": "warn",
     "react/no-unused-state": "react/no-unused-state",

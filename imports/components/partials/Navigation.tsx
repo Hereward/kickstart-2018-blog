@@ -5,10 +5,10 @@ import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
-import styled from "styled-components";
+//import styled from "styled-components";
 import { Session } from "meteor/session";
-import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
-import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
+//import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
+//import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
 
 import {
   Collapse,
@@ -32,8 +32,9 @@ import { Auth } from "../../api/auth/publish";
 import { userSessions } from "../../api/sessions/publish";
 import * as SessionMethods from "../../api/sessions/methods";
 import * as Library from "../../modules/library";
-import * as Tooltips from "../../modules/tooltips";
+//import * as Tooltips from "../../modules/tooltips";
 import * as User from "../../modules/user";
+import DashDisplay from "./DashDisplay";
 
 interface IProps {
   history: any;
@@ -62,8 +63,10 @@ interface IState {
   collapsed: boolean;
   tip: string;
   verified: boolean;
+  loggingOut: boolean;
 }
 
+/*
 const VerifiedIndicator = function vfi(verified) {
   let tag: any;
   let style: any;
@@ -75,6 +78,7 @@ const VerifiedIndicator = function vfi(verified) {
   }
   return <div id="VerifiedIndicator">{tag}</div>;
 };
+*/
 
 declare var Bert: any;
 
@@ -91,7 +95,8 @@ class Navigation extends React.Component<IProps, IState> {
     this.state = {
       collapsed: true,
       verified: false,
-      tip: ""
+      tip: "",
+      loggingOut: false
     };
     this.emailVerifyPrompted = false;
     console.log(`Navigation`, this.props);
@@ -107,7 +112,7 @@ class Navigation extends React.Component<IProps, IState> {
       this.emailVerifyPrompted = Library.userModelessAlert("verifyEmail", this.props);
     }
 
-    Tooltips.set("verified", this.props);
+    //Tooltips.set("verified", this.props);
   }
 
   componentDidMount() {}
@@ -134,6 +139,7 @@ class Navigation extends React.Component<IProps, IState> {
     });
   }
 
+  /*
   static propTypes = {
     authVerified: PropTypes.bool,
     enhancedAuth: PropTypes.bool,
@@ -154,6 +160,7 @@ class Navigation extends React.Component<IProps, IState> {
       QRCodeShown: PropTypes.bool
     })
   };
+  */
 
   getAuthLink() {
     if (this.props.enhancedAuth) {
@@ -204,13 +211,9 @@ class Navigation extends React.Component<IProps, IState> {
     return this.props.userData ? SignedInLayout : SignedOutLayout;
   }
 
+  /*
   emailDashDisplay() {
     let display: string;
-    /*
-    if (this.props.userSession) {
-      console.log(`emailDashDisplay: this.props.userSession`, this.props.userSession);
-    }
-    */
 
     if (!this.props.sessionExpired && this.props.userData) {
       display = ` - ${this.props.userData.emails[0].address}`;
@@ -231,7 +234,9 @@ class Navigation extends React.Component<IProps, IState> {
 
     return layout;
   }
+  */
 
+  /*
   authVerifiedLayout() {
     //let obj = Tooltips.dashBoardTip(this.props);
     let verifiedLayout: any;
@@ -246,6 +251,7 @@ class Navigation extends React.Component<IProps, IState> {
 
     return verifiedLayout;
   }
+  */
 
   /*
   logOutZ() {
@@ -274,6 +280,7 @@ class Navigation extends React.Component<IProps, IState> {
     if (User.id()) {
       this.emailVerifyPrompted = false;
       this.closeNavbar();
+      this.setState({ loggingOut: true });
       SessionMethods.destroySession.call({}, (err, res) => {
         if (err) {
           console.log(`killSession error`, err.reason);
@@ -282,8 +289,9 @@ class Navigation extends React.Component<IProps, IState> {
         console.log(`Navigation logOut`, User.id());
         Accounts.logoutOtherClients();
         Meteor.logout(() => {
-          Tooltips.unset("verified");
+          //Tooltips.unset("verified");
           //Meteor["connection"].setUserId(null);
+          this.setState({ loggingOut: false });
           this.props.history.push("/");
         });
       });
@@ -314,7 +322,15 @@ class Navigation extends React.Component<IProps, IState> {
       <div>
         <Navbar color="dark" expand="md" className="main-nav fixed-top" dark>
           <div className="navbar-brand verified">
-            {this.props.ShortTitle} {this.authVerifiedLayout()}
+            {this.props.ShortTitle}{" "}
+            <DashDisplay
+              enhancedAuth={this.props.enhancedAuth}
+              loggingOut={this.state.loggingOut}
+              authData={this.props.authData}
+              loggingIn={this.props.loggingIn}
+              userData={this.props.userData}
+              sessionExpired={this.props.sessionExpired}
+            />
           </div>
           <NavbarToggler onClick={this.toggleNavbar} />
           <Collapse isOpen={!this.state.collapsed} navbar>
@@ -374,7 +390,6 @@ export default withRouter(
         authData = Auth.findOne({ owner: User.id() });
       }
     }
-    
 
     return {
       authData: authData,
