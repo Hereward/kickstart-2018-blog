@@ -63,7 +63,6 @@ interface IState {
   collapsed: boolean;
   tip: string;
   verified: boolean;
-  loggingOut: boolean;
 }
 
 /*
@@ -85,6 +84,7 @@ declare var Bert: any;
 class Navigation extends React.Component<IProps, IState> {
   tipInitialised: boolean = false;
   clearTip: boolean = false;
+  loggingOut: boolean = false;
 
   emailVerifyPrompted: boolean;
   constructor(props) {
@@ -95,8 +95,7 @@ class Navigation extends React.Component<IProps, IState> {
     this.state = {
       collapsed: true,
       verified: false,
-      tip: "",
-      loggingOut: false
+      tip: ""
     };
     this.emailVerifyPrompted = false;
     console.log(`Navigation`, this.props);
@@ -280,7 +279,7 @@ class Navigation extends React.Component<IProps, IState> {
     if (User.id()) {
       this.emailVerifyPrompted = false;
       this.closeNavbar();
-      this.setState({ loggingOut: true });
+      this.loggingOut = true;
       SessionMethods.destroySession.call({}, (err, res) => {
         if (err) {
           console.log(`killSession error`, err.reason);
@@ -291,7 +290,7 @@ class Navigation extends React.Component<IProps, IState> {
         Meteor.logout(() => {
           //Tooltips.unset("verified");
           //Meteor["connection"].setUserId(null);
-          this.setState({ loggingOut: false });
+          this.loggingOut = false;
           this.props.history.push("/");
         });
       });
@@ -301,7 +300,7 @@ class Navigation extends React.Component<IProps, IState> {
   conditionalLogout() {
     if (User.id()) {
       let logout = false;
-      if (this.props.sessionExpired && this.props.sessionActive) {
+      if (this.props.sessionExpired && this.props.sessionActive && !this.loggingOut) {
         console.log(
           `Navigation: conditionalLogout DONE! active=[${this.props.sessionActive}] expired=[${
             this.props.sessionExpired
@@ -325,7 +324,7 @@ class Navigation extends React.Component<IProps, IState> {
             {this.props.ShortTitle}{" "}
             <DashDisplay
               enhancedAuth={this.props.enhancedAuth}
-              loggingOut={this.state.loggingOut}
+              loggingOut={this.loggingOut}
               authData={this.props.authData}
               loggingIn={this.props.loggingIn}
               userData={this.props.userData}
@@ -365,8 +364,13 @@ class Navigation extends React.Component<IProps, IState> {
 }
 
 export default withRouter(
-  withTracker(({ params }) => {
-    let authDataReady = Meteor.subscribe("enhancedAuth");
+  withTracker(({ enhancedAuth }) => {
+    //console.log("enhancedAuth", enhancedAuth);
+    let authDataReady: any;
+    if (enhancedAuth) {
+      authDataReady = Meteor.subscribe("enhancedAuth");
+    }
+    //authDataReady = Meteor.subscribe("enhancedAuth");
     let sessionDataReady = Meteor.subscribe("userSessions");
     let authData: any;
     let userSession: any;

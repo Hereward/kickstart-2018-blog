@@ -124,13 +124,11 @@ class Authenticator extends React.Component<IProps, IState> {
     }
 
     if (props.authData) {
-      console.log(`Authenticator setTimer - authData`, props.authData);
+      //console.log(`Authenticator setTimer - authData`, props.authData);
       if (props.authData.private_key && !this.timerWasSet) {
         this.timerID = Meteor.setInterval(() => this.checkTokens(props.authData.private_key), 2000);
         this.timerWasSet = true;
       }
-    } else {
-      console.log(`Authenticator setTimer - NO AUTH DATA!`);
     }
   }
 

@@ -75,6 +75,7 @@ const tip = {
 export default class DashDisplay extends React.Component<IProps, IState> {
   tipInitialised: boolean = false;
   clearTip: boolean = false;
+  currentTip: string = "";
 
   emailVerifyPrompted: boolean;
   constructor(props) {
@@ -82,19 +83,21 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     this.state = {
       verified: false
     };
-    console.log(`DashDisplay`, this.props);
+    //console.log(`DashDisplay`, this.props);
   }
 
   componentWillReceiveProps(nextProps) {}
 
-  componentWillUpdate(nextProps) {}
-
-  componentDidUpdate() {
-    this.set("verified");
+  componentWillUpdate(nextProps) {
+    if (nextProps !== this.props) {
+      this.set(nextProps);
+    }
   }
 
+  componentDidUpdate() {}
+
   componentDidMount() {
-    this.set("verified");
+    this.set(this.props);
   }
 
   /*
@@ -115,50 +118,52 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   };
   */
 
-  dashBoardTip() {
-    let emailVerified = User.data() ? User.data().emails[0].verified : false;
+  dashBoardTip(props) {
+    let emailVerified = props.userData ? props.userData.emails[0].verified : false;
     let verifiedFlag: boolean = false;
     let message: any;
-    if (!User.id()) {
+    if (!props.userData) {
       message = tip.loggedOut;
-    } else if (this.props.enhancedAuth === false) {
+    } else if (props.enhancedAuth === false) {
       verifiedFlag = emailVerified;
       message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
-    } else if (!this.props.authData) {
+    } else if (!props.authData) {
       message = tip.loggedOut;
     } else {
-      verifiedFlag = this.props.authData.verified && emailVerified;
+      verifiedFlag = props.authData.verified && emailVerified;
       message = verifiedFlag ? tip.verified.enhanced.verified : tip.verified.enhanced.unverified;
 
       if (!emailVerified) {
         message += tip.verified.enhanced.email;
       }
 
-      if (!this.props.authData.verified) {
+      if (!props.authData.verified) {
         message += emailVerified ? "" : " ";
         message += tip.verified.enhanced.auth2FA;
       }
     }
 
-    console.log(`dashBoardTip`, message);
+    //console.log(`dashBoardTip`, message);
 
     return { verified: verifiedFlag, tip: message };
   }
 
-  set(type) {
-    console.log(`DashDsiplay set`);
-    let tipObj = this.dashBoardTip();
-    if (tipObj.tip) {
-      let initialised = jquery(`.${type}`).hasClass("tooltipstered");
+  set(props) {
+    let initialised = jquery(`.verified`).hasClass("tooltipstered");
+    let newTip = this.dashBoardTip(props).tip;
+    
+    if (newTip !== this.currentTip) {
+      console.log(`DashDisplay set - ACTION`);
+      this.currentTip = newTip;
       if (initialised) {
-        jquery(`.${type}`).tooltipster("destroy");
+        jquery(`.verified`).tooltipster("destroy");
       }
 
-      jquery(`.${type}`).tooltipster({
+      jquery(`.verified`).tooltipster({
         trigger: "hover",
         animation: "slide",
         theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
-        content: tipObj.tip
+        content: newTip
       });
     }
   }
@@ -191,12 +196,12 @@ export default class DashDisplay extends React.Component<IProps, IState> {
 
   getVerifiedIndicator() {
     let layout: any;
-    let obj = this.dashBoardTip();
+    let obj = this.dashBoardTip(this.props);
 
     let tag: any;
     let style: any;
 
-    console.log(`getVerifiedIndicator`, this.props.userData);
+    //console.log(`getVerifiedIndicator`, this.props.userData);
     if (this.props.loggingIn || this.props.loggingOut) {
       tag = (
         <RefreshIndicator
