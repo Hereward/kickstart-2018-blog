@@ -41,7 +41,7 @@ export default withTracker(() => {
   let enhancedAuth: boolean = true;
   let userId = User.id();
   let authData: any;
-  if (Meteor.settings.public.enhancedAuth.active === 0) {
+  if (Meteor.settings.public.enhancedAuth.active === false) {
     enhancedAuth = false;
   }
 

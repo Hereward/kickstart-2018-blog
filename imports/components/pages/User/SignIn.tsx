@@ -79,6 +79,17 @@ class SignIn extends React.Component<IProps, IState> {
     }
   }
 
+  createSession(destination) {
+    SessionMethods.createUserSession.call({}, (err, res) => {
+      if (err) {
+        console.log(`createSession error: [${err.reason}]`, err);
+        Library.modalErrorAlert(err.reason);
+      } else {
+        this.props.history.push(destination);
+      }
+    });
+  }
+
   
   SignInUser() {
     this.setState({ allowSubmit: false });
@@ -98,18 +109,12 @@ class SignIn extends React.Component<IProps, IState> {
               Library.modalErrorAlert(err.reason);
               console.log(`setVerified error`, err);
             } else {
-              SessionMethods.createUserSession.call({}, (err, res) => {
-                if (err) {
-                  console.log(`createSession error: [${err.reason}]`, err);
-                  Library.modalErrorAlert(err.reason);
-                } else {
-                  this.props.history.push("/authenticate");
-                }
-              });
+              this.createSession("/authenticate");
             }
           });
         } else {
-          this.props.history.push("/");
+          this.createSession("/");
+          //this.props.history.push("/");
         }
       }
     });

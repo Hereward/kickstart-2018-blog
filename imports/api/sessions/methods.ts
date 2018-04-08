@@ -36,6 +36,7 @@ export const createUserSession = new ValidatedMethod({
   validate: null,
 
   run() {
+    console.log("createUserSession");
     authCheck("UserSession.create", this.userId);
     let id = insert(this.userId);
   }
@@ -44,7 +45,7 @@ export const createUserSession = new ValidatedMethod({
 export const killSession = new ValidatedMethod({
   name: "UserSession.kill",
   validate: new SimpleSchema({
-    id: { type: String },
+    id: { type: String }
   }).validator(),
 
   run(fields) {
@@ -58,7 +59,7 @@ export const killSession = new ValidatedMethod({
         { owner: fields.id },
         {
           $set: {
-            expired: true,
+            expired: true
           }
         }
       );
@@ -143,6 +144,7 @@ export const restoreUserSession = new ValidatedMethod({
 
   run() {
     let sessionRestored = false;
+    let id: string;
 
     if (!this.isSimulation) {
       authCheck("UserSession.restore", this.userId);
@@ -151,7 +153,8 @@ export const restoreUserSession = new ValidatedMethod({
 
       if (!sessionRecord) {
         console.log(`insert: no session found for user: [${this.userId}]`);
-       let id = insert(this.userId);
+        id = insert(this.userId);
+        sessionRestored = true;
       } else {
         keepAliveUserSession.call({ id: this.userId, activityDetected: false }, (err, res) => {
           if (err) {
@@ -159,7 +162,7 @@ export const restoreUserSession = new ValidatedMethod({
           }
         });
       }
-      console.log(`restoreUserSession sessionRestored=[${sessionRestored}]`);
+      console.log(`restoreUserSession sessionRestored=[${sessionRestored}] id=[${id}]`);
     }
     return sessionRestored;
   }

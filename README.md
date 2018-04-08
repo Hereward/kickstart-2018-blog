@@ -128,7 +128,7 @@ The following file names have been added to the included .gitignore file:
 
 #### configurable settings:
 
-`enhancedAuth` - use these settings to enable/disable 2 factor authentication & enable a deve Note: changing this setting after initial build may cause problems
+`enhancedAuth` - use these settings to enable/disable 2 factor authentication & change settings
 * `active` - Determines whether the app runs with 2FA
 * `maxAttempts` - Maximum number of failed attempts allowed
 * `displayCode` - For development, display the auth code on screen
