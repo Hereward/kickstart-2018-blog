@@ -38,28 +38,6 @@ export const createUserSession = new ValidatedMethod({
   run() {
     authCheck("UserSession.create", this.userId);
     let id = insert(this.userId);
-    /*
-    let inactivityTimeout: any;
-    inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
-    let now = new Date();
-    let expires = new Date(Date.now() + inactivityTimeout);
-
-    let id = "";
-
-    userSessions.remove({ owner: this.userId });
-
-    id = userSessions.insert({
-      expired: false,
-      active: true,
-      expiresOn: expires,
-      createdAt: now,
-      owner: this.userId
-    });
-
-    console.log(`createUserSession sessionID=[${id}]`, this.userId);
-
-    return id;
-    */
   }
 });
 
@@ -75,7 +53,7 @@ export const killSession = new ValidatedMethod({
 
     sessionRecord = userSessions.findOne({ owner: fields.id });
     if (sessionRecord) {
-      console.log(`UserSession.kill - KILL NOW - active=[${fields.active}]`, fields.id);
+      console.log(`UserSession.kill - KILL NOW`, fields.id);
       userSessions.update(
         { owner: fields.id },
         {
@@ -173,22 +151,6 @@ export const restoreUserSession = new ValidatedMethod({
 
       if (!sessionRecord) {
         console.log(`insert: no session found for user: [${this.userId}]`);
-        /*
-        console.log(`no session found for user: [${this.userId}]`);
-        let inactivityTimeout: any;
-        inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
-        let now = new Date();
-        let expires = new Date(Date.now() + inactivityTimeout);
-
-        let id = userSessions.insert({
-          expired: false,
-          active: true,
-          expiresOn: expires,
-          createdAt: now,
-          owner: this.userId
-        });
-        sessionRestored = true;
-        */
        let id = insert(this.userId);
       } else {
         keepAliveUserSession.call({ id: this.userId, activityDetected: false }, (err, res) => {
