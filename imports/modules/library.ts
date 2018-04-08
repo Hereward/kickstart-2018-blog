@@ -82,7 +82,7 @@ export function userModelessAlert(type, props) {
   if (type === "verifyEmail") {
     if (
       User.id() &&
-      props.authData.verified &&
+      (!props.enhancedAuth || props.authData.verified) &&
       props.profile.verificationEmailSent === 1 &&
       !emailVerified
     ) {
@@ -93,7 +93,7 @@ export function userModelessAlert(type, props) {
       alertType = "warning";
     } else if (
       User.id() &&
-      props.authData.verified &&
+      (!props.enhancedAuth || props.authData.verified) &&
       props.profile.verificationEmailSent === 2 &&
       !emailVerified
     ) {
