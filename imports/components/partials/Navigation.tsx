@@ -277,30 +277,30 @@ class Navigation extends React.Component<IProps, IState> {
 
   logOut() {
     if (User.id()) {
-      this.emailVerifyPrompted = false;
       this.closeNavbar();
+      this.emailVerifyPrompted = false;
       this.loggingOut = true;
+      Accounts.logoutOtherClients();
+      console.log(`Navigation logOut`, User.id());
       SessionMethods.destroySession.call({}, (err, res) => {
         if (err) {
-          console.log(`killSession error`, err.reason);
-          Library.modalErrorAlert(err.reason);
+          console.log(`destroySession error`, err.reason);
         }
-        console.log(`Navigation logOut`, User.id());
-        Accounts.logoutOtherClients();
         Meteor.logout(() => {
-          //Tooltips.unset("verified");
           //Meteor["connection"].setUserId(null);
+          console.log(`Navigation logOut DONE`);
           this.loggingOut = false;
           this.props.history.push("/");
         });
       });
+
     }
   }
 
   conditionalLogout() {
     if (User.id()) {
       let logout = false;
-      if (this.props.sessionExpired && this.props.sessionActive && !this.loggingOut) {
+      if (this.props.sessionExpired && !this.loggingOut) {
         console.log(
           `Navigation: conditionalLogout DONE! active=[${this.props.sessionActive}] expired=[${
             this.props.sessionExpired

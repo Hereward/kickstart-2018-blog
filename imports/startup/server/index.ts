@@ -16,17 +16,6 @@ Accounts.emailTemplates.from = "Meteor Kickstart <postmaster@mg.truthnews.com.au
 Accounts.onLogin(user => {
   let id = user.user._id;
   console.log(`(Server) Login`, id);
- 
-  /*
-  let timeOutOn = (Meteor.settings.public.session.timeOutOn === false) ? false : true;
-  if (timeOutOn) {
-    keepAliveUserSession.call({ id: id, activityDetected: false }, (err, res) => {
-      if (err) {
-        console.log(`keepAliveUserSession onLogin error`, err.reason);
-      }
-    });
-  }
-  */
 });
 
 Accounts.onLogout(user => {

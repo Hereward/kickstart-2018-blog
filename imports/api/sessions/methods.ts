@@ -5,6 +5,25 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "./publish";
 
+const insert = function insert(userId) {
+  let sessionRestored: boolean;
+  let inactivityTimeout: any;
+  inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
+  let now = new Date();
+  let expires = new Date(Date.now() + inactivityTimeout);
+
+  let id = userSessions.insert({
+    expired: false,
+    active: true,
+    expiresOn: expires,
+    createdAt: now,
+    owner: userId
+  });
+  sessionRestored = true;
+
+  return id;
+};
+
 const authCheck = (userId, methodName) => {
   if (!userId) {
     throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
@@ -18,6 +37,8 @@ export const createUserSession = new ValidatedMethod({
 
   run() {
     authCheck("UserSession.create", this.userId);
+    let id = insert(this.userId);
+    /*
     let inactivityTimeout: any;
     inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
     let now = new Date();
@@ -38,15 +59,14 @@ export const createUserSession = new ValidatedMethod({
     console.log(`createUserSession sessionID=[${id}]`, this.userId);
 
     return id;
+    */
   }
 });
-
 
 export const killSession = new ValidatedMethod({
   name: "UserSession.kill",
   validate: new SimpleSchema({
     id: { type: String },
-    active: { type: Boolean }
   }).validator(),
 
   run(fields) {
@@ -61,7 +81,6 @@ export const killSession = new ValidatedMethod({
         {
           $set: {
             expired: true,
-            active: fields.active
           }
         }
       );
@@ -116,10 +135,12 @@ export const keepAliveUserSession = new ValidatedMethod({
 
     if (sessionRecord) {
       let diff = now - sessionRecord.expiresOn;
-      console.log(`UserSession.keepAlive - activityDetected=[${fields.activityDetected}] id=[${fields.id}] diff=[${diff}]`);
+      console.log(
+        `UserSession.keepAlive - activityDetected=[${fields.activityDetected}] id=[${fields.id}] diff=[${diff}]`
+      );
 
       if (diff > 0) {
-        killSession.call({ id: fields.id, active: true }, () => {});
+        killSession.call({ id: fields.id }, () => {});
       } else if (fields.activityDetected) {
         let expires = new Date(Date.now() + inactivityTimeout);
         userSessions.update(
@@ -137,12 +158,58 @@ export const keepAliveUserSession = new ValidatedMethod({
   }
 });
 
+export const restoreUserSession = new ValidatedMethod({
+  name: "UserSession.restore",
+
+  validate: null,
+
+  run() {
+    let sessionRestored = false;
+
+    if (!this.isSimulation) {
+      authCheck("UserSession.restore", this.userId);
+      console.log(`restoreUserSession`);
+      let sessionRecord = userSessions.findOne({ owner: this.userId });
+
+      if (!sessionRecord) {
+        console.log(`insert: no session found for user: [${this.userId}]`);
+        /*
+        console.log(`no session found for user: [${this.userId}]`);
+        let inactivityTimeout: any;
+        inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
+        let now = new Date();
+        let expires = new Date(Date.now() + inactivityTimeout);
+
+        let id = userSessions.insert({
+          expired: false,
+          active: true,
+          expiresOn: expires,
+          createdAt: now,
+          owner: this.userId
+        });
+        sessionRestored = true;
+        */
+       let id = insert(this.userId);
+      } else {
+        keepAliveUserSession.call({ id: this.userId, activityDetected: false }, (err, res) => {
+          if (err) {
+            console.log(`keepAliveUserSession error`, err.reason);
+          }
+        });
+      }
+      console.log(`restoreUserSession sessionRestored=[${sessionRestored}]`);
+    }
+    return sessionRestored;
+  }
+});
+
 export const destroySession = new ValidatedMethod({
   name: "session.destroy",
   validate: null,
 
   run(fields) {
     authCheck("session.destroy", this.userId);
+    console.log(`destroySession`, this.userId);
     let ownerId = this.userId;
     userSessions.remove({ owner: ownerId });
     return true;

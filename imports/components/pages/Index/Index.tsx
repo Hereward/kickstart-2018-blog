@@ -2,6 +2,9 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import { Link } from "react-router-dom";
 import * as ReactDOM from "react-dom";
+import * as dateFormat from "dateformat";
+import { Card, Button, CardHeader, CardFooter, CardBody, CardTitle, CardText } from "reactstrap";
+
 import Checkbox from "material-ui/Checkbox";
 import { Tasks } from "../../../api/tasks/publish";
 import Task from "../../partials/Task";
@@ -13,6 +16,7 @@ import * as Icon from "../../../modules/icons";
 import { Pages } from "../../../api/pages/publish";
 import HomeContent from "../../partials/Home";
 import * as User from "../../../modules/user";
+import { userSessions } from "../../../api/sessions/publish";
 
 declare var DocHead: any;
 
@@ -26,6 +30,7 @@ interface IProps {
   incompleteCount: number;
   taskCount: number;
   page: any;
+  userSession: any;
 }
 
 interface IState {
@@ -132,12 +137,42 @@ class Index extends React.Component<IProps, IState> {
     }
   }
 
+  sessionData() {
+    let layout: any;
+    if (this.props.currentUser && this.props.userSession) {
+      let now = new Date();
+      let nowFormatted = dateFormat(now, "mmmm dS, yyyy, h:MM:ss TT");
+      let expiresOn = dateFormat(this.props.userSession.expiresOn, "mmmm dS, yyyy, h:MM:ss TT");
+      let expired = this.props.userSession.expired ? "yes" : "no";
+      let active = this.props.userSession.active ? "yes" : "no";
+
+      layout = (
+        <Card>
+          <CardHeader>
+            <h2>Session Data</h2>
+          </CardHeader>
+          <CardBody>
+            <CardTitle>{nowFormatted}</CardTitle>
+            <div className="card-text">
+              <p>
+                <strong>Expires on:</strong> {expiresOn}
+              </p>
+              <p>
+                <strong>Expired:</strong> {expired}
+              </p>
+            </div>
+          </CardBody>
+        </Card>
+      );
+    }
+
+    return layout;
+  }
+
   todosSection() {
     let tasks: any;
-    let loggedOutMsg = !User.id() ? (
-      <p>
-        <em>You can add and remove tasks here when you are logged in to your account.</em>
-      </p>
+    let loggedOutMsg = !this.props.currentUser ? (
+      <CardText><em>You can add and remove tasks here when you are logged in to your account.</em></CardText>
     ) : (
       ""
     );
@@ -146,8 +181,32 @@ class Index extends React.Component<IProps, IState> {
     if (this.props.tasks) {
       tasks = this.renderTasks();
     }
+
+    let loggedInContent = this.props.currentUser ? (
+      <div className="card-text">
+        <div className="todos-form-wrapper">
+          {this.getCheckBox()}
+          {this.getForm()}
+        </div>
+        <ul>{tasks}</ul>
+      </div>
+    ) : (
+      ""
+    );
+
     let todosLayout = (
-      <div className="todos">
+      <Card>
+        <CardHeader>
+          <h2>Simple Todos App</h2>
+        </CardHeader>
+        <CardBody>{loggedOutMsg}{loggedInContent}</CardBody>
+      </Card>
+    );
+    return todosLayout;
+  }
+
+  /*
+  <div className="todos">
         <div className="todos-top-section">
           <h2>Simple Todos App</h2>
           {loggedOutMsg}
@@ -158,15 +217,14 @@ class Index extends React.Component<IProps, IState> {
         </div>
         <ul>{tasks}</ul>
       </div>
-    );
-    return todosLayout;
-  }
+      */
 
   render() {
     return (
       <Transition>
         <HomeContent />
-        <div className="container">{this.todosSection()}</div>
+        <div className="container sessionData">{this.sessionData()}</div>
+        <div className="container todos">{this.todosSection()}</div>
       </Transition>
     );
   }
@@ -175,7 +233,11 @@ class Index extends React.Component<IProps, IState> {
 export default withTracker(() => {
   //Meteor.subscribe("userData");
   let tasksDataReady = Meteor.subscribe("tasks");
+  let sessionDataReady = Meteor.subscribe("userSessions");
   let tasks: any;
+  let userSession: any;
+  let userData: any;
+  userData = User.data();
   let count = 0;
 
   let query = Tasks.find({}, { sort: { createdAt: -1 } });
@@ -191,11 +253,18 @@ export default withTracker(() => {
     tasks = query.fetch();
   }
 
+  if (userData) {
+    if (sessionDataReady) {
+      userSession = userSessions.findOne({ owner: User.id() });
+    }
+  }
+
   return {
     tasks: tasks,
     taskCount: count,
     incompleteCount: Tasks.find({ checked: { $ne: true } }).count(),
-    currentUser: User.data(),
-    page: page
+    currentUser: userData,
+    page: page,
+    userSession: userSession
   };
 })(Index);
