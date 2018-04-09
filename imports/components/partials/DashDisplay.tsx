@@ -121,8 +121,12 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   dashBoardTip(props) {
     let emailVerified = props.userData ? props.userData.emails[0].verified : false;
     let verifiedFlag: boolean = false;
-    let message: any;
-    if (!props.userData) {
+    let message: any = "We're not quite sure what's going on...";
+    if (props.loggingIn) {
+      message = tip.loggingIn;
+    } else if (props.loggingOut) {
+      message = tip.loggingOut;
+    } else if (!props.userData) {
       message = tip.loggedOut;
     } else if (props.enhancedAuth === false) {
       verifiedFlag = emailVerified;
@@ -151,7 +155,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   set(props) {
     let initialised = jquery(`.verified`).hasClass("tooltipstered");
     let newTip = this.dashBoardTip(props).tip;
-    
+
     if (newTip !== this.currentTip) {
       console.log(`DashDisplay set - ACTION`);
       this.currentTip = newTip;
