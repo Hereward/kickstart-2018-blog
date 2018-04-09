@@ -12,7 +12,8 @@
     "session": {
       "heartbeatInterval": 300000,
       "inactivityTimeout": 3600000,
-      "timeOutOn": true
+      "timeOutOn": false,
+      "allowMultiSession": false
     }
   },
   "private": {

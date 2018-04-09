@@ -38,17 +38,21 @@ const keepAlive = function keepAlive(activityDetected: any) {
 
 const restoreSession = function restoreSession() {
   if (User.id()) {
-    restoreUserSession.call({}, (err, res) => {});
+    restoreUserSession.call({
+      if (err) {
+        console.log(`restoreUserSession client error`, err.reason);
+      }
+    }, (err, res) => {});
   }
 };
 
 Meteor.startup(() => {
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
   addMeta();
-  restoreSession();
 
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
   if (timeOutOn === true) {
+    restoreSession();
     let heartbeatInterval = Meteor.settings.public.session.heartbeatInterval || 300000;
     let inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
     let activityDetected = false;

@@ -137,6 +137,7 @@ The following file names have been added to the included .gitignore file:
 * `heartbeatInterval (integer)` - interval between activity detection messages sent to server (ms - default: 300000)
 * `inactivityTimeout (integer)` - length of time before inactive users are logged out (ms - default: 3600000)
 * `timeOutOn (boolean)` - turn on or off the timeout feature (default: true)
+* `allowMultiSession` - allow multiiple client sessions for the same user
 
 `smtp` - populate these settings with your SMTP server configuration
 

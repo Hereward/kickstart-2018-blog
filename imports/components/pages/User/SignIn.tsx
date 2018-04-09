@@ -1,4 +1,5 @@
 import { Meteor } from "meteor/meteor";
+import { Accounts } from "meteor/accounts-base";
 import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
@@ -93,12 +94,17 @@ class SignIn extends React.Component<IProps, IState> {
   
   SignInUser() {
     this.setState({ allowSubmit: false });
+    let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
+
       this.setState({ allowSubmit: true });
       if (error) {
         return Library.modalErrorAlert({ detail: error.reason, title: "Sign In Failed" });
       } else {
         console.log(`Sign In Succesful`);
+        if (!allowMultiSession) {
+          Accounts.logoutOtherClients();
+        }
         if (this.props.enhancedAuth) {
           let authFields = {
             verified: false

@@ -5,6 +5,14 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "./publish";
 
+const authCheck = (userId, methodName) => {
+  console.log("authCheck", userId, methodName);
+  if (!userId) {
+    console.log("authCheck failed", methodName);
+    throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
+  }
+};
+
 const insert = function insert(userId) {
   let sessionRestored: boolean;
   let inactivityTimeout: any;
@@ -22,12 +30,6 @@ const insert = function insert(userId) {
   sessionRestored = true;
 
   return id;
-};
-
-const authCheck = (userId, methodName) => {
-  if (!userId) {
-    throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
-  }
 };
 
 export const createUserSession = new ValidatedMethod({
@@ -145,25 +147,26 @@ export const restoreUserSession = new ValidatedMethod({
   run() {
     let sessionRestored = false;
     let id: string;
+    authCheck("UserSession.restore", this.userId);
 
-    if (!this.isSimulation) {
-      authCheck("UserSession.restore", this.userId);
-      console.log(`restoreUserSession`);
-      let sessionRecord = userSessions.findOne({ owner: this.userId });
+    //if (!this.isSimulation) {
+    //let auth = authCheck("UserSession.restore", this.userId);
+    console.log(`restoreUserSession`, this.userId);
+    let sessionRecord = userSessions.findOne({ owner: this.userId });
 
-      if (!sessionRecord) {
-        console.log(`insert: no session found for user: [${this.userId}]`);
-        id = insert(this.userId);
-        sessionRestored = true;
-      } else {
-        keepAliveUserSession.call({ id: this.userId, activityDetected: false }, (err, res) => {
-          if (err) {
-            console.log(`keepAliveUserSession error`, err.reason);
-          }
-        });
-      }
-      console.log(`restoreUserSession sessionRestored=[${sessionRestored}] id=[${id}]`);
+    if (!sessionRecord) {
+      console.log(`restoreUserSession: no session found for user: [${this.userId}]`);
+      id = insert(this.userId);
+      sessionRestored = true;
+    } else if (this.userId) {
+      keepAliveUserSession.call({ id: this.userId, activityDetected: false }, (err, res) => {
+        if (err) {
+          console.log(`keepAliveUserSession error`, err.reason);
+        }
+      });
     }
+    console.log(`restoreUserSession userID=[${this.userId}] sessionRestored=[${sessionRestored}] id=[${id}]`);
+    //}
     return sessionRestored;
   }
 });
@@ -177,6 +180,7 @@ export const destroySession = new ValidatedMethod({
     console.log(`destroySession`, this.userId);
     let ownerId = this.userId;
     userSessions.remove({ owner: ownerId });
+
     return true;
   }
 });

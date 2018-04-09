@@ -141,6 +141,7 @@ class Index extends React.Component<IProps, IState> {
     let layout: any;
     if (this.props.currentUser && this.props.userSession) {
       let now = new Date();
+      let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
       let nowFormatted = dateFormat(now, "mmmm dS, yyyy, h:MM:ss TT");
       let expiresOn = dateFormat(this.props.userSession.expiresOn, "mmmm dS, yyyy, h:MM:ss TT");
       let expired = this.props.userSession.expired ? "yes" : "no";
@@ -155,7 +156,7 @@ class Index extends React.Component<IProps, IState> {
             <CardTitle>{nowFormatted}</CardTitle>
             <div className="card-text">
               <p>
-                <strong>Expires on:</strong> {expiresOn}
+                <strong>Expiry:</strong> {timeOutOn ? expiresOn : "Session timeout disabled in config."}
               </p>
               <p>
                 <strong>Expired:</strong> {expired}
