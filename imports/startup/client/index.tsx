@@ -37,14 +37,35 @@ const keepAlive = function keepAlive(activityDetected: any) {
 };
 
 const restoreSession = function restoreSession() {
-  if (User.id()) {
-    restoreUserSession.call({
+  if (User.data()) {
+    //console.log(`restoreSession`, User.id(), User.data());
+    restoreUserSession.call({ id: User.id() }, (err, res) => {
       if (err) {
         console.log(`restoreUserSession client error`, err.reason);
       }
-    }, (err, res) => {});
+    });
   }
 };
+
+Accounts.onLogout(() => {
+  console.log(`(Client) Logout`, User.id(), User.data());
+
+  /*
+  restoreUserSession.call({ id: User.id() }, (err, res) => {
+    if (err) {
+      console.log(`restoreUserSession client error`, err.reason);
+    }
+  });
+  */
+
+  /*
+  destroySession.call({ id: id}, (err, res) => {
+    if (err) {
+      console.log(`SERVER destroySession error`, err.reason);
+    }
+  });
+  */
+});
 
 Meteor.startup(() => {
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
@@ -60,7 +81,7 @@ Meteor.startup(() => {
     let activityEvents = "mousemove click keydown";
     //Meteor.setInterval(keepAlive(activityDetected), heartbeatInterval);
 
-    setInterval(function keepMeAlive() {
+    Meteor.setInterval(function keepMeAlive() {
       keepAlive(activityDetected);
       activityDetected = false;
     }, heartbeatInterval);

@@ -282,7 +282,7 @@ class Navigation extends React.Component<IProps, IState> {
       this.loggingOut = true;
       Accounts.logoutOtherClients();
       console.log(`Navigation logOut`, User.id());
-      SessionMethods.destroySession.call({}, (err, res) => {
+      SessionMethods.destroySession.call({id: User.id()}, (err, res) => {
         if (err) {
           console.log(`destroySession error`, err.reason);
         }
