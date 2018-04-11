@@ -21,11 +21,14 @@ const authCheck = (methodName, userId) => {
 const insert = function insert(userId) {
   let inactivityTimeout: any;
   let removeOptions = {};
+  //let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
   inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
-  if (Meteor.settings.public.session.allowMultiSession) {
+  /*
+  if (allowMultiSession) {
     removeOptions = { owner: userId };
   }
-  
+  */
+
   let now: any;
   
   now = new Date();
@@ -34,7 +37,7 @@ const insert = function insert(userId) {
 
   //let diff = expires - now;
 
-  userSessions.remove(removeOptions);
+  userSessions.remove({ owner: userId });
 
   let id = userSessions.insert({
     expired: false,
