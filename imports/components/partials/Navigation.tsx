@@ -216,7 +216,12 @@ class Navigation extends React.Component<IProps, IState> {
       this.closeNavbar();
       this.emailVerifyPrompted = false;
       this.loggingOut = true;
-      Accounts.logoutOtherClients();
+      /*
+      let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
+      if (!allowMultiSession) {
+        Accounts.logoutOtherClients();
+      }
+      */
       console.log(`Navigation logOut`, User.id());
       SessionMethods.deActivateSession.call({}, (err, res) => {
         if (err) {
