@@ -28,6 +28,8 @@
     "jquery-validation": "^1.17.0",
     "material-ui": "^0.20.0",
     "meteor-node-stubs": "^0.3.2",
+    "moment": "^2.22.0",
+    "moment-duration-format": "^2.2.2",
     "popper.js": "^1.13.0",
     "prop-types": "^15.6.0",
     "qrcode": "^1.2.0",
@@ -49,7 +51,7 @@
     "reactstrap": "^5.0.0-beta",
     "showdown": "^1.8.6",
     "simpl-schema": "^1.4.1",
-    "speakeasy": "git+https://github.com/speakeasyjs/speakeasy.git",
+    "speakeasy": "^2.0.0",
     "styled-components": "^2.4.0",
     "tooltipster": "^4.2.6"
   },

@@ -19,6 +19,7 @@ declare module "meteor/react-meteor-data" {
 
 // declare var require: any
 
+
 declare var Bert: any;
 
 declare var process: any;

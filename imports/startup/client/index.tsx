@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session";
 import * as jquery from "jquery";
@@ -37,8 +38,9 @@ const keepAlive = function keepAlive(activityDetected: any) {
 };
 
 const restoreSession = function restoreSession() {
-  if (User.data()) {
-    //console.log(`restoreSession`, User.id(), User.data());
+ 
+  if (User.id()) {
+    console.log(`restoreSession`, User.id(), User.data(), Meteor.loggingIn());
     restoreUserSession.call({ id: User.id() }, (err, res) => {
       if (err) {
         console.log(`restoreUserSession client error`, err.reason);
@@ -48,28 +50,13 @@ const restoreSession = function restoreSession() {
 };
 
 Accounts.onLogout(() => {
-  console.log(`(Client) Logout`, User.id(), User.data());
-
-  /*
-  restoreUserSession.call({ id: User.id() }, (err, res) => {
-    if (err) {
-      console.log(`restoreUserSession client error`, err.reason);
-    }
-  });
-  */
-
-  /*
-  destroySession.call({ id: id}, (err, res) => {
-    if (err) {
-      console.log(`SERVER destroySession error`, err.reason);
-    }
-  });
-  */
+  console.log(`(Client) Logout`, Meteor.userId(), Meteor.user());
 });
 
 Meteor.startup(() => {
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
   addMeta();
+  console.log(`client startup`, User.id(), User.data(), Meteor.loggingIn());
 
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
   if (timeOutOn === true) {

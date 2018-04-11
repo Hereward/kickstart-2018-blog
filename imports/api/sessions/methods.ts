@@ -5,20 +5,28 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "./publish";
 
-const authCheck = (userId, methodName) => {
+const authCheck = (methodName, userId) => {
   //console.log("authCheck", userId, methodName);
+  let auth = true;
   if (!userId) {
-    console.log("authCheck failed", methodName);
+    //console.log("authCheck failed", methodName);
+    auth = false;
     throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
+  } else {
+    //console.log("authCheck passsed", userId);
   }
+  return auth;
 };
 
 const insert = function insert(userId) {
-  let sessionRestored: boolean;
   let inactivityTimeout: any;
   inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
-  let now = new Date();
-  let expires = new Date(Date.now() + inactivityTimeout);
+  let now: any;
+  now = new Date();
+  let expires: any;
+  expires = new Date(Date.now() + inactivityTimeout);
+
+  //let diff = expires - now;
 
   userSessions.remove({ owner: userId });
 
@@ -29,7 +37,6 @@ const insert = function insert(userId) {
     createdAt: now,
     owner: userId
   });
-  sessionRestored = true;
 
   return id;
 };
@@ -88,8 +95,7 @@ export const deActivateSession = new ValidatedMethod({
         { owner: this.userId },
         {
           $set: {
-            active: false,
-            expired: false
+            active: false
           }
         }
       );
@@ -118,14 +124,14 @@ export const keepAliveUserSession = new ValidatedMethod({
     sessionRecord = userSessions.findOne({ owner: fields.id });
 
     if (sessionRecord) {
-      let diff = now - sessionRecord.expiresOn;
+      let diff = sessionRecord.expiresOn - now;
       console.log(
         `UserSession.keepAlive - force=[${fields.force}] activityDetected=[${fields.activityDetected}] id=[${
           fields.id
         }] diff=[${diff}]`
       );
 
-      if (diff > 0 && !fields.force) {
+      if (diff < 0 && !fields.force) {
         killSession.call({ id: fields.id }, () => {});
       } else if (fields.activityDetected) {
         let expires = new Date(Date.now() + inactivityTimeout);
@@ -134,7 +140,8 @@ export const keepAliveUserSession = new ValidatedMethod({
           { owner: fields.id },
           {
             $set: {
-              expiresOn: expires
+              expiresOn: expires,
+              diff: diff
             }
           }
         );
@@ -155,46 +162,47 @@ export const restoreUserSession = new ValidatedMethod({
   run(fields) {
     let sessionRestored = false;
     let id: string;
-    authCheck("UserSession.restore", fields.id);
+    console.log(`restoreUserSession BEGIN`);
+    let authorised = authCheck("UserSession.restore", this.userId);
 
-    //if (!this.isSimulation) {
-    //let auth = authCheck("UserSession.restore", fields.id);
-    console.log(`restoreUserSession`, fields.id);
-    let sessionRecord = userSessions.findOne({ owner: fields.id });
+    if (authorised && !this.isSimulation) {
+      //if (!this.isSimulation) {
+      //let auth = authCheck("UserSession.restore", this.userId);
+      console.log(`restoreUserSession`, authorised, this.userId);
+      let sessionRecord = userSessions.findOne({ owner: this.userId });
 
-    // killSession.call({ id: fields.id }, () => {});
-    //if (this.userId) {
-    //console.log(`restoreUserSession THIS.userId is ALIVE!!! [${this.userId}]`);
-    if (!sessionRecord) {
-      console.log(`restoreUserSession: no session found for user: [${fields.id}]`);
-      id = insert(fields.id);
-      sessionRestored = true;
-    } else {
-      keepAliveUserSession.call({ id: fields.id, activityDetected: false }, (err, res) => {
-        if (err) {
-          console.log(`keepAliveUserSession error`, err.reason);
-        }
-      });
+      // killSession.call({ id: this.userId }, () => {});
+      //if (this.userId) {
+      //console.log(`restoreUserSession THIS.userId is ALIVE!!! [${this.userId}]`);
+      if (!sessionRecord) {
+        console.log(`restoreUserSession: no session found for user: [${this.userId}]`);
+        id = insert(this.userId);
+        sessionRestored = true;
+      } else {
+        keepAliveUserSession.call({ id: this.userId, activityDetected: false }, (err, res) => {
+          if (err) {
+            console.log(`keepAliveUserSession error`, err.reason);
+          }
+        });
+      }
+      //}
     }
-    //}
 
-    console.log(`restoreUserSession userID=[${fields.id}] sessionRestored=[${sessionRestored}] id=[${id}]`);
+    console.log(`restoreUserSession userID=[${this.userId}] sessionRestored=[${sessionRestored}] id=[${id}]`);
     return sessionRestored;
   }
 });
 
 export const destroySession = new ValidatedMethod({
   name: "session.destroy",
-  validate: new SimpleSchema({
-    id: { type: String }
-  }).validator(),
+  validate: null,
 
-  run(fields) {
-    authCheck("session.destroy", fields.id);
-    let sessionRecord = userSessions.findOne({ owner: fields.id });
+  run() {
+    authCheck("session.destroy", this.userId);
+    let sessionRecord = userSessions.findOne({ owner: this.userId });
     if (sessionRecord) {
-      console.log(`destroySession`, fields.id);
-      userSessions.remove({ owner: fields.id });
+      console.log(`destroySession`, this.userId);
+      userSessions.remove({ owner: this.userId });
     }
 
     return true;

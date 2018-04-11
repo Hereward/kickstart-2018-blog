@@ -1,6 +1,5 @@
 /// <reference path="../../../index.d.ts" />
 import { Accounts } from "meteor/accounts-base";
-import { destroySession } from "../../api/sessions/methods";
 import "./api";
 
 /*
@@ -21,13 +20,6 @@ Accounts.onLogin(user => {
 Accounts.onLogout(user => {
   let id = (user && user.user) ? user.user._id : 'undefined';
   console.log(`(Server) Logout`, id);
-  /*
-  destroySession.call({ id: id}, (err, res) => {
-    if (err) {
-      console.log(`SERVER destroySession error`, err.reason);
-    }
-  });
-  */
 });
 
 let smtp = Meteor.settings.private.smtp;

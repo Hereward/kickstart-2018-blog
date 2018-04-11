@@ -210,70 +210,6 @@ class Navigation extends React.Component<IProps, IState> {
     return this.props.userData ? SignedInLayout : SignedOutLayout;
   }
 
-  /*
-  emailDashDisplay() {
-    let display: string;
-
-    if (!this.props.sessionExpired && this.props.userData) {
-      display = ` - ${this.props.userData.emails[0].address}`;
-    } else if (this.props.loggingIn) {
-      display = ` - logging in...`;
-    }
-
-    return display;
-  }
-
-  getVerifiedIndicator() {
-    let layout: any;
-    let obj = Tooltips.dashBoardTip(this.props);
-
-    if (!this.props.loggingIn && this.props.userData) {
-      layout = <div className="d-inline-block">{VerifiedIndicator(obj.verified)}</div>;
-    }
-
-    return layout;
-  }
-  */
-
-  /*
-  authVerifiedLayout() {
-    //let obj = Tooltips.dashBoardTip(this.props);
-    let verifiedLayout: any;
-    let emailDashDisplay = this.emailDashDisplay();
-    if (emailDashDisplay) {
-      verifiedLayout = (
-        <div className="d-inline-block">
-          <div className="d-none d-sm-inline">{emailDashDisplay}</div> {this.getVerifiedIndicator()}
-        </div>
-      );
-    }
-
-    return verifiedLayout;
-  }
-  */
-
-  /*
-  logOutZ() {
-    if (User.id()) {
-      let id = User.id();
-      console.log(`Navigation logOut`, id);
-      this.emailVerifyPrompted = false;
-
-      Meteor.logout(() => {
-        this.closeNavbar();
-        Tooltips.unset("verified");
-        Accounts.logoutOtherClients();
-        SessionMethods.killSession.call({ id: id, active: false }, (err, res) => {
-          if (err) {
-            console.log(`killSession error`, err.reason);
-            Library.modalErrorAlert(err.reason);
-          }
-          this.props.history.push("/");
-        });
-      });
-    }
-  }
-  */
 
   logOut() {
     if (User.id()) {
@@ -282,7 +218,7 @@ class Navigation extends React.Component<IProps, IState> {
       this.loggingOut = true;
       Accounts.logoutOtherClients();
       console.log(`Navigation logOut`, User.id());
-      SessionMethods.destroySession.call({id: User.id()}, (err, res) => {
+      SessionMethods.deActivateSession.call({}, (err, res) => {
         if (err) {
           console.log(`destroySession error`, err.reason);
         }
@@ -303,7 +239,7 @@ class Navigation extends React.Component<IProps, IState> {
   conditionalLogout() {
     if (User.id()) {
       let logout = false;
-      if (this.props.sessionExpired && !this.loggingOut) {
+      if (this.props.sessionActive && this.props.sessionExpired && !this.loggingOut) {
         console.log(
           `Navigation: conditionalLogout DONE! active=[${this.props.sessionActive}] expired=[${
             this.props.sessionExpired
@@ -361,6 +297,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   render() {
+    //console.log(`METEOR USER`, Meteor.user(), Meteor.userId(), Meteor.loggingIn());
     this.conditionalLogout();
     return this.navBar();
   }

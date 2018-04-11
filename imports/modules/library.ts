@@ -138,3 +138,4 @@ export function getCookie(name) {
       .split(";")
       .shift();
 }
+

@@ -3,6 +3,8 @@ import { withTracker } from "meteor/react-meteor-data";
 import { Link } from "react-router-dom";
 import * as ReactDOM from "react-dom";
 import * as dateFormat from "dateformat";
+import * as moment from "moment";
+import * as momentDurationFormatSetup from "moment-duration-format";
 import { Card, Button, CardHeader, CardFooter, CardBody, CardTitle, CardText } from "reactstrap";
 
 import Checkbox from "material-ui/Checkbox";
@@ -18,6 +20,10 @@ import HomeContent from "../../partials/Home";
 import * as User from "../../../modules/user";
 import { userSessions } from "../../../api/sessions/publish";
 
+momentDurationFormatSetup(moment);
+
+declare var Chronos: any;
+
 declare var DocHead: any;
 
 interface IProps {
@@ -31,6 +37,9 @@ interface IProps {
   taskCount: number;
   page: any;
   userSession: any;
+  remainingTime: any;
+  timeNow: any;
+  remainingTimeFormatted: any;
 }
 
 interface IState {
@@ -140,12 +149,24 @@ class Index extends React.Component<IProps, IState> {
   sessionData() {
     let layout: any;
     if (this.props.currentUser && this.props.userSession) {
-      let now = new Date();
+      //let now = new Date();
+      //let now = Chronos.date();
       let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
-      let nowFormatted = dateFormat(now, "mmmm dS, yyyy, h:MM:ss TT");
+      let nowFormatted = dateFormat(this.props.timeNow, "mmmm dS, yyyy, h:MM:ss TT");
       let expiresOn = dateFormat(this.props.userSession.expiresOn, "mmmm dS, yyyy, h:MM:ss TT");
       let expired = this.props.userSession.expired ? "yes" : "no";
       let active = this.props.userSession.active ? "yes" : "no";
+
+      //let duration = moment.duration(this.props.remainingTime);
+
+      //let diff = moment(this.props.userSession.expiresOn).unix() - moment(this.props.timeNow).unix();
+
+      // execution
+      //let timeLeft = moment.utc(diff).format("HH:mm:ss.SSS");
+
+      //let timeLeft = `${mm.hours()}h:${mm.minutes()}m:${mm.seconds()}s`;
+
+      // <CardTitle>{nowFormatted}</CardTitle>
 
       layout = (
         <Card>
@@ -153,13 +174,12 @@ class Index extends React.Component<IProps, IState> {
             <h2>Session Data</h2>
           </CardHeader>
           <CardBody>
-            <CardTitle>{nowFormatted}</CardTitle>
             <div className="card-text">
               <p>
-                <strong>Expiry:</strong> {timeOutOn ? expiresOn : "Session timeout disabled in config."}
+                <strong>Expires:</strong> {timeOutOn ? expiresOn : "Session timeout disabled in config."}
               </p>
               <p>
-                <strong>Expired:</strong> {expired}
+                <strong>Remaining:</strong> {this.props.remainingTimeFormatted}
               </p>
             </div>
           </CardBody>
@@ -173,7 +193,9 @@ class Index extends React.Component<IProps, IState> {
   todosSection() {
     let tasks: any;
     let loggedOutMsg = !this.props.currentUser ? (
-      <CardText><em>You can add and remove tasks here when you are logged in to your account.</em></CardText>
+      <CardText>
+        <em>You can add and remove tasks here when you are logged in to your account.</em>
+      </CardText>
     ) : (
       ""
     );
@@ -200,7 +222,10 @@ class Index extends React.Component<IProps, IState> {
         <CardHeader>
           <h2>Simple Todos App</h2>
         </CardHeader>
-        <CardBody>{loggedOutMsg}{loggedInContent}</CardBody>
+        <CardBody>
+          {loggedOutMsg}
+          {loggedInContent}
+        </CardBody>
       </Card>
     );
     return todosLayout;
@@ -238,6 +263,12 @@ export default withTracker(() => {
   let tasks: any;
   let userSession: any;
   let userData: any;
+  let remainingTime: any;
+  let remainingTimeFormatted: any;
+  //let timeNow: any;
+  //timeNow = new Date();
+  let timeNow = Chronos.date();
+
   userData = User.data();
   let count = 0;
 
@@ -257,6 +288,14 @@ export default withTracker(() => {
   if (userData) {
     if (sessionDataReady) {
       userSession = userSessions.findOne({ owner: User.id() });
+      if (userSession) {
+        remainingTime = userSession.expiresOn - timeNow;
+        let myDuration: any;
+        myDuration = moment.duration(remainingTime, "milliseconds");
+        remainingTimeFormatted = myDuration.format("hh:mm:ss", {
+          trim: false
+        });
+      }
     }
   }
 
@@ -266,6 +305,9 @@ export default withTracker(() => {
     incompleteCount: Tasks.find({ checked: { $ne: true } }).count(),
     currentUser: userData,
     page: page,
-    userSession: userSession
+    userSession: userSession,
+    remainingTime: remainingTime,
+    timeNow: timeNow,
+    remainingTimeFormatted: remainingTimeFormatted
   };
 })(Index);

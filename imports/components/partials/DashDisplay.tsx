@@ -181,11 +181,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
 
   emailDashDisplay() {
     let display: string;
-    /*
-    if (this.props.userSession) {
-      console.log(`emailDashDisplay: this.props.userSession`, this.props.userSession);
-    }
-    */
 
     if (!this.props.sessionExpired && this.props.userData) {
       display = ` ${this.props.userData.emails[0].address}`;
