@@ -124,7 +124,6 @@ class Authenticator extends React.Component<IProps, IState> {
     }
 
     if (props.authData) {
-      //console.log(`Authenticator setTimer - authData`, props.authData);
       if (props.authData.private_key && !this.timerWasSet) {
         this.timerID = Meteor.setInterval(() => this.checkTokens(props.authData.private_key), 2000);
         this.timerWasSet = true;
@@ -164,7 +163,6 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 
   verifyToken() {
-    console.log(`verifyToken`);
     let myToken = this.state.authCode.trim();
     let verified;
 
@@ -179,7 +177,6 @@ class Authenticator extends React.Component<IProps, IState> {
         console.log(`verifyToken error`, err);
         this.setState({ allowSubmit: true });
       } else {
-        console.log(`verifyToken: Authenticator> push('/')`);
         this.props.history.push("/");
       }
     });

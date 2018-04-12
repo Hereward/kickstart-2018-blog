@@ -14,12 +14,10 @@ Accounts.emailTemplates.from = "Meteor Kickstart <postmaster@mg.truthnews.com.au
 
 Accounts.onLogin(user => {
   let id = user.user._id;
-  console.log(`(Server) Login`, id);
 });
 
 Accounts.onLogout(user => {
-  let id = (user && user.user) ? user.user._id : 'undefined';
-  console.log(`(Server) Logout`, id);
+  let id = user && user.user ? user.user._id : "undefined";
 });
 
 let smtp = Meteor.settings.private.smtp;
@@ -28,5 +26,4 @@ let env = `smtp://${encodeURIComponent(smtp.username)}:${encodeURIComponent(smtp
   smtp.server
 )}:${smtp.port}`;
 
-console.log(`SERVER ENV =[${env}]`);
 process.env.MAIL_URL = env;

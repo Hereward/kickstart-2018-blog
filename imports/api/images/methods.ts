@@ -5,6 +5,16 @@ import axios from "axios";
 import * as ProfileMethods from "./methods";
 import * as User from "../../modules/user";
 
+const authCheck = (methodName, userId) => {
+  let auth = true;
+  if (!userId) {
+    auth = false;
+    console.log(`authCheck (${methodName}) - NO USER ID`);
+    throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
+  }
+  return auth;
+};
+
 export const Images = new FilesCollection({
   debug: true,
   collectionName: "Images",
@@ -24,6 +34,7 @@ export const Images = new FilesCollection({
 
 Meteor.methods({
   RemoveFile(fileId) {
+    authCheck("RemoveFile", this.userId);
     check(fileId, String);
 
     if (!User.id()) {
@@ -40,9 +51,11 @@ Meteor.methods({
   },
 
   RenameFile(fileId) {
+    authCheck("RenameFile", this.userId);
     check(fileId, String);
   },
   getImage(resourceID, myUrl) {
+    authCheck("getImage", this.userId);
     check(resourceID, String);
     check(myUrl, String);
     let url = myUrl || "http://placehold.it/800x450";

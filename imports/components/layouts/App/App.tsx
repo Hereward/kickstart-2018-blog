@@ -44,12 +44,8 @@ export default withTracker(() => {
   if (Meteor.settings.public.enhancedAuth.active === false) {
     enhancedAuth = false;
   }
-
-  //let signedIn = false;
   let profile: any;
-
   if (userId) {
-    //signedIn = true;
     if (ProfilesDataReady) {
       profile = Profiles.findOne({ owner: userId });
     }

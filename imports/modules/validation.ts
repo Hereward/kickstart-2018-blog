@@ -8,7 +8,6 @@ import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-side
 export function validate(context: any, rules: any = "") {
   
   let validationRules = rules ? rules : {};
-  console.log(`validate`, validationRules);
   jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
     trigger: "custom",
     animation: "slide",

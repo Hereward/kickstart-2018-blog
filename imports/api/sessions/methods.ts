@@ -6,14 +6,11 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "./publish";
 
 const authCheck = (methodName, userId) => {
-  //console.log("authCheck", userId, methodName);
   let auth = true;
   if (!userId) {
-    //console.log("authCheck failed", methodName);
     auth = false;
+    console.log(`authCheck (${methodName}) - NO USER ID`);
     throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
-  } else {
-    //console.log("authCheck passsed", userId);
   }
   return auth;
 };
@@ -21,21 +18,11 @@ const authCheck = (methodName, userId) => {
 const insert = function insert(userId) {
   let inactivityTimeout: any;
   let removeOptions = {};
-  //let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
   inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
-  /*
-  if (allowMultiSession) {
-    removeOptions = { owner: userId };
-  }
-  */
-
   let now: any;
-  
   now = new Date();
   let expires: any;
   expires = new Date(Date.now() + inactivityTimeout);
-
-  //let diff = expires - now;
 
   userSessions.remove({ owner: userId });
 
@@ -56,7 +43,6 @@ export const createUserSession = new ValidatedMethod({
   validate: null,
 
   run() {
-    console.log("createUserSession");
     authCheck("UserSession.create", this.userId);
     let id = insert(this.userId);
   }
@@ -74,7 +60,6 @@ export const killSession = new ValidatedMethod({
 
     sessionRecord = userSessions.findOne({ owner: fields.id });
     if (sessionRecord) {
-      console.log(`UserSession.kill - KILL NOW`, fields.id);
       userSessions.update(
         { owner: fields.id },
         {
@@ -99,7 +84,6 @@ export const deActivateSession = new ValidatedMethod({
     let sessionRecord: any;
     sessionRecord = userSessions.findOne({ owner: this.userId });
     if (sessionRecord) {
-      console.log(`UserSession.deActivateSession`);
       userSessions.update(
         { owner: this.userId },
         {
@@ -134,11 +118,6 @@ export const keepAliveUserSession = new ValidatedMethod({
 
     if (sessionRecord) {
       let diff = sessionRecord.expiresOn - now;
-      console.log(
-        `UserSession.keepAlive - force=[${fields.force}] activityDetected=[${fields.activityDetected}] id=[${
-          fields.id
-        }] diff=[${diff}]`
-      );
 
       if (diff < 0 && !fields.force) {
         killSession.call({ id: fields.id }, () => {});
@@ -171,20 +150,12 @@ export const restoreUserSession = new ValidatedMethod({
   run(fields) {
     let sessionRestored = false;
     let id: string;
-    console.log(`restoreUserSession BEGIN`);
     let authorised = authCheck("UserSession.restore", this.userId);
 
     if (authorised && !this.isSimulation) {
-      //if (!this.isSimulation) {
-      //let auth = authCheck("UserSession.restore", this.userId);
-      console.log(`restoreUserSession`, authorised, this.userId);
       let sessionRecord = userSessions.findOne({ owner: this.userId });
 
-      // killSession.call({ id: this.userId }, () => {});
-      //if (this.userId) {
-      //console.log(`restoreUserSession THIS.userId is ALIVE!!! [${this.userId}]`);
       if (!sessionRecord) {
-        console.log(`restoreUserSession: no session found for user: [${this.userId}]`);
         id = insert(this.userId);
         sessionRestored = true;
       } else {
@@ -194,10 +165,8 @@ export const restoreUserSession = new ValidatedMethod({
           }
         });
       }
-      //}
     }
 
-    console.log(`restoreUserSession userID=[${this.userId}] sessionRestored=[${sessionRestored}] id=[${id}]`);
     return sessionRestored;
   }
 });
@@ -210,7 +179,6 @@ export const destroySession = new ValidatedMethod({
     authCheck("session.destroy", this.userId);
     let sessionRecord = userSessions.findOne({ owner: this.userId });
     if (sessionRecord) {
-      console.log(`destroySession`, this.userId);
       userSessions.remove({ owner: this.userId });
     }
 

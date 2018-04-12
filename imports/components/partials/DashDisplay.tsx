@@ -83,7 +83,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     this.state = {
       verified: false
     };
-    //console.log(`DashDisplay`, this.props);
   }
 
   componentWillReceiveProps(nextProps) {}
@@ -147,8 +146,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
       }
     }
 
-    //console.log(`dashBoardTip`, message);
-
     return { verified: verifiedFlag, tip: message };
   }
 
@@ -200,7 +197,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     let tag: any;
     let style: any;
 
-    //console.log(`getVerifiedIndicator`, this.props.userData);
     if (this.props.loggingIn || this.props.loggingOut) {
       tag = (
         <RefreshIndicator

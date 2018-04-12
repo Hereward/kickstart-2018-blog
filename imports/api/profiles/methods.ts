@@ -4,10 +4,15 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Profiles } from "./publish";
 
-const authCheck = (userId, methodName) => {
+
+const authCheck = (methodName, userId) => {
+  let auth = true;
   if (!userId) {
+    auth = false;
+    console.log(`authCheck (${methodName}) - NO USER ID`);
     throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
   }
+  return auth;
 };
 
 export const createProfile = new ValidatedMethod({
@@ -20,7 +25,6 @@ export const createProfile = new ValidatedMethod({
   }).validator(),
 
   run() {
-    //console.log(`profiles.create START`);
     authCheck("profiles.create", this.userId);
 
     let id = Profiles.insert({
@@ -41,7 +45,6 @@ export const createProfile = new ValidatedMethod({
       owner: this.userId
     });
 
-    //console.log(`profiles.create - DONE!`);
     return id;
   }
 });
@@ -54,7 +57,6 @@ export const updateProfileImage = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    //console.log(`profileImage.update`);
     authCheck("profiles.update", this.userId);
 
     Profiles.update(fields.id, {
@@ -63,7 +65,6 @@ export const updateProfileImage = new ValidatedMethod({
       }
     });
 
-    //console.log(`profileImage.update - DONE!`);
     return true;
   }
 });
@@ -85,7 +86,6 @@ export const updateProfile = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    //console.log(`profiles.update`);
     authCheck("profiles.update", this.userId);
 
     Profiles.update(fields.id, {
@@ -104,7 +104,6 @@ export const updateProfile = new ValidatedMethod({
       }
     });
 
-    //console.log(`profiles.update - DONE!`);
     return true;
   }
 });

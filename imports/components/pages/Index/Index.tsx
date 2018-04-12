@@ -149,24 +149,11 @@ class Index extends React.Component<IProps, IState> {
   sessionData() {
     let layout: any;
     if (this.props.currentUser && this.props.userSession) {
-      //let now = new Date();
-      //let now = Chronos.date();
       let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
       let nowFormatted = dateFormat(this.props.timeNow, "mmmm dS, yyyy, h:MM:ss TT");
       let expiresOn = dateFormat(this.props.userSession.expiresOn, "mmmm dS, yyyy, h:MM:ss TT");
       let expired = this.props.userSession.expired ? "yes" : "no";
       let active = this.props.userSession.active ? "yes" : "no";
-
-      //let duration = moment.duration(this.props.remainingTime);
-
-      //let diff = moment(this.props.userSession.expiresOn).unix() - moment(this.props.timeNow).unix();
-
-      // execution
-      //let timeLeft = moment.utc(diff).format("HH:mm:ss.SSS");
-
-      //let timeLeft = `${mm.hours()}h:${mm.minutes()}m:${mm.seconds()}s`;
-
-      // <CardTitle>{nowFormatted}</CardTitle>
 
       layout = (
         <Card>
@@ -231,20 +218,6 @@ class Index extends React.Component<IProps, IState> {
     return todosLayout;
   }
 
-  /*
-  <div className="todos">
-        <div className="todos-top-section">
-          <h2>Simple Todos App</h2>
-          {loggedOutMsg}
-          <div className="todos-form-wrapper">
-            {this.getCheckBox()}
-            {this.getForm()}
-          </div>
-        </div>
-        <ul>{tasks}</ul>
-      </div>
-      */
-
   render() {
     return (
       <Transition>
@@ -257,7 +230,6 @@ class Index extends React.Component<IProps, IState> {
 }
 
 export default withTracker(() => {
-  //Meteor.subscribe("userData");
   let tasksDataReady = Meteor.subscribe("tasks");
   let sessionDataReady = Meteor.subscribe("userSessions");
   let tasks: any;
@@ -265,13 +237,9 @@ export default withTracker(() => {
   let userData: any;
   let remainingTime: any;
   let remainingTimeFormatted: any;
-  //let timeNow: any;
-  //timeNow = new Date();
   let timeNow = Chronos.date();
-
   userData = User.data();
   let count = 0;
-
   let query = Tasks.find({}, { sort: { createdAt: -1 } });
   count = query.count();
 

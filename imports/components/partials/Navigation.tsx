@@ -98,7 +98,6 @@ class Navigation extends React.Component<IProps, IState> {
       tip: ""
     };
     this.emailVerifyPrompted = false;
-    console.log(`Navigation`, this.props);
   }
 
   componentWillReceiveProps(nextProps) {}
@@ -210,34 +209,23 @@ class Navigation extends React.Component<IProps, IState> {
     return this.props.userData ? SignedInLayout : SignedOutLayout;
   }
 
-
   logOut() {
     if (User.id()) {
       this.closeNavbar();
       this.emailVerifyPrompted = false;
       this.loggingOut = true;
-      /*
-      let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
-      if (!allowMultiSession) {
-        Accounts.logoutOtherClients();
-      }
-      */
+
       console.log(`Navigation logOut`, User.id());
       SessionMethods.deActivateSession.call({}, (err, res) => {
         if (err) {
-          console.log(`destroySession error`, err.reason);
+          console.log(`deActivateSession error`, err.reason);
         }
         Meteor.logout(() => {
           //Meteor["connection"].setUserId(null);
           console.log(`Navigation logOut DONE`);
           this.loggingOut = false;
-          //window.location.href = '/';
-          //window.location.reload();
-          //window.location
-          //this.props.history.push("/");
         });
       });
-
     }
   }
 
@@ -302,7 +290,6 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   render() {
-    //console.log(`METEOR USER`, Meteor.user(), Meteor.userId(), Meteor.loggingIn());
     this.conditionalLogout();
     return this.navBar();
   }
@@ -310,12 +297,10 @@ class Navigation extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(({ enhancedAuth }) => {
-    //console.log("enhancedAuth", enhancedAuth);
     let authDataReady: any;
     if (enhancedAuth) {
       authDataReady = Meteor.subscribe("enhancedAuth");
     }
-    //authDataReady = Meteor.subscribe("enhancedAuth");
     let sessionDataReady = Meteor.subscribe("userSessions");
     let authData: any;
     let userSession: any;

@@ -1,5 +1,4 @@
 ///<reference path="../../../../index.d.ts"/>
-//import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
@@ -74,7 +73,6 @@ class ChangePassword extends React.Component<IProps, IState> {
   }
 
   changePassword() {
-    console.log(`changePassword`);
     this.setState({ allowSubmit: false });
     let newPassword = this.state.newPassword.trim();
     let oldPassword = this.state.oldPassword.trim();
@@ -95,11 +93,9 @@ class ChangePassword extends React.Component<IProps, IState> {
             Library.modalSuccessAlert({ message: "Your password was changed!" });
 
             if (this.props.enhancedAuth) {
-              console.log("password reset: redirect to /authenticate");
               this.props.history.push("/authenticate");
             } else {
               this.props.history.push("/");
-              console.log("password reset: redirect to /");
             }
           } else {
             this.setState({ allowSubmit: true });

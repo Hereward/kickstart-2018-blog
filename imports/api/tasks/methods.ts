@@ -4,10 +4,21 @@ import { Tasks } from "./publish";
 
 let task: any;
 
+const authCheck = (methodName, userId) => {
+  let auth = true;
+  if (!userId) {
+    auth = false;
+    console.log(`authCheck (${methodName}) - NO USER ID`);
+    throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
+  }
+  return auth;
+};
+
 export const wipeContent = new ValidatedMethod({
   name: "tasks.wipeContent",
   validate: new SimpleSchema({}).validator(),
   run() {
+    authCheck("tasks.wipeContent", this.userId);
     if (!this.isSimulation) {
       Tasks.remove({ owner: this.userId, private: false });
       return true;
@@ -29,6 +40,7 @@ export const create = new ValidatedMethod({
     text: { type: String }
   }).validator(),
   run(fields) {
+    authCheck("tasks.create", this.userId);
     let text = fields.text;
     if (!this.userId) {
       throw new Meteor.Error("not-authorized");
@@ -50,6 +62,7 @@ export const remove = new ValidatedMethod({
     taskId: { type: String }
   }).validator(),
   run(fields) {
+    authCheck("tasks.remove", this.userId);
     task = Tasks.findOne(fields.taskId);
 
     if (task.private && task.owner !== this.userId) {
@@ -67,6 +80,7 @@ export const setChecked = new ValidatedMethod({
     checked: { type: Boolean }
   }).validator(),
   run(fields) {
+    authCheck("tasks.setChecked", this.userId);
     task = Tasks.findOne(fields.taskId);
 
     if (task.private && task.owner !== this.userId) {
@@ -84,6 +98,7 @@ export const setPrivate = new ValidatedMethod({
     private: { type: Boolean }
   }).validator(),
   run(fields) {
+    authCheck("tasks.setPrivate", this.userId);
     task = Tasks.findOne(fields.taskId);
 
     if (task.private && task.owner !== this.userId) {

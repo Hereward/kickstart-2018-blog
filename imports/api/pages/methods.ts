@@ -4,10 +4,14 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Pages } from "./publish";
 
-const authCheck = (userId, methodName) => {
+const authCheck = (methodName, userId) => {
+  let auth = true;
   if (!userId) {
+    auth = false;
+    console.log(`authCheck (${methodName}) - NO USER ID`);
     throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
   }
+  return auth;
 };
 
 export const setDefaultContent = new ValidatedMethod({
@@ -17,6 +21,7 @@ export const setDefaultContent = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
+    authCheck("pages.setDefaultContent", this.userId);
     let heading = "";
     let body = "";
 
@@ -42,6 +47,7 @@ export const wipeContent = new ValidatedMethod({
   name: "pages.wipeContent",
   validate: new SimpleSchema({}).validator(),
   run() {
+    authCheck("pages.wipeContent", this.userId);
     if (!this.isSimulation) {
       Pages.remove({});
 

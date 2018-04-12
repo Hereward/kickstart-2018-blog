@@ -38,9 +38,7 @@ const keepAlive = function keepAlive(activityDetected: any) {
 };
 
 const restoreSession = function restoreSession() {
- 
   if (User.id()) {
-    console.log(`restoreSession`, User.id(), User.data(), Meteor.loggingIn());
     restoreUserSession.call({ id: User.id() }, (err, res) => {
       if (err) {
         console.log(`restoreUserSession client error`, err.reason);
@@ -49,14 +47,11 @@ const restoreSession = function restoreSession() {
   }
 };
 
-Accounts.onLogout(() => {
-  console.log(`(Client) Logout`, Meteor.userId(), Meteor.user());
-});
+Accounts.onLogout(() => {});
 
 Meteor.startup(() => {
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
   addMeta();
-  console.log(`client startup`, User.id(), User.data(), Meteor.loggingIn());
 
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
   if (timeOutOn === true) {
@@ -64,10 +59,7 @@ Meteor.startup(() => {
     let heartbeatInterval = Meteor.settings.public.session.heartbeatInterval || 300000;
     let inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
     let activityDetected = false;
-
     let activityEvents = "mousemove click keydown";
-    //Meteor.setInterval(keepAlive(activityDetected), heartbeatInterval);
-
     Meteor.setInterval(function keepMeAlive() {
       keepAlive(activityDetected);
       activityDetected = false;

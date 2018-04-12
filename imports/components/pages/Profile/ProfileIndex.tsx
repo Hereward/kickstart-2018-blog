@@ -73,7 +73,6 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   handleSetState(sVar, sVal) {
-    console.log(`handleSetState (Profile index)`, sVar, sVal);
     this.setState({ [sVar]: sVal });
   }
 
@@ -81,7 +80,6 @@ class Profile extends React.Component<IProps, IState> {
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let id = target.id;
-    console.log(`Profile HandleChange`, value, id);
     this.setState({ [id]: value });
   }
 
@@ -108,11 +106,9 @@ class Profile extends React.Component<IProps, IState> {
   sendVerificationEmail() {
     let id = User.id();
     this.setState({ disableVerify: true });
-    console.log(`sendVerificationEmail NOW`, id);
 
     ProfileMethods.sendVerificationEmail.call({ id: id }, (err, res) => {
       this.setState({ disableVerify: false });
-      //console.log("sendVerificationEmail.call", authFields);
       if (err) {
         Library.modalErrorAlert(err.reason);
         console.log(`sendVerificationEmail error`, err);
@@ -148,7 +144,6 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   setEditor(state) {
-    console.log(`setEditor`, state);
     this.setState({ editProfile: state });
   }
 
@@ -363,7 +358,6 @@ export default withRouter(
     if (ImagesDataReady) {
       if (props.profile) {
         myImages = Images.find({ _id: props.profile.image_id }).fetch();
-        console.log(`PROFILE LOAD`, props);
       }
     }
     return { myImages };
