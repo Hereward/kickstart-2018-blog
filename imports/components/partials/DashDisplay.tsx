@@ -154,7 +154,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     let newTip = this.dashBoardTip(props).tip;
 
     if (newTip !== this.currentTip) {
-      console.log(`DashDisplay set - ACTION`);
+      //console.log(`DashDisplay set - ACTION`);
       this.currentTip = newTip;
       if (initialised) {
         jquery(`.verified`).tooltipster("destroy");

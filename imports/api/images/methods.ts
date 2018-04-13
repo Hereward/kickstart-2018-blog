@@ -22,7 +22,7 @@ export const Images = new FilesCollection({
   storagePath: Meteor.settings.public.images.storagePath,
   permissions: 0o774,
 	parentDirPermissions: 0o774,
-  onBeforeUpload: function(file) {
+  onBeforeUpload: function onBeforeUpload(file) {
     // Allow upload files under 10MB, and only in png/jpg/jpeg formats
     if (file.size <= 1024 * 1024 * 10 && /png|jpg|jpeg/i.test(file.extension)) {
       return true;

@@ -18,6 +18,7 @@ import { EditIcon, CancelEditIcon } from "../../../modules/icons";
 
 import UploadForm from "../../forms/UploadForm";
 import { Images } from "../../../api/images/methods";
+import { deleteAllUsers } from "../../../api/admin/methods";
 import Image from "../../partials/Image";
 
 import SignInForm from "../../forms/SignInForm";
@@ -29,6 +30,9 @@ interface IProps {
   signedIn: boolean;
   profile: any;
   myImages: any;
+  userData: any;
+  userEmail: string;
+  emailVerified: boolean;
 }
 
 interface IState {
@@ -36,6 +40,8 @@ interface IState {
   editProfile: boolean;
   disableVerify: boolean;
   allowSubmit: boolean;
+  allowSubmitDeleteAllUsers: boolean;
+  DeleteAllUsersDone: boolean;
 }
 
 class Profile extends React.Component<IProps, IState> {
@@ -48,6 +54,7 @@ class Profile extends React.Component<IProps, IState> {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleSetState = this.handleSetState.bind(this);
+    this.handleDeleteAllUsers = this.handleDeleteAllUsers.bind(this);
     this.sendVerificationEmail = this.sendVerificationEmail.bind(this);
     let mapped: any;
     mapped = this.fieldMapper("init");
@@ -63,6 +70,8 @@ class Profile extends React.Component<IProps, IState> {
       obj["editImage"] = false;
       obj["disableVerify"] = false;
       obj["allowSubmit"] = true;
+      obj["DeleteAllUsersDone"] = false;
+      obj["allowSubmitDeleteAllUsers"] = true;
     } else if (type === "props") {
       this.fieldsArray.forEach(element => (obj[element] = props[element]));
     } else if (type === "method") {
@@ -99,6 +108,21 @@ class Profile extends React.Component<IProps, IState> {
         console.log(`ProfileMethods.updateProfile failed`, err);
       } else {
         this.setEditor(false);
+      }
+    });
+  }
+
+  handleDeleteAllUsers() {
+    console.log(`handleDeleteAllUsers`);
+    this.setState({ allowSubmitDeleteAllUsers: false });
+    this.setState({ DeleteAllUsersDone: false });
+    deleteAllUsers.call({}, err => {
+      this.setState({ allowSubmitDeleteAllUsers: true });
+      this.setState({ DeleteAllUsersDone: true });
+
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`deleteAllUsers failed`, err);
       }
     });
   }
@@ -162,6 +186,7 @@ class Profile extends React.Component<IProps, IState> {
           {heading}{" "}
           <CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="editProfile" />
         </h2>
+
         <ProfileForm
           allowSubmit={this.state.allowSubmit}
           profileObj={this.props.profile}
@@ -217,12 +242,44 @@ class Profile extends React.Component<IProps, IState> {
     return layout;
   }
 
+  renderAdminPanel() {
+    let layout: any;
+    let completionMessage = (
+      <span>
+        <strong>- Done !</strong>
+      </span>
+    );
+    layout = "";
+    if (this.props.userEmail && this.props.userEmail === Meteor.settings.public.adminEmail) {
+      layout = (
+        <BlockUi tag="div" blocking={!this.state.allowSubmitDeleteAllUsers}>
+          <Alert color="warning">
+            <strong>DELETE ALL NON-ADMIN USERS</strong>
+            <hr />{" "}
+            <Button
+              disabled={!this.state.allowSubmitDeleteAllUsers}
+              onClick={this.handleDeleteAllUsers}
+              size="sm"
+              color="primary"
+            >
+              DELETE NOW
+            </Button>{" "}
+            {this.state.DeleteAllUsersDone ? completionMessage : ""}
+          </Alert>
+        </BlockUi>
+      );
+    }
+
+    return layout;
+  }
+
   renderNotification() {
     let layout: any;
     layout = "";
 
-    if (User.data()) {
-      let verified = User.data().emails[0].verified;
+    if (this.props.userData) {
+      let verified = this.props.emailVerified;
+      //let verified = this.props.userData.emails[0].verified;
       if (!verified) {
         layout = (
           <BlockUi tag="div" blocking={this.state.disableVerify}>
@@ -344,6 +401,7 @@ class Profile extends React.Component<IProps, IState> {
       <Transition>
         <div className="container page-content">
           {this.renderNotification()}
+          {this.renderAdminPanel()}
           {layout}
         </div>
       </Transition>
@@ -355,11 +413,20 @@ export default withRouter(
   withTracker(props => {
     let myImages: any;
     let ImagesDataReady = Meteor.subscribe("allImages");
+    let userEmail: string;
+    let emailVerified: boolean = false;
+    let userData = User.data();
+
+    if (userData) {
+      emailVerified = userData.emails[0].verified;
+      userEmail = userData.emails[0].address;
+    }
+
     if (ImagesDataReady) {
       if (props.profile) {
         myImages = Images.find({ _id: props.profile.image_id }).fetch();
       }
     }
-    return { myImages };
+    return { myImages: myImages, userData: userData, userEmail: userEmail, emailVerified: emailVerified };
   })(Profile)
 );

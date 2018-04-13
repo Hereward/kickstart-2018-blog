@@ -224,6 +224,7 @@ class Navigation extends React.Component<IProps, IState> {
           //Meteor["connection"].setUserId(null);
           console.log(`Navigation logOut DONE`);
           this.loggingOut = false;
+          this.props.history.push("/");
         });
       });
     }
