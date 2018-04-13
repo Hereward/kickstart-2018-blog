@@ -34,6 +34,7 @@ The project has session timeout features, with some settings which are configura
 * [Key Features](#features)
 * [Coding Style](#style)
 * [File Structure](#structure)
+* [Admin Functions](#admin)
 * [Meteor Settings](#settings)
 * [2FA Security](#2FA)
 * [Session Timeout](#timeout)
@@ -117,6 +118,9 @@ There is a separate 'modules' folder which contains a number of function librari
 * tooltips.ts
 * validation.ts
 
+## <a name="admin"></a>Admin Functions
+Currently there is only one admin function provided. If logged in as "admin" user (see [settings](#settings)), you will see an option to delete all non-admin users on the Profile page.
+
 ## <a name="settings"></a>Meteor Settngs
 
 Meteor settings files should be stored in the .deploy folder. A template file is provided. You should have as a minimum a production and a staging version. These files should be excluded from git.
@@ -127,7 +131,7 @@ The following file names have been added to the included .gitignore file:
 * settings-development.json
 
 #### configurable settings:
-
+`adminEmail` - use the setting to sepcify the email address of 1 administrator
 `enhancedAuth` - use these settings to enable/disable 2 factor authentication & change settings
 * `active` - Determines whether the app runs with 2FA
 * `maxAttempts` - Maximum number of failed attempts allowed
