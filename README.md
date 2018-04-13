@@ -119,7 +119,7 @@ There is a separate 'modules' folder which contains a number of function librari
 * validation.ts
 
 ## <a name="admin"></a>Admin Functions
-Currently there is only one admin function provided. If logged in as "admin" user (see [settings](#settings)), you will see an option to delete all non-admin users on the Profile page.
+Currently there is only one admin function provided. If logged in as an "admin" user (see [settings](#settings)), you will see an option to delete all non-admin users on the Profile page.
 
 ## <a name="settings"></a>Meteor Settngs
 
