@@ -10,6 +10,15 @@
       "maxAttempts": 3,
       "displayCode": true
     },
+    "images": {
+      "storagePath": "/images"
+    },
+    "defaultContent": {
+      "about": {
+        "heading": "About Page",
+        "body": "<p>This is the About page. You can edit it when logged in to your account.</p>"
+      }
+    },
     "session": {
       "heartbeatInterval": 300000,
       "inactivityTimeout": 3600000,
