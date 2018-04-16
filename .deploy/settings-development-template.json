@@ -6,7 +6,7 @@
     "copyright": "\u00A9 MyCompany 2018. All rights reserved.",
     "adminEmail": "hereward@eyeofthetiger.asia",
     "enhancedAuth": {
-      "active": 1,
+      "active": true,
       "maxAttempts": 3,
       "displayCode": true
     },
