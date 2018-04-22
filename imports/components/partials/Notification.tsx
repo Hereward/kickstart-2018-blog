@@ -8,12 +8,14 @@ const panelData = {
     enable: {
       message: "WARNING: 2FA is disabled. Activate 2 factor authentication on your account for enhanced security.",
       btnText: "Activate Now",
-      alertLevel: "danger"
+      alertLevel: "danger",
+      caution: "Once 2FA is activated you'll need to enter an authorisation code in order to access your account."
     },
     disable: {
-      message: "2 factor authentication is active. You can de-activate it, but will need to enter an authorisation code first.",
+      message: "2 factor authentication is currently active.",
       btnText: "De-activate Now",
-      alertLevel: "info"
+      alertLevel: "danger",
+      caution: "In order to complete this action you'll need to enter an authorisation code or you'll be locked out of your account."
     }
   },
   verifyEmail: {
@@ -68,10 +70,15 @@ export default class Notification extends React.Component<IProps, IState> {
     let message: string;
     let alertLevel: string;
     let btnText: string;
+    let caution: string;
 
     let panelType = this.props.type;
 
     if (panelType === "auth") {
+      if (!this.props.authData) {
+        return null;
+      }
+
       let stateChange: string;
 
       switch (this.props.authData.enabled) {
@@ -92,10 +99,13 @@ export default class Notification extends React.Component<IProps, IState> {
       message = panelData[panelType][stateChange].message;
       alertLevel = panelData[panelType][stateChange].alertLevel;
       btnText = panelData[panelType][stateChange].btnText;
+      caution = panelData[panelType][stateChange].caution;
+
     } else {
       message = panelData[panelType].message;
       alertLevel = panelData[panelType].alertLevel;
       btnText = panelData[panelType].btnText;
+      caution = panelData[panelType].caution;
     }
 
     layout = (
@@ -105,7 +115,7 @@ export default class Notification extends React.Component<IProps, IState> {
           <hr />{" "}
           <Button onClick={this.props.mainFunction} size="sm" color="primary">
             {btnText}
-          </Button>{" "}
+          </Button>{" "}{caution ? <span><strong>&nbsp;CAUTION: </strong><em>{caution}</em></span> : ''}
         </Alert>
       </BlockUi>
     );
