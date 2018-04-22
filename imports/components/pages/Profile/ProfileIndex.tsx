@@ -44,7 +44,7 @@ interface IState {
   editProfile: boolean;
   disableVerify: boolean;
   allowSubmit: boolean;
-  allowSubmitDeleteAllUsers: boolean;
+  disableSubmitDeleteAllUsers: boolean;
   DeleteAllUsersDone: boolean;
   processing2FArequest: boolean;
 }
@@ -77,7 +77,7 @@ class Profile extends React.Component<IProps, IState> {
       obj["disableVerify"] = false;
       obj["allowSubmit"] = true;
       obj["DeleteAllUsersDone"] = false;
-      obj["allowSubmitDeleteAllUsers"] = true;
+      obj["disableSubmitDeleteAllUsers"] = false;
       obj["processing2FArequest"] = false;
     } else if (type === "props") {
       this.fieldsArray.forEach(element => (obj[element] = props[element]));
@@ -121,15 +121,20 @@ class Profile extends React.Component<IProps, IState> {
 
   handleDeleteAllUsers() {
     console.log(`handleDeleteAllUsers`);
-    this.setState({ allowSubmitDeleteAllUsers: false });
+    this.setState({ disableSubmitDeleteAllUsers: true });
     this.setState({ DeleteAllUsersDone: false });
     deleteAllUsers.call({}, err => {
-      this.setState({ allowSubmitDeleteAllUsers: true });
+      this.setState({ disableSubmitDeleteAllUsers: false });
       this.setState({ DeleteAllUsersDone: true });
 
       if (err) {
         Library.modalErrorAlert(err.reason);
         console.log(`deleteAllUsers failed`, err);
+      } else {
+        Library.modalSuccessAlert({
+          message:
+            "All non-admin users were deleted!"
+        });
       }
     });
   }
@@ -141,7 +146,7 @@ class Profile extends React.Component<IProps, IState> {
     ProfileMethods.sendVerificationEmail.call({ id: id }, (err, res) => {
       this.setState({ disableVerify: false });
       if (err) {
-        Library.modalErrorAlert(err.reason);
+        Library.modalErrorAlert('Please check your internet connection.');
         console.log(`sendVerificationEmail error`, err);
       } else {
         Library.modalSuccessAlert({
@@ -290,7 +295,7 @@ class Profile extends React.Component<IProps, IState> {
 
     return layout;
   }
-
+/*
   renderAdminPanel() {
     let layout: any;
     let completionMessage = (
@@ -321,7 +326,10 @@ class Profile extends React.Component<IProps, IState> {
 
     return layout;
   }
+  */
 
+ 
+  /*
   renderNotification() {
     let layout: any;
     layout = "";
@@ -350,6 +358,7 @@ class Profile extends React.Component<IProps, IState> {
 
     return layout;
   }
+  */
 
   renderImage() {
     let layout: any;
@@ -451,19 +460,44 @@ class Profile extends React.Component<IProps, IState> {
         <div className="container page-content">
           <Notification
             mainFunction={this.Toggle2FA}
-            panel="auth"
+            panel="standard"
+            type="auth"
             parentProps={this.props}
             processingRequest={this.state.processing2FArequest}
             authData={this.props.authData}
           />
-          {this.renderNotification()}
-          {this.renderAdminPanel()}
+
+          {this.props.emailVerified === false ? <Notification
+            mainFunction={this.sendVerificationEmail}
+            panel="standard"
+            type="verifyEmail"
+            parentProps={this.props}
+            processingRequest={this.state.disableVerify}
+            authData={this.props.authData}
+          /> : ''}
+
+          {this.props.admin ? <Notification
+            mainFunction={this.handleDeleteAllUsers}
+            panel="standard"
+            type="admin"
+            parentProps={this.props}
+            processingRequest={this.state.disableSubmitDeleteAllUsers}
+            authData={this.props.authData}
+          /> : ''}
+
+
           {layout}
         </div>
       </Transition>
     );
   }
 }
+
+/*
+
+          {this.renderNotification()}
+          {this.renderAdminPanel()}
+          */
 
 // <Notification mainFunction={this.Toggle2FA} panel='2FA' parentProps={this.props} />
 

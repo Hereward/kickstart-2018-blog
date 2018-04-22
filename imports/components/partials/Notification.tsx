@@ -11,10 +11,20 @@ const panelData = {
       alertLevel: "danger"
     },
     disable: {
-      message: "2FA is enabled. De-activate 2 factor authentication.",
+      message: "2 factor authentication is active. You can de-activate it, but will need to enter an authorisation code first.",
       btnText: "De-activate Now",
       alertLevel: "info"
     }
+  },
+  verifyEmail: {
+    message: "WARNING: Your email address is not verified.",
+    btnText: "Verify Now",
+    alertLevel: "warning"
+  },
+  admin: {
+    message: "DELETE ALL NON-ADMIN USERS.",
+    btnText: "DELETE NOW",
+    alertLevel: "warning"
   }
 };
 
@@ -24,6 +34,7 @@ interface IProps {
   parentProps: any;
   processingRequest: boolean;
   authData: any;
+  type: string;
 }
 
 interface IState {}
@@ -41,50 +52,51 @@ export default class Notification extends React.Component<IProps, IState> {
 
   componentWillReceiveProps(nextProps) {}
 
-  standardPanel() {
-    return <div>boo</div>;
-  }
-
   execute() {
     let layout: any = null;
     switch (this.props.panel) {
       case "standard":
         layout = this.standardPanel();
         break;
-      case "auth":
-        if (this.props.authData) {
-          layout = this.render2FAPanel();
-        }
-        break;
     }
 
     return layout;
   }
 
-  render2FAPanel() {
+  standardPanel() {
     let layout: any;
+    let message: string;
+    let alertLevel: string;
+    let btnText: string;
 
-    let panelType = this.props.panel;
-    let stateChange: string;
+    let panelType = this.props.type;
 
-    switch (this.props.authData.enabled) {
-      case 0:
-        stateChange = "enable";
-        break;
-      case 1:
-        stateChange = "disable";
-        break;
-      case 2:
-        stateChange = "disable";
-        break;
-      case 3:
-        stateChange = "enable";
-        break;
+    if (panelType === "auth") {
+      let stateChange: string;
+
+      switch (this.props.authData.enabled) {
+        case 0:
+          stateChange = "enable";
+          break;
+        case 1:
+          stateChange = "disable";
+          break;
+        case 2:
+          stateChange = "disable";
+          break;
+        case 3:
+          stateChange = "enable";
+          break;
+      }
+
+      message = panelData[panelType][stateChange].message;
+      alertLevel = panelData[panelType][stateChange].alertLevel;
+      btnText = panelData[panelType][stateChange].btnText;
+    } else {
+      message = panelData[panelType].message;
+      alertLevel = panelData[panelType].alertLevel;
+      btnText = panelData[panelType].btnText;
     }
-
-    let message = panelData[panelType][stateChange].message;
-    let alertLevel = panelData[panelType][stateChange].alertLevel;
-    let btnText = panelData[panelType][stateChange].btnText;
 
     layout = (
       <BlockUi tag="div" blocking={this.props.processingRequest}>
