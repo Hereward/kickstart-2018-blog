@@ -98,13 +98,16 @@ class Register extends React.Component<IProps, IState> {
           if (err) {
             console.log(`Error: ${err.reason}`);
             this.setState({allowSubmit: true});
-            return Library.modalErrorAlert(err.reason);
+            Library.modalErrorAlert(err.reason);
+            console.log(`createUser error`, err);
+            
           } else {
 
             SessionMethods.createUserSession.call({}, (err, res) => {
               if (err) {
                 console.log(`createSession error: [${err.reason}]`, err);
-                return Library.modalErrorAlert(err.reason);
+                Library.modalErrorAlert(err.reason);
+                console.log(`createUserSession error`, err);
               }
             });
 
@@ -118,20 +121,18 @@ class Register extends React.Component<IProps, IState> {
               if (err) {
                 this.setState({allowSubmit: true});
                 Library.modalErrorAlert(err.reason);
+                console.log(`createProfile error`, err);
               } else {
                 this.sendVerificationEmail(id);
               }
             });
 
-            let authFields = {
-              owner: User.id()
-            };
 
-            AuthMethods.createAuth.call(authFields, (err, id) => {
+            AuthMethods.createAuth.call({}, (err, id) => {
               if (err) {
                 this.setState({allowSubmit: true});
                 Library.modalErrorAlert(err.reason);
-                console.log(`createAuth error: [${err.reason}]`);
+                console.log(`createAuth error: [${err.reason}]`, err);
               } else {
                 console.log(`auth successfully created. res = [${id}]`);
               }
@@ -139,11 +140,14 @@ class Register extends React.Component<IProps, IState> {
 
            
 
+            this.props.history.push("/");
+            /*
             if (this.props.enhancedAuth) {
               this.props.history.push("/authenticate");
             } else {
               this.props.history.push("/");
             }
+            */
           }
         }
       );

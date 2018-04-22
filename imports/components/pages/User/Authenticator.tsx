@@ -1,3 +1,4 @@
+///<reference path="../../../../index.d.ts"/>
 import { Meteor } from "meteor/meteor";
 import * as speakeasy from "speakeasy";
 import ReactRouterPropTypes from "react-router-prop-types";
@@ -15,6 +16,9 @@ import Transition from "../../partials/Transition";
 import * as Methods from "../../../api/auth/methods";
 import { Auth } from "../../../api/auth/publish";
 import * as User from "../../../modules/user";
+import AuthCodeDisplay from "../../partials/AuthCodeDisplay";
+import QRCodeContainer from "../../partials/QRCode";
+//import { decryptKey, deletetKey } from "../../../api/auth/methods";
 
 const LoadingPlaceHolder = styled.div`
   border: 1px dashed Silver;
@@ -29,6 +33,7 @@ const LoadingPlaceHolder = styled.div`
 interface IProps {
   history: any;
   boojam: string;
+  enhancedAuth: boolean;
   authData: {
     _id: string;
     verified: boolean;
@@ -38,6 +43,7 @@ interface IProps {
     keyObj: any;
     QRCodeShown: boolean;
     QRCodeURL: string;
+    enabled: number;
   };
 }
 
@@ -49,6 +55,11 @@ interface IState {
   allowSubmit: boolean;
 }
 
+const opTypeMessage = {
+  enabled: "2 Factor authentication has been activated.",
+  disabled: "2 Factor authentication has been de-activated."
+};
+
 class Authenticator extends React.Component<IProps, IState> {
   oldToken: string;
   counter: number;
@@ -56,25 +67,30 @@ class Authenticator extends React.Component<IProps, IState> {
   expiredTokens: string[];
   allowKeyGeneration: boolean = true;
   timerWasSet: boolean;
+  verifySuccessful: boolean = false;
 
   constructor(props) {
     super(props);
 
-    if (this.props.authData && this.props.authData.verified) {
-      this.props.history.push("/");
-    }
-
     this.handleQRClick = this.handleQRClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.checkTokens = this.checkTokens.bind(this);
+    this.goHome = this.goHome.bind(this);
+    //this.checkTokens = this.checkTokens.bind(this);
     this.renderExpiredTokens = this.renderExpiredTokens.bind(this);
     this.oldToken = "";
     this.counter = 0;
     this.expiredTokens = [];
     this.timerID = 0;
     this.timerWasSet = false;
-    let showQRcode = this.props.authData && this.props.authData.QRCodeShown === false ? true : false;
+    let showQRcode = true;
+
+    /*
+    if (this.props.authData && (this.props.authData.QRCodeShown === false)) {
+      console.log(`Authenticator constructor showQRcode!!!!`);
+      showQRcode = true;
+    }
+    */
 
     this.state = {
       showQRcode: showQRcode,
@@ -85,6 +101,7 @@ class Authenticator extends React.Component<IProps, IState> {
     };
   }
 
+  /*
   static propTypes = {
     history: ReactRouterPropTypes.history,
     authData: PropTypes.shape({
@@ -98,23 +115,35 @@ class Authenticator extends React.Component<IProps, IState> {
       QRCodeURL: PropTypes.string
     })
   };
+  */
 
   componentWillMount() {}
 
-  componentDidUpdate() {}
-
-  componentWillReceiveProps(nextProps) {
-    this.setTimer(nextProps);
+  componentDidUpdate() {
+    if (this.props.authData && (this.props.authData.verified || !this.props.authData.enabled)) {
+      this.props.history.push("/");
+    }
   }
 
-  componentDidMount() {
-    this.setTimer();
+  componentWillReceiveProps(nextProps) {
+    /*
+    if (nextProps.authData && (nextProps.authData.QRCodeShown === false)) {
+      console.log(`componentWillReceiveProps showQRcode!!!!`);
+      this.setState({ showQRcode: true });
+    } else if (nextProps.authData && (nextProps.authData.QRCodeShown === true)) {
+      this.setState({ showQRcode: true });
+    }
+    */
+    //this.setTimer(nextProps);
   }
 
   componentWillUnmount() {
-    clearInterval(this.timerID);
+    //this.cleanup();
   }
 
+  componentDidMount() {}
+
+  /*
   setTimer(nextProps: any = "") {
     let props: any;
     if (nextProps) {
@@ -130,6 +159,7 @@ class Authenticator extends React.Component<IProps, IState> {
       }
     }
   }
+  */
 
   getQRCodeLayout() {
     let QRcode = (
@@ -151,7 +181,8 @@ class Authenticator extends React.Component<IProps, IState> {
 
   handleQRClick() {
     this.setState({ showQRcode: false });
-    this.setTimer();
+    console.log(`Authenticator handleQRClick`);
+    //this.setTimer();
   }
 
   handleChange(e) {
@@ -164,24 +195,35 @@ class Authenticator extends React.Component<IProps, IState> {
 
   verifyToken() {
     let myToken = this.state.authCode.trim();
-    let verified;
+    //let verified;
 
-    let authFields = {
-      key: this.props.authData.private_key,
-      myToken: myToken
-    };
-
-    Methods.verifyToken.call(authFields, (err, verified) => {
+    Methods.verifyToken.call({ myToken: myToken }, (err, res) => {
       if (err) {
         Library.invalidAuthCodeAlert(err);
         console.log(`verifyToken error`, err);
         this.setState({ allowSubmit: true });
       } else {
+        this.verifySuccessful = true;
+        if (res.operationIndicator) {
+          Library.modalSuccessAlert({ message: opTypeMessage[res.operationIndicator] });
+        }
         this.props.history.push("/");
       }
     });
   }
 
+  cleanup() {
+    if (!this.verifySuccessful) {
+      Methods.cleanup.call({}, (err, res) => {
+        if (err) {
+          Library.modalErrorAlert(err.reason);
+          console.log(`auth cleanup error`, err);
+        }
+      });
+    }
+  }
+
+  /*
   checkTokens(key) {
     let authFields = {
       key: key
@@ -199,6 +241,12 @@ class Authenticator extends React.Component<IProps, IState> {
       }
     });
   }
+  */
+
+  goHome() {
+    log.info("GO HOME");
+    this.props.history.push("/");
+  }
 
   QRCodeReady() {
     let flag = false;
@@ -210,7 +258,13 @@ class Authenticator extends React.Component<IProps, IState> {
 
   getLayout() {
     let layout = (
-      <div className="container page-content">{this.state.showQRcode ? this.QRLayout() : this.verifyLayout()}</div>
+      <div className="container page-content">
+        {this.state.showQRcode && this.props.authData && this.props.authData.enabled === 3 ? (
+          <QRCodeContainer handleQRclick={this.handleQRClick} exit={this.goHome} />
+        ) : (
+          this.verifyLayout()
+        )}
+      </div>
     );
     return layout;
   }
@@ -228,6 +282,7 @@ class Authenticator extends React.Component<IProps, IState> {
     return tag;
   }
 
+  /*
   QRLayout() {
     let QRLayout = (
       <Transition>
@@ -248,6 +303,7 @@ class Authenticator extends React.Component<IProps, IState> {
     );
     return QRLayout;
   }
+  */
 
   showCode() {
     let layout = (
@@ -262,13 +318,15 @@ class Authenticator extends React.Component<IProps, IState> {
   verifyLayout() {
     let layout = (
       <Transition>
-        <AuthenticatorForm
-          allowSubmit={this.state.allowSubmit}
-          handleChange={this.handleChange}
-          handleSubmit={this.handleSubmit}
-        />
+        <div>
+          <AuthenticatorForm
+            allowSubmit={this.state.allowSubmit}
+            handleChange={this.handleChange}
+            handleSubmit={this.handleSubmit}
+          />
 
-        {this.showCode()}
+          {Meteor.settings.public.enhancedAuth.displayCode ? <AuthCodeDisplay /> : ""}
+        </div>
       </Transition>
     );
     return layout;
@@ -288,7 +346,6 @@ class Authenticator extends React.Component<IProps, IState> {
 export default withRouter(
   withTracker(() => {
     let authData: any;
-    //Meteor.subscribe("userData");
     let authDataReady = Meteor.subscribe("enhancedAuth");
 
     if (User.id()) {

@@ -2,7 +2,19 @@ import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
+import { userSessions } from "../sessions/publish";
+//import * as SimpleCryptoJS from "simple-crypto-js";
 import { Auth } from "./publish";
+
+//import * as Aesjs  from "aes-js";
+
+//let SimpleCryptoJS = require("simple-crypto-js");
+
+//const SimpleCryptoJS = require("simple-crypto-js");
+
+//const SimpleCryptoJS = require("simple-crypto-js").SimpleCryptoJS;
+
+//const CryptoJS = require("crypto-js");
 
 let Future: any;
 let QRCode: any;
@@ -10,11 +22,18 @@ let speakeasy = require("speakeasy");
 
 declare var Npm: any;
 
+//let crypto: any;
+
+let crypto = require("crypto");
+
+//let algorithm = "aes-256-ctr";
+//let iv = "m4UQdvJ6z4PCYVC9";
+// password = "boojam5596";
+
 if (Meteor.isServer) {
   Future = Npm.require("fibers/future");
   QRCode = require("qrcode");
 }
-
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -24,6 +43,60 @@ const authCheck = (methodName, userId) => {
     throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
   }
   return auth;
+};
+
+const forceLogout = userId => {
+  let sessionRecord: any;
+  sessionRecord = userSessions.findOne({ owner: userId });
+  if (sessionRecord) {
+    userSessions.update(
+      { owner: userId },
+      {
+        $set: {
+          expired: true
+        }
+      }
+    );
+  }
+};
+
+const initAuth = (authId, userId) => {
+  let key: any;
+  let secret: any;
+  let user = Meteor.users.findOne(userId);
+  let email = user.emails[0].address;
+  let toDataURLObj = { error: "", url: "" };
+
+  const buf = crypto.randomBytes(16);
+  const randomString = buf.toString("hex");
+  console.log(`initAuth - | randomString = [${randomString}]`, email);
+  secret = speakeasy.generateSecret({
+    length: 20,
+    name: `Meteor KickStart: ${email}`
+  });
+  key = secret.base32;
+
+  let keyEncrypted = encrypt(key, randomString);
+  console.log(`initAuth keyEncrypted SUCCESS [${keyEncrypted}]`);
+  Auth.update(authId, { $set: { private_key_enc: keyEncrypted, cryptoKey: randomString } });
+  let future = new Future();
+  QRCode.toDataURL(secret.otpauth_url, (err, dataUrl) => {
+    future.return({ error: err, url: dataUrl });
+  });
+  toDataURLObj = future.wait();
+  if (toDataURLObj.error) {
+    console.log(`initAuth toDataURL FAIL: `, toDataURLObj.error);
+    throw new Meteor.Error(
+      `initAuth toDataURL FAIL [initAuth] [${toDataURLObj.error}]`,
+      "Could not retrieve QRCode URL."
+    );
+  } else {
+    let urlEnc = encrypt(toDataURLObj.url, randomString);
+    console.log(`initAuth toDataURL SUCCESS`);
+    Auth.update(authId, { $set: { QRCodeURL_enc: urlEnc } });
+  }
+
+  return { key: key, url: toDataURLObj.url };
 };
 
 const exceedAttemptsCheck = (verified, attemptsLeft) => {
@@ -41,39 +114,73 @@ const exceedAttemptsCheck = (verified, attemptsLeft) => {
   }
 };
 
+function encrypt(text, password) {
+  let cipher = crypto.createCipheriv(
+    Meteor.settings.private.enhancedAuth.algorithm,
+    password,
+    Meteor.settings.private.enhancedAuth.iv
+  );
+  let crypted = cipher.update(text, "utf8", "hex");
+  crypted += cipher.final("hex");
+  return crypted;
+}
+
+function decrypt(text, password) {
+  let decipher = crypto.createDecipheriv(
+    Meteor.settings.private.enhancedAuth.algorithm,
+    password,
+    Meteor.settings.private.enhancedAuth.iv
+  );
+  let dec = decipher.update(text, "hex", "utf8");
+  dec += decipher.final("utf8");
+  return dec;
+}
+
 export const createAuth = new ValidatedMethod({
   name: "auth.create",
 
-  validate: new SimpleSchema({
-    owner: { type: String }
-  }).validator(),
+  validate: null,
 
-  run(fields) {
+  run() {
     authCheck("auth.create", this.userId);
     let key: any;
     let secret: any;
-    let user = Meteor.users.findOne(this.userId);
-    let email = user.emails[0].address;
-    let toDataURLObj = { error: "", url: "" };
+    //let user = Meteor.users.findOne(this.userId);
+    //let email = user.emails[0].address;
+    //let toDataURLObj = { error: "", url: "" };
 
-    let id = Auth.insert({
+    let authId = Auth.insert({
       verified: false,
       currentAttempts: 0,
       private_key: key,
+      private_key_enc: key,
       keyObj: secret,
       QRCodeShown: false,
       QRCodeURL: "",
-      owner: fields.owner
+      QRCodeURL_enc: "",
+      cryptoKey: "",
+      enabled: 0,
+      owner: this.userId
     });
 
     if (!this.isSimulation) {
+      //initAuth(authId, this.userId);
+      /*
+      const buf = crypto.randomBytes(16);
+      const randomString = buf.toString("hex");
+
+      console.log(`auth.create - SimpleCryptoKey | randomString = [${randomString}]`, email);
+
       secret = speakeasy.generateSecret({
         length: 20,
         name: `Meteor KickStart: ${email}`
       });
       key = secret.base32;
 
-      Auth.update(id, { $set: { private_key: key, keyObj: secret } });
+      let keyEncrypted = encrypt(key, randomString);
+      console.log(`keyEncrypted SUCCESS [${keyEncrypted}]`);
+
+      Auth.update(authId, { $set: { private_key_enc: keyEncrypted, cryptoKey: randomString } });
 
       let future = new Future();
       QRCode.toDataURL(secret.otpauth_url, (err, dataUrl) => {
@@ -81,7 +188,6 @@ export const createAuth = new ValidatedMethod({
       });
 
       toDataURLObj = future.wait();
-      //output = toDataURLObj.url;
 
       if (toDataURLObj.error) {
         console.log(`toDataURL FAIL: `, toDataURLObj.error);
@@ -90,15 +196,108 @@ export const createAuth = new ValidatedMethod({
           "Could not retrieve QRCode URL."
         );
       } else {
+        let urlEnc = encrypt(toDataURLObj.url, randomString);
         console.log(`toDataURL SUCCESS`);
-        Auth.update(id, { $set: { QRCodeURL: toDataURLObj.url } });
+        Auth.update(authId, { $set: { QRCodeURL_enc: urlEnc } });
       }
+      */
     }
 
-    return id;
+    return authId;
   }
 });
 
+export const decryptKey = new ValidatedMethod({
+  name: "auth.decryptKey",
+
+  validate: null,
+
+  run(fields) {
+    authCheck("auth.decryptKey", this.userId);
+    if (!this.isSimulation) {
+      let authRecord: any;
+      authRecord = Auth.findOne({ owner: this.userId });
+      if (authRecord && authRecord.private_key_enc && authRecord.QRCodeURL_enc) {
+        //let simpleCryptoObj = new SimpleCryptoJS(authRecord.SimpleCryptoKey);
+
+        //let privateKey = simpleCryptoObj.decrypt(authRecord.private_key_enc);
+        //let pkBytes = CryptoJS.AES.decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
+        //let privateKey = pkBytes.toString(CryptoJS.enc.Utf8);
+
+        let privateKey = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
+
+        //console.log(`auth.decryptKey DECRYPTED privateKey=`, privateKey);
+
+        //let QRbytes = CryptoJS.AES.decrypt(authRecord.QRCodeURL_enc, authRecord.cryptoKey);
+        //let QRCodeURL = QRbytes.toString(CryptoJS.enc.Utf8);
+
+        let QRCodeURL = decrypt(authRecord.QRCodeURL_enc, authRecord.cryptoKey);
+
+        //console.log(`auth.decryptKey DECRYPTED QRCodeURL=`, QRCodeURL);
+
+        //let QRCodeURL = simpleCryptoObj.decrypt(authRecord.QRCodeURL_enc);
+        Auth.update(authRecord._id, { $set: { private_key: privateKey, QRCodeURL: QRCodeURL } });
+        console.log(`auth.decryptKey - DONE!`);
+      }
+    }
+  }
+});
+
+export const init = new ValidatedMethod({
+  name: "auth.init",
+
+  validate: null,
+
+  run(fields) {
+    authCheck("auth.init", this.userId);
+    let privateData: any;
+    if (!this.isSimulation) {
+      let authRecord: any;
+      authRecord = Auth.findOne({ owner: this.userId });
+      if (authRecord) {
+        privateData = initAuth(authRecord._id, this.userId);
+        //log.info(`auth.init - DONE!`, privateData);
+      }
+    }
+    return privateData;
+  }
+});
+
+export const cancel = new ValidatedMethod({
+  name: "auth.cancel",
+
+  validate: null,
+
+  run(fields) {
+    authCheck("auth.cancel", this.userId);
+    if (!this.isSimulation) {
+      let authRecord: any;
+      authRecord = Auth.findOne({ owner: this.userId });
+      if (authRecord) {
+        Auth.update(authRecord._id, { $set: { enabled: 0, verified: false } });
+        console.log(`auth.cancel - DONE!`);
+      }
+    }
+  }
+});
+
+export const deletetKey = new ValidatedMethod({
+  name: "auth.deletetKey",
+
+  validate: null,
+
+  run(fields) {
+    authCheck("auth.deletetKey", this.userId);
+    let authRecord: any;
+    authRecord = Auth.findOne({ owner: this.userId });
+    if (authRecord) {
+      Auth.update(authRecord._id, { $set: { private_key: "", QRCodeURL: "" } });
+      console.log(`auth.deletetKey - DONE!`);
+    }
+  }
+});
+
+/*
 export const setPrivateKey = new ValidatedMethod({
   name: "auth.setPrivateKey",
 
@@ -116,7 +315,9 @@ export const setPrivateKey = new ValidatedMethod({
     console.log(`auth.setPrivateKey - DONE!`);
   }
 });
+*/
 
+/*
 export const generateQRCode = new ValidatedMethod({
   name: "auth.generateQRCode",
 
@@ -153,31 +354,195 @@ export const generateQRCode = new ValidatedMethod({
         "Could not retrieve QRCode URL."
       );
     } else {
-      Auth.update(fields.id, { $set: { QRCodeShown: true } });
+      Auth.update(this.userId, { $set: { QRCodeShown: true } });
     }
 
     return output;
   }
 });
+*/
 
 export const currentValidToken = new ValidatedMethod({
   name: "auth.currentValidToken",
-  validate: new SimpleSchema({
-    key: { type: String }
-  }).validator(),
+  validate: null,
 
-  run(fields) {
+  run() {
     authCheck("auth.currentValidToken", this.userId);
-    let token: any = "000000";
+    let token: any = "initialising...";
+
+    let authRecord: any;
     if (!this.isSimulation) {
-      if (fields.key) {
+      authRecord = Auth.findOne({ owner: this.userId });
+      if (authRecord && authRecord.private_key_enc) {
+        let secret = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
+
         token = speakeasy.totp({
-          secret: fields.key,
+          secret: secret,
           encoding: "base32"
         });
       }
+      //log.info(`currentValidToken`, token);
     }
+
     return token;
+  }
+});
+
+export const toggleEnabledPending = new ValidatedMethod({
+  name: "auth.activate",
+
+  validate: null,
+
+  run(fields) {
+    authCheck("auth.setVerified", this.userId);
+    if (!this.isSimulation) {
+      let ownerId = this.userId;
+      let authRecord: any;
+      authRecord = Auth.findOne({ owner: ownerId });
+
+      if (authRecord) {
+        let currentState = authRecord.enabled;
+        let targetState: number;
+        switch (currentState) {
+          case 1:
+            targetState = 2;
+            break;
+          case 0:
+            targetState = 3;
+            break;
+          case 2:
+            targetState = 2;
+            break;
+          case 3:
+            targetState = 3;
+            break;
+          default:
+            targetState = 0;
+        }
+
+        Auth.update(authRecord._id, { $set: { enabled: targetState, verified: false } });
+        console.log(`auth.activate - DONE!`);
+      } else {
+        console.log(`auth.activate - No auth record found.`);
+      }
+    }
+  }
+});
+
+export const cleanup = new ValidatedMethod({
+  name: "auth.cleanup",
+
+  validate: null,
+
+  run(fields) {
+    authCheck("auth.cleanup", this.userId);
+    let targetState: number;
+    let ownerId = this.userId;
+    let authRecord: any;
+    let logOutRequired: boolean = false;
+    if (!this.isSimulation) {
+      authRecord = Auth.findOne({ owner: ownerId });
+
+      if (authRecord) {
+        let currentState = authRecord.enabled;
+        switch (currentState) {
+          case 1:
+            targetState = 1;
+            //logOutRequired = true;
+            break;
+          case 0:
+            targetState = 0;
+            //logOutRequired = true;
+            break;
+          case 2:
+            targetState = 1;
+            break;
+          case 3:
+            targetState = 0;
+            break;
+          default:
+            targetState = 0;
+        }
+
+        Auth.update(authRecord._id, {
+          $set: { verified: false, enabled: targetState }
+        });
+
+        if (logOutRequired) {
+          forceLogout(this.userId);
+        }
+        //Auth.update(authRecord._id, { $set: { verified: fields.verified } });
+        console.log(`auth.cleanup - DONE!`);
+      } else {
+        console.log(`auth.cleanup - No auth record found.`);
+      }
+    }
+    return logOutRequired;
+  }
+});
+
+export const initUserLogin = new ValidatedMethod({
+  name: "auth.initUserLogin",
+  validate: null,
+
+  run(fields) {
+    authCheck("auth.initUserLogin", this.userId);
+    let enabled: any = 0;
+    let authRecord: any;
+    authRecord = Auth.findOne({ owner: this.userId });
+
+    if (authRecord) {
+      enabled = authRecord.enabled;
+      //log.info(`auth.initUserLogin - DATA FOUND`, enabled);
+      Auth.update(authRecord._id, { $set: { verified: false } });
+    }
+
+    log.info(`auth.initUserLogin`, enabled);
+
+    return enabled;
+  }
+});
+
+export const validateUserLogin = new ValidatedMethod({
+  name: "auth.validateUserLogin",
+  validate: null,
+
+  run(fields) {
+    authCheck("auth.validateUserLogin", this.userId);
+    let targetState: number;
+    let authRecord: any;
+    authRecord = Auth.findOne({ owner: this.userId });
+
+    if (!this.isSimulation) {
+      if (!authRecord.verified && authRecord.enabled !== 0) {
+        let currentState = authRecord.enabled;
+        switch (currentState) {
+          case 1:
+            targetState = 1;
+            break;
+          case 2:
+            targetState = 1;
+            break;
+          case 3:
+            targetState = 0;
+            break;
+          default:
+            targetState = 0;
+        }
+
+        Auth.update(authRecord._id, {
+          $set: { enabled: targetState }
+        });
+
+        if (currentState === 1 || currentState === 3) {
+          forceLogout(this.userId);
+        }
+
+        log.info(`validateUserLogin - forcing logout`);
+      }
+    }
+
+    return targetState;
   }
 });
 
@@ -206,21 +571,24 @@ export const setVerified = new ValidatedMethod({
 export const verifyToken = new ValidatedMethod({
   name: "auth.verifyToken",
   validate: new SimpleSchema({
-    key: { type: String },
     myToken: { type: String }
   }).validator(),
 
   run(fields) {
-    authCheck("auth.currentValidToken", this.userId);
+    authCheck("auth.verifyToken", this.userId);
     let verified = true;
+    let targetState: number;
+    let operationType: string;
     let ownerId = this.userId;
     let authRecord: any;
     let maxAttempts = Meteor.settings.public.enhancedAuth.maxAttempts;
     authRecord = Auth.findOne({ owner: ownerId });
 
     if (!this.isSimulation) {
+      let secret = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
+
       verified = speakeasy.time.verify({
-        secret: fields.key,
+        secret: secret,
         encoding: "base32",
         token: fields.myToken,
         window: 2
@@ -236,10 +604,31 @@ export const verifyToken = new ValidatedMethod({
       let attemptsOK = exceedAttemptsCheck(verified, attemptsLeft);
 
       if (attemptsOK) {
-        Auth.update(authRecord._id, { $set: { verified: true, QRCodeShown: true, currentAttempts: 0 } });
+        let currentState = authRecord.enabled;
+        switch (currentState) {
+          case 1:
+            targetState = 1;
+            break;
+          case 0:
+            targetState = 0;
+            break;
+          case 2:
+            targetState = 0;
+            operationType = "disabled";
+            break;
+          case 3:
+            targetState = 1;
+            operationType = "enabled";
+            break;
+          default:
+            targetState = 0;
+        }
+        Auth.update(authRecord._id, {
+          $set: { verified: true, QRCodeShown: true, currentAttempts: 0, enabled: targetState }
+        });
       }
     }
 
-    return verified;
+    return { verified: verified, operationIndicator: operationType };
   }
 });

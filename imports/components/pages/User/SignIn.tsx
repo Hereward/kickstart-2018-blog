@@ -85,7 +85,7 @@ class SignIn extends React.Component<IProps, IState> {
       if (err) {
         console.log(`createSession error: [${err.reason}]`, err);
         Library.modalErrorAlert(err.reason);
-      } else {
+      } else if (destination) {
         this.props.history.push(destination);
       }
     });
@@ -93,6 +93,7 @@ class SignIn extends React.Component<IProps, IState> {
 
   SignInUser() {
     this.setState({ allowSubmit: false });
+    let destination = "/";
     let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
       this.setState({ allowSubmit: true });
@@ -103,20 +104,21 @@ class SignIn extends React.Component<IProps, IState> {
           Accounts.logoutOtherClients();
         }
         if (this.props.enhancedAuth) {
-          let authFields = {
-            verified: false
-          };
-
-          AuthMethods.setVerified.call(authFields, (err, res) => {
+          AuthMethods.initUserLogin.call({ verified: false }, (err, res) => {
             if (err) {
               Library.modalErrorAlert(err.reason);
               console.log(`setVerified error`, err);
             } else {
-              this.createSession("/authenticate");
+              if (res !== 0) {
+                destination = "";
+              }
+
+              this.createSession(destination);
             }
           });
         } else {
-          this.createSession("/");
+          this.createSession(destination);
+          //this.createSession("/");
           //this.props.history.push("/");
         }
       }

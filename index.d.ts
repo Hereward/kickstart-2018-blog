@@ -103,6 +103,19 @@ declare module "react-quill" {
 */
 
 
+/*
+declare module "simple-crypto-js" {
+  
+  function generateRandom(length?: any, wordArray?: any): any; 
+
+   class SimpleCryptoJS {
+    constructor(secret?: any);
+  }
+  
+}
+*/
+
+declare var log: any;
 
 
 declare module "meteor/meteor" {

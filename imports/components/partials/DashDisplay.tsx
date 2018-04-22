@@ -73,8 +73,8 @@ const tip = {
 };
 
 export default class DashDisplay extends React.Component<IProps, IState> {
-  tipInitialised: boolean = false;
-  clearTip: boolean = false;
+  //tipInitialised: boolean = false;
+  //clearTip: boolean = false;
   currentTip: string = "";
 
   emailVerifyPrompted: boolean;
@@ -88,6 +88,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   componentWillReceiveProps(nextProps) {}
 
   componentWillUpdate(nextProps) {
+    //log.info('DashDisplay componentWillUpdate');
     if (nextProps !== this.props) {
       this.set(nextProps);
     }
@@ -96,6 +97,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   componentDidUpdate() {}
 
   componentDidMount() {
+    //log.info('DashDisplay Mount');
     this.set(this.props);
   }
 
@@ -121,19 +123,22 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     let emailVerified = props.userData ? props.userData.emails[0].verified : false;
     let verifiedFlag: boolean = false;
     let message: any = "We're not quite sure what's going on...";
+    //log.info(`dashBoardTip`, props.authData);
     if (props.loggingIn) {
       message = tip.loggingIn;
     } else if (props.loggingOut) {
       message = tip.loggingOut;
     } else if (!props.userData) {
       message = tip.loggedOut;
-    } else if (props.enhancedAuth === false) {
-      verifiedFlag = emailVerified;
-      message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
     } else if (!props.authData) {
       message = tip.loggedOut;
+    } else if (props.enhancedAuth === false || props.authData.enabled === 0) {
+
+      verifiedFlag = emailVerified;
+      message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
+   
     } else {
-      verifiedFlag = props.authData.verified && emailVerified;
+      verifiedFlag = (props.authData.verified || !props.authData.enabled) && emailVerified;
       message = verifiedFlag ? tip.verified.enhanced.verified : tip.verified.enhanced.unverified;
 
       if (!emailVerified) {

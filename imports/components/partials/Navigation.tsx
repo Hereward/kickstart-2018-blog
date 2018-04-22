@@ -56,6 +56,7 @@ interface IProps {
     owner: string;
     keyObj: any;
     QRCodeShown: boolean;
+    enabled: number;
   };
 }
 
@@ -79,12 +80,13 @@ const VerifiedIndicator = function vfi(verified) {
 };
 */
 
-declare var Bert: any;
+//declare var Bert: any;
 
 class Navigation extends React.Component<IProps, IState> {
   tipInitialised: boolean = false;
   clearTip: boolean = false;
   loggingOut: boolean = false;
+  timerID: any;
 
   emailVerifyPrompted: boolean;
   constructor(props) {
@@ -92,6 +94,7 @@ class Navigation extends React.Component<IProps, IState> {
     this.toggleNavbar = this.toggleNavbar.bind(this);
     this.closeNavbar = this.closeNavbar.bind(this);
     this.logOut = this.logOut.bind(this);
+    this.timerID = 0;
     this.state = {
       collapsed: true,
       verified: false,
@@ -105,25 +108,61 @@ class Navigation extends React.Component<IProps, IState> {
   componentWillUpdate(nextProps) {}
 
   componentDidUpdate() {
+    if (
+      !this.timerID &&
+      !this.loggingOut &&
+      this.props.location.pathname === "/" && 
+      this.props.authData &&
+      !(this.props.authData.enabled === 1 && !this.props.authData.verified)
+    ) {
+      //log.info(`Nav componentDidUpdate BEGIN`, this.timerID);
+      this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
+
+      log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO TRUE`, this.props.location.pathname);
+    }
+    log.info(`Nav componentDidUpdate END`, this.timerID, this.props.location.pathname);
+  }
+
+  verifyEmailReminder() {
     let notify = this.verifyEmailNotificationRequired();
     if (notify) {
-      this.emailVerifyPrompted = Library.userModelessAlert("verifyEmail", this.props);
+      //console.log(`Nav componentDidUpdate NOTIFY REQUIRED!!!`);
+      Library.userModelessAlert("verifyEmail", this.props);
+      this.emailVerifyPrompted = true;
+    } else {
+      this.timerID = 0;
+      log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO FALSE`, this.props.location.pathname);
+      //console.log(`Nav componentDidUpdate NOTIFY NOT REQUIRED!!! [loggingOut = ${this.loggingOut}] [prompted = ${this.emailVerifyPrompted}]`, this.props);
     }
-
-    //Tooltips.set("verified", this.props);
   }
 
   componentDidMount() {}
 
   verifyEmailNotificationRequired() {
-    return (
+    let notify = false;
+    if (
       this.props.location.pathname === "/" &&
       !this.emailVerifyPrompted &&
+      !this.loggingOut &&
       this.props.userData &&
+      !this.props.userData.emails[0].verified &&
       this.props.profile &&
-      (!this.props.enhancedAuth || this.props.authData)
+      this.props.profile.verificationEmailSent &&
+      this.props.authData &&
+      this.props.authData.enabled < 2
+    ) {
+      notify = true;
+    }
+    //console.log(`verifyEmailNotificationRequired?`, notify);
+    log.info(
+      `verifyEmailNotificationRequired | notify=[${notify}]`,
+      this.props.location.pathname,
+      this.props.authData.enabled
     );
+    return notify;
   }
+
+  //   (!this.props.enhancedAuth || (this.props.authData && this.props.authData.enabled && this.props.authData.verified))
 
   closeNavbar() {
     if (!this.state.collapsed) {
@@ -162,7 +201,7 @@ class Navigation extends React.Component<IProps, IState> {
 
   getAuthLink() {
     if (this.props.enhancedAuth) {
-      if (this.props.authData && !this.props.authData.verified) {
+      if (this.props.authData && this.props.authData.enabled === 1 && !this.props.authData.verified) {
         return (
           <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/authenticate">
             Authenticator
@@ -210,10 +249,18 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   logOut() {
-    if (User.id()) {
+    if (this.props.userData) {
       this.closeNavbar();
       this.emailVerifyPrompted = false;
+      if (this.timerID) {
+        clearTimeout(this.timerID);
+      }
+
+      this.timerID = 0;
       this.loggingOut = true;
+      //if (this.props.location.pathname === "/authenticate") {
+      this.props.history.push("/");
+      //}
 
       console.log(`Navigation logOut`, User.id());
       SessionMethods.deActivateSession.call({}, (err, res) => {
@@ -224,23 +271,38 @@ class Navigation extends React.Component<IProps, IState> {
           //Meteor["connection"].setUserId(null);
           console.log(`Navigation logOut DONE`);
           this.loggingOut = false;
-          this.props.history.push("/");
+          //this.props.history.push("/");
         });
       });
     }
   }
 
-  conditionalLogout() {
+  conditionalReroute() {
     if (User.id()) {
       let logout = false;
-      if (this.props.sessionActive && this.props.sessionExpired && !this.loggingOut) {
-        console.log(
-          `Navigation: conditionalLogout DONE! active=[${this.props.sessionActive}] expired=[${
+      if (!this.loggingOut && this.props.sessionActive && this.props.sessionExpired) {
+        log.info(
+          `Navigation: conditionalReroute DONE (sessionExpired)! active=[${this.props.sessionActive}] expired=[${
             this.props.sessionExpired
           }]`,
           User.id()
         );
         logout = true;
+      } else if (
+        !this.loggingOut &&
+        this.props.location.pathname !== "/authenticate" &&
+        this.props.authData &&
+        this.props.authData.enabled > 0 &&
+        !this.props.authData.verified
+      ) {
+        log.info(
+          `Navigation: conditionalReroute DONE (enabled & verified=false)! active=[${
+            this.props.sessionActive
+          }] expired=[${this.props.sessionExpired}]`,
+          User.id(), this.timerID
+        );
+
+        this.props.history.push("/authenticate");
       }
 
       if (logout) {
@@ -291,7 +353,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   render() {
-    this.conditionalLogout();
+    this.conditionalReroute();
     return this.navBar();
   }
 }

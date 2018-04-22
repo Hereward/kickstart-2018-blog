@@ -41,7 +41,7 @@
         ]
       }
     ],
-    "import/newline-after-import": [2],
+    "import/newline-after-import": "off",
     "import/prefer-default-export": "off",
     "import/extensions": [0],
     "import/no-absolute-path": [0],
@@ -92,6 +92,7 @@
     "no-redeclare": "warn",
     "block-scoped-var": "warn",
     "operator-assignment": "warn",
+    "default-case": "off",
     "react/no-unused-state": "react/no-unused-state",
     "semi": ["error", "always"],
     "prefer-arrow-callback": ["warn",

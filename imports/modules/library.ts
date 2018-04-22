@@ -3,8 +3,8 @@ import * as User from "./user";
 export function invalidAuthCodeAlert(error) {
   let message: string;
   let title: string;
-  let obj = arguments[0];
-  message = obj.reason || "Operation completed sucessfully.";
+  //let obj = arguments[0];
+  message = error.reason || "Operation completed sucessfully.";
   title = error.error === "invalidCode" ? "Invalid Code" : "Account Locked";
 
   swal({
@@ -71,33 +71,31 @@ export function userModelessAlert(type, props) {
     return;
   }
 
-  let emailVerified = User.data().emails[0].verified;
+  let emailVerified = props.userData.emails[0].verified;
 
   let msg = "";
   let alertType = "";
   let icon = "fa-magic";
   let title = "";
   let hideDelay = 7000;
-  let allowAlert = false;
+  //let allowFurtherAlerts = false;
+  //  (!props.enhancedAuth || props.authData.verified) &&
   if (type === "verifyEmail") {
+    //allowFurtherAlerts = true;
     if (
-      User.id() &&
-      (!props.enhancedAuth || props.authData.verified) &&
       props.profile.verificationEmailSent === 1 &&
       !emailVerified
     ) {
-      allowAlert = true;
+      //allowFurtherAlerts = true;
       title = "Check Your Email";
       msg =
         "A verification email has been sent to your nominated email account. Please check your email and click on the verification link.";
       alertType = "warning";
     } else if (
-      User.id() &&
-      (!props.enhancedAuth || props.authData.verified) &&
       props.profile.verificationEmailSent === 2 &&
       !emailVerified
     ) {
-      allowAlert = true;
+      //allowFurtherAlerts = true;
       title = "Verification email could not be sent";
       msg =
         "We tried to send a verification email to your nominated email address, but there was a problem. Please check your profile for more details.";
@@ -105,17 +103,16 @@ export function userModelessAlert(type, props) {
     }
   }
 
-  if (allowAlert) {
-    Bert.defaults.hideDelay = hideDelay;
-    Bert.alert({
-      hideDelay: hideDelay,
-      type: alertType,
-      icon: icon,
-      title: title,
-      message: msg
-    });
-  }
-  return allowAlert;
+  //log.info(`Bert message =`, emailVerified, props.profile.verificationEmailSent, type, msg);
+  Bert.defaults.hideDelay = hideDelay;
+  Bert.alert({
+    hideDelay: hideDelay,
+    type: alertType,
+    icon: icon,
+    title: title,
+    message: msg
+  });
+
 }
 
 export function setCookie(name, value, sec) {
@@ -138,4 +135,3 @@ export function getCookie(name) {
       .split(";")
       .shift();
 }
-

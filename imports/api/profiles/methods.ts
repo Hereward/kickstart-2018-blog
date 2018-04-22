@@ -26,6 +26,11 @@ export const createProfile = new ValidatedMethod({
 
   run() {
     authCheck("profiles.create", this.userId);
+    let admin = false;
+
+    if (!this.isSimulation) {
+      admin = (Meteor.settings.private.adminEmail === Meteor.user().emails[0].address);
+    }
 
     let id = Profiles.insert({
       fname: "",
@@ -42,7 +47,8 @@ export const createProfile = new ValidatedMethod({
       verificationEmailSent: 0,
       new: true,
       createdAt: new Date(),
-      owner: this.userId
+      owner: this.userId,
+      admin: admin
     });
 
     return id;

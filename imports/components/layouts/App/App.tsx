@@ -41,6 +41,7 @@ export default withTracker(() => {
   let enhancedAuth: boolean = true;
   let userId = User.id();
   let authData: any;
+  let admin = false;
   if (Meteor.settings.public.enhancedAuth.active === false) {
     enhancedAuth = false;
   }
@@ -48,6 +49,9 @@ export default withTracker(() => {
   if (userId) {
     if (ProfilesDataReady) {
       profile = Profiles.findOne({ owner: userId });
+      if (profile) {
+        admin = profile.admin;
+      }
     }
   }
 
@@ -55,6 +59,7 @@ export default withTracker(() => {
     MainTitle: Meteor.settings.public.MainTitle,
     ShortTitle: Meteor.settings.public.ShortTitle,
     enhancedAuth: enhancedAuth,
-    profile: profile
+    profile: profile,
+    admin: admin
   };
 })(App);

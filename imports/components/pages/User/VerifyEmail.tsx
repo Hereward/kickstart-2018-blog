@@ -9,6 +9,8 @@ import * as AuthMethods from "../../../api/auth/methods";
 
 import Transition from "../../partials/Transition";
 import * as Library from "../../../modules/library";
+import * as User from "../../../modules/user";
+import { Auth } from "../../../api/auth/publish";
 
 interface IProps {
   enhancedAuth: boolean;
@@ -49,13 +51,14 @@ class VerifyEmail extends React.Component<IProps, IState> {
       this.token,
       function verified(err) {
         if (!err) {
-          if (this.props.enhancedAuth) {
+          if (this.props.enhancedAuth && this.propsAuthData && this.propsAuthData.enabled) {
             AuthMethods.setVerified.call({ verified: false }, (err, res) => {
               if (err) {
                 Library.modalErrorAlert(err.reason);
                 console.log(`setVerified error`, err);
               }
             });
+            //this.props.history.push("/");
 
             this.props.history.push("/authenticate");
           } else {
@@ -88,6 +91,16 @@ class VerifyEmail extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(({ params }) => {
-    return {};
+    let authData: any;
+    let authDataReady = Meteor.subscribe("enhancedAuth");
+
+    if (User.id()) {
+      let id = User.id();
+
+      if (authDataReady) {
+        authData = Auth.findOne({ owner: id });
+      }
+    }
+    return { authData: authData };
   })(VerifyEmail)
 );

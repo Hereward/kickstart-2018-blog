@@ -8,9 +8,9 @@ import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import App from "../../components/layouts/App/App";
 import { addMeta } from "./meta";
 import * as Library from "../../modules/library";
-import * as AuthMethods from "../../api/auth/methods";
 import * as ContentManagement from "../../modules/contentManagement";
 import { keepAliveUserSession, restoreUserSession } from "../../api/sessions/methods";
+import { validateUserLogin } from "../../api/auth/methods";
 import * as User from "../../modules/user";
 
 class Launch extends React.Component {
@@ -29,7 +29,7 @@ class Launch extends React.Component {
 
 const keepAlive = function keepAlive(activityDetected: any) {
   if (User.data()) {
-    keepAliveUserSession.call({ id: User.id(), activityDetected: activityDetected }, (err, res) => {
+    keepAliveUserSession.call({ activityDetected: activityDetected }, (err, res) => {
       if (err) {
         console.log(`keepAliveUserSession client error`, err.reason);
       }
@@ -39,7 +39,17 @@ const keepAlive = function keepAlive(activityDetected: any) {
 
 const restoreSession = function restoreSession() {
   if (User.id()) {
-    restoreUserSession.call({ id: User.id() }, (err, res) => {
+    restoreUserSession.call({}, (err, res) => {
+      if (err) {
+        console.log(`restoreUserSession client error`, err.reason);
+      }
+    });
+  }
+};
+
+const validateLogin = function validateLogin() {
+  if (User.id()) {
+    validateUserLogin.call({}, (err, res) => {
       if (err) {
         console.log(`restoreUserSession client error`, err.reason);
       }
@@ -52,6 +62,7 @@ Accounts.onLogout(() => {});
 Meteor.startup(() => {
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
   addMeta();
+  //validateLogin();
 
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
   if (timeOutOn === true) {

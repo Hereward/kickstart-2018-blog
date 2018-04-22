@@ -20,7 +20,9 @@ import UploadForm from "../../forms/UploadForm";
 import { Images } from "../../../api/images/methods";
 import { deleteAllUsers } from "../../../api/admin/methods";
 import Image from "../../partials/Image";
-
+import Notification from "../../partials/Notification";
+import { toggleEnabledPending as toggle2FA } from "../../../api/auth/methods";
+import { Auth } from "../../../api/auth/publish";
 import SignInForm from "../../forms/SignInForm";
 import * as User from "../../../modules/user";
 
@@ -33,6 +35,8 @@ interface IProps {
   userData: any;
   userEmail: string;
   emailVerified: boolean;
+  admin: boolean;
+  authData: any;
 }
 
 interface IState {
@@ -42,6 +46,7 @@ interface IState {
   allowSubmit: boolean;
   allowSubmitDeleteAllUsers: boolean;
   DeleteAllUsersDone: boolean;
+  processing2FArequest: boolean;
 }
 
 class Profile extends React.Component<IProps, IState> {
@@ -56,6 +61,7 @@ class Profile extends React.Component<IProps, IState> {
     this.handleSetState = this.handleSetState.bind(this);
     this.handleDeleteAllUsers = this.handleDeleteAllUsers.bind(this);
     this.sendVerificationEmail = this.sendVerificationEmail.bind(this);
+    this.Toggle2FA = this.Toggle2FA.bind(this);
     let mapped: any;
     mapped = this.fieldMapper("init");
     this.state = mapped;
@@ -72,6 +78,7 @@ class Profile extends React.Component<IProps, IState> {
       obj["allowSubmit"] = true;
       obj["DeleteAllUsersDone"] = false;
       obj["allowSubmitDeleteAllUsers"] = true;
+      obj["processing2FArequest"] = false;
     } else if (type === "props") {
       this.fieldsArray.forEach(element => (obj[element] = props[element]));
     } else if (type === "method") {
@@ -242,6 +249,48 @@ class Profile extends React.Component<IProps, IState> {
     return layout;
   }
 
+  Toggle2FA() {
+    this.setState({ processing2FArequest: true });
+    toggle2FA.call({}, (err, verified) => {
+      this.setState({ processing2FArequest: false });
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`Toggle2FA error`, err);
+      } else {
+        //this.props.history.push("/authenticate");
+      }
+    });
+
+    //return true;
+  }
+
+  render2FAPanel() {
+    let layout: any;
+    let activateMsg = "Activate 2 factor authentication on your account for enhanced security.";
+    let deActivateMsg = "De-activate 2 factor authentication.";
+    let activateBtnText = "Activate Now";
+    let deActivateBtnText = "De-activate Now";
+    let alertLevelActivate = "danger";
+    let alertLeveldeActivate = "warning";
+
+    layout = "";
+    if (this.props.admin) {
+      layout = (
+        <BlockUi tag="div" blocking={this.state.processing2FArequest}>
+          <Alert color={alertLevelActivate}>
+            <strong>{activateMsg}</strong>
+            <hr />{" "}
+            <Button onClick={this.Toggle2FA()} size="sm" color="primary">
+              {activateBtnText}
+            </Button>{" "}
+          </Alert>
+        </BlockUi>
+      );
+    }
+
+    return layout;
+  }
+
   renderAdminPanel() {
     let layout: any;
     let completionMessage = (
@@ -250,7 +299,7 @@ class Profile extends React.Component<IProps, IState> {
       </span>
     );
     layout = "";
-    if (this.props.userEmail && this.props.userEmail === Meteor.settings.public.adminEmail) {
+    if (this.props.admin) {
       layout = (
         <BlockUi tag="div" blocking={!this.state.allowSubmitDeleteAllUsers}>
           <Alert color="warning">
@@ -400,6 +449,13 @@ class Profile extends React.Component<IProps, IState> {
     return (
       <Transition>
         <div className="container page-content">
+          <Notification
+            mainFunction={this.Toggle2FA}
+            panel="auth"
+            parentProps={this.props}
+            processingRequest={this.state.processing2FArequest}
+            authData={this.props.authData}
+          />
           {this.renderNotification()}
           {this.renderAdminPanel()}
           {layout}
@@ -409,6 +465,8 @@ class Profile extends React.Component<IProps, IState> {
   }
 }
 
+// <Notification mainFunction={this.Toggle2FA} panel='2FA' parentProps={this.props} />
+
 export default withRouter(
   withTracker(props => {
     let myImages: any;
@@ -417,9 +475,18 @@ export default withRouter(
     let emailVerified: boolean = false;
     let userData = User.data();
 
+    let authData: any;
+    let authDataReady = Meteor.subscribe("enhancedAuth");
+
+
     if (userData) {
       emailVerified = userData.emails[0].verified;
       userEmail = userData.emails[0].address;
+      let id = User.id();
+
+      if (authDataReady) {
+        authData = Auth.findOne({ owner: id });
+      }
     }
 
     if (ImagesDataReady) {
@@ -427,6 +494,13 @@ export default withRouter(
         myImages = Images.find({ _id: props.profile.image_id }).fetch();
       }
     }
-    return { myImages: myImages, userData: userData, userEmail: userEmail, emailVerified: emailVerified };
+    return {
+      admin: props.admin,
+      myImages: myImages,
+      userData: userData,
+      userEmail: userEmail,
+      emailVerified: emailVerified,
+      authData: authData
+    };
   })(Profile)
 );

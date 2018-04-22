@@ -101,31 +101,30 @@ export const keepAliveUserSession = new ValidatedMethod({
   name: "UserSession.keepAlive",
 
   validate: new SimpleSchema({
-    id: { type: String },
     activityDetected: { type: Boolean },
     force: { type: Boolean, optional: true }
   }).validator(),
 
   run(fields) {
-    authCheck("UserSession.keepAlive", fields.id);
+    authCheck("UserSession.keepAlive", this.userId);
     let inactivityTimeout: any;
     inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
     let now: any;
     now = new Date();
     let id = "";
     let sessionRecord: any;
-    sessionRecord = userSessions.findOne({ owner: fields.id });
+    sessionRecord = userSessions.findOne({ owner: this.userId });
 
     if (sessionRecord) {
       let diff = sessionRecord.expiresOn - now;
 
       if (diff < 0 && !fields.force) {
-        killSession.call({ id: fields.id }, () => {});
+        killSession.call({ id: this.userId }, () => {});
       } else if (fields.activityDetected) {
         let expires = new Date(Date.now() + inactivityTimeout);
         // Date.now()
         userSessions.update(
-          { owner: fields.id },
+          { owner: this.userId },
           {
             $set: {
               expiresOn: expires,
@@ -143,9 +142,7 @@ export const keepAliveUserSession = new ValidatedMethod({
 export const restoreUserSession = new ValidatedMethod({
   name: "UserSession.restore",
 
-  validate: new SimpleSchema({
-    id: { type: String }
-  }).validator(),
+  validate: null,
 
   run(fields) {
     let sessionRestored = false;
@@ -159,7 +156,7 @@ export const restoreUserSession = new ValidatedMethod({
         id = insert(this.userId);
         sessionRestored = true;
       } else {
-        keepAliveUserSession.call({ id: this.userId, activityDetected: false }, (err, res) => {
+        keepAliveUserSession.call({ activityDetected: false }, (err, res) => {
           if (err) {
             console.log(`keepAliveUserSession error`, err.reason);
           }
