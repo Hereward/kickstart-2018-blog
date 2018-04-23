@@ -118,9 +118,9 @@ class Navigation extends React.Component<IProps, IState> {
       //log.info(`Nav componentDidUpdate BEGIN`, this.timerID);
       this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
 
-      log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO TRUE`, this.props.location.pathname);
+      //log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO TRUE`, this.props.location.pathname);
     }
-    log.info(`Nav componentDidUpdate END`, this.timerID, this.props.location.pathname);
+    //log.info(`Nav componentDidUpdate END`, this.timerID, this.props.location.pathname);
   }
 
   verifyEmailReminder() {
@@ -131,7 +131,7 @@ class Navigation extends React.Component<IProps, IState> {
       this.emailVerifyPrompted = true;
     } else {
       this.timerID = 0;
-      log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO FALSE`, this.props.location.pathname);
+      //log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO FALSE`, this.props.location.pathname);
       //console.log(`Nav componentDidUpdate NOTIFY NOT REQUIRED!!! [loggingOut = ${this.loggingOut}] [prompted = ${this.emailVerifyPrompted}]`, this.props);
     }
   }

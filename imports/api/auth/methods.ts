@@ -52,16 +52,17 @@ const initAuth = (authId, userId) => {
 
   const buf = crypto.randomBytes(16);
   const randomString = buf.toString("hex");
-  console.log(`initAuth - | randomString = [${randomString}]`, email);
+  //console.log(`initAuth - | randomString = [${randomString}]`, email);
   secret = speakeasy.generateSecret({
     length: 20,
     name: `Meteor KickStart: ${email}`
   });
   key = secret.base32;
+  log.info(`initAuth - Raw Key`, key);
 
   let keyEncrypted = encrypt(key, randomString);
   console.log(`initAuth keyEncrypted SUCCESS [${keyEncrypted}]`);
-  Auth.update(authId, { $set: { private_key_enc: keyEncrypted, cryptoKey: randomString } });
+  Auth.update(authId, { $set: { private_key_enc: keyEncrypted, cryptoKey: randomString }});
   let future = new Future();
   QRCode.toDataURL(secret.otpauth_url, (err, dataUrl) => {
     future.return({ error: err, url: dataUrl });
@@ -75,7 +76,7 @@ const initAuth = (authId, userId) => {
     );
   } else {
     let urlEnc = encrypt(toDataURLObj.url, randomString);
-    console.log(`initAuth toDataURL SUCCESS`);
+    //console.log(`initAuth toDataURL SUCCESS`);
     Auth.update(authId, { $set: { QRCodeURL_enc: urlEnc } });
   }
 
@@ -105,6 +106,7 @@ function encrypt(text, password) {
   );
   let crypted = cipher.update(text, "utf8", "hex");
   crypted += cipher.final("hex");
+  //log.info(`encrypt`, text);
   return crypted;
 }
 
@@ -116,6 +118,7 @@ function decrypt(text, password) {
   );
   let dec = decipher.update(text, "hex", "utf8");
   dec += decipher.final("utf8");
+  //log.info(`decrypt`, dec);
   return dec;
 }
 
@@ -170,7 +173,9 @@ export const decryptKey = new ValidatedMethod({
   }
 });
 
-export const init = new ValidatedMethod({
+
+
+export const getDecrpytedAuthData = new ValidatedMethod({
   name: "auth.init",
 
   validate: null,
@@ -178,16 +183,21 @@ export const init = new ValidatedMethod({
   run(fields) {
     authCheck("auth.init", this.userId);
     let privateData: any;
+    let privateKey: string;
+    let url: string;
     if (!this.isSimulation) {
       let authRecord: any;
       authRecord = Auth.findOne({ owner: this.userId });
       if (authRecord) {
-        privateData = initAuth(authRecord._id, this.userId);
+        privateKey = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
+        url = decrypt(authRecord.QRCodeURL_enc, authRecord.cryptoKey);
+        privateData = {key: privateKey, url: url};
       }
     }
     return privateData;
   }
 });
+
 
 export const cancel = new ValidatedMethod({
   name: "auth.cancel",
@@ -280,6 +290,10 @@ export const toggleEnabledPending = new ValidatedMethod({
             targetState = 0;
         }
 
+        if (targetState === 3) {
+          initAuth(authRecord._id, this.userId);
+        }
+        
         Auth.update(authRecord._id, { $set: { enabled: targetState, verified: false } });
         console.log(`auth.activate - DONE!`);
       } else {
@@ -442,6 +456,7 @@ export const verifyToken = new ValidatedMethod({
 
     if (!this.isSimulation) {
       let secret = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
+      log.info('decrypted private key', secret);
 
       verified = speakeasy.time.verify({
         secret: secret,

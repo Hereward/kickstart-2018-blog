@@ -8,7 +8,7 @@ import Loader from "react-loader-spinner";
 import styled from "styled-components";
 import * as Library from "../../modules/library";
 import Transition from "./Transition";
-import { init as initAuthData, cancel as cancel2FA } from "../../api/auth/methods";
+import {getDecrpytedAuthData, cancel as cancel2FA } from "../../api/auth/methods";
 import { Auth } from "../../api/auth/publish";
 import * as User from "../../modules/user";
 
@@ -53,15 +53,7 @@ class QRCode extends React.Component<IProps, IState> {
       privateKey: "",
       cancelEnabled: false
     };
-    initAuthData.call({}, (err, res) => {
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        console.log(`initAuth error`, err);
-      } else {
-        log.info(`initAuth - DONE (Client)!`, res);
-        this.setState({ privateKey: res.key, QRCodeURL: res.url });
-      }
-    });
+    
   }
 
   componentWillReceiveProps(nextProps) {}
@@ -70,7 +62,19 @@ class QRCode extends React.Component<IProps, IState> {
 
   componentDidUpdate() {}
 
-  componentWillUnmount() {}
+  componentWillMount() {
+    
+    getDecrpytedAuthData.call({}, (err, res) => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`initAuth error`, err);
+      } else {
+        log.info(`initAuth - DONE (Client)!`, res);
+        this.setState({ privateKey: res.key, QRCodeURL: res.url });
+      }
+    });
+    
+  }
 
   componentDidMount() {}
 
