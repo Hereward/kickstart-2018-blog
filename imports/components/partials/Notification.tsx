@@ -10,18 +10,20 @@ const panelData = {
         message: "WARNING: 2FA is disabled. Activate 2 factor authentication on your account for enhanced security.",
         btnText: "Activate Now",
         alertLevel: "danger",
-        caution: "Once 2FA is activated you'll need to enter an authorisation code in order to access your account."
+        addendum: "Once 2FA is activated you'll need to enter an authorisation code in order to access your account."
       },
       disable: {
         message: "2 factor authentication is currently active.",
         btnText: "De-activate Now",
         alertLevel: "danger",
-        caution:
+        addendum:
           "In order to complete this action you'll need to enter an authorisation code or you'll be locked out of your account."
       }
     },
     verifyEmail: {
       message: "WARNING: Your email address is not verified.",
+      addendum:
+          "You will receive an email with further instructions.",
       btnText: "Verify Now",
       alertLevel: "warning"
     },
@@ -82,7 +84,7 @@ export default class Notification extends React.Component<IProps, IState> {
     let message: string;
     let alertLevel: string;
     let btnText: string;
-    let caution: string;
+    let addendum: string;
 
     let panelType = this.props.type;
 
@@ -111,12 +113,12 @@ export default class Notification extends React.Component<IProps, IState> {
       message = panelData[this.props.panel][panelType][stateChange].message;
       alertLevel = panelData[this.props.panel][panelType][stateChange].alertLevel;
       btnText = panelData[this.props.panel][panelType][stateChange].btnText;
-      caution = panelData[this.props.panel][panelType][stateChange].caution;
+      addendum = panelData[this.props.panel][panelType][stateChange].addendum;
     } else {
       message = panelData[this.props.panel][panelType].message;
       alertLevel = panelData[this.props.panel][panelType].alertLevel;
       btnText = panelData[this.props.panel][panelType].btnText;
-      caution = panelData[this.props.panel][panelType].caution;
+      addendum = panelData[this.props.panel][panelType].addendum;
     }
 
     layout = (
@@ -127,10 +129,10 @@ export default class Notification extends React.Component<IProps, IState> {
           <Button onClick={this.props.mainFunction} size="sm" color="primary">
             {btnText}
           </Button>{" "}
-          {caution ? (
+          {addendum ? (
             <span>
-              <strong>&nbsp;CAUTION: </strong>
-              <em>{caution}</em>
+              <strong>&nbsp;NOTE: </strong>
+              <em>{addendum}</em>
             </span>
           ) : (
             ""
@@ -147,7 +149,7 @@ export default class Notification extends React.Component<IProps, IState> {
     let message: string;
     let alertLevel: string;
     let btnText: string;
-    let caution: string;
+    let addendum: string;
 
     let panelType = this.props.type;
     log.info(`infoPanel - panelType`, panelType);

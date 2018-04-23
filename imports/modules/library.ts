@@ -75,26 +75,17 @@ export function userModelessAlert(type, props) {
 
   let msg = "";
   let alertType = "";
-  let icon = "fa-magic";
   let title = "";
   let hideDelay = 7000;
-  //let allowFurtherAlerts = false;
-  //  (!props.enhancedAuth || props.authData.verified) &&
+  // let icon = "fa-magic";
+
   if (type === "verifyEmail") {
-    //allowFurtherAlerts = true;
-    if (
-      props.profile.verificationEmailSent === 1 &&
-      !emailVerified
-    ) {
-      //allowFurtherAlerts = true;
+    if (props.profile.verificationEmailSent === 1 && !emailVerified) {
       title = "Check Your Email";
       msg =
         "A verification email has been sent to your nominated email account. Please check your email and click on the verification link.";
-      alertType = "warning";
-    } else if (
-      props.profile.verificationEmailSent === 2 &&
-      !emailVerified
-    ) {
+      alertType = "info";
+    } else if (props.profile.verificationEmailSent === 2 && !emailVerified) {
       //allowFurtherAlerts = true;
       title = "Verification email could not be sent";
       msg =
@@ -103,16 +94,13 @@ export function userModelessAlert(type, props) {
     }
   }
 
-  //log.info(`Bert message =`, emailVerified, props.profile.verificationEmailSent, type, msg);
   Bert.defaults.hideDelay = hideDelay;
   Bert.alert({
     hideDelay: hideDelay,
     type: alertType,
-    icon: icon,
     title: title,
     message: msg
   });
-
 }
 
 export function setCookie(name, value, sec) {
