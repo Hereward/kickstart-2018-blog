@@ -48,7 +48,6 @@ class QRCode extends React.Component<IProps, IState> {
     super(props);
     this.handleQRClick = this.handleQRClick.bind(this);
     this.cancel2FA = this.cancel2FA.bind(this);
-    //let showQRcode = this.props.authData && this.props.authData.QRCodeShown === false ? true : false;
     this.state = {
       QRCodeURL: "",
       privateKey: "",
@@ -71,20 +70,9 @@ class QRCode extends React.Component<IProps, IState> {
 
   componentDidUpdate() {}
 
-  componentWillUnmount() {
-    /*
-    deletetKey.call({}, (err, token) => {
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        console.log(`deletetKey error`, err);
-      }
-    });
-    */
-  }
+  componentWillUnmount() {}
 
-  componentDidMount() {
-    //console.log(`QRCode - componentDidMount`);
-  }
+  componentDidMount() {}
 
   handleQRClick() {
     this.props.handleQRclick();

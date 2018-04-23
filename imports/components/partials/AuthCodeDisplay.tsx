@@ -39,8 +39,6 @@ export default class AuthCodeDisplay extends React.Component<IProps, IState> {
     this.setTimer();
   }
 
-
-
   componentWillReceiveProps(nextProps) {
     this.setTimer();
   }
@@ -48,7 +46,6 @@ export default class AuthCodeDisplay extends React.Component<IProps, IState> {
   componentWillUpdate(nextProps) {}
 
   componentDidUpdate() {}
-
 
   setTimer() {
     if (!this.timerWasSet) {
@@ -70,11 +67,10 @@ export default class AuthCodeDisplay extends React.Component<IProps, IState> {
         Library.modalErrorAlert(err.reason);
         console.log(`currentValidToken error`, err);
       } else if (token && this.oldToken !== token) {
-          //console.log(`checkTokens [${token}]`);
-          this.setState({ currentValidToken: token });
-          this.oldToken = token;
-          this.expiredTokens.push(this.oldToken);
-        
+        //console.log(`checkTokens [${token}]`);
+        this.setState({ currentValidToken: token });
+        this.oldToken = token;
+        this.expiredTokens.push(this.oldToken);
       }
     });
   }

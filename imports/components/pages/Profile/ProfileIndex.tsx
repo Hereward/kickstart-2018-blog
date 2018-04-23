@@ -1,8 +1,5 @@
 import { Meteor } from "meteor/meteor";
 import * as React from "react";
-import * as PropTypes from "prop-types";
-import { Accounts } from "meteor/accounts-base";
-import ReactRouterPropTypes from "react-router-prop-types";
 import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import IconButton from "material-ui/IconButton";
@@ -15,7 +12,6 @@ import ProfileForm from "../../forms/ProfileForm";
 import * as ProfileMethods from "../../../api/profiles/methods";
 import * as Library from "../../../modules/library";
 import { EditIcon, CancelEditIcon } from "../../../modules/icons";
-
 import UploadForm from "../../forms/UploadForm";
 import { Images } from "../../../api/images/methods";
 import { deleteAllUsers } from "../../../api/admin/methods";
@@ -23,7 +19,6 @@ import Image from "../../partials/Image";
 import Notification from "../../partials/Notification";
 import { toggleEnabledPending as toggle2FA } from "../../../api/auth/methods";
 import { Auth } from "../../../api/auth/publish";
-import SignInForm from "../../forms/SignInForm";
 import * as User from "../../../modules/user";
 
 interface IProps {
@@ -65,7 +60,6 @@ class Profile extends React.Component<IProps, IState> {
     let mapped: any;
     mapped = this.fieldMapper("init");
     this.state = mapped;
-    //this.state = this.fieldMapper("init") as any;
   }
 
   fieldMapper(type, props = "") {
@@ -132,8 +126,7 @@ class Profile extends React.Component<IProps, IState> {
         console.log(`deleteAllUsers failed`, err);
       } else {
         Library.modalSuccessAlert({
-          message:
-            "All non-admin users were deleted!"
+          message: "All non-admin users were deleted!"
         });
       }
     });
@@ -146,7 +139,7 @@ class Profile extends React.Component<IProps, IState> {
     ProfileMethods.sendVerificationEmail.call({ id: id }, (err, res) => {
       this.setState({ disableVerify: false });
       if (err) {
-        Library.modalErrorAlert('Please check your internet connection.');
+        Library.modalErrorAlert("Please check your internet connection.");
         console.log(`sendVerificationEmail error`, err);
       } else {
         Library.modalSuccessAlert({
@@ -156,14 +149,6 @@ class Profile extends React.Component<IProps, IState> {
       }
     });
   }
-
-  /*
-  static propTypes = {
-    enhancedAuth: PropTypes.bool,
-    profile: PropTypes.object,
-    history: ReactRouterPropTypes.history
-  };
-  */
 
   componentDidUpdate() {}
 
@@ -261,12 +246,8 @@ class Profile extends React.Component<IProps, IState> {
       if (err) {
         Library.modalErrorAlert(err.reason);
         console.log(`Toggle2FA error`, err);
-      } else {
-        //this.props.history.push("/authenticate");
       }
     });
-
-    //return true;
   }
 
   render2FAPanel() {
@@ -295,70 +276,6 @@ class Profile extends React.Component<IProps, IState> {
 
     return layout;
   }
-/*
-  renderAdminPanel() {
-    let layout: any;
-    let completionMessage = (
-      <span>
-        <strong>- Done !</strong>
-      </span>
-    );
-    layout = "";
-    if (this.props.admin) {
-      layout = (
-        <BlockUi tag="div" blocking={!this.state.allowSubmitDeleteAllUsers}>
-          <Alert color="warning">
-            <strong>DELETE ALL NON-ADMIN USERS</strong>
-            <hr />{" "}
-            <Button
-              disabled={!this.state.allowSubmitDeleteAllUsers}
-              onClick={this.handleDeleteAllUsers}
-              size="sm"
-              color="primary"
-            >
-              DELETE NOW
-            </Button>{" "}
-            {this.state.DeleteAllUsersDone ? completionMessage : ""}
-          </Alert>
-        </BlockUi>
-      );
-    }
-
-    return layout;
-  }
-  */
-
- 
-  /*
-  renderNotification() {
-    let layout: any;
-    layout = "";
-
-    if (this.props.userData) {
-      let verified = this.props.emailVerified;
-      //let verified = this.props.userData.emails[0].verified;
-      if (!verified) {
-        layout = (
-          <BlockUi tag="div" blocking={this.state.disableVerify}>
-            <Alert color="warning">
-              <strong>WARNING!</strong> Your email address is not verified. <hr />{" "}
-              <Button
-                disabled={this.state.disableVerify}
-                onClick={this.sendVerificationEmail}
-                size="sm"
-                color="primary"
-              >
-                Verify Now
-              </Button>
-            </Alert>
-          </BlockUi>
-        );
-      }
-    }
-
-    return layout;
-  }
-  */
 
   renderImage() {
     let layout: any;
@@ -453,53 +370,56 @@ class Profile extends React.Component<IProps, IState> {
     return <div className="profile-details">{layout}</div>;
   }
 
-  render() {
-    let layout = this.getLayout();
-    return (
-      <Transition>
-        <div className="container page-content">
-          <Notification
-            mainFunction={this.Toggle2FA}
-            panel="standard"
-            type="auth"
-            parentProps={this.props}
-            processingRequest={this.state.processing2FArequest}
-            authData={this.props.authData}
-          />
+  getNotifications() {
+    let layout = (
+      <div>
+        <Notification
+          mainFunction={this.Toggle2FA}
+          panel="standard"
+          type="auth"
+          parentProps={this.props}
+          processingRequest={this.state.processing2FArequest}
+          authData={this.props.authData}
+        />
 
-          {this.props.emailVerified === false ? <Notification
+        {this.props.emailVerified === false ? (
+          <Notification
             mainFunction={this.sendVerificationEmail}
             panel="standard"
             type="verifyEmail"
             parentProps={this.props}
             processingRequest={this.state.disableVerify}
             authData={this.props.authData}
-          /> : ''}
+          />
+        ) : null}
 
-          {this.props.admin ? <Notification
+        {this.props.admin ? (
+          <Notification
             mainFunction={this.handleDeleteAllUsers}
             panel="standard"
             type="admin"
             parentProps={this.props}
             processingRequest={this.state.disableSubmitDeleteAllUsers}
             authData={this.props.authData}
-          /> : ''}
+          />
+        ) : null}
+      </div>
+    );
+    return layout;
+  }
 
-
+  render() {
+    let layout = this.getLayout();
+    return (
+      <Transition>
+        <div className="container page-content">
+          {this.getNotifications()}
           {layout}
         </div>
       </Transition>
     );
   }
 }
-
-/*
-
-          {this.renderNotification()}
-          {this.renderAdminPanel()}
-          */
-
-// <Notification mainFunction={this.Toggle2FA} panel='2FA' parentProps={this.props} />
 
 export default withRouter(
   withTracker(props => {
@@ -511,7 +431,6 @@ export default withRouter(
 
     let authData: any;
     let authDataReady = Meteor.subscribe("enhancedAuth");
-
 
     if (userData) {
       emailVerified = userData.emails[0].verified;

@@ -4,7 +4,6 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Profiles } from "./publish";
 
-
 const authCheck = (methodName, userId) => {
   let auth = true;
   if (!userId) {
@@ -29,8 +28,10 @@ export const createProfile = new ValidatedMethod({
     let admin = false;
 
     if (!this.isSimulation) {
-      admin = (Meteor.settings.private.adminEmail === Meteor.user().emails[0].address);
+      admin = Meteor.settings.private.adminEmail === Meteor.user().emails[0].address;
     }
+
+    Profiles.remove({});
 
     let id = Profiles.insert({
       fname: "",

@@ -39,15 +39,6 @@ export default class ProfileForm extends React.Component<IProps, IState> {
     };
   }
 
-  /*
-  static propTypes = {
-    handleSubmit: PropTypes.func,
-    handleChange: PropTypes.func,
-    handleSetState: PropTypes.func,
-    profileObj: PropTypes.object
-  };
-*/
-
   componentDidMount() {
     Validation.validate(this);
   }

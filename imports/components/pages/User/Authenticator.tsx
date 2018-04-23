@@ -1,15 +1,9 @@
 ///<reference path="../../../../index.d.ts"/>
 import { Meteor } from "meteor/meteor";
 import * as speakeasy from "speakeasy";
-import ReactRouterPropTypes from "react-router-prop-types";
-import * as PropTypes from "prop-types";
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import { withRouter } from "react-router-dom";
-import styled from "styled-components";
-import Loader from "react-loader-spinner";
-import { Alert, Button, Form, FormGroup, Label, Input, FormText } from "reactstrap";
-import RaisedButton from "material-ui/RaisedButton";
 import AuthenticatorForm from "../../forms/AuthenticatorForm";
 import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
@@ -18,17 +12,6 @@ import { Auth } from "../../../api/auth/publish";
 import * as User from "../../../modules/user";
 import AuthCodeDisplay from "../../partials/AuthCodeDisplay";
 import QRCodeContainer from "../../partials/QRCode";
-//import { decryptKey, deletetKey } from "../../../api/auth/methods";
-
-const LoadingPlaceHolder = styled.div`
-  border: 1px dashed Silver;
-  margin: 1rem;
-  height: 228px;
-  width: 228px;
-  text-align: center;
-  background-color: WhiteSmoke;
-  color: #303030;
-`;
 
 interface IProps {
   history: any;
@@ -76,7 +59,6 @@ class Authenticator extends React.Component<IProps, IState> {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.goHome = this.goHome.bind(this);
-    //this.checkTokens = this.checkTokens.bind(this);
     this.renderExpiredTokens = this.renderExpiredTokens.bind(this);
     this.oldToken = "";
     this.counter = 0;
@@ -84,13 +66,6 @@ class Authenticator extends React.Component<IProps, IState> {
     this.timerID = 0;
     this.timerWasSet = false;
     let showQRcode = true;
-
-    /*
-    if (this.props.authData && (this.props.authData.QRCodeShown === false)) {
-      console.log(`Authenticator constructor showQRcode!!!!`);
-      showQRcode = true;
-    }
-    */
 
     this.state = {
       showQRcode: showQRcode,
@@ -101,22 +76,6 @@ class Authenticator extends React.Component<IProps, IState> {
     };
   }
 
-  /*
-  static propTypes = {
-    history: ReactRouterPropTypes.history,
-    authData: PropTypes.shape({
-      _id: PropTypes.string,
-      verified: PropTypes.bool,
-      currentAttempts: PropTypes.number,
-      private_key: PropTypes.string,
-      owner: PropTypes.string,
-      keyObj: PropTypes.any,
-      QRCodeShown: PropTypes.bool,
-      QRCodeURL: PropTypes.string
-    })
-  };
-  */
-
   componentWillMount() {}
 
   componentDidUpdate() {
@@ -125,41 +84,11 @@ class Authenticator extends React.Component<IProps, IState> {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
-    /*
-    if (nextProps.authData && (nextProps.authData.QRCodeShown === false)) {
-      console.log(`componentWillReceiveProps showQRcode!!!!`);
-      this.setState({ showQRcode: true });
-    } else if (nextProps.authData && (nextProps.authData.QRCodeShown === true)) {
-      this.setState({ showQRcode: true });
-    }
-    */
-    //this.setTimer(nextProps);
-  }
+  componentWillReceiveProps(nextProps) {}
 
-  componentWillUnmount() {
-    //this.cleanup();
-  }
+  componentWillUnmount() {}
 
   componentDidMount() {}
-
-  /*
-  setTimer(nextProps: any = "") {
-    let props: any;
-    if (nextProps) {
-      props = nextProps;
-    } else {
-      props = this.props;
-    }
-
-    if (props.authData) {
-      if (props.authData.private_key && !this.timerWasSet) {
-        this.timerID = Meteor.setInterval(() => this.checkTokens(props.authData.private_key), 2000);
-        this.timerWasSet = true;
-      }
-    }
-  }
-  */
 
   getQRCodeLayout() {
     let QRcode = (
@@ -174,15 +103,12 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 
   handleSubmit() {
-    //e.preventDefault();
     this.setState({ allowSubmit: false });
     this.verifyToken();
   }
 
   handleQRClick() {
     this.setState({ showQRcode: false });
-    console.log(`Authenticator handleQRClick`);
-    //this.setTimer();
   }
 
   handleChange(e) {
@@ -195,7 +121,6 @@ class Authenticator extends React.Component<IProps, IState> {
 
   verifyToken() {
     let myToken = this.state.authCode.trim();
-    //let verified;
 
     Methods.verifyToken.call({ myToken: myToken }, (err, res) => {
       if (err) {
@@ -212,48 +137,9 @@ class Authenticator extends React.Component<IProps, IState> {
     });
   }
 
-  cleanup() {
-    if (!this.verifySuccessful) {
-      Methods.cleanup.call({}, (err, res) => {
-        if (err) {
-          Library.modalErrorAlert(err.reason);
-          console.log(`auth cleanup error`, err);
-        }
-      });
-    }
-  }
-
-  /*
-  checkTokens(key) {
-    let authFields = {
-      key: key
-    };
-    Methods.currentValidToken.call(authFields, (err, token) => {
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        console.log(`currentValidToken error`, err);
-      } else if (token && this.oldToken !== token) {
-        if (this.oldToken !== token) {
-          this.setState({ currentValidToken: token });
-          this.oldToken = token;
-          this.expiredTokens.push(this.oldToken);
-        }
-      }
-    });
-  }
-  */
-
   goHome() {
     log.info("GO HOME");
     this.props.history.push("/");
-  }
-
-  QRCodeReady() {
-    let flag = false;
-    if (this.props.authData.QRCodeURL) {
-      flag = true;
-    }
-    return flag;
   }
 
   getLayout() {
@@ -267,52 +153,6 @@ class Authenticator extends React.Component<IProps, IState> {
       </div>
     );
     return layout;
-  }
-
-  getLoadingPlaceHolder() {
-    let tag = (
-      <LoadingPlaceHolder className="d-flex align-items-center">
-        <div className="m-auto">
-          <Loader type="Oval" color="red" height="80" width="80" />
-          <div className="mx-2 mt-2">Loading QR code, please wait...</div>
-        </div>
-      </LoadingPlaceHolder>
-    );
-
-    return tag;
-  }
-
-  /*
-  QRLayout() {
-    let QRLayout = (
-      <Transition>
-        <div>
-          <h2>Register For 2 Factor Authentication</h2>
-          <p className="lead">
-            In order to use the full range of our services you will need to use 2 factor authentication.
-          </p>
-          <p className="lead">Below you will see a graphical QR code followed by the private key text string.</p>
-          <div>{this.props.authData.QRCodeURL ? this.getQRCodeLayout() : this.getLoadingPlaceHolder()}</div>
-
-          <p className="lead">Please scan the QR code or manually enter the private key into Google Authenticator.</p>
-          <Button id="QRDone" onClick={this.handleQRClick}>
-            Click Here When Done
-          </Button>
-        </div>
-      </Transition>
-    );
-    return QRLayout;
-  }
-  */
-
-  showCode() {
-    let layout = (
-      <div>
-        <Alert color="primary">{this.state.currentValidToken}</Alert>
-      </div>
-    );
-
-    return Meteor.settings.public.enhancedAuth.displayCode ? layout : "";
   }
 
   verifyLayout() {

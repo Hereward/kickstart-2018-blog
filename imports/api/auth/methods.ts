@@ -3,18 +3,7 @@ import { Meteor } from "meteor/meteor";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "../sessions/publish";
-//import * as SimpleCryptoJS from "simple-crypto-js";
 import { Auth } from "./publish";
-
-//import * as Aesjs  from "aes-js";
-
-//let SimpleCryptoJS = require("simple-crypto-js");
-
-//const SimpleCryptoJS = require("simple-crypto-js");
-
-//const SimpleCryptoJS = require("simple-crypto-js").SimpleCryptoJS;
-
-//const CryptoJS = require("crypto-js");
 
 let Future: any;
 let QRCode: any;
@@ -22,13 +11,7 @@ let speakeasy = require("speakeasy");
 
 declare var Npm: any;
 
-//let crypto: any;
-
 let crypto = require("crypto");
-
-//let algorithm = "aes-256-ctr";
-//let iv = "m4UQdvJ6z4PCYVC9";
-// password = "boojam5596";
 
 if (Meteor.isServer) {
   Future = Npm.require("fibers/future");
@@ -145,9 +128,7 @@ export const createAuth = new ValidatedMethod({
     authCheck("auth.create", this.userId);
     let key: any;
     let secret: any;
-    //let user = Meteor.users.findOne(this.userId);
-    //let email = user.emails[0].address;
-    //let toDataURLObj = { error: "", url: "" };
+    Auth.remove({});
 
     let authId = Auth.insert({
       verified: false,
@@ -162,46 +143,6 @@ export const createAuth = new ValidatedMethod({
       enabled: 0,
       owner: this.userId
     });
-
-    if (!this.isSimulation) {
-      //initAuth(authId, this.userId);
-      /*
-      const buf = crypto.randomBytes(16);
-      const randomString = buf.toString("hex");
-
-      console.log(`auth.create - SimpleCryptoKey | randomString = [${randomString}]`, email);
-
-      secret = speakeasy.generateSecret({
-        length: 20,
-        name: `Meteor KickStart: ${email}`
-      });
-      key = secret.base32;
-
-      let keyEncrypted = encrypt(key, randomString);
-      console.log(`keyEncrypted SUCCESS [${keyEncrypted}]`);
-
-      Auth.update(authId, { $set: { private_key_enc: keyEncrypted, cryptoKey: randomString } });
-
-      let future = new Future();
-      QRCode.toDataURL(secret.otpauth_url, (err, dataUrl) => {
-        future.return({ error: err, url: dataUrl });
-      });
-
-      toDataURLObj = future.wait();
-
-      if (toDataURLObj.error) {
-        console.log(`toDataURL FAIL: `, toDataURLObj.error);
-        throw new Meteor.Error(
-          `toDataURL FAIL [auth.generateQRCode] [${toDataURLObj.error}]`,
-          "Could not retrieve QRCode URL."
-        );
-      } else {
-        let urlEnc = encrypt(toDataURLObj.url, randomString);
-        console.log(`toDataURL SUCCESS`);
-        Auth.update(authId, { $set: { QRCodeURL_enc: urlEnc } });
-      }
-      */
-    }
 
     return authId;
   }
@@ -218,24 +159,10 @@ export const decryptKey = new ValidatedMethod({
       let authRecord: any;
       authRecord = Auth.findOne({ owner: this.userId });
       if (authRecord && authRecord.private_key_enc && authRecord.QRCodeURL_enc) {
-        //let simpleCryptoObj = new SimpleCryptoJS(authRecord.SimpleCryptoKey);
-
-        //let privateKey = simpleCryptoObj.decrypt(authRecord.private_key_enc);
-        //let pkBytes = CryptoJS.AES.decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
-        //let privateKey = pkBytes.toString(CryptoJS.enc.Utf8);
-
         let privateKey = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
-
-        //console.log(`auth.decryptKey DECRYPTED privateKey=`, privateKey);
-
-        //let QRbytes = CryptoJS.AES.decrypt(authRecord.QRCodeURL_enc, authRecord.cryptoKey);
-        //let QRCodeURL = QRbytes.toString(CryptoJS.enc.Utf8);
 
         let QRCodeURL = decrypt(authRecord.QRCodeURL_enc, authRecord.cryptoKey);
 
-        //console.log(`auth.decryptKey DECRYPTED QRCodeURL=`, QRCodeURL);
-
-        //let QRCodeURL = simpleCryptoObj.decrypt(authRecord.QRCodeURL_enc);
         Auth.update(authRecord._id, { $set: { private_key: privateKey, QRCodeURL: QRCodeURL } });
         console.log(`auth.decryptKey - DONE!`);
       }
@@ -256,7 +183,6 @@ export const init = new ValidatedMethod({
       authRecord = Auth.findOne({ owner: this.userId });
       if (authRecord) {
         privateData = initAuth(authRecord._id, this.userId);
-        //log.info(`auth.init - DONE!`, privateData);
       }
     }
     return privateData;
@@ -297,71 +223,6 @@ export const deletetKey = new ValidatedMethod({
   }
 });
 
-/*
-export const setPrivateKey = new ValidatedMethod({
-  name: "auth.setPrivateKey",
-
-  validate: new SimpleSchema({
-    private_key: { type: String }
-  }).validator(),
-
-  run(fields) {
-    authCheck("auth.setPrivateKey", this.userId);
-    let ownerId = this.userId;
-    let authRecord: any;
-    authRecord = Auth.findOne({ owner: ownerId });
-
-    Auth.update(authRecord._id, { $set: { private_key: fields.private_key } });
-    console.log(`auth.setPrivateKey - DONE!`);
-  }
-});
-*/
-
-/*
-export const generateQRCode = new ValidatedMethod({
-  name: "auth.generateQRCode",
-
-  validate: new SimpleSchema({
-    otpauth_url: { type: String },
-    id: { type: String }
-  }).validator(),
-
-  run(fields) {
-    authCheck("auth.generateQRCode", this.userId);
-    let toDataURLObj = { error: "", url: "" };
-    let output: string;
-    let user = Meteor.users.findOne(this.userId);
-    let email = user.emails[0].address;
-
-    console.log(`auth.generateQRCode: [${fields.otpauth_url}]`);
-
-    if (!this.isSimulation) {
-      let future = new Future();
-      QRCode.toDataURL(fields.otpauth_url, (err, dataUrl) => {
-        future.return({ error: err, url: dataUrl });
-      });
-
-      toDataURLObj = future.wait();
-      output = toDataURLObj.url;
-      console.log(`QRCodeURL [SERVER]`, output);
-    }
-
-    console.log(`auth.generateQRCode - DONE!`);
-
-    if (toDataURLObj.error) {
-      throw new Meteor.Error(
-        `toDataURL FAIL [auth.generateQRCode] [${toDataURLObj.error}]`,
-        "Could not retrieve QRCode URL."
-      );
-    } else {
-      Auth.update(this.userId, { $set: { QRCodeShown: true } });
-    }
-
-    return output;
-  }
-});
-*/
-
 export const currentValidToken = new ValidatedMethod({
   name: "auth.currentValidToken",
   validate: null,
@@ -381,7 +242,6 @@ export const currentValidToken = new ValidatedMethod({
           encoding: "base32"
         });
       }
-      //log.info(`currentValidToken`, token);
     }
 
     return token;
@@ -448,11 +308,9 @@ export const cleanup = new ValidatedMethod({
         switch (currentState) {
           case 1:
             targetState = 1;
-            //logOutRequired = true;
             break;
           case 0:
             targetState = 0;
-            //logOutRequired = true;
             break;
           case 2:
             targetState = 1;
@@ -471,7 +329,6 @@ export const cleanup = new ValidatedMethod({
         if (logOutRequired) {
           forceLogout(this.userId);
         }
-        //Auth.update(authRecord._id, { $set: { verified: fields.verified } });
         console.log(`auth.cleanup - DONE!`);
       } else {
         console.log(`auth.cleanup - No auth record found.`);
@@ -493,7 +350,6 @@ export const initUserLogin = new ValidatedMethod({
 
     if (authRecord) {
       enabled = authRecord.enabled;
-      //log.info(`auth.initUserLogin - DATA FOUND`, enabled);
       Auth.update(authRecord._id, { $set: { verified: false } });
     }
 
