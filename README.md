@@ -131,19 +131,23 @@ The following file names have been added to the included .gitignore file:
 * settings-development.json
 
 #### configurable settings:
-`adminEmail` - use the setting to sepcify the email address of 1 administrator
-`enhancedAuth` - use these settings to enable/disable 2 factor authentication & change settings
+`private/adminEmail` - use the setting to sepcify the email address of 1 administrator
+`public/enhancedAuth` - use these settings to enable/disable 2 factor authentication & change settings
 * `active` - Determines whether the app runs with 2FA
 * `maxAttempts` - Maximum number of failed attempts allowed
 * `displayCode` - For development, display the auth code on screen
 
-`session` - use these settings to control the session timeout features
+`private/enhancedAuth` - These settings are used to store users' 2FA private keys securely. More info: https://nodejs.org/api/crypto.html
+* `iv` - Initialisation vector (16 character random string in UTF-8 encoding)
+* `algorithm` - Algorithm used to encrypt the private key
+
+`public/session` - use these settings to control the session timeout features
 * `heartbeatInterval (integer)` - interval between activity detection messages sent to server (ms - default: 300000)
 * `inactivityTimeout (integer)` - length of time before inactive users are logged out (ms - default: 3600000)
 * `timeOutOn (boolean)` - turn on or off the timeout feature (default: true)
 * `allowMultiSession` - allow multiple client sessions for the same user. **Note:** using this setting in conjunction with `enhancedAuth: {active: true}` presents a security risk as the auth token is not client specific
 
-`smtp` - populate these settings with your SMTP server configuration
+`private/smtp` - populate these settings with your SMTP server configuration
 
 
 ## <a name="2FA"></a>2FA Security
@@ -167,13 +171,17 @@ Settings for these features can be set in [Meteor Settings](#settings).
 
 ## <a name="run"></a>Run
 
-You need to specify a settings file when you run Meteor otherwise there will be runtime errors. See [NPM Function Calls](#npm) section below.
+You need to specify a settings file when you run Meteor otherwise there will be runtime errors. 
+Using NPM preconfigured script: `npm start` (See [NPM Function Calls](#npm) section)
+
 
 ## <a name="deploy"></a>Deploy
 
 A sample configuration for the Meteor Up package is provided. The config files are stored in .deploy in the project root.
 
-More info: http://meteor-up.com/
+Using NPM preconfigured script: `npm run deploy` (See [NPM Function Calls](#npm) section)
+
+More info on MUP: http://meteor-up.com/
 
 ## <a name="npm"></a>NPM Function Calls
 
