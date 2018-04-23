@@ -63,6 +63,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
             this.props.history.push("/authenticate");
           } else {
             this.props.history.push("/");
+            Library.modalSuccessAlert({ message: "Your email address has been verified." });
           }
         } else {
           Library.modalErrorAlert({

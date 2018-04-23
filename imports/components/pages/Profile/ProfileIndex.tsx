@@ -373,30 +373,34 @@ class Profile extends React.Component<IProps, IState> {
   getNotifications() {
     let layout = (
       <div>
-        <Notification
-          mainFunction={this.Toggle2FA}
-          panel="standard"
-          type="auth"
-          parentProps={this.props}
-          processingRequest={this.state.processing2FArequest}
-          authData={this.props.authData}
-        />
-
-        {this.props.emailVerified === false ? (
+         {this.props.emailVerified === false ? (
           <Notification
             mainFunction={this.sendVerificationEmail}
-            panel="standard"
+            panel="action"
             type="verifyEmail"
             parentProps={this.props}
             processingRequest={this.state.disableVerify}
             authData={this.props.authData}
           />
         ) : null}
+        
+        {this.props.authData && this.props.emailVerified === true ? (
+          <Notification
+            mainFunction={this.Toggle2FA}
+            panel="action"
+            type="auth"
+            parentProps={this.props}
+            processingRequest={this.state.processing2FArequest}
+            authData={this.props.authData}
+          />
+        ) : (
+          this.props.authData && this.props.authData.enabled === 0 ? <Notification panel="info" type="authDisabled" /> : null
+        )}
 
         {this.props.admin ? (
           <Notification
             mainFunction={this.handleDeleteAllUsers}
-            panel="standard"
+            panel="action"
             type="admin"
             parentProps={this.props}
             processingRequest={this.state.disableSubmitDeleteAllUsers}
