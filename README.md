@@ -131,7 +131,7 @@ The following file names have been added to the included .gitignore file:
 * settings-development.json
 
 #### configurable settings:
-`private/adminEmail` - use the setting to sepcify the email address of 1 administrator
+`private/adminEmail` - use this setting to specify the email address of 1 administrator
 `public/enhancedAuth` - use these settings to enable/disable 2 factor authentication & change settings
 * `active` - Determines whether the app runs with 2FA
 * `maxAttempts` - Maximum number of failed attempts allowed
