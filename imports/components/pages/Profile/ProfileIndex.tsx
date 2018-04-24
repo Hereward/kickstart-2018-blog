@@ -372,7 +372,7 @@ class Profile extends React.Component<IProps, IState> {
 
   getNotifications() {
     let layout = (
-      <div>
+      <div className="notifications"> 
          {this.props.emailVerified === false ? (
           <Notification
             mainFunction={this.sendVerificationEmail}

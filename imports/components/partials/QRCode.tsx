@@ -132,9 +132,9 @@ class QRCode extends React.Component<IProps, IState> {
           <p className="lead">Please scan the QR code or manually enter the private key into Google Authenticator.</p>
           <Button color="primary" id="QRDone" onClick={this.handleQRClick}>
             Click Here When Done
-          </Button> {" "}
+          </Button> &nbsp;
           <Button color="secondary" disabled={this.state.cancelEnabled} id="cancel2FA" onClick={this.cancel2FA}>
-            Cancel 2FA request
+            Cancel
           </Button>
         </div>
       </Transition>

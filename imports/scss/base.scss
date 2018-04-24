@@ -18,7 +18,7 @@ body {
 
 .pageLoader {
   width: 300px;
-  height:300px;
+  height: 300px;
   margin-top: 2rem;
   text-align: center;
   background-color: transparent;
@@ -71,12 +71,12 @@ img {
   margin-top: -2px !important;
 }
 
-
 .navbar-dark .navbar-nav .nav-link {
   color: rgba(255, 255, 255, 0.5) !important;
 }
 
-.navbar-dark .navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link:focus {
   color: rgba(255, 255, 255, 0.75) !important;
 }
 
@@ -133,7 +133,6 @@ footer {
   font-size: 2rem;
   font-weight: 400;
 }
-
 
 h1,
 .h1 {
@@ -260,6 +259,14 @@ nav.main-nav {
 @media (max-width: 320px) {
 }
 
+@media (max-width: 575px) {
+  .notifications .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+}
+
 @media (min-width: 576px) {
   .ql-video {
     position: relative;
@@ -277,7 +284,8 @@ nav.main-nav {
 }
 
 @media (min-width: 768px) {
-  .action-highlight-off, .action-verified-user {
+  .action-highlight-off,
+  .action-verified-user {
     height: 24px !important;
     //margin-top: 0 !important;
   }
@@ -290,7 +298,6 @@ nav.main-nav {
     width: 24px !important;
     height: 24px !important;
   }
-  
 }
 
 @media (min-width: 992px) {
