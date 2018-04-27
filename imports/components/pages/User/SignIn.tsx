@@ -17,6 +17,8 @@ interface IProps {
   history: any;
   AuthVerified: boolean;
   enhancedAuth: boolean;
+  loginToken: string;
+  userSettings: any;
 }
 
 interface IState {
@@ -80,8 +82,9 @@ class SignIn extends React.Component<IProps, IState> {
     }
   }
 
-  createSession(destination) {
-    SessionMethods.createUserSession.call({}, (err, res) => {
+  createSession(destination = "") {
+    let token = User.sessionToken('create'); //Accounts._storedLoginToken();
+    SessionMethods.createUserSession.call({ loginToken: token }, (err, res) => {
       if (err) {
         console.log(`createSession error: [${err.reason}]`, err);
         Library.modalErrorAlert(err.reason);
@@ -99,29 +102,20 @@ class SignIn extends React.Component<IProps, IState> {
       this.setState({ allowSubmit: true });
       if (error) {
         return Library.modalErrorAlert({ detail: error.reason, title: "Sign In Failed" });
-      } else {
-        if (!allowMultiSession) {
+      } else if (!allowMultiSession) {
           Accounts.logoutOtherClients();
-        }
-        if (this.props.enhancedAuth) {
-          AuthMethods.initUserLogin.call({ verified: false }, (err, res) => {
-            if (err) {
-              Library.modalErrorAlert(err.reason);
-              console.log(`setVerified error`, err);
-            } else {
-              if (res !== 0) {
-                destination = "";
-              }
-
-              this.createSession(destination);
-            }
-          });
-        } else {
-          this.createSession(destination);
-          //this.createSession("/");
-          //this.props.history.push("/");
-        }
       }
+      this.createSession();
+        /*
+        log.info(`SignInUser`, this.props);
+
+        if (this.props.userSettings && this.props.userSettings.authEnabled) {
+          let destination = "/authenticate";
+        }
+
+        this.createSession(destination);
+        */
+      
     });
   }
 
@@ -135,7 +129,7 @@ class SignIn extends React.Component<IProps, IState> {
 }
 
 export default withRouter(
-  withTracker(({ params }) => {
+  withTracker(() => {
     //let sessionDataReady = Meteor.subscribe("userSessions");
     return {};
   })(SignIn)

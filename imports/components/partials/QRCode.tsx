@@ -8,7 +8,8 @@ import Loader from "react-loader-spinner";
 import styled from "styled-components";
 import * as Library from "../../modules/library";
 import Transition from "./Transition";
-import {getDecrpytedAuthData, cancel as cancel2FA } from "../../api/auth/methods";
+import {getDecrpytedAuthData } from "../../api/auth/methods";
+import { cancel2FA } from "../../api/settings/methods";
 import { Auth } from "../../api/auth/publish";
 import * as User from "../../modules/user";
 
@@ -17,9 +18,7 @@ let QRCodeContainer: any;
 interface IProps {
   handleQRclick: any;
   exit: any;
-  authData: {
-    QRCodeShown: boolean;
-  };
+ 
 }
 
 interface IState {
@@ -67,9 +66,9 @@ class QRCode extends React.Component<IProps, IState> {
     getDecrpytedAuthData.call({}, (err, res) => {
       if (err) {
         Library.modalErrorAlert(err.reason);
-        console.log(`initAuth error`, err);
+        console.log(`getDecrpytedAuthData error`, err);
       } else {
-        log.info(`initAuth - DONE (Client)!`, res);
+        log.info(`getDecrpytedAuthData - DONE (Client)!`, res);
         this.setState({ privateKey: res.key, QRCodeURL: res.url });
       }
     });
@@ -143,17 +142,5 @@ class QRCode extends React.Component<IProps, IState> {
 }
 
 export default (QRCodeContainer = withTracker(() => {
-  let authData: any;
-  //Meteor.subscribe("userData");
-  let authDataReady = Meteor.subscribe("enhancedAuth");
-
-  if (User.id()) {
-    let id = User.id();
-
-    if (authDataReady) {
-      authData = Auth.findOne({ owner: id });
-    }
-  }
-
-  return { authData: authData };
+  return {};
 })(QRCode));

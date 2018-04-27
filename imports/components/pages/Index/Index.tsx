@@ -229,16 +229,16 @@ class Index extends React.Component<IProps, IState> {
   }
 }
 
-export default withTracker(() => {
+export default withTracker((props) => {
   let tasksDataReady = Meteor.subscribe("tasks");
   let sessionDataReady = Meteor.subscribe("userSessions");
   let tasks: any;
   let userSession: any;
-  let userData: any;
+ // let userData: any;
   let remainingTime: any;
   let remainingTimeFormatted: any;
   let timeNow = Chronos.date();
-  userData = User.data();
+  //userData = User.data();
   let count = 0;
   let query = Tasks.find({}, { sort: { createdAt: -1 } });
   count = query.count();
@@ -253,7 +253,7 @@ export default withTracker(() => {
     tasks = query.fetch();
   }
 
-  if (userData) {
+  if (props.userData) {
     if (sessionDataReady) {
       userSession = userSessions.findOne({ owner: User.id() });
       if (userSession) {
@@ -271,7 +271,7 @@ export default withTracker(() => {
     tasks: tasks,
     taskCount: count,
     incompleteCount: Tasks.find({ checked: { $ne: true } }).count(),
-    currentUser: userData,
+    currentUser: props.userData,
     page: page,
     userSession: userSession,
     remainingTime: remainingTime,

@@ -1,4 +1,7 @@
+///<reference path="../../../../index.d.ts"/>
+
 import { Meteor } from "meteor/meteor";
+import { Accounts } from "meteor/accounts-base";
 import * as React from "react";
 import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
@@ -17,9 +20,10 @@ import { Images } from "../../../api/images/methods";
 import { deleteAllUsers } from "../../../api/admin/methods";
 import Image from "../../partials/Image";
 import Notification from "../../partials/Notification";
-import { toggleEnabledPending as toggle2FA } from "../../../api/auth/methods";
+import { toggleAuthEnabledPending as toggle2FA } from "../../../api/settings/methods";
 import { Auth } from "../../../api/auth/publish";
 import * as User from "../../../modules/user";
+
 
 interface IProps {
   history: any;
@@ -28,10 +32,10 @@ interface IProps {
   profile: any;
   myImages: any;
   userData: any;
+  userSettings: any;
   userEmail: string;
   emailVerified: boolean;
   admin: boolean;
-  authData: any;
 }
 
 interface IState {
@@ -150,6 +154,12 @@ class Profile extends React.Component<IProps, IState> {
     });
   }
 
+  componentWillMount() {
+    if (!User.id()) {
+      this.props.history.push("/");
+    }
+  }
+
   componentDidUpdate() {}
 
   componentDidMount() {
@@ -240,8 +250,9 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   Toggle2FA() {
+    
     this.setState({ processing2FArequest: true });
-    toggle2FA.call({}, (err, verified) => {
+    toggle2FA.call({loginToken: User.sessionToken('get')}, (err, verified) => {
       this.setState({ processing2FArequest: false });
       if (err) {
         Library.modalErrorAlert(err.reason);
@@ -371,31 +382,29 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   getNotifications() {
+    log.info(`getNotifications`, this.props.emailVerified, this.props.enhancedAuth);
     let layout = (
-      <div className="notifications"> 
-         {this.props.emailVerified === false ? (
+      <div className="notifications">
+        {this.props.emailVerified === false ? (
           <Notification
             mainFunction={this.sendVerificationEmail}
             panel="action"
             type="verifyEmail"
             parentProps={this.props}
             processingRequest={this.state.disableVerify}
-            authData={this.props.authData}
           />
         ) : null}
-        
-        {this.props.authData && this.props.emailVerified === true ? (
+
+        {this.props.emailVerified === true && this.props.enhancedAuth ? (
           <Notification
+            userSettings={this.props.userSettings}
             mainFunction={this.Toggle2FA}
             panel="action"
             type="auth"
             parentProps={this.props}
             processingRequest={this.state.processing2FArequest}
-            authData={this.props.authData}
           />
-        ) : (
-          this.props.authData && this.props.authData.enabled === 0 ? <Notification panel="info" type="authDisabled" /> : null
-        )}
+        ) : null}
 
         {this.props.admin ? (
           <Notification
@@ -404,13 +413,14 @@ class Profile extends React.Component<IProps, IState> {
             type="admin"
             parentProps={this.props}
             processingRequest={this.state.disableSubmitDeleteAllUsers}
-            authData={this.props.authData}
           />
         ) : null}
       </div>
     );
     return layout;
   }
+
+  //this.props.userSettings.authEnabled === 0 ? (<Notification panel="info" type="authDisabled" />) 
 
   render() {
     let layout = this.getLayout();
@@ -431,19 +441,11 @@ export default withRouter(
     let ImagesDataReady = Meteor.subscribe("allImages");
     let userEmail: string;
     let emailVerified: boolean = false;
-    let userData = User.data();
 
-    let authData: any;
-    let authDataReady = Meteor.subscribe("enhancedAuth");
-
-    if (userData) {
-      emailVerified = userData.emails[0].verified;
-      userEmail = userData.emails[0].address;
+    if (props.userData) {
+      emailVerified = props.userData.emails[0].verified;
+      userEmail = props.userData.emails[0].address;
       let id = User.id();
-
-      if (authDataReady) {
-        authData = Auth.findOne({ owner: id });
-      }
     }
 
     if (ImagesDataReady) {
@@ -454,10 +456,8 @@ export default withRouter(
     return {
       admin: props.admin,
       myImages: myImages,
-      userData: userData,
       userEmail: userEmail,
-      emailVerified: emailVerified,
-      authData: authData
+      emailVerified: emailVerified
     };
   })(Profile)
 );

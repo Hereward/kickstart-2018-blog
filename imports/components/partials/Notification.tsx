@@ -43,10 +43,11 @@ const panelData = {
 
 interface IProps {
   mainFunction?: any;
+  userSettings?: any;
   panel: string;
   parentProps?: any;
   processingRequest?: boolean;
-  authData?: any;
+  userSession?: any;
   type: string;
 }
 
@@ -89,13 +90,13 @@ export default class Notification extends React.Component<IProps, IState> {
     let panelType = this.props.type;
 
     if (panelType === "auth") {
-      if (!this.props.authData) {
+      if (!this.props.userSettings) {
         return null;
       }
 
       let stateChange: string;
 
-      switch (this.props.authData.enabled) {
+      switch (this.props.userSettings.authEnabled) {
         case 0:
           stateChange = "enable";
           break;

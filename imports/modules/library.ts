@@ -1,11 +1,26 @@
 import * as User from "./user";
 
+const authErrors = {
+  invalidCode : "Invalid Code",
+  exceededAttempts: "Account Locked",
+  invalidSession: "Invalid Session"
+};
+
+
+export const nested = (pathArr, nestedObj) => {
+  return pathArr.reduce((obj, key) =>
+      (obj && obj[key] !== 'undefined') ? obj[key] : null, nestedObj);
+};
+
+
+//export const nestedx = (props, object) => props.reduce((prefix, val) => (prefix && prefix[val]) ? prefix[val] : null, object);
+
 export function invalidAuthCodeAlert(error) {
   let message: string;
   let title: string;
   //let obj = arguments[0];
   message = error.reason || "Operation completed sucessfully.";
-  title = error.error === "invalidCode" ? "Invalid Code" : "Account Locked";
+  title = authErrors[error.error] ? authErrors[error.error] : "Something Went Wrong...";
 
   swal({
     title: title,
@@ -71,7 +86,7 @@ export function userModelessAlert(type, props) {
     return;
   }
 
-  let emailVerified = props.userData.emails[0].verified;
+  //let emailVerified = props.userData.emails[0].verified;
 
   let msg = "";
   let alertType = "";
@@ -80,12 +95,12 @@ export function userModelessAlert(type, props) {
   // let icon = "fa-magic";
 
   if (type === "verifyEmail") {
-    if (props.profile.verificationEmailSent === 1 && !emailVerified) {
+    if (props.profile.verificationEmailSent === 1) {
       title = "Check Your Email";
       msg =
         "A verification email has been sent to your nominated email account. Please check your email and click on the verification link.";
       alertType = "info";
-    } else if (props.profile.verificationEmailSent === 2 && !emailVerified) {
+    } else if (props.profile.verificationEmailSent === 2) {
       //allowFurtherAlerts = true;
       title = "Verification email could not be sent";
       msg =

@@ -17,6 +17,9 @@ interface IProps {
   history: any;
   boojam: string;
   enhancedAuth: boolean;
+  userSettings: any;
+  loginToken: string;
+  userSession: any;
   authData: {
     _id: string;
     verified: boolean;
@@ -79,8 +82,8 @@ class Authenticator extends React.Component<IProps, IState> {
   componentWillMount() {}
 
   componentDidUpdate() {
-    if (this.props.authData && (this.props.authData.verified || !this.props.authData.enabled)) {
-      this.props.history.push("/");
+    if (this.props.userSettings && ((this.props.userSession && this.props.userSession.auth && this.props.userSession.auth.verified) || !this.props.userSettings.authEnabled)) {
+       //this.props.history.push("/");
     }
   }
 
@@ -122,7 +125,7 @@ class Authenticator extends React.Component<IProps, IState> {
   verifyToken() {
     let myToken = this.state.authCode.trim();
 
-    Methods.verifyToken.call({ myToken: myToken }, (err, res) => {
+    Methods.verifyToken.call({ myToken: myToken, loginToken: User.sessionToken('get') }, (err, res) => {
       if (err) {
         Library.invalidAuthCodeAlert(err);
         console.log(`verifyToken error`, err);
@@ -132,7 +135,8 @@ class Authenticator extends React.Component<IProps, IState> {
         if (res.operationIndicator) {
           Library.modalSuccessAlert({ message: opTypeMessage[res.operationIndicator] });
         }
-        this.props.history.push("/");
+        log.info(`verifyToken - SUCCESS`);
+        //this.props.history.push("/");
       }
     });
   }
@@ -145,7 +149,7 @@ class Authenticator extends React.Component<IProps, IState> {
   getLayout() {
     let layout = (
       <div className="container page-content">
-        {this.state.showQRcode && this.props.authData && this.props.authData.enabled === 3 ? (
+        {this.state.showQRcode && this.props.userSettings && this.props.userSettings.authEnabled === 3 ? (
           <QRCodeContainer handleQRclick={this.handleQRClick} exit={this.goHome} />
         ) : (
           this.verifyLayout()
@@ -185,17 +189,6 @@ class Authenticator extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(() => {
-    let authData: any;
-    let authDataReady = Meteor.subscribe("enhancedAuth");
-
-    if (User.id()) {
-      let id = User.id();
-
-      if (authDataReady) {
-        authData = Auth.findOne({ owner: id });
-      }
-    }
-
-    return { authData: authData };
+    return {};
   })(Authenticator)
 );

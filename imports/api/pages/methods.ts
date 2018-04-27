@@ -14,6 +14,37 @@ const authCheck = (methodName, userId) => {
   return auth;
 };
 
+export const createPages = new ValidatedMethod({
+  name: "pages.create",
+
+  validate: null,
+
+  run() {
+    authCheck("pages.create", this.userId);
+    let admin = false;
+    let id: string;
+
+    if (!this.isSimulation) {
+      admin = Meteor.settings.private.adminEmail === Meteor.user().emails[0].address;
+    }
+
+    //Profiles.remove({});
+
+    let exists = Pages.findOne({ name: "about" });
+
+    if (!exists) {
+      id = Pages.insert({
+        name: "about",
+        heading: Meteor.settings.public.defaultContent.about.heading,
+        body: Meteor.settings.public.defaultContent.about.body,
+        createdAt: new Date(),
+        owner: ""
+      });
+    }
+
+    return id;
+  }
+});
 
 export const updatePage = new ValidatedMethod({
   name: "pages.update",

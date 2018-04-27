@@ -3,7 +3,9 @@ import { Meteor } from "meteor/meteor";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "../sessions/publish";
+import { userSettings } from "../settings/publish";
 import { Auth } from "./publish";
+import { getSession, exceedAttemptsCheck, updateAuth as sessionUpdateAuth } from "../sessions/methods";
 
 let Future: any;
 let QRCode: any;
@@ -22,12 +24,19 @@ const authCheck = (methodName, userId) => {
   let auth = true;
   if (!userId) {
     auth = false;
-    console.log(`authCheck (${methodName}) - NO USER ID`);
+    //console.log(`authCheck (${methodName}) - NO USER ID`);
     throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
   }
   return auth;
 };
 
+const authFind = userId => {
+  let rec: any;
+  rec = Auth.findOne({ owner: userId });
+  return rec;
+};
+
+/*
 const forceLogout = userId => {
   let sessionRecord: any;
   sessionRecord = userSessions.findOne({ owner: userId });
@@ -42,8 +51,20 @@ const forceLogout = userId => {
     );
   }
 };
+*/
 
-const initAuth = (authId, userId) => {
+export const insertAuth = function insert(userId) {
+  let id = Auth.insert({
+    private_key_enc: "",
+    QRCodeURL_enc: "",
+    cryptoKey: "",
+    owner: userId
+  });
+
+  return id;
+};
+
+export const initAuth = (authId, userId) => {
   let key: any;
   let secret: any;
   let user = Meteor.users.findOne(userId);
@@ -62,7 +83,7 @@ const initAuth = (authId, userId) => {
 
   let keyEncrypted = encrypt(key, randomString);
   console.log(`initAuth keyEncrypted SUCCESS [${keyEncrypted}]`);
-  Auth.update(authId, { $set: { private_key_enc: keyEncrypted, cryptoKey: randomString }});
+  Auth.update(authId, { $set: { private_key_enc: keyEncrypted, cryptoKey: randomString } });
   let future = new Future();
   QRCode.toDataURL(secret.otpauth_url, (err, dataUrl) => {
     future.return({ error: err, url: dataUrl });
@@ -81,21 +102,6 @@ const initAuth = (authId, userId) => {
   }
 
   return { key: key, url: toDataURLObj.url };
-};
-
-const exceedAttemptsCheck = (verified, attemptsLeft) => {
-  let message: string;
-  if (attemptsLeft < 1 && !verified) {
-    message =
-      "You have exceeded the maximum allowed number of authentication attempts. Please contact Admin to reinstate access to your account.";
-    throw new Meteor.Error(`exceededAttempts`, message);
-  } else if (!verified && attemptsLeft > 0) {
-    let attempts = attemptsLeft > 1 ? "attempts" : "attempt";
-    message = `You have ${attemptsLeft} ${attempts} left.`;
-    throw new Meteor.Error(`invalidCode`, message);
-  } else {
-    return true;
-  }
 };
 
 function encrypt(text, password) {
@@ -122,6 +128,7 @@ function decrypt(text, password) {
   return dec;
 }
 
+/*
 export const createAuth = new ValidatedMethod({
   name: "auth.create",
 
@@ -150,7 +157,9 @@ export const createAuth = new ValidatedMethod({
     return authId;
   }
 });
+*/
 
+/*
 export const decryptKey = new ValidatedMethod({
   name: "auth.decryptKey",
 
@@ -172,16 +181,15 @@ export const decryptKey = new ValidatedMethod({
     }
   }
 });
-
-
+*/
 
 export const getDecrpytedAuthData = new ValidatedMethod({
-  name: "auth.init",
+  name: "auth.getDecrpytedAuthData",
 
   validate: null,
 
   run(fields) {
-    authCheck("auth.init", this.userId);
+    authCheck("auth.getDecrpytedAuthData", this.userId);
     let privateData: any;
     let privateKey: string;
     let url: string;
@@ -191,14 +199,14 @@ export const getDecrpytedAuthData = new ValidatedMethod({
       if (authRecord) {
         privateKey = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
         url = decrypt(authRecord.QRCodeURL_enc, authRecord.cryptoKey);
-        privateData = {key: privateKey, url: url};
+        privateData = { key: privateKey, url: url };
       }
     }
     return privateData;
   }
 });
 
-
+/*
 export const cancel = new ValidatedMethod({
   name: "auth.cancel",
 
@@ -216,7 +224,9 @@ export const cancel = new ValidatedMethod({
     }
   }
 });
+*/
 
+/*
 export const deletetKey = new ValidatedMethod({
   name: "auth.deletetKey",
 
@@ -232,6 +242,7 @@ export const deletetKey = new ValidatedMethod({
     }
   }
 });
+*/
 
 export const currentValidToken = new ValidatedMethod({
   name: "auth.currentValidToken",
@@ -257,6 +268,8 @@ export const currentValidToken = new ValidatedMethod({
     return token;
   }
 });
+
+/*
 
 export const toggleEnabledPending = new ValidatedMethod({
   name: "auth.activate",
@@ -302,7 +315,9 @@ export const toggleEnabledPending = new ValidatedMethod({
     }
   }
 });
+*/
 
+/*
 export const cleanup = new ValidatedMethod({
   name: "auth.cleanup",
 
@@ -351,7 +366,9 @@ export const cleanup = new ValidatedMethod({
     return logOutRequired;
   }
 });
+*/
 
+/*
 export const initUserLogin = new ValidatedMethod({
   name: "auth.initUserLogin",
   validate: null,
@@ -363,16 +380,16 @@ export const initUserLogin = new ValidatedMethod({
     authRecord = Auth.findOne({ owner: this.userId });
 
     if (authRecord) {
-      enabled = authRecord.enabled;
       Auth.update(authRecord._id, { $set: { verified: false } });
     }
 
-    log.info(`auth.initUserLogin`, enabled);
 
     return enabled;
   }
 });
+*/
 
+/*
 export const validateUserLogin = new ValidatedMethod({
   name: "auth.validateUserLogin",
   validate: null,
@@ -415,7 +432,9 @@ export const validateUserLogin = new ValidatedMethod({
     return targetState;
   }
 });
+*/
 
+/*
 export const setVerified = new ValidatedMethod({
   name: "auth.setVerified",
 
@@ -437,26 +456,25 @@ export const setVerified = new ValidatedMethod({
     }
   }
 });
+*/
 
 export const verifyToken = new ValidatedMethod({
   name: "auth.verifyToken",
   validate: new SimpleSchema({
-    myToken: { type: String }
+    myToken: { type: String },
+    loginToken: { type: String }
   }).validator(),
 
   run(fields) {
     authCheck("auth.verifyToken", this.userId);
-    let verified = true;
-    let targetState: number;
+    let verified = false;
     let operationType: string;
-    let ownerId = this.userId;
     let authRecord: any;
-    let maxAttempts = Meteor.settings.public.enhancedAuth.maxAttempts;
-    authRecord = Auth.findOne({ owner: ownerId });
+    authRecord = Auth.findOne({ owner: this.userId });
 
     if (!this.isSimulation) {
       let secret = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
-      log.info('decrypted private key', secret);
+      log.info("verifyToken - decrypted private key", secret);
 
       verified = speakeasy.time.verify({
         secret: secret,
@@ -465,39 +483,7 @@ export const verifyToken = new ValidatedMethod({
         window: 2
       });
 
-      let attemptsLeft = maxAttempts - (authRecord.currentAttempts + 1);
-
-      if (!verified) {
-        let currentAttempts = authRecord.currentAttempts + 1;
-        Auth.update(authRecord._id, { $set: { verified: false, QRCodeShown: true, currentAttempts: currentAttempts } });
-      }
-
-      let attemptsOK = exceedAttemptsCheck(verified, attemptsLeft);
-
-      if (attemptsOK) {
-        let currentState = authRecord.enabled;
-        switch (currentState) {
-          case 1:
-            targetState = 1;
-            break;
-          case 0:
-            targetState = 0;
-            break;
-          case 2:
-            targetState = 0;
-            operationType = "disabled";
-            break;
-          case 3:
-            targetState = 1;
-            operationType = "enabled";
-            break;
-          default:
-            targetState = 0;
-        }
-        Auth.update(authRecord._id, {
-          $set: { verified: true, QRCodeShown: true, currentAttempts: 0, enabled: targetState }
-        });
-      }
+      operationType = sessionUpdateAuth(this.userId, fields.loginToken, verified);
     }
 
     return { verified: verified, operationIndicator: operationType };

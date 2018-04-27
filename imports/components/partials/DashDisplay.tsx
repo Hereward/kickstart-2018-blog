@@ -36,18 +36,11 @@ import * as User from "../../modules/user";
 interface IProps {
   sessionExpired: boolean;
   userData: any;
+  userSettings: any;
+  userSession: any;
   loggingIn: boolean;
   loggingOut: boolean;
   enhancedAuth: boolean;
-  authData: {
-    _id: string;
-    verified: boolean;
-    currentAttempts: number;
-    private_key: string;
-    owner: string;
-    keyObj: any;
-    QRCodeShown: boolean;
-  };
 }
 
 interface IState {
@@ -123,29 +116,31 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     let emailVerified = props.userData ? props.userData.emails[0].verified : false;
     let verifiedFlag: boolean = false;
     let message: any = "We're not quite sure what's going on...";
-    //log.info(`dashBoardTip`, props.authData);
     if (props.loggingIn) {
       message = tip.loggingIn;
     } else if (props.loggingOut) {
       message = tip.loggingOut;
-    } else if (!props.userData) {
+    } else if (!props.userData || !props.userSettings) {
       message = tip.loggedOut;
-    } else if (!props.authData) {
-      message = tip.loggedOut;
-    } else if (props.enhancedAuth === false || props.authData.enabled === 0) {
-
+    } else if (props.enhancedAuth === false || props.userSettings.authEnabled === 0) {
       verifiedFlag = emailVerified;
       message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
-   
     } else {
-      verifiedFlag = (props.authData.verified || !props.authData.enabled) && emailVerified;
+      log.info(`dashBoardTip`, props);
+      verifiedFlag =
+        ((props.userSession && props.userSession.auth && props.userSession.auth.verified) ||
+          !props.userSettings.authEnabled) &&
+        emailVerified;
       message = verifiedFlag ? tip.verified.enhanced.verified : tip.verified.enhanced.unverified;
 
       if (!emailVerified) {
         message += tip.verified.enhanced.email;
       }
 
-      if (!props.authData.verified) {
+      if (
+        props.userSession &&
+        (!props.userSession.auth || (props.userSession.auth && !props.userSession.auth.verified))
+      ) {
         message += emailVerified ? "" : " ";
         message += tip.verified.enhanced.auth2FA;
       }

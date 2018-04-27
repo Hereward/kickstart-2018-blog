@@ -118,6 +118,14 @@ declare module "simple-crypto-js" {
 declare var log: any;
 
 
+declare module 'meteor/simply:reactive-local-storage' {
+  function setItem(key: string, value: string): any;
+  function getItem(key: string): any;
+}
+
+
+
+
 declare module "meteor/meteor" {
   var process: any;
   
@@ -166,6 +174,7 @@ declare module "meteor/accounts-base" {
 
     var urls: URLS;
     var emailTemplates: EmailTemplates;
+    var _lastLoginTokenWhenPolled: any;
 
     function createUser(
       options: {
@@ -201,6 +210,8 @@ declare module "meteor/accounts-base" {
     function onLogin(options: any): any;
     function onLogout(options: any): any;
     function logoutOtherClients(): any;
+
+    function _storedLoginToken(): any;
   }
 }
 

@@ -5,7 +5,6 @@ import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
 import * as React from "react";
 import { withRouter } from "react-router-dom";
-import * as AuthMethods from "../../../api/auth/methods";
 
 import Transition from "../../partials/Transition";
 import * as Library from "../../../modules/library";
@@ -18,63 +17,61 @@ interface IProps {
   AuthVerified: boolean;
   sillyProp: string;
   signedIn: boolean;
+  loginToken: string;
+  userData: any;
 }
 
 interface IState {}
 
 class VerifyEmail extends React.Component<IProps, IState> {
   token: string;
+  done: boolean;
 
   constructor(props) {
     super(props);
     this.checkToken = this.checkToken.bind(this);
     let url = window.location.href;
     this.token = url.substr(url.lastIndexOf("/") + 1);
+    this.done = false;
   }
 
   componentDidUpdate() {}
 
   componentWillReceiveProps(nextProps) {}
 
-  componentWillMount() {
-    this.checkToken();
-  }
+  componentWillMount() {}
 
+  /*
   static propTypes = {
     history: ReactRouterPropTypes.history,
     sillyProp: PropTypes.string
   };
+  */
 
   //
   checkToken() {
-    Accounts.verifyEmail(
-      this.token,
-      function verified(err) {
-        if (!err) {
-          if (this.props.enhancedAuth && this.propsAuthData && this.propsAuthData.enabled) {
-            AuthMethods.setVerified.call({ verified: false }, (err, res) => {
-              if (err) {
-                Library.modalErrorAlert(err.reason);
-                console.log(`setVerified error`, err);
-              }
-            });
+    let verified = Library.nested(["userData", "emails", 0, "verified"], this.props);
+    //log.info(`verify email checkToken`, verified);
+    if (!User.id() || verified === false && !this.done) {
+      this.done = true;
+      Accounts.verifyEmail(
+        this.token,
+        function verified(err) {
+          if (!err) {
+            User.checkLoginToken();
             //this.props.history.push("/");
-
-            this.props.history.push("/authenticate");
-          } else {
-            this.props.history.push("/");
             Library.modalSuccessAlert({ message: "Your email address has been verified." });
+          } else {
+            Library.modalErrorAlert({
+              detail: err.reason,
+              title: `Email verification failed`
+            });
+            console.log(err);
+            this.props.history.push("/");
           }
-        } else {
-          Library.modalErrorAlert({
-            detail: "Please try again.",
-            title: "Email verification failed"
-          });
-          console.log(err);
-          this.props.history.push("/");
-        }
-      }.bind(this)
-    );
+        }.bind(this)
+      );
+    }
   }
 
   getLayout() {
@@ -82,6 +79,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
   }
 
   render() {
+    this.checkToken();
     return (
       <Transition>
         <div className="container page-content">{this.getLayout()}</div>
@@ -92,16 +90,6 @@ class VerifyEmail extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(({ params }) => {
-    let authData: any;
-    let authDataReady = Meteor.subscribe("enhancedAuth");
-
-    if (User.id()) {
-      let id = User.id();
-
-      if (authDataReady) {
-        authData = Auth.findOne({ owner: id });
-      }
-    }
-    return { authData: authData };
+    return {};
   })(VerifyEmail)
 );

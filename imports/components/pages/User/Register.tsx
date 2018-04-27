@@ -13,7 +13,9 @@ import * as ProfileMethods from "../../../api/profiles/methods";
 import * as AuthMethods from "../../../api/auth/methods";
 import * as Library from "../../../modules/library";
 import * as SessionMethods from "../../../api/sessions/methods";
+import * as PagesMethods from "../../../api/pages/methods";
 import * as User from "../../../modules/user";
+import * as userSettingsMethods from "../../../api/settings/methods";
 
 import SignInForm from "../../forms/SignInForm";
 
@@ -21,6 +23,7 @@ interface IProps {
   history: any;
   enhancedAuth: boolean;
   signedIn: boolean;
+  loginToken: string;
 }
 
 interface IState {
@@ -80,6 +83,18 @@ class Register extends React.Component<IProps, IState> {
     }
   }
 
+  /*
+  hash(token) {
+    const crypto = require("crypto");
+    //let hash = crypto.createHash('md5').update(token).digest('hex');
+
+    const hash = crypto.createHash("sha256");
+    hash.update(token);
+    let hashString = hash.digest("hex");
+    log.info(`hash`, token, hashString);
+  }
+  */
+
   registerUser(event) {
     this.setState({ allowSubmit: false });
     let email = this.state.email.trim();
@@ -97,17 +112,33 @@ class Register extends React.Component<IProps, IState> {
         err => {
           if (err) {
             console.log(`Error: ${err.reason}`);
-            this.setState({allowSubmit: true});
+            this.setState({ allowSubmit: true });
             Library.modalErrorAlert(err.reason);
             console.log(`createUser error`, err);
-            
           } else {
+            let token = User.sessionToken('create'); //Accounts._storedLoginToken(); // this.props.loginToken; //localStorage.getItem("Meteor.loginToken");
+            log.info(`registerUser`, token);
+            //let hash = Library.hash(token);
 
-            SessionMethods.createUserSession.call({}, (err, res) => {
+            userSettingsMethods.createUserSettings.call({}, (err, res) => {
+              if (err) {
+                console.log(`createUserSettings error: [${err.reason}]`, err);
+                Library.modalErrorAlert(err.reason);
+              }
+            });
+
+            SessionMethods.createUserSession.call({ loginToken: token }, (err, res) => {
               if (err) {
                 console.log(`createSession error: [${err.reason}]`, err);
                 Library.modalErrorAlert(err.reason);
-                console.log(`createUserSession error`, err);
+              }
+            });
+
+            PagesMethods.createPages.call({}, (err, id) => {
+              if (err) {
+                this.setState({ allowSubmit: true });
+                Library.modalErrorAlert(err.reason);
+                console.log(`createPages error`, err);
               }
             });
 
@@ -119,7 +150,7 @@ class Register extends React.Component<IProps, IState> {
 
             ProfileMethods.createProfile.call(profileFields, (err, id) => {
               if (err) {
-                this.setState({allowSubmit: true});
+                this.setState({ allowSubmit: true });
                 Library.modalErrorAlert(err.reason);
                 console.log(`createProfile error`, err);
               } else {
@@ -127,6 +158,7 @@ class Register extends React.Component<IProps, IState> {
               }
             });
 
+            /*
 
             AuthMethods.createAuth.call({}, (err, id) => {
               if (err) {
@@ -137,8 +169,7 @@ class Register extends React.Component<IProps, IState> {
                 console.log(`auth successfully created. res = [${id}]`);
               }
             });
-
-           
+*/
 
             this.props.history.push("/");
             /*
@@ -184,7 +215,7 @@ class Register extends React.Component<IProps, IState> {
 }
 
 export default withRouter(
-  withTracker(({ params }) => {
+  withTracker(() => {
     return {};
   })(Register)
 );

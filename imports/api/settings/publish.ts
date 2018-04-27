@@ -1,28 +1,22 @@
 import { Mongo } from "meteor/mongo";
 import { Meteor } from "meteor/meteor";
 
-export const userSessions = new Mongo.Collection("userSessions");
+export const userSettings = new Mongo.Collection("userSettings");
 
 if (Meteor.isServer) {
-  Meteor.publish("userSessions", function sessionsPublication() {
-    return userSessions.find(
+  Meteor.publish("userSettings", function userSettingsPublication() {
+    return userSettings.find(
       { owner: this.userId },
       {
         fields: {
-          _id: 1,
-          loginToken: 1,
-          expired: 1,
-          active: 1,
-          auth: 1,
-          expiresOn: 1,
-          createdAt: 1,
+          authEnabled: 1,
           owner: 1
         }
       }
     );
   });
 
-  userSessions.deny({
+  userSettings.deny({
     insert() {
       return true;
     },

@@ -10,7 +10,7 @@ import { addMeta } from "./meta";
 import * as Library from "../../modules/library";
 import * as ContentManagement from "../../modules/contentManagement";
 import { keepAliveUserSession, restoreUserSession } from "../../api/sessions/methods";
-import { validateUserLogin } from "../../api/auth/methods";
+//import { validateUserLogin } from "../../api/auth/methods";
 import * as User from "../../modules/user";
 
 class Launch extends React.Component {
@@ -27,9 +27,10 @@ class Launch extends React.Component {
   }
 }
 
+
 const keepAlive = function keepAlive(activityDetected: any) {
   if (User.data()) {
-    keepAliveUserSession.call({ activityDetected: activityDetected }, (err, res) => {
+    keepAliveUserSession.call({ activityDetected: activityDetected, loginToken: User.sessionToken('get')}, (err, res) => {
       if (err) {
         console.log(`keepAliveUserSession client error`, err.reason);
       }
@@ -37,9 +38,11 @@ const keepAlive = function keepAlive(activityDetected: any) {
   }
 };
 
+
 const restoreSession = function restoreSession() {
   if (User.id()) {
-    restoreUserSession.call({}, (err, res) => {
+    let token = User.sessionToken('get');
+    restoreUserSession.call({loginToken: token}, (err, res) => {
       if (err) {
         console.log(`restoreUserSession client error`, err.reason);
       }
@@ -47,26 +50,34 @@ const restoreSession = function restoreSession() {
   }
 };
 
+
+/*
 const validateLogin = function validateLogin() {
   if (User.id()) {
     validateUserLogin.call({}, (err, res) => {
       if (err) {
-        console.log(`restoreUserSession client error`, err.reason);
+        console.log(`validateUserLogin client error`, err.reason);
       }
     });
   }
 };
+*/
 
-Accounts.onLogout(() => {});
+Accounts.onLogout(() => {
+  log.info(`Client Logout`, User.sessionToken('get'));
+});
 
 Meteor.startup(() => {
+  log.info(`Meteor.startup`, User.sessionToken('get'));
+
+  //let token = localStorage.getItem('Meteor.loginToken');
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
   addMeta();
   //validateLogin();
 
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
   if (timeOutOn === true) {
-    restoreSession();
+    User.checkLoginToken();
     let heartbeatInterval = Meteor.settings.public.session.heartbeatInterval || 300000;
     let inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
     let activityDetected = false;

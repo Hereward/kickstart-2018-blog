@@ -8,12 +8,14 @@ import { Link, withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
 import * as Library from "../../../modules/library";
-import * as AuthMethods from "../../../api/auth/methods";
+import { clearSessionAuthMethod } from "../../../api/sessions/methods";
+import * as User from "../../../modules/user";
 
 interface IProps {
   history: any;
   enhancedAuth: boolean;
   authVerified: boolean;
+  loginToken: string;
 }
 
 interface IState {
@@ -58,7 +60,13 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    let form = <ForgotPassWordResetForm allowSubmit={this.state.allowSubmit} handleChange={this.handleChange} handleSubmit={this.resetPassword} />;
+    let form = (
+      <ForgotPassWordResetForm
+        allowSubmit={this.state.allowSubmit}
+        handleChange={this.handleChange}
+        handleSubmit={this.resetPassword}
+      />
+    );
 
     return form;
   }
@@ -84,12 +92,14 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
         password1,
         function reset(err) {
           if (!err) {
-            AuthMethods.setVerified.call({ verified: false }, (err, res) => {
-              if (err) {
-                Library.modalErrorAlert(err.reason);
-                console.log(`setVerified error`, err);
-              }
-            });
+            if (this.props.enhancedAuth && this.props.userSettings.authEnabled) {
+              clearSessionAuthMethod.call({ verified: false, loginToken: User.sessionToken("get") }, (err, res) => {
+                if (err) {
+                  Library.modalErrorAlert(err.reason);
+                  console.log(`clearSessionAuthMethod error`, err);
+                }
+              });
+            }
 
             Library.modalSuccessAlert({ message: "Your password was reset." });
 
@@ -126,7 +136,7 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
 }
 
 export default withRouter(
-  withTracker(({ params }) => {
+  withTracker(() => {
     return {};
   })(ForgotPassWordReset)
 );

@@ -29,6 +29,7 @@ import {
 import * as ContentManagement from "../../modules/contentManagement";
 import * as AuthMethods from "../../api/auth/methods";
 import { Auth } from "../../api/auth/publish";
+import { userSettings } from "../../api/settings/publish";
 import { userSessions } from "../../api/sessions/publish";
 import * as SessionMethods from "../../api/sessions/methods";
 import * as Library from "../../modules/library";
@@ -44,10 +45,12 @@ interface IProps {
   profile: any;
   location: any;
   userSession: any;
+  userSettings: any;
   userData: any;
   sessionActive: boolean;
   sessionExpired: boolean;
   loggingIn: boolean;
+  loginToken: string;
   authData: {
     _id: string;
     verified: boolean;
@@ -111,16 +114,16 @@ class Navigation extends React.Component<IProps, IState> {
     if (
       !this.timerID &&
       !this.loggingOut &&
-      this.props.location.pathname === "/" && 
-      this.props.authData &&
-      !(this.props.authData.enabled === 1 && !this.props.authData.verified)
+      this.props.location.pathname === "/" &&
+      this.props.userData &&
+      !this.props.userData.emails[0].verified
     ) {
       //log.info(`Nav componentDidUpdate BEGIN`, this.timerID);
       this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
 
-      //log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO TRUE`, this.props.location.pathname);
+      //log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO TRUE`, this.props.userSettings);
     }
-    //log.info(`Nav componentDidUpdate END`, this.timerID, this.props.location.pathname);
+    //log.info(`Nav componentDidUpdate END`, this.props);
   }
 
   verifyEmailReminder() {
@@ -148,8 +151,8 @@ class Navigation extends React.Component<IProps, IState> {
       !this.props.userData.emails[0].verified &&
       this.props.profile &&
       this.props.profile.verificationEmailSent &&
-      this.props.authData &&
-      this.props.authData.enabled < 2
+      this.props.userSettings &&
+      this.props.userSettings.authEnabled < 2
     ) {
       notify = true;
     }
@@ -157,12 +160,12 @@ class Navigation extends React.Component<IProps, IState> {
     log.info(
       `verifyEmailNotificationRequired | notify=[${notify}]`,
       this.props.location.pathname,
-      this.props.authData.enabled
+      this.props.userSettings.authEnabled
     );
     return notify;
   }
 
-  //   (!this.props.enhancedAuth || (this.props.authData && this.props.authData.enabled && this.props.authData.verified))
+  //   (!this.props.enhancedAuth || (this.props.authData && this.props.userSettings.authEnabled && this.props.authData.verified))
 
   closeNavbar() {
     if (!this.state.collapsed) {
@@ -201,7 +204,7 @@ class Navigation extends React.Component<IProps, IState> {
 
   getAuthLink() {
     if (this.props.enhancedAuth) {
-      if (this.props.authData && this.props.authData.enabled === 1 && !this.props.authData.verified) {
+      if (this.props.authData && this.props.userSettings.authEnabled === 1 && !this.props.authData.verified) {
         return (
           <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/authenticate">
             Authenticator
@@ -263,7 +266,7 @@ class Navigation extends React.Component<IProps, IState> {
       //}
 
       console.log(`Navigation logOut`, User.id());
-      SessionMethods.deActivateSession.call({}, (err, res) => {
+      SessionMethods.deActivateSession.call({ loginToken: User.sessionToken("get") }, (err, res) => {
         if (err) {
           console.log(`deActivateSession error`, err.reason);
         }
@@ -279,6 +282,8 @@ class Navigation extends React.Component<IProps, IState> {
 
   conditionalReroute() {
     if (User.id()) {
+      let path = this.props.location.pathname;
+      let reRoute = "";
       let logout = false;
       if (!this.loggingOut && this.props.sessionActive && this.props.sessionExpired) {
         log.info(
@@ -288,26 +293,44 @@ class Navigation extends React.Component<IProps, IState> {
           User.id()
         );
         logout = true;
+      } else if (path === "/authenticate") {
+        let verified: any;
+        verified = Library.nested(["userSession", "auth", "verified"], this.props);
+        if (verified) {
+          reRoute = "/";
+        }
+      } else if (path.match(/verify-email/)) {
+        //let emailVerified = (this.props.userData.emails[0].verified);
+        let emailVerified = Library.nested(["userData", "emails", 0, "verified"], this.props);
+        log.info(`conditionalReroute`, emailVerified);
+        if (emailVerified === true) {
+          reRoute = "/";
+        }
+      } else if (
+        path === "/signin" &&
+        this.props.userSettings &&
+        this.props.userSettings.authEnabled === 0
+      ) {
+        reRoute = "/";
       } else if (
         !this.loggingOut &&
         this.props.location.pathname !== "/authenticate" &&
-        this.props.authData &&
-        this.props.authData.enabled > 0 &&
-        !this.props.authData.verified
+        this.props.userSettings &&
+        (this.props.userSettings.authEnabled > 1 ||
+          (this.props.userSettings.authEnabled === 1 &&
+            this.props.userSession &&
+            (!this.props.userSession.auth || !this.props.userSession.auth.verified)))
       ) {
-        log.info(
-          `Navigation: conditionalReroute DONE (enabled & verified=false)! active=[${
-            this.props.sessionActive
-          }] expired=[${this.props.sessionExpired}]`,
-          User.id(), this.timerID
-        );
-
-        this.props.history.push("/authenticate");
+        reRoute = "/authenticate";
       }
 
       if (logout) {
         this.logOut();
+      } else if (reRoute) {
+        this.props.history.push(reRoute);
       }
+
+      log.info(`conditionalReroute NEW ROUTE = [${reRoute}]`, this.props.location.pathname, this.props);
     }
   }
 
@@ -318,9 +341,10 @@ class Navigation extends React.Component<IProps, IState> {
           <div className="navbar-brand verified">
             {this.props.ShortTitle}{" "}
             <DashDisplay
+              userSession={this.props.userSession}
+              userSettings={this.props.userSettings}
               enhancedAuth={this.props.enhancedAuth}
               loggingOut={this.loggingOut}
-              authData={this.props.authData}
               loggingIn={this.props.loggingIn}
               userData={this.props.userData}
               sessionExpired={this.props.sessionExpired}
@@ -359,14 +383,20 @@ class Navigation extends React.Component<IProps, IState> {
 }
 
 export default withRouter(
-  withTracker(({ enhancedAuth }) => {
+  withTracker(() => {
+    /*
     let authDataReady: any;
     if (enhancedAuth) {
       authDataReady = Meteor.subscribe("enhancedAuth");
     }
+
+    let userSettingsDataReady: any;
+    userSettingsDataReady = Meteor.subscribe("userSettings");
     let sessionDataReady = Meteor.subscribe("userSessions");
+
     let authData: any;
     let userSession: any;
+    let userSettings: any;
     let userData: any;
     let sessionActive: boolean = false;
     let sessionExpired: boolean = false;
@@ -376,25 +406,30 @@ export default withRouter(
     userData = User.data();
 
     if (userData) {
-      if (sessionDataReady) {
-        userSession = userSessions.findOne({ owner: User.id() });
+      if (sessionDataReady && authDataReady && userSettingsDataReady) {
+        userSettings = userSettings.findOne({ owner: User.id() });
+        let token = localStorage.getItem('Meteor.loginToken');
+        userSession = userSessions.findOne({ owner: User.id(), loginToken: token });
         if (userSession) {
           sessionActive = userSession.active;
           sessionExpired = userSession.expired;
         }
+        authData = Auth.findOne({ owner: User.id(), sessionId: userSession._id });
       }
-      if (authDataReady) {
-        authData = Auth.findOne({ owner: User.id() });
-      }
+        
     }
+    */
 
-    return {
+    return {};
+  })(Navigation)
+);
+
+/*
+      userSettings: userSettings,
       authData: authData,
       userSession: userSession,
       userData: userData,
       loggingIn: loggingIn,
       sessionActive: sessionActive,
       sessionExpired: sessionExpired
-    };
-  })(Navigation)
-);
+      */

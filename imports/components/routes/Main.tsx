@@ -58,8 +58,12 @@ const MainRouter = props => (
       redirect="/"
     />
     <AuthRoute path="/register" cProps={props} component={Register} condition={!User.id()} redirect="/" />
-    <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={User.id() && props.enhancedAuth} redirect="/" />
+    <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={User.id()} redirect="/" />
+    
   </Switch>
 );
 
 export default MainRouter;
+
+// <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={!User.id()} redirect="/" />
+// <Route path="/authenticate" render={() => <Authenticator {...props} />} />

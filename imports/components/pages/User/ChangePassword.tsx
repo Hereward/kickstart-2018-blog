@@ -8,12 +8,14 @@ import { Link, withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import ChangePasswordForm from "../../forms/ChangePasswordForm";
 import * as Library from "../../../modules/library";
-import * as AuthMethods from "../../../api/auth/methods";
+import { clearSessionAuthMethod } from "../../../api/sessions/methods";
+import * as User from "../../../modules/user";
 
 interface IProps {
   history: any;
   enhancedAuth: boolean;
   authVerified: boolean;
+  loginToken: string;
 }
 
 interface IState {
@@ -81,14 +83,16 @@ class ChangePassword extends React.Component<IProps, IState> {
       Accounts.changePassword(
         oldPassword,
         newPassword,
-        function setVerified(err) {
+        function sv(err) {
           if (!err) {
-            AuthMethods.setVerified.call({ verified: false }, (err, res) => {
-              if (err) {
-                Library.modalErrorAlert(err.reason);
-                console.log(`setVerified error`, err);
-              }
-            });
+            if (this.props.enhancedAuth && this.props.userSettings.authEnabled) {
+              clearSessionAuthMethod.call({ verified: false, loginToken: User.sessionToken("get") }, (err, res) => {
+                if (err) {
+                  Library.modalErrorAlert(err.reason);
+                  console.log(`clearSessionAuthMethod error`, err);
+                }
+              });
+            }
 
             Library.modalSuccessAlert({ message: "Your password was changed!" });
 
@@ -123,7 +127,7 @@ class ChangePassword extends React.Component<IProps, IState> {
 }
 
 export default withRouter(
-  withTracker(({ params }) => {
+  withTracker(() => {
     return {};
   })(ChangePassword)
 );
