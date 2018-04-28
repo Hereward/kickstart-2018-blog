@@ -2,8 +2,9 @@ import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session";
 import * as RLocalStorage from "meteor/simply:reactive-local-storage";
 import { restoreUserSession } from "../api/sessions/methods";
+//import * as Library from "./library";
 
-const sessionTokenName = 'Meteor.Kickstart2018.SessionToken';
+const sessionTokenName = "Meteor.Kickstart2018.SessionToken";
 
 export function id() {
   const id = Meteor.userId() ? Meteor.userId() : false;
@@ -57,7 +58,7 @@ export function sessionToken(action, value?: string, key?: string) {
       break;
   }
 
-  log.info(`sessionToken`, action, value, key, output);
+  //log.info(`sessionToken`, action, value, key, output);
 
   return output;
 }
@@ -73,8 +74,16 @@ export function hash(token, algorithm = "md5") {
   return hashString;
 }
 
-export function checkLoginToken(props?) {
+export function checkSessionToken(prevProps?, newProps?) {
   if (id()) {
+    if (prevProps && newProps) {
+      if (!prevProps.userSession || newProps.userSession === prevProps.userSession) {
+        return false;
+      }
+    }
+
+    log.info(`checkSessionToken`, prevProps);
+
     //if (prevProps.sessionToken !== this.props.sessionToken) {
     let sessionTokenString = sessionToken("get"); //RLocalStorage.getItem("Meteor.Kickstart2018.SessionToken");
 
@@ -83,7 +92,7 @@ export function checkLoginToken(props?) {
       log.info(`restoreSession - token was re-generated`, sessionTokenString);
     }
 
-    restoreUserSession.call({ loginToken: sessionTokenString }, (err, res) => {
+    restoreUserSession.call({ sessionToken: sessionTokenString }, (err, res) => {
       if (err) {
         console.log(`restoreUserSession client error`, err.reason);
       }

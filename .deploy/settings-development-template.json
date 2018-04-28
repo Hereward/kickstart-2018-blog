@@ -14,7 +14,7 @@
       "heartbeatInterval": 300000,
       "inactivityTimeout": 3600000,
       "timeOutOn": true,
-      "allowMultiSession": false
+      "allowMultiSession": true
     },
     "images": {
       "storagePath": "../../../../../.storage/images"

@@ -31,7 +31,7 @@ export const createProfile = new ValidatedMethod({
       admin = Meteor.settings.private.adminEmail === Meteor.user().emails[0].address;
     }
 
-    Profiles.remove({});
+    Profiles.remove({ owner: this.userId });
 
     let id = Profiles.insert({
       fname: "",

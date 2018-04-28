@@ -31,7 +31,7 @@ const AuthRoute = ({ component: Component, redirect, condition, cProps, ...rest 
 
 const MainRouter = props => (
   <Switch>
-    <Route exact path="/" component={Index} />
+    <Route exact path="/" render={() => <Index {...props} />} />
     <Route path="/about" render={() => <About {...props} />} />
     <Route path="/profile" render={() => <Profile {...props} />} />
     <Route path="/verify-email" render={() => <VerifyEmail {...props} />} />

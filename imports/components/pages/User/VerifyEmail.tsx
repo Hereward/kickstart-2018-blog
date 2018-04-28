@@ -17,7 +17,7 @@ interface IProps {
   AuthVerified: boolean;
   sillyProp: string;
   signedIn: boolean;
-  loginToken: string;
+  sessionToken: string;
   userData: any;
 }
 
@@ -58,7 +58,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
         this.token,
         function verified(err) {
           if (!err) {
-            User.checkLoginToken();
+            User.checkSessionToken();
             //this.props.history.push("/");
             Library.modalSuccessAlert({ message: "Your email address has been verified." });
           } else {

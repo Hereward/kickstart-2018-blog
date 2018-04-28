@@ -15,7 +15,7 @@ interface IProps {
   history: any;
   enhancedAuth: boolean;
   authVerified: boolean;
-  loginToken: string;
+  sessionToken: string;
 }
 
 interface IState {
@@ -84,23 +84,21 @@ class ChangePassword extends React.Component<IProps, IState> {
         oldPassword,
         newPassword,
         function sv(err) {
+          let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
           if (!err) {
-            if (this.props.enhancedAuth && this.props.userSettings.authEnabled) {
-              clearSessionAuthMethod.call({ verified: false, loginToken: User.sessionToken("get") }, (err, res) => {
+            if (authEnabled) {
+              clearSessionAuthMethod.call({ verified: false, sessionToken: User.sessionToken("get") }, (err, res) => {
                 if (err) {
                   Library.modalErrorAlert(err.reason);
                   console.log(`clearSessionAuthMethod error`, err);
                 }
+                this.props.history.push("/authenticate");
               });
-            }
-
-            Library.modalSuccessAlert({ message: "Your password was changed!" });
-
-            if (this.props.enhancedAuth) {
-              this.props.history.push("/authenticate");
             } else {
               this.props.history.push("/");
             }
+
+            Library.modalSuccessAlert({ message: "Your password was changed!" });
           } else {
             this.setState({ allowSubmit: true });
             Library.modalErrorAlert({ message: err.reason, title: "Password change failed." });

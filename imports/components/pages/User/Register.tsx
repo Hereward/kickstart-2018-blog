@@ -23,7 +23,7 @@ interface IProps {
   history: any;
   enhancedAuth: boolean;
   signedIn: boolean;
-  loginToken: string;
+  sessionToken: string;
 }
 
 interface IState {
@@ -116,7 +116,11 @@ class Register extends React.Component<IProps, IState> {
             Library.modalErrorAlert(err.reason);
             console.log(`createUser error`, err);
           } else {
-            let token = User.sessionToken('create'); //Accounts._storedLoginToken(); // this.props.loginToken; //localStorage.getItem("Meteor.loginToken");
+            let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
+            if (!allowMultiSession) {
+              Accounts.logoutOtherClients();
+            }
+            let token = User.sessionToken("create"); //Accounts._storedsessionToken(); // this.props.sessionToken; //localStorage.getItem("Meteor.sessionToken");
             log.info(`registerUser`, token);
             //let hash = Library.hash(token);
 
@@ -127,7 +131,7 @@ class Register extends React.Component<IProps, IState> {
               }
             });
 
-            SessionMethods.createUserSession.call({ loginToken: token }, (err, res) => {
+            SessionMethods.createUserSession.call({ sessionToken: token }, (err, res) => {
               if (err) {
                 console.log(`createSession error: [${err.reason}]`, err);
                 Library.modalErrorAlert(err.reason);
@@ -158,18 +162,15 @@ class Register extends React.Component<IProps, IState> {
               }
             });
 
-            /*
-
             AuthMethods.createAuth.call({}, (err, id) => {
               if (err) {
-                this.setState({allowSubmit: true});
+                this.setState({ allowSubmit: true });
                 Library.modalErrorAlert(err.reason);
                 console.log(`createAuth error: [${err.reason}]`, err);
               } else {
                 console.log(`auth successfully created. res = [${id}]`);
               }
             });
-*/
 
             this.props.history.push("/");
             /*

@@ -10,7 +10,7 @@ if (Meteor.isServer) {
       {
         fields: {
           _id: 1,
-          loginToken: 1,
+          sessionToken: 1,
           expired: 1,
           active: 1,
           auth: 1,

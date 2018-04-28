@@ -17,8 +17,6 @@ let QRCodeContainer: any;
 
 interface IProps {
   handleQRclick: any;
-  exit: any;
- 
 }
 
 interface IState {
@@ -88,7 +86,6 @@ class QRCode extends React.Component<IProps, IState> {
         Library.modalErrorAlert(err.reason);
         console.log(`cancel2FA error`, err);
       }
-      this.props.exit();
     });
   }
 

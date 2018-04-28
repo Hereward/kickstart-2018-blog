@@ -30,7 +30,7 @@ class Launch extends React.Component {
 
 const keepAlive = function keepAlive(activityDetected: any) {
   if (User.data()) {
-    keepAliveUserSession.call({ activityDetected: activityDetected, loginToken: User.sessionToken('get')}, (err, res) => {
+    keepAliveUserSession.call({ activityDetected: activityDetected, sessionToken: User.sessionToken('get')}, (err, res) => {
       if (err) {
         console.log(`keepAliveUserSession client error`, err.reason);
       }
@@ -42,7 +42,7 @@ const keepAlive = function keepAlive(activityDetected: any) {
 const restoreSession = function restoreSession() {
   if (User.id()) {
     let token = User.sessionToken('get');
-    restoreUserSession.call({loginToken: token}, (err, res) => {
+    restoreUserSession.call({sessionToken: token}, (err, res) => {
       if (err) {
         console.log(`restoreUserSession client error`, err.reason);
       }
@@ -70,14 +70,14 @@ Accounts.onLogout(() => {
 Meteor.startup(() => {
   log.info(`Meteor.startup`, User.sessionToken('get'));
 
-  //let token = localStorage.getItem('Meteor.loginToken');
+  //let token = localStorage.getItem('Meteor.sessionToken');
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
   addMeta();
   //validateLogin();
 
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
   if (timeOutOn === true) {
-    User.checkLoginToken();
+    User.checkSessionToken();
     let heartbeatInterval = Meteor.settings.public.session.heartbeatInterval || 300000;
     let inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
     let activityDetected = false;

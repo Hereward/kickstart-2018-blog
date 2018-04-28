@@ -128,7 +128,6 @@ function decrypt(text, password) {
   return dec;
 }
 
-/*
 export const createAuth = new ValidatedMethod({
   name: "auth.create",
 
@@ -136,28 +135,11 @@ export const createAuth = new ValidatedMethod({
 
   run() {
     authCheck("auth.create", this.userId);
-    let key: any;
-    let secret: any;
-    Auth.remove({});
-
-    let authId = Auth.insert({
-      verified: false,
-      currentAttempts: 0,
-      private_key: key,
-      private_key_enc: key,
-      keyObj: secret,
-      QRCodeShown: false,
-      QRCodeURL: "",
-      QRCodeURL_enc: "",
-      cryptoKey: "",
-      enabled: 0,
-      owner: this.userId
-    });
-
+    Auth.remove({ owner: this.userId });
+    let authId = insertAuth(this.userId);
     return authId;
   }
 });
-*/
 
 /*
 export const decryptKey = new ValidatedMethod({
@@ -462,7 +444,7 @@ export const verifyToken = new ValidatedMethod({
   name: "auth.verifyToken",
   validate: new SimpleSchema({
     myToken: { type: String },
-    loginToken: { type: String }
+    sessionToken: { type: String }
   }).validator(),
 
   run(fields) {
@@ -483,7 +465,7 @@ export const verifyToken = new ValidatedMethod({
         window: 2
       });
 
-      operationType = sessionUpdateAuth(this.userId, fields.loginToken, verified);
+      operationType = sessionUpdateAuth(this.userId, fields.sessionToken, verified);
     }
 
     return { verified: verified, operationIndicator: operationType };

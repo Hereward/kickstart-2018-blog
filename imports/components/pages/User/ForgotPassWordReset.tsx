@@ -15,7 +15,7 @@ interface IProps {
   history: any;
   enhancedAuth: boolean;
   authVerified: boolean;
-  loginToken: string;
+  sessionToken: string;
 }
 
 interface IState {
@@ -91,25 +91,21 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
         this.token,
         password1,
         function reset(err) {
+          let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
           if (!err) {
-            if (this.props.enhancedAuth && this.props.userSettings.authEnabled) {
-              clearSessionAuthMethod.call({ verified: false, loginToken: User.sessionToken("get") }, (err, res) => {
+            if (authEnabled) {
+              clearSessionAuthMethod.call({ verified: false, sessionToken: User.sessionToken("get") }, (err, res) => {
                 if (err) {
                   Library.modalErrorAlert(err.reason);
                   console.log(`clearSessionAuthMethod error`, err);
                 }
+                this.props.history.push("/authenticate");
               });
+            } else {
+              this.props.history.push("/");
             }
 
             Library.modalSuccessAlert({ message: "Your password was reset." });
-
-            if (this.props.enhancedAuth) {
-              console.log("password reset: redirect to /authenticate");
-              this.props.history.push("/authenticate");
-            } else {
-              this.props.history.push("/");
-              console.log("password reset: redirect to /");
-            }
           } else {
             this.setState({ allowSubmit: true });
             Library.modalErrorAlert({ reason: err, title: "Password reset failed." });

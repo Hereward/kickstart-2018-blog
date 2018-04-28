@@ -39,7 +39,8 @@ class App extends React.Component<IProps, IState> {
   componentWillUpdate() {}
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-      User.checkLoginToken(prevProps);
+      User.checkSessionToken(prevProps, this.props);
+      //log.info(`App`, this.props);
   }
 
   componentWillMount() {}
@@ -47,7 +48,7 @@ class App extends React.Component<IProps, IState> {
   
 
   render() {
-    //this.checkLoginToken();
+    //this.checksessionToken();
     return (
       <BrowserRouter>
         <div className="router-parent d-flex flex-column">
@@ -78,7 +79,7 @@ export default withTracker(() => {
   let enhancedAuth = Meteor.settings.public.enhancedAuth.active === false ? false : true;
   let sessionToken: string;
 
-  //let oldToken = Accounts._lastLoginTokenWhenPolled;
+  //let oldToken = Accounts._lastsessionTokenWhenPolled;
 
   let loggingIn: boolean;
   loggingIn = User.loggingIn();
@@ -100,14 +101,14 @@ export default withTracker(() => {
 
     // if (sessionDataReady && authDataReady && userSettingsDataReady) {
     userSettingsRec = userSettings.findOne({ owner: userData._id });
-    // let token = localStorage.getItem("Meteor.loginToken");
-    userSession = userSessions.findOne({ owner: userData._id, loginToken: sessionToken });
+    // let token = localStorage.getItem("Meteor.sessionToken");
+    userSession = userSessions.findOne({ owner: userData._id, sessionToken: sessionToken });
 
     if (userSession) {
       sessionActive = userSession.active;
       sessionExpired = userSession.expired;
       authData = Auth.findOne({ owner: userData._id, sessionId: userSession._id });
-      log.info(`App userSession FOUND!!!`, userSession._id, authData, sessionToken);
+      //log.info(`App userSession FOUND!!!`, userSession._id, authData, sessionToken);
     }
     //  }
   }

@@ -2,7 +2,7 @@ import { Meteor } from "meteor/meteor";
 import { Mongo } from "meteor/mongo";
 
 export const Auth = new Mongo.Collection("enhancedAuth");
-export const AuthSecret = new Mongo.Collection("enhancedAuthSecret");
+//export const AuthSecret = new Mongo.Collection("enhancedAuthSecret");
 
 if (Meteor.isServer) {
   Auth.deny({

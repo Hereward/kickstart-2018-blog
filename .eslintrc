@@ -97,6 +97,7 @@
     "no-extra-bind": "warn",
     "react/no-unused-state": "react/no-unused-state",
     "semi": ["error", "always"],
+    "no-lonely-if": "warn",
     "prefer-arrow-callback": ["warn",
       {
         "allowNamedFunctions": true

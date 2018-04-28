@@ -250,17 +250,18 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   Toggle2FA() {
-    
     this.setState({ processing2FArequest: true });
-    toggle2FA.call({loginToken: User.sessionToken('get')}, (err, verified) => {
-      this.setState({ processing2FArequest: false });
+    Accounts.logoutOtherClients();
+    toggle2FA.call({sessionToken: User.sessionToken('get')}, (err, verified) => {
       if (err) {
+        this.setState({ processing2FArequest: false });
         Library.modalErrorAlert(err.reason);
         console.log(`Toggle2FA error`, err);
       }
     });
   }
 
+  /*
   render2FAPanel() {
     let layout: any;
     let activateMsg = "Activate 2 factor authentication on your account for enhanced security.";
@@ -287,6 +288,8 @@ class Profile extends React.Component<IProps, IState> {
 
     return layout;
   }
+*/
+
 
   renderImage() {
     let layout: any;

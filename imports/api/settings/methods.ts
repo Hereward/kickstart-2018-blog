@@ -7,7 +7,7 @@ import { userSessions } from "../sessions/publish";
 import { userSettings } from "./publish";
 import { Auth } from "../auth/publish";
 import { insertAuth, initAuth } from "../auth/methods";
-import { clearSessionAuth } from "../sessions/methods";
+import { clearSessionAuth, getSession } from "../sessions/methods";
 
 //let Future: any;
 //let QRCode: any;
@@ -36,7 +36,7 @@ export const createUserSettings = new ValidatedMethod({
     authCheck("userSettings.create", this.userId);
     let key: any;
     let secret: any;
-    userSettings.remove({});
+    userSettings.remove({ owner: this.userId });
 
     let authId = userSettings.insert({
       authEnabled: 0,
@@ -51,7 +51,7 @@ export const toggleAuthEnabledPending = new ValidatedMethod({
   name: "userSettings.toggleEnabledPending",
 
   validate: new SimpleSchema({
-    loginToken: { type: String }
+    sessionToken: { type: String }
   }).validator(),
 
   run(fields) {
@@ -83,9 +83,19 @@ export const toggleAuthEnabledPending = new ValidatedMethod({
 
         if (targetState > 1) {
           userSettings.update(settingsRecord._id, { $set: { authEnabled: targetState } });
-          clearSessionAuth(this.userId, fields.loginToken);
-          let id = insertAuth(this.userId);
-          initAuth(id, this.userId);
+        }
+
+        if (targetState === 2) {
+          //let session: any;
+          //session = getSession(this.userId, fields.sessionToken);
+          clearSessionAuth(this.userId, fields.sessionToken);
+        }
+
+        //let id = insertAuth(this.userId);
+        if (targetState === 3) {
+          let authRec: any;
+          authRec = Auth.findOne({ owner: this.userId });
+          initAuth(authRec._id, this.userId);
         }
 
         console.log(`userSettings.toggleEnabledPending - DONE!`, currentState, targetState);

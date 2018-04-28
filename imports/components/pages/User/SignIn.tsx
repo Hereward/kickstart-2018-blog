@@ -17,7 +17,7 @@ interface IProps {
   history: any;
   AuthVerified: boolean;
   enhancedAuth: boolean;
-  loginToken: string;
+  sessionToken: string;
   userSettings: any;
 }
 
@@ -83,8 +83,8 @@ class SignIn extends React.Component<IProps, IState> {
   }
 
   createSession(destination = "") {
-    let token = User.sessionToken('create'); //Accounts._storedLoginToken();
-    SessionMethods.createUserSession.call({ loginToken: token }, (err, res) => {
+    let token = User.sessionToken('create'); //Accounts._storedsessionToken();
+    SessionMethods.createUserSession.call({ sessionToken: token }, (err, res) => {
       if (err) {
         console.log(`createSession error: [${err.reason}]`, err);
         Library.modalErrorAlert(err.reason);

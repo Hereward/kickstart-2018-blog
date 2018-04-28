@@ -10,14 +10,14 @@ const panelData = {
         message: "WARNING: 2FA is disabled. Activate 2 factor authentication on your account for enhanced security.",
         btnText: "Activate Now",
         alertLevel: "danger",
-        addendum: "Once 2FA is activated you'll need to enter an authorisation code in order to access your account."
+        addendum: "Other clients will be logged out immediately. Once 2FA is activated you'll need to enter an authorisation code in order to access your account."
       },
       disable: {
         message: "2 factor authentication is currently active.",
         btnText: "De-activate Now",
         alertLevel: "danger",
         addendum:
-          "In order to complete this action you'll need to enter an authorisation code or you'll be locked out of your account."
+          "In order to complete this action you'll need to enter an authorisation code or you'll be locked out of your account. Other clients will be logged out immediately."
       }
     },
     verifyEmail: {

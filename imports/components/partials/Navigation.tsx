@@ -50,7 +50,7 @@ interface IProps {
   sessionActive: boolean;
   sessionExpired: boolean;
   loggingIn: boolean;
-  loginToken: string;
+  sessionToken: string;
   authData: {
     _id: string;
     verified: boolean;
@@ -266,7 +266,7 @@ class Navigation extends React.Component<IProps, IState> {
       //}
 
       console.log(`Navigation logOut`, User.id());
-      SessionMethods.deActivateSession.call({ loginToken: User.sessionToken("get") }, (err, res) => {
+      SessionMethods.deActivateSession.call({ sessionToken: User.sessionToken("get") }, (err, res) => {
         if (err) {
           console.log(`deActivateSession error`, err.reason);
         }
@@ -286,23 +286,27 @@ class Navigation extends React.Component<IProps, IState> {
       let reRoute = "";
       let logout = false;
       if (!this.loggingOut && this.props.sessionActive && this.props.sessionExpired) {
+        /*
         log.info(
           `Navigation: conditionalReroute DONE (sessionExpired)! active=[${this.props.sessionActive}] expired=[${
             this.props.sessionExpired
           }]`,
           User.id()
         );
+        */
         logout = true;
+        
       } else if (path === "/authenticate") {
-        let verified: any;
-        verified = Library.nested(["userSession", "auth", "verified"], this.props);
-        if (verified) {
+        
+        let verified = Library.nested(["userSession", "auth", "verified"], this.props);
+        let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
+        if (verified || authEnabled === 0) {
           reRoute = "/";
         }
       } else if (path.match(/verify-email/)) {
         //let emailVerified = (this.props.userData.emails[0].verified);
         let emailVerified = Library.nested(["userData", "emails", 0, "verified"], this.props);
-        log.info(`conditionalReroute`, emailVerified);
+        //log.info(`conditionalReroute`, emailVerified);
         if (emailVerified === true) {
           reRoute = "/";
         }
@@ -330,7 +334,7 @@ class Navigation extends React.Component<IProps, IState> {
         this.props.history.push(reRoute);
       }
 
-      log.info(`conditionalReroute NEW ROUTE = [${reRoute}]`, this.props.location.pathname, this.props);
+      //log.info(`conditionalReroute NEW ROUTE = [${reRoute}]`, this.props.location.pathname, this.props);
     }
   }
 
@@ -408,8 +412,8 @@ export default withRouter(
     if (userData) {
       if (sessionDataReady && authDataReady && userSettingsDataReady) {
         userSettings = userSettings.findOne({ owner: User.id() });
-        let token = localStorage.getItem('Meteor.loginToken');
-        userSession = userSessions.findOne({ owner: User.id(), loginToken: token });
+        let token = localStorage.getItem('Meteor.sessionToken');
+        userSession = userSessions.findOne({ owner: User.id(), sessionToken: token });
         if (userSession) {
           sessionActive = userSession.active;
           sessionExpired = userSession.expired;

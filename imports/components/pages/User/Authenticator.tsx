@@ -18,7 +18,7 @@ interface IProps {
   boojam: string;
   enhancedAuth: boolean;
   userSettings: any;
-  loginToken: string;
+  sessionToken: string;
   userSession: any;
   authData: {
     _id: string;
@@ -61,7 +61,6 @@ class Authenticator extends React.Component<IProps, IState> {
     this.handleQRClick = this.handleQRClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.goHome = this.goHome.bind(this);
     this.renderExpiredTokens = this.renderExpiredTokens.bind(this);
     this.oldToken = "";
     this.counter = 0;
@@ -125,7 +124,7 @@ class Authenticator extends React.Component<IProps, IState> {
   verifyToken() {
     let myToken = this.state.authCode.trim();
 
-    Methods.verifyToken.call({ myToken: myToken, loginToken: User.sessionToken('get') }, (err, res) => {
+    Methods.verifyToken.call({ myToken: myToken, sessionToken: User.sessionToken('get') }, (err, res) => {
       if (err) {
         Library.invalidAuthCodeAlert(err);
         console.log(`verifyToken error`, err);
@@ -141,16 +140,18 @@ class Authenticator extends React.Component<IProps, IState> {
     });
   }
 
+  /*
   goHome() {
     log.info("GO HOME");
     this.props.history.push("/");
   }
+  */
 
   getLayout() {
     let layout = (
       <div className="container page-content">
         {this.state.showQRcode && this.props.userSettings && this.props.userSettings.authEnabled === 3 ? (
-          <QRCodeContainer handleQRclick={this.handleQRClick} exit={this.goHome} />
+          <QRCodeContainer handleQRclick={this.handleQRClick} />
         ) : (
           this.verifyLayout()
         )}

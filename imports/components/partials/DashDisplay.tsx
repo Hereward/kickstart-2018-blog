@@ -126,7 +126,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
       verifiedFlag = emailVerified;
       message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
     } else {
-      log.info(`dashBoardTip`, props);
+      //log.info(`dashBoardTip`, props);
       verifiedFlag =
         ((props.userSession && props.userSession.auth && props.userSession.auth.verified) ||
           !props.userSettings.authEnabled) &&
