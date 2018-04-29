@@ -19,7 +19,6 @@ interface IProps {
   enhancedAuth: boolean;
   userSettings: any;
   sessionToken: string;
-  userSession: any;
   authData: {
     _id: string;
     verified: boolean;
@@ -80,11 +79,7 @@ class Authenticator extends React.Component<IProps, IState> {
 
   componentWillMount() {}
 
-  componentDidUpdate() {
-    if (this.props.userSettings && ((this.props.userSession && this.props.userSession.auth && this.props.userSession.auth.verified) || !this.props.userSettings.authEnabled)) {
-       //this.props.history.push("/");
-    }
-  }
+  componentDidUpdate() {}
 
   componentWillReceiveProps(nextProps) {}
 

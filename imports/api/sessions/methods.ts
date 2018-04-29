@@ -6,6 +6,8 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "./publish";
 import { userSettings } from "../settings/publish";
 import { Auth } from "../auth/publish";
+import { hash } from "../../modules/user";
+
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -17,29 +19,35 @@ const authCheck = (methodName, userId) => {
   return auth;
 };
 
-const sessionCheck = (sessionRecord = "", sessionToken = "") => {
+const sessionCheck = (methodName, sessionRecord = "", sessionToken = "") => {
   if (!sessionRecord) {
-    log.error(`updateAuth - invalidSession`, sessionToken);
+    log.error(`${methodName} - invalidSession`, sessionToken);
     throw new Meteor.Error(`invalidSession`, "It appears you are logged out (no session). Please try again!");
   }
 };
 
 export const getSession = function getSession(userId, token = "") {
-  let sessionRecord: any = userSessions.findOne({ owner: userId, sessionToken: token });
+  let sessionRecord: any;
+  let hashedToken = hash(token);
+  sessionRecord = userSessions.findOne({ owner: userId, sessionToken: hashedToken });
   return sessionRecord;
 };
 
+
+
 export const clearSessionAuth = (userId, sessionToken) => {
   let sessionRecord: any;
-  sessionRecord = userSessions.findOne({ owner: userId, sessionToken: sessionToken });
+  sessionRecord = getSession(userId, sessionToken);
+  //sessionRecord = userSessions.findOne({ owner: userId, sessionToken: sessionToken });
 
-  userSessions.update({ owner: userId, sessionToken: sessionToken }, { $unset: { auth: 1 } });
+  userSessions.update( sessionRecord._id, { $unset: { auth: 1 } });
   //log.info("clearSessionAuth", sessionToken);
 };
 
 export const clearSessionAuthVerified = (userId, sessionToken) => {
   let sessionRecord: any;
-  sessionRecord = userSessions.findOne({ owner: userId, sessionToken: sessionToken });
+  //sessionRecord = userSessions.findOne({ owner: userId, sessionToken: sessionToken });
+  sessionRecord = getSession(userId, sessionToken);
 
   userSessions.update(sessionRecord._id, {
     $set: { auth: { verified: false, currentAttempts: 0 } }
@@ -54,13 +62,14 @@ const insert = function insert(userId, token = "") {
   now = new Date();
   let expires: any;
   expires = new Date(Date.now() + inactivityTimeout);
+  let hashedToken = hash(token);
 
-  userSessions.remove({ sessionToken: token });
+  userSessions.remove({ sessionToken: hashedToken });
 
   //  auth: {verified: 2, currentAttempts: 0},
 
   let id = userSessions.insert({
-    sessionToken: token,
+    sessionToken: hashedToken,
     expired: false,
     active: true,
     expiresOn: expires,
@@ -154,7 +163,8 @@ export const restoreUserSession = new ValidatedMethod({
     if (!this.isSimulation) {
       let authorised = authCheck("UserSession.restore", this.userId);
 
-      let sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
+      //let sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
+      let sessionRecord = getSession(this.userId, fields.sessionToken);
       if (!sessionRecord) {
         id = insert(this.userId, fields.sessionToken);
         //insertAuth(id);
@@ -202,7 +212,7 @@ export const updateAuth = (userId, sessionToken, verified) => {
   //let verifiedInt = verified ? 1 : 0;
 
   sessionRecord = getSession(userId, sessionToken);
-  sessionCheck(sessionRecord, sessionToken);
+  sessionCheck('updateAuth', sessionRecord, sessionToken);
 
   if (!verified) {
     currentAttempts = sessionRecord.auth.currentAttempts + 1;
@@ -288,11 +298,11 @@ export const killSession = new ValidatedMethod({
     let sessionRecord: any;
 
     sessionRecord = getSession(fields.id, fields.sessionToken);
-    sessionCheck(sessionRecord, fields.sessionToken);
+    sessionCheck('killSession', sessionRecord, fields.sessionToken);
 
     if (sessionRecord) {
       userSessions.update(
-        { owner: fields.id, sessionToken: fields.sessionToken },
+        sessionRecord._id,
         {
           $set: {
             expired: true
@@ -314,12 +324,13 @@ export const deActivateSession = new ValidatedMethod({
   run(fields) {
     authCheck("session.deActivate", this.userId);
     let sessionRecord: any;
-    sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
-    sessionCheck(sessionRecord, fields.sessionToken);
+    //sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
+    sessionRecord = getSession(this.userId, fields.sessionToken);
+    sessionCheck('deActivateSession', sessionRecord, fields.sessionToken);
 
     if (sessionRecord) {
       userSessions.update(
-        { owner: this.userId },
+        sessionRecord._id,
         {
           $set: {
             active: false
@@ -348,8 +359,9 @@ export const keepAliveUserSession = new ValidatedMethod({
     now = new Date();
     let id = "";
     let sessionRecord: any;
-    sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
-    sessionCheck(sessionRecord, fields.sessionToken);
+    //sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
+    sessionRecord = getSession(this.userId, fields.sessionToken);
+    sessionCheck('keepAliveUserSession', sessionRecord, fields.sessionToken);
 
     if (sessionRecord) {
       let diff = sessionRecord.expiresOn - now;
@@ -360,7 +372,7 @@ export const keepAliveUserSession = new ValidatedMethod({
         let expires = new Date(Date.now() + inactivityTimeout);
         // Date.now()
         userSessions.update(
-          { owner: this.userId, sessionToken: fields.sessionToken },
+          sessionRecord._id,
           {
             $set: {
               expiresOn: expires,

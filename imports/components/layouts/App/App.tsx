@@ -90,6 +90,8 @@ export default withTracker(() => {
   if (userData && !loggingIn) {
     //sessionToken = User.sessionToken("get");
     sessionToken = User.sessionToken("get"); 
+    let hashedToken = User.hash(sessionToken);
+
     //RLocalStorage.getItem("Meteor.Kickstart2018.SessionToken");
     //log.info(`App - LOGIN TOKEN:`, sessionToken, enhancedAuth);
     //  if (ProfilesDataReady) {
@@ -102,7 +104,8 @@ export default withTracker(() => {
     // if (sessionDataReady && authDataReady && userSettingsDataReady) {
     userSettingsRec = userSettings.findOne({ owner: userData._id });
     // let token = localStorage.getItem("Meteor.sessionToken");
-    userSession = userSessions.findOne({ owner: userData._id, sessionToken: sessionToken });
+
+    userSession = userSessions.findOne({ owner: userData._id, sessionToken: hashedToken });
 
     if (userSession) {
       sessionActive = userSession.active;

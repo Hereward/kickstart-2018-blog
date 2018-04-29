@@ -47,7 +47,6 @@ interface IProps {
   panel: string;
   parentProps?: any;
   processingRequest?: boolean;
-  userSession?: any;
   type: string;
 }
 

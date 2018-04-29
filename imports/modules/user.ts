@@ -6,6 +6,17 @@ import { restoreUserSession } from "../api/sessions/methods";
 
 const sessionTokenName = "Meteor.Kickstart2018.SessionToken";
 
+export function hash(token, algorithm = "md5") {
+  const crypto = require("crypto");
+  //let hash = crypto.createHash('md5').update(token).digest('hex');
+  //sha256
+  const hash = crypto.createHash(algorithm);
+  hash.update(token);
+  let hashString = hash.digest("hex");
+  log.info(`hash`, token, hashString);
+  return hashString;
+}
+
 export function id() {
   const id = Meteor.userId() ? Meteor.userId() : false;
   return id;
@@ -63,16 +74,7 @@ export function sessionToken(action, value?: string, key?: string) {
   return output;
 }
 
-export function hash(token, algorithm = "md5") {
-  const crypto = require("crypto");
-  //let hash = crypto.createHash('md5').update(token).digest('hex');
-  //sha256
-  const hash = crypto.createHash(algorithm);
-  hash.update(token);
-  let hashString = hash.digest("hex");
-  log.info(`hash`, token, hashString);
-  return hashString;
-}
+
 
 export function checkSessionToken(prevProps?, newProps?) {
   if (id()) {
