@@ -8,7 +8,6 @@ import { userSettings } from "../settings/publish";
 import { Auth } from "../auth/publish";
 import { hash } from "../../modules/user";
 
-
 const authCheck = (methodName, userId) => {
   let auth = true;
   if (!userId) {
@@ -33,14 +32,12 @@ export const getSession = function getSession(userId, token = "") {
   return sessionRecord;
 };
 
-
-
 export const clearSessionAuth = (userId, sessionToken) => {
   let sessionRecord: any;
   sessionRecord = getSession(userId, sessionToken);
   //sessionRecord = userSessions.findOne({ owner: userId, sessionToken: sessionToken });
 
-  userSessions.update( sessionRecord._id, { $unset: { auth: 1 } });
+  userSessions.update(sessionRecord._id, { $unset: { auth: 1 } });
   //log.info("clearSessionAuth", sessionToken);
 };
 
@@ -212,7 +209,13 @@ export const updateAuth = (userId, sessionToken, verified) => {
   //let verifiedInt = verified ? 1 : 0;
 
   sessionRecord = getSession(userId, sessionToken);
-  sessionCheck('updateAuth', sessionRecord, sessionToken);
+  sessionCheck("updateAuth", sessionRecord, sessionToken);
+  if (!sessionRecord.auth) {
+    userSessions.update(sessionRecord._id, {
+      $set: { auth: { verified: verified, currentAttempts: currentAttempts } }
+    });
+    sessionRecord = getSession(userId, sessionToken);
+  }
 
   if (!verified) {
     currentAttempts = sessionRecord.auth.currentAttempts + 1;
@@ -298,17 +301,14 @@ export const killSession = new ValidatedMethod({
     let sessionRecord: any;
 
     sessionRecord = getSession(fields.id, fields.sessionToken);
-    sessionCheck('killSession', sessionRecord, fields.sessionToken);
+    sessionCheck("killSession", sessionRecord, fields.sessionToken);
 
     if (sessionRecord) {
-      userSessions.update(
-        sessionRecord._id,
-        {
-          $set: {
-            expired: true
-          }
+      userSessions.update(sessionRecord._id, {
+        $set: {
+          expired: true
         }
-      );
+      });
     }
 
     return true;
@@ -326,17 +326,14 @@ export const deActivateSession = new ValidatedMethod({
     let sessionRecord: any;
     //sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
     sessionRecord = getSession(this.userId, fields.sessionToken);
-    sessionCheck('deActivateSession', sessionRecord, fields.sessionToken);
+    sessionCheck("deActivateSession", sessionRecord, fields.sessionToken);
 
     if (sessionRecord) {
-      userSessions.update(
-        sessionRecord._id,
-        {
-          $set: {
-            active: false
-          }
+      userSessions.update(sessionRecord._id, {
+        $set: {
+          active: false
         }
-      );
+      });
     }
     return true;
   }
@@ -361,7 +358,7 @@ export const keepAliveUserSession = new ValidatedMethod({
     let sessionRecord: any;
     //sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
     sessionRecord = getSession(this.userId, fields.sessionToken);
-    sessionCheck('keepAliveUserSession', sessionRecord, fields.sessionToken);
+    sessionCheck("keepAliveUserSession", sessionRecord, fields.sessionToken);
 
     if (sessionRecord) {
       let diff = sessionRecord.expiresOn - now;
@@ -371,15 +368,12 @@ export const keepAliveUserSession = new ValidatedMethod({
       } else if (fields.activityDetected) {
         let expires = new Date(Date.now() + inactivityTimeout);
         // Date.now()
-        userSessions.update(
-          sessionRecord._id,
-          {
-            $set: {
-              expiresOn: expires,
-              diff: diff
-            }
+        userSessions.update(sessionRecord._id, {
+          $set: {
+            expiresOn: expires,
+            diff: diff
           }
-        );
+        });
       }
     }
 
