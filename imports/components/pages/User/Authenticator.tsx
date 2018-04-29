@@ -19,17 +19,6 @@ interface IProps {
   enhancedAuth: boolean;
   userSettings: any;
   sessionToken: string;
-  authData: {
-    _id: string;
-    verified: boolean;
-    currentAttempts: number;
-    private_key: string;
-    owner: string;
-    keyObj: any;
-    QRCodeShown: boolean;
-    QRCodeURL: string;
-    enabled: number;
-  };
 }
 
 interface IState {
@@ -86,18 +75,6 @@ class Authenticator extends React.Component<IProps, IState> {
   componentWillUnmount() {}
 
   componentDidMount() {}
-
-  getQRCodeLayout() {
-    let QRcode = (
-      <div className="QRcode">
-        <div>
-          <img alt="QR Code" src={this.props.authData.QRCodeURL} />
-        </div>
-        <div className="private-key">{this.props.authData.private_key}</div>
-      </div>
-    );
-    return QRcode;
-  }
 
   handleSubmit() {
     this.setState({ allowSubmit: false });

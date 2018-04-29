@@ -39,13 +39,11 @@ class App extends React.Component<IProps, IState> {
   componentWillUpdate() {}
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-      User.checkSessionToken(prevProps, this.props);
-      //log.info(`App`, this.props);
+    
+    //log.info(`App`, this.props);
   }
 
   componentWillMount() {}
-
-  
 
   render() {
     //this.checksessionToken();
@@ -64,12 +62,12 @@ class App extends React.Component<IProps, IState> {
 }
 
 export default withTracker(() => {
-  let ProfilesDataReady = Meteor.subscribe("profiles");
-  let authDataReady = Meteor.subscribe("enhancedAuth");
-  let userSettingsDataReady = Meteor.subscribe("userSettings");
-  let sessionDataReady = Meteor.subscribe("userSessions");
+  let profilesHandle = Meteor.subscribe("profiles");
+  let userSettingsHandle = Meteor.subscribe("userSettings");
+  let sessionHandle = Meteor.subscribe("userSessions");
 
-  let authData: any;
+  let sessionReady = false;
+
   let userSession: any;
   let userSettingsRec: any;
   //let userSettings: any;
@@ -82,14 +80,16 @@ export default withTracker(() => {
   //let oldToken = Accounts._lastsessionTokenWhenPolled;
 
   let loggingIn: boolean;
+  let userId = User.id();
   loggingIn = User.loggingIn();
   userData = User.data();
+  
   let admin = false;
   let profile: any;
 
   if (userData && !loggingIn) {
     //sessionToken = User.sessionToken("get");
-    sessionToken = User.sessionToken("get"); 
+    sessionToken = User.sessionToken("get");
     let hashedToken = User.hash(sessionToken);
 
     //RLocalStorage.getItem("Meteor.Kickstart2018.SessionToken");
@@ -101,7 +101,6 @@ export default withTracker(() => {
     }
     //  }
 
-    // if (sessionDataReady && authDataReady && userSettingsDataReady) {
     userSettingsRec = userSettings.findOne({ owner: userData._id });
     // let token = localStorage.getItem("Meteor.sessionToken");
 
@@ -110,10 +109,22 @@ export default withTracker(() => {
     if (userSession) {
       sessionActive = userSession.active;
       sessionExpired = userSession.expired;
-      authData = Auth.findOne({ owner: userData._id, sessionId: userSession._id });
-      //log.info(`App userSession FOUND!!!`, userSession._id, authData, sessionToken);
     }
-    //  }
+
+    /*
+    let sessioHandleReady = sessionHandle.ready();
+    let settingsHandleReady = userSettingsHandle.ready();
+
+    if (sessioHandleReady && settingsHandleReady) {
+      sessionReady = true;
+    }
+    */
+   
+    
+    if (userId && profilesHandle.ready() && userSettingsHandle.ready() && sessionHandle.ready() && userData && !loggingIn) {
+      sessionReady = true;
+    }
+    
   }
 
   //let userId = User.id();
@@ -123,7 +134,6 @@ export default withTracker(() => {
     ShortTitle: Meteor.settings.public.ShortTitle,
     enhancedAuth: enhancedAuth,
     userSettings: userSettingsRec,
-    authData: authData,
     userSession: userSession,
     userData: userData,
     sessionActive: sessionActive,
@@ -131,6 +141,7 @@ export default withTracker(() => {
     loggingIn: loggingIn,
     profile: profile,
     admin: admin,
-    sessionToken: sessionToken
+    sessionToken: sessionToken,
+    sessionReady: sessionReady
   };
 })(App);

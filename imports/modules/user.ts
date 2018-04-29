@@ -4,7 +4,8 @@ import * as RLocalStorage from "meteor/simply:reactive-local-storage";
 import { restoreUserSession } from "../api/sessions/methods";
 //import * as Library from "./library";
 
-const sessionTokenName = "Meteor.Kickstart2018.SessionToken";
+const sessionTokenName = Meteor.settings.public.session.sessionTokenName; 
+//"Meteor.Kickstart2018.SessionToken";
 
 export function hash(token, algorithm = "md5") {
   const crypto = require("crypto");
@@ -13,7 +14,7 @@ export function hash(token, algorithm = "md5") {
   const hash = crypto.createHash(algorithm);
   hash.update(token);
   let hashString = hash.digest("hex");
-  log.info(`hash`, token, hashString);
+  //log.info(`hash`, token, hashString);
   return hashString;
 }
 
@@ -80,11 +81,12 @@ export function checkSessionToken(prevProps?, newProps?) {
   if (id()) {
     if (prevProps && newProps) {
       if (!prevProps.userSession || newProps.userSession === prevProps.userSession) {
+        //log.info(`checkSessionToken - ABORT!`);
         return false;
       }
     }
 
-    log.info(`checkSessionToken`, prevProps);
+    log.info(`checkSessionToken`, prevProps, newProps);
 
     //if (prevProps.sessionToken !== this.props.sessionToken) {
     let sessionTokenString = sessionToken("get"); //RLocalStorage.getItem("Meteor.Kickstart2018.SessionToken");

@@ -30,7 +30,7 @@ import * as ContentManagement from "../../modules/contentManagement";
 import * as AuthMethods from "../../api/auth/methods";
 import { Auth } from "../../api/auth/publish";
 import { userSettings } from "../../api/settings/publish";
-import { userSessions } from "../../api/sessions/publish";
+//import { userSessions } from "../../api/sessions/publish";
 import * as SessionMethods from "../../api/sessions/methods";
 import * as Library from "../../modules/library";
 //import * as Tooltips from "../../modules/tooltips";
@@ -51,16 +51,7 @@ interface IProps {
   sessionExpired: boolean;
   loggingIn: boolean;
   sessionToken: string;
-  authData: {
-    _id: string;
-    verified: boolean;
-    currentAttempts: number;
-    private_key: string;
-    owner: string;
-    keyObj: any;
-    QRCodeShown: boolean;
-    enabled: number;
-  };
+  sessionReady: boolean;
 }
 
 interface IState {
@@ -106,24 +97,29 @@ class Navigation extends React.Component<IProps, IState> {
     this.emailVerifyPrompted = false;
   }
 
-  componentWillReceiveProps(nextProps) {}
+  componentWillReceiveProps(nextProps) {
+    //log.info(`Nav - componentDidUpdate - sessionReady`, this.props.sessionReady, nextProps.sessionReady, this.props, nextProps);
+  }
 
   componentWillUpdate(nextProps) {}
 
-  componentDidUpdate() {
-    if (
-      !this.timerID &&
-      !this.loggingOut &&
-      this.props.location.pathname === "/" &&
-      this.props.userData &&
-      !this.props.userData.emails[0].verified
-    ) {
-      //log.info(`Nav componentDidUpdate BEGIN`, this.timerID);
-      this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    
+    if (!this.loggingOut) {
+      
+      User.checkSessionToken(prevProps, this.props);
 
-      //log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO TRUE`, this.props.userSettings);
+      if (
+        this.props.sessionReady &&
+        !this.timerID &&
+        this.props.location.pathname === "/" &&
+        !this.props.userData.emails[0].verified
+      ) {
+        //log.info(`Nav componentDidUpdate BEGIN`, this.timerID);
+        this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
+        //log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO TRUE`, this.props.userSettings);
+      }
     }
-    //log.info(`Nav componentDidUpdate END`, this.props);
   }
 
   verifyEmailReminder() {
@@ -144,14 +140,12 @@ class Navigation extends React.Component<IProps, IState> {
   verifyEmailNotificationRequired() {
     let notify = false;
     if (
+      this.props.sessionReady &&
       this.props.location.pathname === "/" &&
+      this.props.profile.verificationEmailSent &&
       !this.emailVerifyPrompted &&
       !this.loggingOut &&
-      this.props.userData &&
       !this.props.userData.emails[0].verified &&
-      this.props.profile &&
-      this.props.profile.verificationEmailSent &&
-      this.props.userSettings &&
       this.props.userSettings.authEnabled < 2
     ) {
       notify = true;
@@ -165,8 +159,6 @@ class Navigation extends React.Component<IProps, IState> {
     return notify;
   }
 
-  //   (!this.props.enhancedAuth || (this.props.authData && this.props.userSettings.authEnabled && this.props.authData.verified))
-
   closeNavbar() {
     if (!this.state.collapsed) {
       this.setState({ collapsed: true });
@@ -177,41 +169,6 @@ class Navigation extends React.Component<IProps, IState> {
     this.setState({
       collapsed: !this.state.collapsed
     });
-  }
-
-  /*
-  static propTypes = {
-    authVerified: PropTypes.bool,
-    enhancedAuth: PropTypes.bool,
-    userSession: PropTypes.any,
-    sessionExpired: PropTypes.bool,
-    sessionActive: PropTypes.bool,
-    loggingIn: PropTypes.bool,
-    ShortTitle: PropTypes.string,
-    history: ReactRouterPropTypes.history,
-    profile: PropTypes.any,
-    authData: PropTypes.shape({
-      _id: PropTypes.string,
-      verified: PropTypes.bool,
-      currentAttempts: PropTypes.number,
-      private_key: PropTypes.string,
-      owner: PropTypes.string,
-      keyObj: PropTypes.any,
-      QRCodeShown: PropTypes.bool
-    })
-  };
-  */
-
-  getAuthLink() {
-    if (this.props.enhancedAuth) {
-      if (this.props.authData && this.props.userSettings.authEnabled === 1 && !this.props.authData.verified) {
-        return (
-          <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/authenticate">
-            Authenticator
-          </DropdownItem>
-        );
-      }
-    }
   }
 
   getAuthLayout() {
@@ -228,8 +185,6 @@ class Navigation extends React.Component<IProps, IState> {
         <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/change-password">
           Change Password
         </DropdownItem>
-
-        {this.getAuthLink()}
       </DropdownMenu>
     );
 
@@ -252,7 +207,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   logOut() {
-    if (this.props.userData) {
+    if (this.props.sessionReady) {
       this.closeNavbar();
       this.emailVerifyPrompted = false;
       if (this.timerID) {
@@ -281,11 +236,15 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   conditionalReroute() {
-    if (User.id()) {
+    if (this.props.sessionReady && !this.loggingOut) {
       let path = this.props.location.pathname;
       let reRoute = "";
       let logout = false;
-      if (!this.loggingOut && this.props.sessionActive && this.props.sessionExpired) {
+      let verified = Library.nested(["userSession", "auth", "verified"], this.props);
+      let authEnabled = this.props.userSettings.authEnabled;
+      //Library.nested(["userSettings", "authEnabled"], this.props);
+
+      if (this.props.sessionActive && this.props.sessionExpired) {
         /*
         log.info(
           `Navigation: conditionalReroute DONE (sessionExpired)! active=[${this.props.sessionActive}] expired=[${
@@ -295,11 +254,7 @@ class Navigation extends React.Component<IProps, IState> {
         );
         */
         logout = true;
-        
       } else if (path === "/authenticate") {
-        
-        let verified = Library.nested(["userSession", "auth", "verified"], this.props);
-        let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
         if (verified || authEnabled === 0) {
           reRoute = "/";
         }
@@ -310,20 +265,14 @@ class Navigation extends React.Component<IProps, IState> {
         if (emailVerified === true) {
           reRoute = "/";
         }
+        //} else if (path === "/signin" && authEnabled === 0) {
+        //   reRoute = "/";
       } else if (
-        path === "/signin" &&
-        this.props.userSettings &&
-        this.props.userSettings.authEnabled === 0
-      ) {
-        reRoute = "/";
-      } else if (
+        !verified &&
         !this.loggingOut &&
         this.props.location.pathname !== "/authenticate" &&
-        this.props.userSettings &&
-        (this.props.userSettings.authEnabled > 1 ||
-          (this.props.userSettings.authEnabled === 1 &&
-            this.props.userSession &&
-            (!this.props.userSession.auth || !this.props.userSession.auth.verified)))
+        authEnabled &&
+        authEnabled > 0
       ) {
         reRoute = "/authenticate";
       }
@@ -388,52 +337,6 @@ class Navigation extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(() => {
-    /*
-    let authDataReady: any;
-    if (enhancedAuth) {
-      authDataReady = Meteor.subscribe("enhancedAuth");
-    }
-
-    let userSettingsDataReady: any;
-    userSettingsDataReady = Meteor.subscribe("userSettings");
-    let sessionDataReady = Meteor.subscribe("userSessions");
-
-    let authData: any;
-    let userSession: any;
-    let userSettings: any;
-    let userData: any;
-    let sessionActive: boolean = false;
-    let sessionExpired: boolean = false;
-
-    let loggingIn: boolean;
-    loggingIn = User.loggingIn();
-    userData = User.data();
-
-    if (userData) {
-      if (sessionDataReady && authDataReady && userSettingsDataReady) {
-        userSettings = userSettings.findOne({ owner: User.id() });
-        let token = localStorage.getItem('Meteor.sessionToken');
-        userSession = userSessions.findOne({ owner: User.id(), sessionToken: token });
-        if (userSession) {
-          sessionActive = userSession.active;
-          sessionExpired = userSession.expired;
-        }
-        authData = Auth.findOne({ owner: User.id(), sessionId: userSession._id });
-      }
-        
-    }
-    */
-
     return {};
   })(Navigation)
 );
-
-/*
-      userSettings: userSettings,
-      authData: authData,
-      userSession: userSession,
-      userData: userData,
-      loggingIn: loggingIn,
-      sessionActive: sessionActive,
-      sessionExpired: sessionExpired
-      */

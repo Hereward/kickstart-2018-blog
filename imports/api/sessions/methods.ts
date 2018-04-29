@@ -28,7 +28,7 @@ const sessionCheck = (methodName, sessionRecord = "", sessionToken = "") => {
 export const getSession = function getSession(userId, token = "") {
   let sessionRecord: any;
   let hashedToken = hash(token);
-  sessionRecord = userSessions.findOne({ owner: userId, sessionToken: hashedToken });
+  sessionRecord = userSessions.findOne({ owner: userId, sessionToken: hashedToken, active: true });
   return sessionRecord;
 };
 
@@ -315,6 +315,26 @@ export const killSession = new ValidatedMethod({
   }
 });
 
+export const destroySession = new ValidatedMethod({
+  name: "UserSession.destroySession",
+
+  validate: new SimpleSchema({
+    sessionToken: { type: String }
+  }).validator(),
+  run(fields) {
+    authCheck("session.destroySession", this.userId);
+    let sessionRecord: any;
+    //sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
+    sessionRecord = getSession(this.userId, fields.sessionToken);
+    sessionCheck("destroySession", sessionRecord, fields.sessionToken);
+
+    if (sessionRecord) {
+      userSessions.remove(sessionRecord._id);
+    }
+    return true;
+  }
+});
+
 export const deActivateSession = new ValidatedMethod({
   name: "UserSession.deActivate",
 
@@ -382,11 +402,11 @@ export const keepAliveUserSession = new ValidatedMethod({
 });
 
 export const purgeSessions = new ValidatedMethod({
-  name: "session.destroy",
+  name: "session.purgeSessions",
   validate: null,
 
   run() {
-    authCheck("session.destroy", this.userId);
+    authCheck("session.purgeSessions", this.userId);
     //let sessionRecords = userSessions.find({ active: false }).fetch();
     //if (sessionRecords) {
     userSessions.remove({ active: false });

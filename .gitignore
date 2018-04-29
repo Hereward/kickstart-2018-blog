@@ -1,6 +1,8 @@
 .idea/
 .storage/
 
+remMongo.bat
+
 # Meteor
 settings-production.json
 settings-development.json

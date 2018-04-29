@@ -14,7 +14,8 @@
       "heartbeatInterval": 300000,
       "inactivityTimeout": 3600000,
       "timeOutOn": true,
-      "allowMultiSession": true
+      "allowMultiSession": true,
+      "sessionTokenName": "Meteor.Kickstart2018.SessionToken"
     },
     "images": {
       "storagePath": "../../../../../.storage/images"
