@@ -456,7 +456,7 @@ export const verifyToken = new ValidatedMethod({
 
     if (!this.isSimulation) {
       let secret = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
-      log.info("verifyToken - decrypted private key", secret);
+      //log.info("verifyToken - decrypted private key", secret);
 
       verified = speakeasy.time.verify({
         secret: secret,

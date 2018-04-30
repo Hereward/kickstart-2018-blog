@@ -85,7 +85,7 @@ export function checkSessionToken(prevProps?, newProps?) {
       */
     //}
 
-    log.info(`checkSessionToken`, prevProps, newProps);
+    log.info(`checkSessionToken - SESSION DATA CHANGED`, prevProps, newProps);
 
     let sessionTokenString = sessionToken("get"); //RLocalStorage.getItem("Meteor.Kickstart2018.SessionToken");
 
