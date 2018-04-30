@@ -90,7 +90,7 @@ export default withTracker(() => {
   if (userData && !loggingIn) {
     //sessionToken = User.sessionToken("get");
     sessionToken = User.sessionToken("get");
-    let hashedToken = User.hash(sessionToken);
+    let hashedToken = (sessionToken) ? User.hash(sessionToken) : '';
 
     //RLocalStorage.getItem("Meteor.Kickstart2018.SessionToken");
     //log.info(`App - LOGIN TOKEN:`, sessionToken, enhancedAuth);
@@ -136,6 +136,7 @@ export default withTracker(() => {
     userSettings: userSettingsRec,
     userSession: userSession,
     userData: userData,
+    userId: userId,
     sessionActive: sessionActive,
     sessionExpired: sessionExpired,
     loggingIn: loggingIn,

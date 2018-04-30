@@ -158,22 +158,29 @@ export const restoreUserSession = new ValidatedMethod({
     let id: string;
 
     if (!this.isSimulation) {
-      let authorised = authCheck("UserSession.restore", this.userId);
+      //let authorised = authCheck("UserSession.restore", this.userId);
 
       //let sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
-      let sessionRecord = getSession(this.userId, fields.sessionToken);
-      if (!sessionRecord) {
+      
+      let sessionRecord: any;
+      if (this.userId && fields.sessionToken) {
+        sessionRecord = getSession(this.userId, fields.sessionToken);
+      }
+
+      if (this.userId && fields.sessionToken && !sessionRecord) {
         id = insert(this.userId, fields.sessionToken);
         //insertAuth(id);
         sessionRestored = true;
+        /*
       } else {
         keepAliveUserSession.call({ activityDetected: false, sessionToken: fields.sessionToken }, (err, res) => {
           if (err) {
             console.log(`keepAliveUserSession error`, err.reason);
           }
         });
+      */
       }
-      log.info(`restoreUserSession sessionRestored=[${sessionRestored}]`, fields, id);
+      log.info(`restoreUserSession userId=[${this.userId}] sessionRestored=[${sessionRestored}]`, fields, id);
     }
 
     return sessionRestored;
@@ -369,7 +376,9 @@ export const keepAliveUserSession = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    authCheck("UserSession.keepAlive", this.userId);
+    //authCheck("UserSession.keepAlive", this.userId);
+    let sessionDetected = false;
+    let killRequired = false;
     let inactivityTimeout: any;
     inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
     let now: any;
@@ -377,13 +386,18 @@ export const keepAliveUserSession = new ValidatedMethod({
     let id = "";
     let sessionRecord: any;
     //sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
-    sessionRecord = getSession(this.userId, fields.sessionToken);
-    sessionCheck("keepAliveUserSession", sessionRecord, fields.sessionToken);
+    if (this.userId && fields.sessionToken) {
+      sessionRecord = getSession(this.userId, fields.sessionToken);
+    }
+
+    //sessionCheck("keepAliveUserSession", sessionRecord, fields.sessionToken);
 
     if (sessionRecord) {
+      sessionDetected = true;
       let diff = sessionRecord.expiresOn - now;
 
-      if (diff < 0 && !fields.force) {
+      if (diff < 0) {
+        killRequired = true;
         killSession.call({ id: this.userId, sessionToken: fields.sessionToken }, () => {});
       } else if (fields.activityDetected) {
         let expires = new Date(Date.now() + inactivityTimeout);
@@ -396,6 +410,10 @@ export const keepAliveUserSession = new ValidatedMethod({
         });
       }
     }
+
+    log.info(
+      `keepAliveUserSession userId=[${this.userId}] sessionDetected=[${sessionDetected}] killRequired=[${killRequired}]`
+    );
 
     return id;
   }

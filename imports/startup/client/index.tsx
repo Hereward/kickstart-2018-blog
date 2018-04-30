@@ -29,7 +29,7 @@ class Launch extends React.Component {
 
 
 const keepAlive = function keepAlive(activityDetected: any) {
-  if (User.data()) {
+  if (User.id()) {
     keepAliveUserSession.call({ activityDetected: activityDetected, sessionToken: User.sessionToken('get')}, (err, res) => {
       if (err) {
         console.log(`keepAliveUserSession client error`, err.reason);
@@ -77,7 +77,8 @@ Meteor.startup(() => {
 
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
   if (timeOutOn === true) {
-    User.checkSessionToken();
+    //User.checkSessionToken();
+    keepAlive(false);
     let heartbeatInterval = Meteor.settings.public.session.heartbeatInterval || 300000;
     let inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
     let activityDetected = false;

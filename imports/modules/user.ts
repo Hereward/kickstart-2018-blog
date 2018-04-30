@@ -4,7 +4,7 @@ import * as RLocalStorage from "meteor/simply:reactive-local-storage";
 import { restoreUserSession } from "../api/sessions/methods";
 //import * as Library from "./library";
 
-const sessionTokenName = Meteor.settings.public.session.sessionTokenName; 
+const sessionTokenName = Meteor.settings.public.session.sessionTokenName;
 //"Meteor.Kickstart2018.SessionToken";
 
 export function hash(token, algorithm = "md5") {
@@ -19,8 +19,7 @@ export function hash(token, algorithm = "md5") {
 }
 
 export function id() {
-  const id = Meteor.userId() ? Meteor.userId() : false;
-  return id;
+  return Meteor.userId();
 }
 
 export function data() {
@@ -75,20 +74,19 @@ export function sessionToken(action, value?: string, key?: string) {
   return output;
 }
 
-
-
 export function checkSessionToken(prevProps?, newProps?) {
-  if (id()) {
-    if (prevProps && newProps) {
+  if (id() && !loggingIn() && newProps.userData && prevProps.userSession && !newProps.userSession) {
+    //if (prevProps && newProps) {
+      /*
       if (!prevProps.userSession || newProps.userSession === prevProps.userSession) {
-        //log.info(`checkSessionToken - ABORT!`);
+        log.info(`checkSessionToken - ABORT (NO NEW DATA)`);
         return false;
       }
-    }
+      */
+    //}
 
     log.info(`checkSessionToken`, prevProps, newProps);
 
-    //if (prevProps.sessionToken !== this.props.sessionToken) {
     let sessionTokenString = sessionToken("get"); //RLocalStorage.getItem("Meteor.Kickstart2018.SessionToken");
 
     if (!sessionTokenString) {
@@ -101,6 +99,8 @@ export function checkSessionToken(prevProps?, newProps?) {
         console.log(`restoreUserSession client error`, err.reason);
       }
     });
-    //}
+  } else {
+    //log.info(`checkSessionToken - (NO USER DATA OR NO CHANGING DATA)`);
+    return false;
   }
 }

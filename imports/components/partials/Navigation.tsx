@@ -47,6 +47,7 @@ interface IProps {
   userSession: any;
   userSettings: any;
   userData: any;
+  userId: string;
   sessionActive: boolean;
   sessionExpired: boolean;
   loggingIn: boolean;
@@ -98,7 +99,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   componentWillReceiveProps(nextProps) {
-    //log.info(`Nav - componentDidUpdate - sessionReady`, this.props.sessionReady, nextProps.sessionReady, this.props, nextProps);
+    //log.info(`Nav - componentDidUpdate loggingIn = [${this.props.loggingIn}] id=[${User.id()}]`, this.props);
   }
 
   componentWillUpdate(nextProps) {}
@@ -300,6 +301,7 @@ class Navigation extends React.Component<IProps, IState> {
               loggingOut={this.loggingOut}
               loggingIn={this.props.loggingIn}
               userData={this.props.userData}
+              userId={this.props.userId}
               sessionExpired={this.props.sessionExpired}
             />
           </div>

@@ -36,6 +36,7 @@ import * as User from "../../modules/user";
 interface IProps {
   sessionExpired: boolean;
   userData: any;
+  userId: string;
   userSettings: any;
   userSession: any;
   loggingIn: boolean;
@@ -82,9 +83,8 @@ export default class DashDisplay extends React.Component<IProps, IState> {
 
   componentWillUpdate(nextProps) {
     //log.info('DashDisplay componentWillUpdate');
-    if (nextProps !== this.props) {
-      this.set(nextProps);
-    }
+    //log.info(`DashDisplay -componentWillUpdate`, nextProps);
+    this.set(nextProps);
   }
 
   componentDidUpdate() {}
@@ -118,10 +118,10 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     let message: any = "We're not quite sure what's going on...";
     if (props.loggingIn) {
       message = tip.loggingIn;
+    } else if (!props.userId || !props.userData || !props.userSettings) {
+      message = tip.loggedOut;
     } else if (props.loggingOut) {
       message = tip.loggingOut;
-    } else if (!props.userData || !props.userSettings) {
-      message = tip.loggedOut;
     } else if (props.enhancedAuth === false || props.userSettings.authEnabled === 0) {
       verifiedFlag = emailVerified;
       message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
@@ -152,6 +152,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   set(props) {
     let initialised = jquery(`.verified`).hasClass("tooltipstered");
     let newTip = this.dashBoardTip(props).tip;
+    log.info(`DashDisplay set - tip`, newTip, props);
 
     if (newTip !== this.currentTip) {
       //console.log(`DashDisplay set - ACTION`);
@@ -178,13 +179,14 @@ export default class DashDisplay extends React.Component<IProps, IState> {
 
   emailDashDisplay() {
     let display: string;
-
-    if (!this.props.sessionExpired && this.props.userData) {
-      display = ` ${this.props.userData.emails[0].address}`;
-    } else if (!this.props.userData) {
-      //display = ` ${tip.loggedOut}`;
-    } else if (this.props.loggingIn) {
+    if (this.props.loggingIn) {
       display = ` ${tip.loggingIn}`;
+    } else if (this.props.loggingOut && this.props.userId) {
+      display = ` ${tip.loggingOut}`;
+    } else if (!this.props.sessionExpired && this.props.userId && this.props.userData) {
+      display = ` ${this.props.userData.emails[0].address}`;
+    } else if (!this.props.userId || !this.props.userData || !this.props.userSettings) {
+      display = null;
     }
 
     return display;
@@ -196,8 +198,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
 
     let tag: any;
     let style: any;
-
-    if (this.props.loggingIn || this.props.loggingOut) {
+    if (this.props.loggingIn || (this.props.loggingOut && this.props.userId)) {
       tag = (
         <RefreshIndicator
           loadingColor="orange"
@@ -208,7 +209,8 @@ export default class DashDisplay extends React.Component<IProps, IState> {
           className="dashboard-spinner"
         />
       );
-    } else if (!this.props.userData) {
+    } else if (!this.props.userId || !this.props.userData || !this.props.userSettings) {
+      //log.info(`getVerifiedIndicator 1`, Meteor.userId(), Meteor.loggingIn(), this.props);
       tag = <NotificationSyncProblem className="notification-sync-problem" />;
     } else if (obj.verified) {
       tag = <ActionVerifiedUser className="action-verified-user" />;
