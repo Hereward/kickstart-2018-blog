@@ -195,7 +195,7 @@ export const restoreUserSession = new ValidatedMethod({
 
 export const exceedAttemptsCheck = (verified, attemptsLeft) => {
   let message: string;
-  if (attemptsLeft < 1 && !verified) {
+  if (attemptsLeft < 1) {
     message =
       "You have exceeded the maximum allowed number of authentication attempts. Please contact Admin to reinstate access to your account.";
     throw new Meteor.Error(`exceededAttempts`, message);
@@ -216,13 +216,14 @@ export const updateAuth = (userId, sessionToken, verified) => {
   let settingsRecord: any;
   let sessionRecord: any;
   let currentAttempts = 0;
+  let attemptsLeft: number;
 
   let maxAttempts = Meteor.settings.public.enhancedAuth.maxAttempts;
-  let attemptsLeft = maxAttempts;
+
   //let verifiedInt = verified ? 1 : 0;
 
   //sessionRecord = getSession(userId, sessionToken);
-  
+
   //if (!sessionRecord.auth) {
   sessionRecord = initSessionAuthVerified(userId, sessionToken);
   sessionCheck("updateAuth", sessionRecord, sessionToken);
@@ -235,10 +236,12 @@ export const updateAuth = (userId, sessionToken, verified) => {
   // } else {
   // }
 
-  if (!verified) {
-    currentAttempts = sessionRecord.auth.currentAttempts + 1;
-    attemptsLeft = maxAttempts - (sessionRecord.auth.currentAttempts + 1);
-  }
+  currentAttempts = sessionRecord.auth.currentAttempts + 1;
+  attemptsLeft = maxAttempts - currentAttempts;
+
+  userSessions.update(sessionRecord._id, {
+    $set: { "auth.currentAttempts": currentAttempts }
+  });
 
   let attemptsOK = exceedAttemptsCheck(verified, attemptsLeft);
   let settings: any;
@@ -265,15 +268,16 @@ export const updateAuth = (userId, sessionToken, verified) => {
         targetState = 0;
     }
 
+    userSessions.update(sessionRecord._id, {
+      $set: { "auth.verified": verified }
+    });
+
     if (verified) {
       userSettings.update(settings._id, {
         $set: { authEnabled: targetState }
       });
     }
 
-    userSessions.update(sessionRecord._id, {
-      $set: { auth: { verified: verified, currentAttempts: currentAttempts } }
-    });
     /*
     if (targetState === 1) {
       userSessions.update(sessionRecord._id, {

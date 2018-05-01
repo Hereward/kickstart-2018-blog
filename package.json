@@ -3,6 +3,7 @@
   "private": true,
   "scripts": {
     "start": "meteor --settings .deploy/settings-development.json",
+    "debug": "meteor --inspect --settings .deploy/settings-development.json",
     "flow": "flow",
     "deploy": "mup deploy --config=.deploy/mup.js --settings=.deploy/settings-staging.json --verbose",
     "deploy-cache": "mup deploy --config=.deploy/mup.js --settings=.deploy/settings-staging.json --cached-build --verbose"
