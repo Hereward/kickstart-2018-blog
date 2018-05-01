@@ -7,7 +7,7 @@ import { userSessions } from "../sessions/publish";
 import { userSettings } from "./publish";
 import { Auth } from "../auth/publish";
 import { insertAuth, initAuth } from "../auth/methods";
-import { clearSessionAuth, getSession } from "../sessions/methods";
+import { clearSessionAuth, initSessionAuthVerified, getSession } from "../sessions/methods";
 
 //let Future: any;
 //let QRCode: any;
@@ -85,11 +85,12 @@ export const toggleAuthEnabledPending = new ValidatedMethod({
           userSettings.update(settingsRecord._id, { $set: { authEnabled: targetState } });
         }
 
-        if (targetState === 2) {
+        if (targetState === 3) {
           //let session: any;
           //session = getSession(this.userId, fields.sessionToken);
-          clearSessionAuth(this.userId, fields.sessionToken);
+          //initSessionAuthVerified(this.userId, fields.sessionToken);
         }
+
 
         //let id = insertAuth(this.userId);
         if (targetState === 3) {

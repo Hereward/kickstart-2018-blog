@@ -36,19 +36,25 @@ export const clearSessionAuth = (userId, sessionToken) => {
   let sessionRecord: any;
   sessionRecord = getSession(userId, sessionToken);
   //sessionRecord = userSessions.findOne({ owner: userId, sessionToken: sessionToken });
-
-  userSessions.update(sessionRecord._id, { $unset: { auth: 1 } });
-  //log.info("clearSessionAuth", sessionToken);
+  if (sessionRecord && sessionRecord.auth) {
+    userSessions.update(sessionRecord._id, { $unset: { auth: 1 } });
+    log.info("clearSessionAuth - DONE", sessionToken);
+  }
 };
 
-export const clearSessionAuthVerified = (userId, sessionToken) => {
+export const initSessionAuthVerified = (userId, sessionToken) => {
   let sessionRecord: any;
+  let sessionRecordUpdated: any;
   //sessionRecord = userSessions.findOne({ owner: userId, sessionToken: sessionToken });
   sessionRecord = getSession(userId, sessionToken);
 
-  userSessions.update(sessionRecord._id, {
-    $set: { auth: { verified: false, currentAttempts: 0 } }
-  });
+  if (sessionRecord && sessionRecord.auth) {
+    userSessions.update(sessionRecord._id, { $set: { "auth.verified": false } });
+  } else if (sessionRecord) {
+    userSessions.update(sessionRecord._id, { $set: { auth: { verified: false, currentAttempts: 0 } } });
+  }
+  sessionRecordUpdated = userSessions.findOne(sessionRecord._id);
+  return sessionRecordUpdated;
 };
 
 const insert = function insert(userId, token = "") {
@@ -161,7 +167,7 @@ export const restoreUserSession = new ValidatedMethod({
       //let authorised = authCheck("UserSession.restore", this.userId);
 
       //let sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
-      
+
       let sessionRecord: any;
       if (this.userId && fields.sessionToken) {
         sessionRecord = getSession(this.userId, fields.sessionToken);
@@ -215,14 +221,19 @@ export const updateAuth = (userId, sessionToken, verified) => {
   let attemptsLeft = maxAttempts;
   //let verifiedInt = verified ? 1 : 0;
 
-  sessionRecord = getSession(userId, sessionToken);
+  //sessionRecord = getSession(userId, sessionToken);
+  
+  //if (!sessionRecord.auth) {
+  sessionRecord = initSessionAuthVerified(userId, sessionToken);
   sessionCheck("updateAuth", sessionRecord, sessionToken);
-  if (!sessionRecord.auth) {
+  /*
     userSessions.update(sessionRecord._id, {
       $set: { auth: { verified: verified, currentAttempts: currentAttempts } }
     });
-    sessionRecord = getSession(userId, sessionToken);
-  }
+    */
+  //sessionRecord = getSession(userId, sessionToken);
+  // } else {
+  // }
 
   if (!verified) {
     currentAttempts = sessionRecord.auth.currentAttempts + 1;
@@ -254,6 +265,16 @@ export const updateAuth = (userId, sessionToken, verified) => {
         targetState = 0;
     }
 
+    if (verified) {
+      userSettings.update(settings._id, {
+        $set: { authEnabled: targetState }
+      });
+    }
+
+    userSessions.update(sessionRecord._id, {
+      $set: { auth: { verified: verified, currentAttempts: currentAttempts } }
+    });
+    /*
     if (targetState === 1) {
       userSessions.update(sessionRecord._id, {
         $set: { auth: { verified: verified, currentAttempts: currentAttempts } }
@@ -261,10 +282,7 @@ export const updateAuth = (userId, sessionToken, verified) => {
     } else {
       clearSessionAuth(userId, sessionToken);
     }
-
-    userSettings.update(settings._id, {
-      $set: { authEnabled: targetState }
-    });
+    */
   }
 
   return operationType;

@@ -118,7 +118,6 @@ class Navigation extends React.Component<IProps, IState> {
       ) {
         //log.info(`Nav componentDidUpdate BEGIN`, this.timerID);
         this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
-        //log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO TRUE`, this.props.userSettings);
       }
     }
   }
@@ -131,7 +130,6 @@ class Navigation extends React.Component<IProps, IState> {
       this.emailVerifyPrompted = true;
     } else {
       this.timerID = 0;
-      //log.info(`Nav componentDidUpdate I AM SETTING the FUCKING VARIABLE TO FALSE`, this.props.location.pathname);
       //console.log(`Nav componentDidUpdate NOTIFY NOT REQUIRED!!! [loggingOut = ${this.loggingOut}] [prompted = ${this.emailVerifyPrompted}]`, this.props);
     }
   }
@@ -256,7 +254,9 @@ class Navigation extends React.Component<IProps, IState> {
         */
         logout = true;
       } else if (path === "/authenticate") {
-        if (verified || authEnabled === 0) {
+        if (authEnabled === 0) {
+          reRoute = "/";
+        } else if (authEnabled === 1 && verified) {
           reRoute = "/";
         }
       } else if (path.match(/verify-email/)) {
@@ -269,11 +269,8 @@ class Navigation extends React.Component<IProps, IState> {
         //} else if (path === "/signin" && authEnabled === 0) {
         //   reRoute = "/";
       } else if (
-        !verified &&
-        !this.loggingOut &&
         this.props.location.pathname !== "/authenticate" &&
-        authEnabled &&
-        authEnabled > 0
+        authEnabled > 1 || (authEnabled === 1 && !verified)
       ) {
         reRoute = "/authenticate";
       }
@@ -284,7 +281,7 @@ class Navigation extends React.Component<IProps, IState> {
         this.props.history.push(reRoute);
       }
 
-      //log.info(`conditionalReroute NEW ROUTE = [${reRoute}]`, this.props.location.pathname, this.props);
+      log.info(`conditionalReroute authEnabled = [${authEnabled}] NEW ROUTE = [${reRoute}]`, this.props.location.pathname, this.props);
     }
   }
 

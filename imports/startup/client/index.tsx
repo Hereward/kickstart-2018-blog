@@ -77,7 +77,6 @@ Meteor.startup(() => {
 
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
   if (timeOutOn === true) {
-    //User.checkSessionToken();
     keepAlive(false);
     let heartbeatInterval = Meteor.settings.public.session.heartbeatInterval || 300000;
     let inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
