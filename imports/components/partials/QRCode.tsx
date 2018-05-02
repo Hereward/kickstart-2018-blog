@@ -66,7 +66,6 @@ class QRCode extends React.Component<IProps, IState> {
         Library.modalErrorAlert(err.reason);
         console.log(`getDecrpytedAuthData error`, err);
       } else {
-        log.info(`getDecrpytedAuthData - DONE (Client)!`, res);
         this.setState({ privateKey: res.key, QRCodeURL: res.url });
       }
     });

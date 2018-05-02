@@ -96,7 +96,7 @@ class Authenticator extends React.Component<IProps, IState> {
   verifyToken() {
     let myToken = this.state.authCode.trim();
 
-    Methods.verifyToken.call({ myToken: myToken, sessionToken: User.sessionToken('get') }, (err, res) => {
+    Methods.verifyToken.call({ myToken: myToken, sessionToken: User.sessionToken("get") }, (err, res) => {
       if (err) {
         Library.invalidAuthCodeAlert(err);
         console.log(`verifyToken error`, err);
@@ -106,18 +106,9 @@ class Authenticator extends React.Component<IProps, IState> {
         if (res.operationIndicator) {
           Library.modalSuccessAlert({ message: opTypeMessage[res.operationIndicator] });
         }
-        log.info(`verifyToken - SUCCESS`);
-        //this.props.history.push("/");
       }
     });
   }
-
-  /*
-  goHome() {
-    log.info("GO HOME");
-    this.props.history.push("/");
-  }
-  */
 
   getLayout() {
     let layout = (

@@ -18,7 +18,6 @@ import * as Icon from "../../../modules/icons";
 import { Pages } from "../../../api/pages/publish";
 import HomeContent from "../../partials/Home";
 import * as User from "../../../modules/user";
-//import { userSessions } from "../../../api/sessions/publish";
 
 momentDurationFormatSetup(moment);
 
@@ -148,7 +147,6 @@ class Index extends React.Component<IProps, IState> {
 
   sessionData() {
     let layout: any;
-    //log.info(`sessionData`, this.props);
     if (this.props.currentUser && this.props.userSession) {
       let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
       let nowFormatted = dateFormat(this.props.timeNow, "mmmm dS, yyyy, h:MM:ss TT");
@@ -230,17 +228,12 @@ class Index extends React.Component<IProps, IState> {
   }
 }
 
-export default withTracker((props) => {
+export default withTracker(props => {
   let tasksDataReady = Meteor.subscribe("tasks");
-  //let sessionDataReady = Meteor.subscribe("userSessions");
-  //log.info(`Index - props`, props);
   let tasks: any;
-  //let userSession: any;
- // let userData: any;
   let remainingTime: any;
   let remainingTimeFormatted: any;
   let timeNow = Chronos.date();
-  //userData = User.data();
   let count = 0;
   let query = Tasks.find({}, { sort: { createdAt: -1 } });
   count = query.count();
@@ -255,17 +248,13 @@ export default withTracker((props) => {
     tasks = query.fetch();
   }
 
-
   if (props.userSession) {
-        //log.info(`Index - userSession`, props);
-      //userSession = userSessions.findOne({ owner: User.id() });
-        remainingTime = props.userSession.expiresOn - timeNow;
-        let myDuration: any;
-        myDuration = moment.duration(remainingTime, "milliseconds");
-        remainingTimeFormatted = myDuration.format("hh:mm:ss", {
-          trim: false
-        });
-      
+    remainingTime = props.userSession.expiresOn - timeNow;
+    let myDuration: any;
+    myDuration = moment.duration(remainingTime, "milliseconds");
+    remainingTimeFormatted = myDuration.format("hh:mm:ss", {
+      trim: false
+    });
   }
 
   return {

@@ -5,10 +5,8 @@ import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { Link, withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
-//import styled from "styled-components";
+
 import { Session } from "meteor/session";
-//import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
-//import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
 
 import {
   Collapse,
@@ -30,10 +28,8 @@ import * as ContentManagement from "../../modules/contentManagement";
 import * as AuthMethods from "../../api/auth/methods";
 import { Auth } from "../../api/auth/publish";
 import { userSettings } from "../../api/settings/publish";
-//import { userSessions } from "../../api/sessions/publish";
 import * as SessionMethods from "../../api/sessions/methods";
 import * as Library from "../../modules/library";
-//import * as Tooltips from "../../modules/tooltips";
 import * as User from "../../modules/user";
 import DashDisplay from "./DashDisplay";
 
@@ -61,22 +57,6 @@ interface IState {
   verified: boolean;
 }
 
-/*
-const VerifiedIndicator = function vfi(verified) {
-  let tag: any;
-  let style: any;
-
-  if (verified) {
-    tag = <ActionVerifiedUser className="action-verified-user" />;
-  } else {
-    tag = <ActionHighlightOff className="action-highlight-off" />;
-  }
-  return <div id="VerifiedIndicator">{tag}</div>;
-};
-*/
-
-//declare var Bert: any;
-
 class Navigation extends React.Component<IProps, IState> {
   tipInitialised: boolean = false;
   clearTip: boolean = false;
@@ -98,16 +78,12 @@ class Navigation extends React.Component<IProps, IState> {
     this.emailVerifyPrompted = false;
   }
 
-  componentWillReceiveProps(nextProps) {
-    //log.info(`Nav - componentDidUpdate loggingIn = [${this.props.loggingIn}] id=[${User.id()}]`, this.props);
-  }
+  componentWillReceiveProps(nextProps) {}
 
   componentWillUpdate(nextProps) {}
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    
     if (!this.loggingOut) {
-      
       User.checkSessionToken(prevProps, this.props);
 
       if (
@@ -116,7 +92,6 @@ class Navigation extends React.Component<IProps, IState> {
         this.props.location.pathname === "/" &&
         !this.props.userData.emails[0].verified
       ) {
-        //log.info(`Nav componentDidUpdate BEGIN`, this.timerID);
         this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
       }
     }
@@ -125,12 +100,10 @@ class Navigation extends React.Component<IProps, IState> {
   verifyEmailReminder() {
     let notify = this.verifyEmailNotificationRequired();
     if (notify) {
-      //console.log(`Nav componentDidUpdate NOTIFY REQUIRED!!!`);
       Library.userModelessAlert("verifyEmail", this.props);
       this.emailVerifyPrompted = true;
     } else {
       this.timerID = 0;
-      //console.log(`Nav componentDidUpdate NOTIFY NOT REQUIRED!!! [loggingOut = ${this.loggingOut}] [prompted = ${this.emailVerifyPrompted}]`, this.props);
     }
   }
 
@@ -149,7 +122,6 @@ class Navigation extends React.Component<IProps, IState> {
     ) {
       notify = true;
     }
-    //console.log(`verifyEmailNotificationRequired?`, notify);
     log.info(
       `verifyEmailNotificationRequired | notify=[${notify}]`,
       this.props.location.pathname,
@@ -215,9 +187,7 @@ class Navigation extends React.Component<IProps, IState> {
 
       this.timerID = 0;
       this.loggingOut = true;
-      //if (this.props.location.pathname === "/authenticate") {
       this.props.history.push("/");
-      //}
 
       console.log(`Navigation logOut`, User.id());
       SessionMethods.deActivateSession.call({ sessionToken: User.sessionToken("get") }, (err, res) => {
@@ -228,7 +198,6 @@ class Navigation extends React.Component<IProps, IState> {
           //Meteor["connection"].setUserId(null);
           console.log(`Navigation logOut DONE`);
           this.loggingOut = false;
-          //this.props.history.push("/");
         });
       });
     }
@@ -241,17 +210,8 @@ class Navigation extends React.Component<IProps, IState> {
       let logout = false;
       let verified = Library.nested(["userSession", "auth", "verified"], this.props);
       let authEnabled = this.props.userSettings.authEnabled;
-      //Library.nested(["userSettings", "authEnabled"], this.props);
 
       if (this.props.sessionActive && this.props.sessionExpired) {
-        /*
-        log.info(
-          `Navigation: conditionalReroute DONE (sessionExpired)! active=[${this.props.sessionActive}] expired=[${
-            this.props.sessionExpired
-          }]`,
-          User.id()
-        );
-        */
         logout = true;
       } else if (path === "/authenticate") {
         if (authEnabled === 0) {
@@ -260,17 +220,13 @@ class Navigation extends React.Component<IProps, IState> {
           reRoute = "/";
         }
       } else if (path.match(/verify-email/)) {
-        //let emailVerified = (this.props.userData.emails[0].verified);
         let emailVerified = Library.nested(["userData", "emails", 0, "verified"], this.props);
-        //log.info(`conditionalReroute`, emailVerified);
         if (emailVerified === true) {
           reRoute = "/";
         }
-        //} else if (path === "/signin" && authEnabled === 0) {
-        //   reRoute = "/";
       } else if (
-        this.props.location.pathname !== "/authenticate" &&
-        authEnabled > 1 || (authEnabled === 1 && !verified)
+        (this.props.location.pathname !== "/authenticate" && authEnabled > 1) ||
+        (authEnabled === 1 && !verified)
       ) {
         reRoute = "/authenticate";
       }
@@ -281,7 +237,14 @@ class Navigation extends React.Component<IProps, IState> {
         this.props.history.push(reRoute);
       }
 
-      log.info(`conditionalReroute authEnabled = [${authEnabled}] NEW ROUTE = [${reRoute}]`, this.props.location.pathname, this.props);
+      if (reRoute) {
+        log.info(
+          `conditionalReroute authEnabled = [${authEnabled}] NEW ROUTE = [${reRoute}]`,
+          this.props.location.pathname,
+          this.props
+        );
+      }
+
     }
   }
 

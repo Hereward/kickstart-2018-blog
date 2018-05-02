@@ -38,15 +38,11 @@ class App extends React.Component<IProps, IState> {
 
   componentWillUpdate() {}
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    
-    //log.info(`App`, this.props);
-  }
+  componentDidUpdate(prevProps, prevState, snapshot) {}
 
   componentWillMount() {}
 
   render() {
-    //this.checksessionToken();
     return (
       <BrowserRouter>
         <div className="router-parent d-flex flex-column">
@@ -65,44 +61,32 @@ export default withTracker(() => {
   let profilesHandle = Meteor.subscribe("profiles");
   let userSettingsHandle = Meteor.subscribe("userSettings");
   let sessionHandle = Meteor.subscribe("userSessions");
-
   let sessionReady = false;
-
   let userSession: any;
   let userSettingsRec: any;
-  //let userSettings: any;
   let userData: any;
   let sessionActive: boolean = false;
   let sessionExpired: boolean = false;
   let enhancedAuth = Meteor.settings.public.enhancedAuth.active === false ? false : true;
   let sessionToken: string;
-
-  //let oldToken = Accounts._lastsessionTokenWhenPolled;
-
   let loggingIn: boolean;
   let userId = User.id();
   loggingIn = User.loggingIn();
   userData = User.data();
-  
+
   let admin = false;
   let profile: any;
 
   if (userData && !loggingIn) {
-    //sessionToken = User.sessionToken("get");
     sessionToken = User.sessionToken("get");
-    let hashedToken = (sessionToken) ? User.hash(sessionToken) : '';
+    let hashedToken = sessionToken ? User.hash(sessionToken) : "";
 
-    //RLocalStorage.getItem("Meteor.Kickstart2018.SessionToken");
-    //log.info(`App - LOGIN TOKEN:`, sessionToken, enhancedAuth);
-    //  if (ProfilesDataReady) {
     profile = Profiles.findOne({ owner: userData._id });
     if (profile) {
       admin = profile.admin;
     }
-    //  }
 
     userSettingsRec = userSettings.findOne({ owner: userData._id });
-    // let token = localStorage.getItem("Meteor.sessionToken");
 
     userSession = userSessions.findOne({ owner: userData._id, sessionToken: hashedToken });
 
@@ -111,23 +95,17 @@ export default withTracker(() => {
       sessionExpired = userSession.expired;
     }
 
-    /*
-    let sessioHandleReady = sessionHandle.ready();
-    let settingsHandleReady = userSettingsHandle.ready();
-
-    if (sessioHandleReady && settingsHandleReady) {
+    if (
+      userId &&
+      profilesHandle.ready() &&
+      userSettingsHandle.ready() &&
+      sessionHandle.ready() &&
+      userData &&
+      !loggingIn
+    ) {
       sessionReady = true;
     }
-    */
-   
-    
-    if (userId && profilesHandle.ready() && userSettingsHandle.ready() && sessionHandle.ready() && userData && !loggingIn) {
-      sessionReady = true;
-    }
-    
   }
-
-  //let userId = User.id();
 
   return {
     MainTitle: Meteor.settings.public.MainTitle,

@@ -150,9 +150,7 @@ export default class Notification extends React.Component<IProps, IState> {
     let alertLevel: string;
     let btnText: string;
     let addendum: string;
-
     let panelType = this.props.type;
-    log.info(`infoPanel - panelType`, panelType);
 
     message = panelData[this.props.panel][panelType].message;
     alertLevel = panelData[this.props.panel][panelType].alertLevel;

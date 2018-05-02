@@ -9,19 +9,13 @@ import { Auth } from "../auth/publish";
 import { insertAuth, initAuth } from "../auth/methods";
 import { clearSessionAuth, initSessionAuthVerified, getSession } from "../sessions/methods";
 
-//let Future: any;
-//let QRCode: any;
-//let speakeasy = require("speakeasy");
 
-//declare var Npm: any;
-
-//let crypto = require("crypto");
 
 const authCheck = (methodName, userId) => {
   let auth = true;
   if (!userId) {
     auth = false;
-    console.log(`authCheck (${methodName}) - NO USER ID`);
+    log.info(`authCheck (${methodName}) - NO USER ID`);
     throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
   }
   return auth;
@@ -85,23 +79,16 @@ export const toggleAuthEnabledPending = new ValidatedMethod({
           userSettings.update(settingsRecord._id, { $set: { authEnabled: targetState } });
         }
 
-        if (targetState === 3) {
-          //let session: any;
-          //session = getSession(this.userId, fields.sessionToken);
-          //initSessionAuthVerified(this.userId, fields.sessionToken);
-        }
+     
 
-
-        //let id = insertAuth(this.userId);
         if (targetState === 3) {
           let authRec: any;
           authRec = Auth.findOne({ owner: this.userId });
           initAuth(authRec._id, this.userId);
         }
 
-        console.log(`userSettings.toggleEnabledPending - DONE!`, currentState, targetState);
-      } else {
-        console.log(`userSettings.toggleEnabledPending - No record found.`);
+        // log.info(`userSettings.toggleEnabledPending - DONE!`, currentState, targetState);
+     
       }
     }
   }
@@ -116,62 +103,12 @@ export const cancel2FA = new ValidatedMethod({
     authCheck("settings.cancel2FA", this.userId);
     if (!this.isSimulation) {
       let settingsRecord: any;
-      //authRecord = Auth.findOne({ owner: this.userId });
       settingsRecord = userSettings.findOne({ owner: this.userId });
       if (settingsRecord) {
         userSettings.update(settingsRecord._id, { $set: { authEnabled: 0 } });
-        console.log(`auth.cancel - DONE!`);
       }
     }
   }
 });
 
-/*
-export const cleanup = new ValidatedMethod({
-  name: "settings.cleanup",
 
-  validate: null,
-
-  run(fields) {
-    authCheck("settings.cleanup", this.userId);
-    let targetState: number;
-    let ownerId = this.userId;
-    let logOutRequired: boolean = false;
-    if (!this.isSimulation) {
-      let SettingsRecord: any;
-      SettingsRecord = Settings.findOne({ owner: ownerId });
-
-      if (SettingsRecord) {
-        let currentState = SettingsRecord.enabled;
-        switch (currentState) {
-          case 1:
-            targetState = 1;
-            break;
-          case 0:
-            targetState = 0;
-            break;
-          case 2:
-            targetState = 1;
-            break;
-          case 3:
-            targetState = 0;
-            break;
-          default:
-            targetState = 0;
-        }
-
-
-        Settings.update(SettingsRecord._id, {
-          $set: { enabled: targetState }
-        });
-
-        console.log(`settings.cleanup - DONE!`);
-      } else {
-        console.log(`settings.cleanup - No record found.`);
-      }
-    }
-    return logOutRequired;
-  }
-});
-
-*/

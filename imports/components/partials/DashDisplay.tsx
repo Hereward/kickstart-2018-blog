@@ -31,8 +31,6 @@ import {
 
 import * as User from "../../modules/user";
 
-//  loggingOut: false;
-
 interface IProps {
   sessionExpired: boolean;
   userData: any;
@@ -67,8 +65,6 @@ const tip = {
 };
 
 export default class DashDisplay extends React.Component<IProps, IState> {
-  //tipInitialised: boolean = false;
-  //clearTip: boolean = false;
   currentTip: string = "";
 
   emailVerifyPrompted: boolean;
@@ -82,35 +78,14 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   componentWillReceiveProps(nextProps) {}
 
   componentWillUpdate(nextProps) {
-    //log.info('DashDisplay componentWillUpdate');
-    //log.info(`DashDisplay -componentWillUpdate`, nextProps);
     this.set(nextProps);
   }
 
   componentDidUpdate() {}
 
   componentDidMount() {
-    //log.info('DashDisplay Mount');
     this.set(this.props);
   }
-
-  /*
-  verifiedIndicator(verified) {
-    //this.props.loggingIn, this.props.loggingOut, this.props.userData
-  
-    let tag: any;
-    let style: any;
-  
-    if (!this.props.userData) {
-      tag = <NotificationSyncProblem className="notification-sync-problem" />;
-    } else if (verified) {
-      tag = <ActionVerifiedUser className="action-verified-user" />;
-    } else {
-      tag = <ActionHighlightOff className="action-highlight-off" />;
-    }
-    return <div id="VerifiedIndicator">{tag}</div>;
-  };
-  */
 
   dashBoardTip(props) {
     let emailVerified = props.userData ? props.userData.emails[0].verified : false;
@@ -126,7 +101,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
       verifiedFlag = emailVerified;
       message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
     } else {
-      //log.info(`dashBoardTip`, props);
       verifiedFlag =
         ((props.userSession && props.userSession.auth && props.userSession.auth.verified) ||
           !props.userSettings.authEnabled) &&
@@ -152,10 +126,8 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   set(props) {
     let initialised = jquery(`.verified`).hasClass("tooltipstered");
     let newTip = this.dashBoardTip(props).tip;
-    // log.info(`DashDisplay set - tip`, newTip, props);
 
     if (newTip !== this.currentTip) {
-      //console.log(`DashDisplay set - ACTION`);
       this.currentTip = newTip;
       if (initialised) {
         jquery(`.verified`).tooltipster("destroy");
@@ -210,7 +182,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
         />
       );
     } else if (!this.props.userId || !this.props.userData || !this.props.userSettings) {
-      //log.info(`getVerifiedIndicator 1`, Meteor.userId(), Meteor.loggingIn(), this.props);
       tag = <NotificationSyncProblem className="notification-sync-problem" />;
     } else if (obj.verified) {
       tag = <ActionVerifiedUser className="action-verified-user" />;
@@ -223,24 +194,17 @@ export default class DashDisplay extends React.Component<IProps, IState> {
       </div>
     );
 
-    //if (!this.props.loggingIn && this.props.userData) {
-    //layout = <div className="d-inline-block">{this.verifiedIndicator(obj.verified)}</div>;
-    //}
-
     return layout || "";
   }
 
   authVerifiedLayout() {
-    //let obj = this.dashBoardTip(this.props);
     let verifiedLayout: any;
     let emailDashDisplay = this.emailDashDisplay();
-    //if (emailDashDisplay) {
     verifiedLayout = (
       <div className="d-inline-block">
         {this.getVerifiedIndicator()} <div className="d-none d-sm-inline-block">{emailDashDisplay}</div>
       </div>
     );
-    //}
 
     return verifiedLayout || "";
   }

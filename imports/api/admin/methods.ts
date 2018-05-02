@@ -34,11 +34,9 @@ export const deleteUser = new ValidatedMethod({
   run(fields) {
     if (!this.isSimulation) {
       authCheck("admin.deleteUser", this.userId);
-      //if (!this.isSimulation) {
       Meteor.users.remove(fields.id);
     }
     return true;
-    //}
   }
 });
 
@@ -54,7 +52,6 @@ export const deleteAllUsers = new ValidatedMethod({
       profileRecord = Profiles.findOne({ owner: this.userId });
       let imageId = profileRecord.image_id;
 
-      //console.log(`deleteAllUsers imageId = [${imageId}]`);
       let email = Meteor.user().emails[0].address;
       Meteor.users.remove({ _id: { $ne: this.userId } });
       Auth.remove({ owner: { $ne: this.userId } });
@@ -62,7 +59,6 @@ export const deleteAllUsers = new ValidatedMethod({
       Profiles.remove({ owner: { $ne: this.userId } });
 
       if (imageId) {
-        //let imagesCursor: any;
         let imagesCursor = Images.find({ _id: { $ne: imageId } });
         let imagesCount = imagesCursor.count();
         let imagesArray = imagesCursor.fetch();
