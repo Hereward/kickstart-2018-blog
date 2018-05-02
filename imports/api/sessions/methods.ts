@@ -146,7 +146,7 @@ export const exceedAttemptsCheck = (verified, attemptsLeft) => {
       "You have exceeded the maximum allowed number of authentication attempts. Please contact Admin to reinstate access to your account.";
     throw new Meteor.Error(`exceededAttempts`, message);
   } else if (!verified && attemptsLeft > 0) {
-    let attemptsLabel = attemptsLeft > 1 ? "attempts" : "attempt";
+    let attemptsLabel = recalctAttempts > 1 ? "attempts" : "attempt";
 
     message = `You have ${recalctAttempts} ${attemptsLabel} left.`;
     throw new Meteor.Error(`invalidCode`, message);
