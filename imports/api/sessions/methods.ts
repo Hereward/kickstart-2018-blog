@@ -91,7 +91,6 @@ export const createUserSession = new ValidatedMethod({
 
       let sessionId = insert(this.userId, fields.sessionToken);
       let settings: any;
-
     }
   }
 });
@@ -141,13 +140,15 @@ export const restoreUserSession = new ValidatedMethod({
 
 export const exceedAttemptsCheck = (verified, attemptsLeft) => {
   let message: string;
-  if (attemptsLeft < 1) {
+  let recalctAttempts = attemptsLeft - 1;
+  if ((attemptsLeft < 2 && !verified) || attemptsLeft < 1) {
     message =
       "You have exceeded the maximum allowed number of authentication attempts. Please contact Admin to reinstate access to your account.";
     throw new Meteor.Error(`exceededAttempts`, message);
   } else if (!verified && attemptsLeft > 0) {
-    let attempts = attemptsLeft > 1 ? "attempts" : "attempt";
-    message = `You have ${attemptsLeft} ${attempts} left.`;
+    let attemptsLabel = attemptsLeft > 1 ? "attempts" : "attempt";
+
+    message = `You have ${recalctAttempts} ${attemptsLabel} left.`;
     throw new Meteor.Error(`invalidCode`, message);
   } else {
     return true;
@@ -155,23 +156,18 @@ export const exceedAttemptsCheck = (verified, attemptsLeft) => {
 };
 
 export const updateAuth = (userId, sessionToken, verified) => {
-  //let verified = false;
   let targetState: number;
   let operationType: string;
-  //let ownerId = this.userId;
   let settingsRecord: any;
   let sessionRecord: any;
   let currentAttempts = 0;
   let attemptsLeft: number;
-
   let maxAttempts = Meteor.settings.public.enhancedAuth.maxAttempts;
 
   sessionRecord = initSessionAuthVerified(userId, sessionToken);
   sessionCheck("updateAuth", sessionRecord, sessionToken);
-
+  attemptsLeft = maxAttempts - sessionRecord.auth.currentAttempts;
   currentAttempts = sessionRecord.auth.currentAttempts + 1;
-  attemptsLeft = maxAttempts - currentAttempts;
-
   userSessions.update(sessionRecord._id, {
     $set: { "auth.currentAttempts": currentAttempts }
   });
@@ -206,6 +202,9 @@ export const updateAuth = (userId, sessionToken, verified) => {
     });
 
     if (verified) {
+      userSessions.update(sessionRecord._id, {
+        $set: { "auth.currentAttempts": 0 }
+      });
       userSettings.update(settings._id, {
         $set: { authEnabled: targetState }
       });
@@ -323,7 +322,7 @@ export const keepAliveUserSession = new ValidatedMethod({
         });
       }
     }
-/*
+    /*
     log.info(
       `keepAliveUserSession userId=[${this.userId}] sessionDetected=[${sessionDetected}] killRequired=[${killRequired}]`
     );
