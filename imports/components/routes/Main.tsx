@@ -35,18 +35,11 @@ const MainRouter = props => (
     <Route path="/about" render={() => <About {...props} />} />
     <Route path="/profile" render={() => <Profile {...props} />} />
     <Route path="/verify-email" render={() => <VerifyEmail {...props} />} />
+    <Route path="/signin" render={() => <SignIn {...props} />} />
     <AuthRoute
       path="/forgot-password"
       cProps={props}
       component={ForgotPassWord}
-      condition={!User.id()}
-      redirect="/"
-    />
-
-    <AuthRoute
-      path="/signin"
-      cProps={props}
-      component={SignIn}
       condition={!User.id()}
       redirect="/"
     />

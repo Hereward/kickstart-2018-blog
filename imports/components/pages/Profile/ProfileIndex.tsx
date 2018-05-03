@@ -21,6 +21,7 @@ import { deleteAllUsers } from "../../../api/admin/methods";
 import Image from "../../partials/Image";
 import Notification from "../../partials/Notification";
 import { toggleAuthEnabledPending as toggle2FA } from "../../../api/settings/methods";
+import { purgeAllOtherSessions } from "../../../api/sessions/methods";
 import { Auth } from "../../../api/auth/publish";
 import * as User from "../../../modules/user";
 
@@ -252,7 +253,15 @@ class Profile extends React.Component<IProps, IState> {
   Toggle2FA() {
     this.setState({ processing2FArequest: true });
     Accounts.logoutOtherClients();
-    toggle2FA.call({sessionToken: User.sessionToken('get')}, (err, verified) => {
+    let token = User.sessionToken('get');
+    purgeAllOtherSessions.call({sessionToken: token}, (err, verified) => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`purgeAllOtherSessions error`, err);
+      }
+    });
+
+    toggle2FA.call({sessionToken: token}, (err, verified) => {
       if (err) {
         this.setState({ processing2FArequest: false });
         Library.modalErrorAlert(err.reason);

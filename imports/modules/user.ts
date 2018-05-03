@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session";
 import * as RLocalStorage from "meteor/simply:reactive-local-storage";
-import { restoreUserSession } from "../api/sessions/methods";
+import { keepAliveUserSession, restoreUserSession } from "../api/sessions/methods";
 
 const sessionTokenName = Meteor.settings.public.session.sessionTokenName;
 
@@ -67,14 +67,23 @@ export function sessionToken(action, value?: string, key?: string) {
 export function checkSessionToken(prevProps?, newProps?) {
   if (id() && !loggingIn() && newProps.userData && prevProps.userSession && !newProps.userSession) {
     let sessionTokenString = sessionToken("get"); 
+    
     if (!sessionTokenString) {
       sessionTokenString = sessionToken("create");
       restoreUserSession.call({ sessionToken: sessionTokenString }, (err, res) => {
         if (err) {
           console.log(`restoreUserSession client error`, err.reason);
         }
+        log.info(`restoreSession - token was re-generated`, sessionTokenString);
       });
-      log.info(`restoreSession - token was re-generated`, sessionTokenString);
+      return true;
+    } else {
+      log.info(`checkSessionToken - session dropped out! Token=`, sessionTokenString);
+      keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionToken('get')}, (err, res) => {
+        if (err) {
+          console.log(`keepAliveUserSession client error`, err.reason);
+        }
+      });
       return true;
     }
   }

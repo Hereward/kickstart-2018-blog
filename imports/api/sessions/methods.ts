@@ -44,12 +44,17 @@ export const initSessionAuthVerified = (userId, sessionToken) => {
   let sessionRecord: any;
   let sessionRecordUpdated: any;
   sessionRecord = getSession(userId, sessionToken);
+  if (!sessionRecord) {
+    insert(userId, sessionToken);
+    sessionRecord = getSession(userId, sessionToken);
+  }
 
   if (sessionRecord && sessionRecord.auth) {
     userSessions.update(sessionRecord._id, { $set: { "auth.verified": false } });
   } else if (sessionRecord) {
     userSessions.update(sessionRecord._id, { $set: { auth: { verified: false, currentAttempts: 0 } } });
   }
+
   sessionRecordUpdated = userSessions.findOne(sessionRecord._id);
   return sessionRecordUpdated;
 };
@@ -214,6 +219,62 @@ export const updateAuth = (userId, sessionToken, verified) => {
   return operationType;
 };
 
+export const purgeInactiveSessions = userId => {
+  let inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
+  let expires = new Date(Date.now() - inactivityTimeout * 3);
+  //  $or: [{ active: false }, { expiresOn: { $lt: expires } }]
+  let query = {
+    $and: [
+      {
+        owner: userId
+      },
+      {
+        active: false
+      }
+    ]
+  };
+
+  let cursor = userSessions.find(query);
+  let count = cursor.count();
+  let recs = cursor.fetch();
+  if (recs) {
+    log.info(`purgeSessions user=[${userId}] count=[${count}] expires=[${expires}]`, recs);
+  } else {
+    log.info(`purgeSessions user=[${userId}] count=[${count}] NO PURGE REQUIRED`);
+  }
+  userSessions.remove(query);
+};
+
+export const purgeAllOtherSessions = new ValidatedMethod({
+  name: "UserSession.purgeAllOtherSessions",
+
+  validate: new SimpleSchema({
+    sessionToken: { type: String }
+  }).validator(),
+
+  run(fields) {
+    // if (!this.isSimulation) {
+    authCheck("session.purgeAllOtherSessions", this.userId);
+    let sessionRecord: any;
+    sessionRecord = getSession(this.userId, fields.sessionToken);
+    if (sessionRecord) {
+      let query = {
+        $and: [
+          {
+            owner: this.userId
+          },
+          {
+            _id: { $ne: sessionRecord._id }
+          }
+        ]
+      };
+      userSessions.remove(query);
+    }
+
+    return true;
+  }
+});
+
 export const killSession = new ValidatedMethod({
   name: "UserSession.kill",
   validate: new SimpleSchema({
@@ -270,7 +331,7 @@ export const deActivateSession = new ValidatedMethod({
     let sessionRecord: any;
     //sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
     sessionRecord = getSession(this.userId, fields.sessionToken);
-    sessionCheck("deActivateSession", sessionRecord, fields.sessionToken);
+    //sessionCheck("deActivateSession", sessionRecord, fields.sessionToken);
 
     if (sessionRecord) {
       userSessions.update(sessionRecord._id, {
@@ -321,6 +382,9 @@ export const keepAliveUserSession = new ValidatedMethod({
           }
         });
       }
+    } else {
+      insert(this.userId, fields.sessionToken);
+      log.info(`keepAliveUserSession - restoring session`);
     }
     /*
     log.info(
@@ -328,17 +392,5 @@ export const keepAliveUserSession = new ValidatedMethod({
     );
 */
     return id;
-  }
-});
-
-export const purgeSessions = new ValidatedMethod({
-  name: "session.purgeSessions",
-  validate: null,
-
-  run() {
-    authCheck("session.purgeSessions", this.userId);
-    userSessions.remove({ active: false });
-
-    return true;
   }
 });

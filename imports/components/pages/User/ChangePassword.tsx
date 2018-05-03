@@ -8,7 +8,7 @@ import { Link, withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import ChangePasswordForm from "../../forms/ChangePasswordForm";
 import * as Library from "../../../modules/library";
-import { clearSessionAuthMethod } from "../../../api/sessions/methods";
+import { clearSessionAuthMethod, purgeAllOtherSessions } from "../../../api/sessions/methods";
 import * as User from "../../../modules/user";
 
 interface IProps {
@@ -86,8 +86,15 @@ class ChangePassword extends React.Component<IProps, IState> {
         function sv(err) {
           let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
           if (!err) {
+            let token = User.sessionToken('get');
+            purgeAllOtherSessions.call({sessionToken: token}, (err, verified) => {
+              if (err) {
+                Library.modalErrorAlert(err.reason);
+                console.log(`purgeAllOtherSessions error`, err);
+              }
+            });
             if (authEnabled) {
-              clearSessionAuthMethod.call({ verified: false, sessionToken: User.sessionToken("get") }, (err, res) => {
+              clearSessionAuthMethod.call({ verified: false, sessionToken: token }, (err, res) => {
                 if (err) {
                   Library.modalErrorAlert(err.reason);
                   console.log(`clearSessionAuthMethod error`, err);

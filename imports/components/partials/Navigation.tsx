@@ -224,6 +224,8 @@ class Navigation extends React.Component<IProps, IState> {
         if (emailVerified === true) {
           reRoute = "/";
         }
+      } else if (path === "/signin" && authEnabled === 0) {
+        reRoute = "/";
       } else if (
         (this.props.location.pathname !== "/authenticate" && authEnabled > 1) ||
         (authEnabled === 1 && !verified)
@@ -244,7 +246,6 @@ class Navigation extends React.Component<IProps, IState> {
           this.props
         );
       }
-
     }
   }
 

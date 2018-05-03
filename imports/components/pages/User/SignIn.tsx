@@ -82,40 +82,27 @@ class SignIn extends React.Component<IProps, IState> {
     }
   }
 
-  createSession(destination = "") {
-    let token = User.sessionToken('create'); //Accounts._storedsessionToken();
+  createSession() {
+    let token = User.sessionToken("create"); //Accounts._storedsessionToken();
     SessionMethods.createUserSession.call({ sessionToken: token }, (err, res) => {
       if (err) {
         console.log(`createSession error: [${err.reason}]`, err);
         Library.modalErrorAlert(err.reason);
-      } else if (destination) {
-        this.props.history.push(destination);
       }
     });
   }
 
   SignInUser() {
     this.setState({ allowSubmit: false });
-    let destination = "/";
     let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
       this.setState({ allowSubmit: true });
       if (error) {
         return Library.modalErrorAlert({ detail: error.reason, title: "Sign In Failed" });
       } else if (!allowMultiSession) {
-          Accounts.logoutOtherClients();
+        Accounts.logoutOtherClients();
       }
       this.createSession();
-        /*
-        log.info(`SignInUser`, this.props);
-
-        if (this.props.userSettings && this.props.userSettings.authEnabled) {
-          let destination = "/authenticate";
-        }
-
-        this.createSession(destination);
-        */
-      
     });
   }
 

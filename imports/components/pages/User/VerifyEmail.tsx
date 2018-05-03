@@ -10,6 +10,7 @@ import Transition from "../../partials/Transition";
 import * as Library from "../../../modules/library";
 import * as User from "../../../modules/user";
 import { Auth } from "../../../api/auth/publish";
+import { purgeAllOtherSessions } from "../../../api/sessions/methods";
 
 interface IProps {
   enhancedAuth: boolean;
@@ -58,6 +59,13 @@ class VerifyEmail extends React.Component<IProps, IState> {
         this.token,
         function verified(err) {
           if (!err) {
+            let token = User.sessionToken('get');
+            purgeAllOtherSessions.call({sessionToken: token}, (err, verified) => {
+              if (err) {
+                Library.modalErrorAlert(err.reason);
+                console.log(`purgeAllOtherSessions error`, err);
+              }
+            });
             Library.modalSuccessAlert({ message: "Your email address has been verified." });
           } else {
             Library.modalErrorAlert({

@@ -60,7 +60,7 @@ class App extends React.Component<IProps, IState> {
 export default withTracker(() => {
   let profilesHandle = Meteor.subscribe("profiles");
   let userSettingsHandle = Meteor.subscribe("userSettings");
-  let sessionHandle = Meteor.subscribe("userSessions");
+  let userSessionHandle = Meteor.subscribe("userSessions");
   let sessionReady = false;
   let userSession: any;
   let userSettingsRec: any;
@@ -99,7 +99,7 @@ export default withTracker(() => {
       userId &&
       profilesHandle.ready() &&
       userSettingsHandle.ready() &&
-      sessionHandle.ready() &&
+      userSessionHandle.ready() &&
       userData &&
       !loggingIn
     ) {
@@ -121,6 +121,7 @@ export default withTracker(() => {
     profile: profile,
     admin: admin,
     sessionToken: sessionToken,
-    sessionReady: sessionReady
+    sessionReady: sessionReady,
+    userSessionDataReady: userSessionHandle.ready()
   };
 })(App);
