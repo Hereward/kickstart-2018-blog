@@ -22,6 +22,8 @@ if (Meteor.isServer) {
     );
   });
 
+  // userSessions.remove({});
+
   userSessions.deny({
     insert() {
       return true;
@@ -34,3 +36,5 @@ if (Meteor.isServer) {
     }
   });
 }
+
+

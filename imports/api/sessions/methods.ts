@@ -115,6 +115,36 @@ export const clearSessionAuthMethod = new ValidatedMethod({
   }
 });
 
+export const purgeAllOtherSessions = new ValidatedMethod({
+  name: "UserSession.purgeAllOtherSessions",
+
+  validate: new SimpleSchema({
+    sessionToken: { type: String }
+  }).validator(),
+
+  run(fields) {
+    // if (!this.isSimulation) {
+    authCheck("session.purgeAllOtherSessions", this.userId);
+    let sessionRecord: any;
+    sessionRecord = getSession(this.userId, fields.sessionToken);
+    if (sessionRecord) {
+      let query = {
+        $and: [
+          {
+            owner: this.userId
+          },
+          {
+            _id: { $ne: sessionRecord._id }
+          }
+        ]
+      };
+      userSessions.remove(query);
+    }
+
+    return true;
+  }
+});
+
 export const restoreUserSession = new ValidatedMethod({
   name: "UserSession.restore",
 
@@ -133,8 +163,8 @@ export const restoreUserSession = new ValidatedMethod({
       }
 
       if (this.userId && fields.sessionToken && !sessionRecord) {
+        userSessions.remove({ owner: this.userId });
         id = insert(this.userId, fields.sessionToken);
-        sessionRestored = true;
       }
       log.info(`restoreUserSession userId=[${this.userId}] sessionRestored=[${sessionRestored}]`, fields, id);
     }
@@ -244,36 +274,6 @@ export const purgeInactiveSessions = userId => {
   }
   userSessions.remove(query);
 };
-
-export const purgeAllOtherSessions = new ValidatedMethod({
-  name: "UserSession.purgeAllOtherSessions",
-
-  validate: new SimpleSchema({
-    sessionToken: { type: String }
-  }).validator(),
-
-  run(fields) {
-    // if (!this.isSimulation) {
-    authCheck("session.purgeAllOtherSessions", this.userId);
-    let sessionRecord: any;
-    sessionRecord = getSession(this.userId, fields.sessionToken);
-    if (sessionRecord) {
-      let query = {
-        $and: [
-          {
-            owner: this.userId
-          },
-          {
-            _id: { $ne: sessionRecord._id }
-          }
-        ]
-      };
-      userSessions.remove(query);
-    }
-
-    return true;
-  }
-});
 
 export const killSession = new ValidatedMethod({
   name: "UserSession.kill",
