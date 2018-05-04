@@ -232,9 +232,6 @@ export const updateAuth = (userId, sessionToken, verified) => {
         targetState = 0;
     }
 
-    userSessions.update(sessionRecord._id, {
-      $set: { verified: verified }
-    });
 
     if (verified) {
       userSessions.update(sessionRecord._id, {
@@ -242,6 +239,14 @@ export const updateAuth = (userId, sessionToken, verified) => {
       });
       userSettings.update(settings._id, {
         $set: { authEnabled: targetState }
+      });
+    }
+
+    if (operationType === "disabled") {
+      clearSessionAuth(userId, sessionToken);
+    } else {
+      userSessions.update(sessionRecord._id, {
+        $set: { verified: verified }
       });
     }
   }

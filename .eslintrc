@@ -95,6 +95,7 @@
     "default-case": "off",
     "no-nested-ternary": "off",
     "no-extra-bind": "warn",
+    "no-empty": "off",
     "react/no-unused-state": "react/no-unused-state",
     "semi": ["error", "always"],
     "no-lonely-if": "warn",

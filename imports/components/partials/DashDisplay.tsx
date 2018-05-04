@@ -52,13 +52,13 @@ const tip = {
   loggingOut: "Signing out...",
   verified: {
     simple: {
-      verified: "Your account is verified.",
-      unverified: "Your email address is not verified."
+      verified: "Your email address was verified.",
+      unverified: "Your email address was not verified."
     },
     enhanced: {
-      verified: "Your session was verified.",
+      verified: "Your session was verified with 2FA.",
       unverified: "Unverified session: ",
-      email: "Email address not verified.",
+      email: "Your email address was not verified.",
       auth2FA: "Session does not have 2 factor authentication."
     }
   }

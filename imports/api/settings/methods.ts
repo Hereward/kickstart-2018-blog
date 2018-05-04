@@ -9,8 +9,6 @@ import { Auth } from "../auth/publish";
 import { insertAuth, initAuth } from "../auth/methods";
 import { clearSessionAuth, initSessionAuthVerified, getSession } from "../sessions/methods";
 
-
-
 const authCheck = (methodName, userId) => {
   let auth = true;
   if (!userId) {
@@ -79,8 +77,6 @@ export const toggleAuthEnabledPending = new ValidatedMethod({
           userSettings.update(settingsRecord._id, { $set: { authEnabled: targetState } });
         }
 
-     
-
         if (targetState === 3) {
           let authRec: any;
           authRec = Auth.findOne({ owner: this.userId });
@@ -88,7 +84,6 @@ export const toggleAuthEnabledPending = new ValidatedMethod({
         }
 
         // log.info(`userSettings.toggleEnabledPending - DONE!`, currentState, targetState);
-     
       }
     }
   }
@@ -110,5 +105,3 @@ export const cancel2FA = new ValidatedMethod({
     }
   }
 });
-
-

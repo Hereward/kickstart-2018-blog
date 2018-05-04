@@ -19,6 +19,7 @@ interface IProps {
   signedIn: boolean;
   sessionToken: string;
   userData: any;
+  sessionReady: any;
 }
 
 interface IState {}
@@ -29,17 +30,23 @@ class VerifyEmail extends React.Component<IProps, IState> {
 
   constructor(props) {
     super(props);
-    this.checkToken = this.checkToken.bind(this);
+    this.checkTokenEmailVerify = this.checkTokenEmailVerify.bind(this);
     let url = window.location.href;
     this.token = url.substr(url.lastIndexOf("/") + 1);
     this.done = false;
   }
 
-  componentDidUpdate() {}
+  componentDidMount() {
+    if (!User.id()) {
+      this.checkTokenEmailVerify();
+    }
+  }
 
-  componentWillReceiveProps(nextProps) {}
-
-  componentWillMount() {}
+  componentDidUpdate() {
+    if (this.props.sessionReady) {
+      this.checkTokenEmailVerify();
+    }
+  }
 
   /*
   static propTypes = {
@@ -49,22 +56,24 @@ class VerifyEmail extends React.Component<IProps, IState> {
   */
 
   //
-  checkToken() {
+  checkTokenEmailVerify() {
     let verified = Library.nested(["userData", "emails", 0, "verified"], this.props);
     //log.info(`verify email checkToken`, verified);
-    if (!User.id() || verified === false && !this.done) {
+    log.info(`checkTokenEmailVerify`, this.token, User.id(), verified, this.done);
+    if (!User.id() || (verified === false && !this.done)) {
+      let sessionToken = User.sessionToken("get");
       this.done = true;
       Accounts.verifyEmail(
         this.token,
-        function verified(err) {
+        function verifyResponse(err) {
+          purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
+            if (err) {
+              Library.modalErrorAlert(err.reason);
+              console.log(`purgeAllOtherSessions error`, err);
+            }
+          });
+
           if (!err) {
-            let token = User.sessionToken('get');
-            purgeAllOtherSessions.call({sessionToken: token}, (err, res) => {
-              if (err) {
-                Library.modalErrorAlert(err.reason);
-                console.log(`purgeAllOtherSessions error`, err);
-              }
-            });
             Library.modalSuccessAlert({ message: "Your email address has been verified." });
           } else {
             Library.modalErrorAlert({
@@ -84,7 +93,6 @@ class VerifyEmail extends React.Component<IProps, IState> {
   }
 
   render() {
-    this.checkToken();
     return (
       <Transition>
         <div className="container page-content">{this.getLayout()}</div>
