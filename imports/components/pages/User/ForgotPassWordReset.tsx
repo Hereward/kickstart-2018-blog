@@ -14,7 +14,6 @@ import * as User from "../../../modules/user";
 interface IProps {
   history: any;
   enhancedAuth: boolean;
-  authVerified: boolean;
   sessionToken: string;
 }
 
@@ -45,11 +44,7 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.authVerified) {
-      this.props.history.push("/");
-    }
-  }
+  componentWillReceiveProps(nextProps) {}
 
   handleChange(e) {
     let target = e.target;
@@ -94,14 +89,14 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
           let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
           if (!err) {
             let token = User.sessionToken('get');
-            purgeAllOtherSessions.call({sessionToken: token}, (err, verified) => {
+            purgeAllOtherSessions.call({sessionToken: token}, (err, res) => {
               if (err) {
                 Library.modalErrorAlert(err.reason);
                 console.log(`purgeAllOtherSessions error`, err);
               }
             });
             if (authEnabled) {
-              clearSessionAuthMethod.call({ verified: false, sessionToken: token }, (err, res) => {
+              clearSessionAuthMethod.call({ sessionToken: token }, (err, res) => {
                 if (err) {
                   Library.modalErrorAlert(err.reason);
                   console.log(`clearSessionAuthMethod error`, err);

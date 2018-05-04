@@ -1,3 +1,4 @@
+/*
 import { Meteor } from "meteor/meteor";
 import * as jquery from "jquery";
 import "tooltipster";
@@ -72,3 +73,5 @@ export function unset(type) {
       jquery(`.${type}`).tooltipster('destroy');
   }
 }
+
+*/

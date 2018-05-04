@@ -2,6 +2,7 @@ import { Mongo } from "meteor/mongo";
 import { Meteor } from "meteor/meteor";
 
 export const userSessions = new Mongo.Collection("userSessions");
+//export const userSessionsAuth = new Mongo.Collection("userSessionsAuth");
 
 if (Meteor.isServer) {
   Meteor.publish("userSessions", function sessionsPublication() {
@@ -13,7 +14,8 @@ if (Meteor.isServer) {
           sessionToken: 1,
           expired: 1,
           active: 1,
-          auth: 1,
+          verified: 1,
+          currentAttempts: 1,
           expiresOn: 1,
           createdAt: 1,
           owner: 1
@@ -21,6 +23,34 @@ if (Meteor.isServer) {
       }
     );
   });
+/*
+  userSessionsAuth.deny({
+    insert() {
+      return true;
+    },
+    update() {
+      return true;
+    },
+    remove() {
+      return true;
+    }
+  });
+
+  Meteor.publish("userSessionsAuth", function userSessionsAuthPublication() {
+    return userSessionsAuth.find(
+      { owner: this.userId },
+      {
+        fields: {
+          _id: 1,
+          sessionToken: 1,
+          currentAttempts: 1,
+          verified: 1,
+          owner: 1
+        }
+      }
+    );
+  });
+  */
 
   // userSessions.remove({});
 

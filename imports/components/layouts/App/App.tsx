@@ -21,7 +21,6 @@ interface IProps {
   Email: string;
   MainTitle: string;
   ShortTitle: string;
-  authVerified: boolean;
   sessionToken: string;
 }
 

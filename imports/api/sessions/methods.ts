@@ -35,8 +35,8 @@ export const getSession = function getSession(userId, token = "") {
 export const clearSessionAuth = (userId, sessionToken) => {
   let sessionRecord: any;
   sessionRecord = getSession(userId, sessionToken);
-  if (sessionRecord && sessionRecord.auth) {
-    userSessions.update(sessionRecord._id, { $unset: { auth: 1 } });
+  if (sessionRecord) {
+    userSessions.update(sessionRecord._id, { $set: { verified: false, currentAttempts: 0 } });
   }
 };
 
@@ -50,9 +50,9 @@ export const initSessionAuthVerified = (userId, sessionToken) => {
   }
 
   if (sessionRecord && sessionRecord.auth) {
-    userSessions.update(sessionRecord._id, { $set: { "auth.verified": false } });
+    userSessions.update(sessionRecord._id, { $set: { verified: false } });
   } else if (sessionRecord) {
-    userSessions.update(sessionRecord._id, { $set: { auth: { verified: false, currentAttempts: 0 } } });
+    userSessions.update(sessionRecord._id, { $set: { verified: false, currentAttempts: 0 } });
   }
 
   sessionRecordUpdated = userSessions.findOne(sessionRecord._id);
@@ -201,10 +201,10 @@ export const updateAuth = (userId, sessionToken, verified) => {
 
   sessionRecord = initSessionAuthVerified(userId, sessionToken);
   sessionCheck("updateAuth", sessionRecord, sessionToken);
-  attemptsLeft = maxAttempts - sessionRecord.auth.currentAttempts;
-  currentAttempts = sessionRecord.auth.currentAttempts + 1;
+  attemptsLeft = maxAttempts - sessionRecord.currentAttempts;
+  currentAttempts = sessionRecord.currentAttempts + 1;
   userSessions.update(sessionRecord._id, {
-    $set: { "auth.currentAttempts": currentAttempts }
+    $set: { currentAttempts: currentAttempts }
   });
 
   let attemptsOK = exceedAttemptsCheck(verified, attemptsLeft);
@@ -233,12 +233,12 @@ export const updateAuth = (userId, sessionToken, verified) => {
     }
 
     userSessions.update(sessionRecord._id, {
-      $set: { "auth.verified": verified }
+      $set: { verified: verified }
     });
 
     if (verified) {
       userSessions.update(sessionRecord._id, {
-        $set: { "auth.currentAttempts": 0 }
+        $set: { currentAttempts: 0 }
       });
       userSettings.update(settings._id, {
         $set: { authEnabled: targetState }

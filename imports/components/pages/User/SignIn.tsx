@@ -15,7 +15,6 @@ import * as User from "../../../modules/user";
 
 interface IProps {
   history: any;
-  AuthVerified: boolean;
   enhancedAuth: boolean;
   sessionToken: string;
   userSettings: any;

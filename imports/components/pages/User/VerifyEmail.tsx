@@ -15,7 +15,6 @@ import { purgeAllOtherSessions } from "../../../api/sessions/methods";
 interface IProps {
   enhancedAuth: boolean;
   history: any;
-  AuthVerified: boolean;
   sillyProp: string;
   signedIn: boolean;
   sessionToken: string;
@@ -60,7 +59,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
         function verified(err) {
           if (!err) {
             let token = User.sessionToken('get');
-            purgeAllOtherSessions.call({sessionToken: token}, (err, verified) => {
+            purgeAllOtherSessions.call({sessionToken: token}, (err, res) => {
               if (err) {
                 Library.modalErrorAlert(err.reason);
                 console.log(`purgeAllOtherSessions error`, err);

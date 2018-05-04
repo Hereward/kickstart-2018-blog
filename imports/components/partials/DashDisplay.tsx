@@ -102,7 +102,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
       message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
     } else {
       verifiedFlag =
-        ((props.userSession && props.userSession.auth && props.userSession.auth.verified) ||
+        ((props.userSession && props.userSession.verified) ||
           !props.userSettings.authEnabled) &&
         emailVerified;
       message = verifiedFlag ? tip.verified.enhanced.verified : tip.verified.enhanced.unverified;
@@ -112,8 +112,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
       }
 
       if (
-        props.userSession &&
-        (!props.userSession.auth || (props.userSession.auth && !props.userSession.auth.verified))
+        props.userSession && !props.userSession.verified
       ) {
         message += emailVerified ? "" : " ";
         message += tip.verified.enhanced.auth2FA;

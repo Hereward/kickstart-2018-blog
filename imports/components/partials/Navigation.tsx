@@ -36,7 +36,6 @@ import DashDisplay from "./DashDisplay";
 interface IProps {
   history: any;
   ShortTitle: any;
-  authVerified: boolean;
   enhancedAuth: boolean;
   profile: any;
   location: any;
@@ -208,7 +207,7 @@ class Navigation extends React.Component<IProps, IState> {
       let path = this.props.location.pathname;
       let reRoute = "";
       let logout = false;
-      let verified = Library.nested(["userSession", "auth", "verified"], this.props);
+      let verified = Library.nested(["userSession", "verified"], this.props);
       let authEnabled = this.props.userSettings.authEnabled;
 
       if (this.props.sessionActive && this.props.sessionExpired) {
