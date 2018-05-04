@@ -11,6 +11,7 @@ import * as Library from "../../../modules/library";
 import * as User from "../../../modules/user";
 import { Auth } from "../../../api/auth/publish";
 import { purgeAllOtherSessions } from "../../../api/sessions/methods";
+import Spinner from "../../partials/Spinner";
 
 interface IProps {
   enhancedAuth: boolean;
@@ -89,7 +90,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    return <div className="lead">Verifying....</div>;
+    return <Spinner caption="verifying" />;
   }
 
   render() {

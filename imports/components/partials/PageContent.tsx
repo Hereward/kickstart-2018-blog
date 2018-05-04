@@ -10,6 +10,7 @@ import * as PageMethods from "../../api/pages/methods";
 import * as Library from "../../modules/library";
 import * as Icon from "../../modules/icons";
 import * as User from "../../modules/user";
+import Spinner from "./Spinner";
 
 interface IProps {
   page: any;
@@ -138,7 +139,7 @@ export default class PageContent extends React.Component<IProps, IState> {
       }
     } else {
       // LOADING
-      layout = <div key="loading">Loading...</div>;
+      layout = <Spinner caption="loading" />;
     }
 
     return layout;
