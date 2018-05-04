@@ -49,7 +49,7 @@ export const initSessionAuthVerified = (userId, sessionToken) => {
     sessionRecord = getSession(userId, sessionToken);
   }
 
-  if (sessionRecord && sessionRecord.auth) {
+  if (sessionRecord && sessionRecord.currentAttempts) {
     userSessions.update(sessionRecord._id, { $set: { verified: false } });
   } else if (sessionRecord) {
     userSessions.update(sessionRecord._id, { $set: { verified: false, currentAttempts: 0 } });
@@ -364,6 +364,7 @@ export const keepAliveUserSession = new ValidatedMethod({
     let sessionRecord: any;
     if (this.userId && fields.sessionToken) {
       sessionRecord = getSession(this.userId, fields.sessionToken);
+      log.info(`keepAliveUserSession`, this.userId, fields.sessionToken, sessionRecord);
     }
 
     if (sessionRecord) {
@@ -382,7 +383,7 @@ export const keepAliveUserSession = new ValidatedMethod({
           }
         });
       }
-    } else {
+    } else if (!this.isSimulation) {
       insert(this.userId, fields.sessionToken);
       log.info(`keepAliveUserSession - restoring session`);
     }

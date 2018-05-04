@@ -432,7 +432,6 @@ class Profile extends React.Component<IProps, IState> {
     return layout;
   }
 
-  //this.props.userSettings.authEnabled === 0 ? (<Notification panel="info" type="authDisabled" />) 
 
   render() {
     let layout = this.getLayout();

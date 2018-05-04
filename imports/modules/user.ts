@@ -65,10 +65,9 @@ export function sessionToken(action, value?: string, key?: string) {
 }
 
 export function checkSessionToken(prevProps?, newProps?) {
-  if (id() && !loggingIn() && newProps.userData && prevProps.userSession && !newProps.userSession) {
-    let sessionTokenString = sessionToken("get"); 
-    
-    if (!sessionTokenString) {
+  if (id() && !loggingIn() && newProps.userData && prevProps.userSession) {
+    let sessionTokenString = sessionToken("get");
+    if (!newProps.userSession && !sessionTokenString) {
       sessionTokenString = sessionToken("create");
       restoreUserSession.call({ sessionToken: sessionTokenString }, (err, res) => {
         if (err) {
@@ -77,9 +76,9 @@ export function checkSessionToken(prevProps?, newProps?) {
         log.info(`restoreSession - token was re-generated`, sessionTokenString);
       });
       return true;
-    } else {
+    } else if (!newProps.userSession) {
       log.info(`checkSessionToken - session dropped out! Token=`, sessionTokenString);
-      keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionToken('get')}, (err, res) => {
+      keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionTokenString }, (err, res) => {
         if (err) {
           console.log(`keepAliveUserSession client error`, err.reason);
         }
@@ -89,3 +88,16 @@ export function checkSessionToken(prevProps?, newProps?) {
   }
   return false;
 }
+
+/*
+export function mountCheck(props) {
+  let sessionTokenString = sessionToken("get");
+  keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionTokenString }, (err, res) => {
+    if (err) {
+      console.log(`keepAliveUserSession client error`, err.reason);
+    }
+  });
+  return true;
+
+}
+*/
