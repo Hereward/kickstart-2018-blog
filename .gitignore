@@ -1,6 +1,8 @@
 .idea/
 .storage/
 
+.vscode/
+
 remMongo.bat
 
 # Meteor

@@ -2,15 +2,17 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import * as BlockUi from "react-block-ui";
-
 import RaisedButton from "material-ui/RaisedButton";
+import Checkbox from "material-ui/Checkbox";
 import * as Validation from "../../modules/validation";
 
 interface IProps {
   handleChange: any;
   handleSubmit: any;
   allowSubmit: boolean;
+  handleCheck: any;
 }
+
 
 interface IState {
   disableSubmit: boolean;
@@ -25,6 +27,7 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleCheck = this.handleCheck.bind(this);
     this.state = {
       disableSubmit: false
     };
@@ -53,6 +56,10 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
 
   handleChange(e) {
     this.props.handleChange(e);
+  }
+
+  handleCheck(event, isInputChecked) {
+    this.props.handleCheck(isInputChecked);
   }
 
   render() {
@@ -92,6 +99,14 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
                 id="password2"
                 name="password2"
                 placeholder="Confirm Password"
+              />
+            </div>
+
+            <div className="form-group">
+              <Checkbox
+                id="keepMeLoggedIn"
+                label="Keep me signed in"
+                onCheck={(event, isInputChecked) => this.handleCheck(event, isInputChecked)}
               />
             </div>
 

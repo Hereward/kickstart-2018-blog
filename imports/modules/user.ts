@@ -65,39 +65,19 @@ export function sessionToken(action, value?: string, key?: string) {
 }
 
 export function checkSessionToken(prevProps?, newProps?) {
-  if (id() && !loggingIn() && newProps.userData && prevProps.userSession) {
+  if (id() && !loggingIn() && newProps.userData && prevProps.userSession && !newProps.userSession) {
     let sessionTokenString = sessionToken("get");
-    if (!newProps.userSession && !sessionTokenString) {
+    if (!sessionTokenString) {
       sessionTokenString = sessionToken("create");
-      restoreUserSession.call({ sessionToken: sessionTokenString }, (err, res) => {
-        if (err) {
-          console.log(`restoreUserSession client error`, err.reason);
-        }
-        log.info(`restoreSession - token was re-generated`, sessionTokenString);
-      });
-      return true;
-    } else if (!newProps.userSession) {
+      log.info(`restoreSession - token was re-generated. New token=`, sessionTokenString);
+    } else {
       log.info(`checkSessionToken - session dropped out! Token=`, sessionTokenString);
-      keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionTokenString }, (err, res) => {
-        if (err) {
-          console.log(`keepAliveUserSession client error`, err.reason);
-        }
-      });
-      return true;
     }
+    keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionTokenString }, (err, res) => {
+      if (err) {
+        console.log(`keepAliveUserSession client error`, err.reason);
+      }
+    });
   }
   return false;
 }
-
-/*
-export function mountCheck(props) {
-  let sessionTokenString = sessionToken("get");
-  keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionTokenString }, (err, res) => {
-    if (err) {
-      console.log(`keepAliveUserSession client error`, err.reason);
-    }
-  });
-  return true;
-
-}
-*/

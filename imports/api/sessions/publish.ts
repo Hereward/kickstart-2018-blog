@@ -1,5 +1,7 @@
-import { Mongo } from "meteor/mongo";
+//import { Mongo } from "meteor/mongo";
 import { Meteor } from "meteor/meteor";
+
+declare var Mongo: any;
 
 export const userSessions = new Mongo.Collection("userSessions");
 //export const userSessionsAuth = new Mongo.Collection("userSessionsAuth");
@@ -17,6 +19,7 @@ if (Meteor.isServer) {
           verified: 1,
           currentAttempts: 1,
           expiresOn: 1,
+          persist: 1,
           createdAt: 1,
           owner: 1
         }

@@ -23,6 +23,7 @@ interface IProps {
 interface IState {
   email: string;
   password: string;
+  keepMeLoggedIn: boolean;
   allowSubmit: boolean;
 }
 
@@ -32,9 +33,11 @@ class SignIn extends React.Component<IProps, IState> {
 
     this.SignInUser = this.SignInUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleCheck = this.handleCheck.bind(this);
     this.state = {
       password: "",
       email: "",
+      keepMeLoggedIn: false,
       allowSubmit: true
     };
   }
@@ -56,6 +59,12 @@ class SignIn extends React.Component<IProps, IState> {
     let id = target.id;
 
     this.setState({ [id]: value });
+    
+  }
+
+  handleCheck(isInputChecked) {
+    this.setState({keepMeLoggedIn: isInputChecked});
+    log.info(`SignIn - handleCheck`, isInputChecked);
   }
 
   getLayout() {
@@ -64,6 +73,7 @@ class SignIn extends React.Component<IProps, IState> {
         allowSubmit={this.state.allowSubmit}
         handleChange={this.handleChange}
         handleSubmit={this.SignInUser}
+        handleCheck={this.handleCheck}
       />
     );
 
@@ -83,7 +93,7 @@ class SignIn extends React.Component<IProps, IState> {
 
   createSession() {
     let token = User.sessionToken("create"); //Accounts._storedsessionToken();
-    SessionMethods.createUserSession.call({ sessionToken: token }, (err, res) => {
+    SessionMethods.createUserSession.call({ sessionToken: token, keepMeLoggedIn: this.state.keepMeLoggedIn }, (err, res) => {
       if (err) {
         console.log(`createSession error: [${err.reason}]`, err);
         Library.modalErrorAlert(err.reason);

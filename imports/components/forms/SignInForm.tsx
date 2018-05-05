@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import Checkbox from "material-ui/Checkbox";
 import * as PropTypes from "prop-types";
 import RaisedButton from "material-ui/RaisedButton";
 import * as BlockUi from "react-block-ui";
@@ -9,10 +10,12 @@ interface IProps {
   handleSubmit: any;
   handleChange: any;
   allowSubmit: boolean;
+  handleCheck: any;
 }
 
 interface IState {
   SubmitText: string;
+  keepMeLoggedIn: boolean;
 }
 
 export default class SignInForm extends React.Component<IProps, IState> {
@@ -24,9 +27,11 @@ export default class SignInForm extends React.Component<IProps, IState> {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleCheck = this.handleCheck.bind(this);
 
     this.state = {
-      SubmitText: "Submit"
+      SubmitText: "Submit",
+      keepMeLoggedIn: false
     };
   }
 
@@ -47,6 +52,10 @@ export default class SignInForm extends React.Component<IProps, IState> {
 
   handleChange(e) {
     this.props.handleChange(e);
+  }
+
+  handleCheck(event, isInputChecked) {
+    this.props.handleCheck(isInputChecked);
   }
 
   render() {
@@ -76,6 +85,14 @@ export default class SignInForm extends React.Component<IProps, IState> {
                 className={this.baseCSSClass}
                 id="password"
                 placeholder="Password"
+              />
+            </div>
+
+            <div className="form-group">
+              <Checkbox
+                id="keepMeLoggedIn"
+                label="Keep me signed in"
+                onCheck={(event, isInputChecked) => this.handleCheck(event, isInputChecked)}
               />
             </div>
 

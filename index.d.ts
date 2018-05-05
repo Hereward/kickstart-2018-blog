@@ -15,11 +15,6 @@ declare module "meteor/react-meteor-data" {
   ): ComponentConstructor<InP>;
 }
 
-//declare var ReactQuill: any;
-
-// declare var require: any
-
-
 declare var Bert: any;
 
 declare var process: any;
@@ -27,93 +22,13 @@ declare var process: any;
 declare function dateFormat(date: any, options: any);
 
 declare function swal(options: object);
-//declare function ValidatedMethod(options:object);
+
 declare var console: Console;
-//declare var Accounts: any;
 
 declare namespace Meteor.User {
   let verificationEmailSent: boolean;
 }
 
-
-
-//        profile?: Object;
-
-/*
-declare module "react-quill" {
-  import * as React from "react";
-  import * as Quill from "quill";
-
-  export interface UnprivilegedEditor {
-    getLength(): number;
-    getText(index?: number, length?: number): string;
-    getHTML(): string;
-    getBounds(index: number, length?: number): Quill.BoundsStatic;
-    getSelection(focus?: boolean): Quill.RangeStatic;
-    getContents(index?: number, length?: number): Quill.DeltaStatic;
-  }
-
-  export interface ComponentProps {
-    id?: string;
-    className?: string;
-    theme?: string;
-    style?: React.CSSProperties;
-    readOnly?: boolean;
-    value?: string | Quill.Delta;
-    defaultValue?: string | Quill.Delta;
-    placeholder?: string;
-    tabIndex?: number;
-    bounds?: string | HTMLElement;
-    onChange?: (
-      content: string,
-      delta: Quill.Delta,
-      source: Quill.Sources,
-      editor: UnprivilegedEditor
-    ) => void;
-    onChangeSelection?: (
-      range: Quill.RangeStatic,
-      source: Quill.Sources,
-      editor: UnprivilegedEditor
-    ) => void;
-    onFocus?: (
-      range: Quill.RangeStatic,
-      source: Quill.Sources,
-      editor: UnprivilegedEditor
-    ) => void;
-    onBlur?: (
-      previousRange: Quill.RangeStatic,
-      source: Quill.Sources,
-      editor: UnprivilegedEditor
-    ) => void;
-    onKeyPress?: React.EventHandler<any>;
-    onKeyDown?: React.EventHandler<any>;
-    onKeyUp?: React.EventHandler<any>;
-    formats?: string[];
-    children?: React.ReactElement<any>;
-    modules?: Quill.StringMap;
-
-  }
-
-  export default class Component extends React.Component<ComponentProps> {
-    focus(): void;
-    blur(): void;
-    getEditor(): Quill.Quill;
-	}
-}
-*/
-
-
-/*
-declare module "simple-crypto-js" {
-  
-  function generateRandom(length?: any, wordArray?: any): any; 
-
-   class SimpleCryptoJS {
-    constructor(secret?: any);
-  }
-  
-}
-*/
 
 declare var log: any;
 
@@ -122,8 +37,6 @@ declare module 'meteor/simply:reactive-local-storage' {
   function setItem(key: string, value: string): any;
   function getItem(key: string): any;
 }
-
-
 
 
 declare module "meteor/meteor" {
@@ -217,17 +130,6 @@ declare module "meteor/accounts-base" {
 
 declare var require: any;
 
-// IntrinsicAttributes
-//IntrinsicElements
-
-/*
-declare module JSX {
-  interface IntrinsicAttributes {
-    "fresh": any;
-  }
-}
-*/
-
 declare namespace JSX {
   interface IntrinsicElements {
     CustomTag: any;
@@ -280,8 +182,9 @@ interface JQuery {
 
 // Meteor-Files
 
+
 declare module "meteor/ostrio:files" {
-  import { Mongo } from "meteor/mongo";
+  //import { Mongo } from "meteor/mongo";
   import { ReactiveVar } from "meteor/reactive-var";
 
   class FileObj {

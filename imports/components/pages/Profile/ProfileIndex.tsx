@@ -461,7 +461,8 @@ export default withRouter(
 
     if (ImagesDataReady) {
       if (props.profile) {
-        myImages = Images.find({ _id: props.profile.image_id }).fetch();
+        let cursor: any = Images.find({ _id: props.profile.image_id });
+        myImages = cursor.fetch();
       }
     }
     return {

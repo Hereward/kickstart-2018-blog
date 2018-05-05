@@ -148,11 +148,31 @@ class Index extends React.Component<IProps, IState> {
   sessionData() {
     let layout: any;
     if (this.props.currentUser && this.props.userSession) {
-      let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
-      let nowFormatted = dateFormat(this.props.timeNow, "mmmm dS, yyyy, h:MM:ss TT");
-      let expiresOn = dateFormat(this.props.userSession.expiresOn, "mmmm dS, yyyy, h:MM:ss TT");
-      let expired = this.props.userSession.expired ? "yes" : "no";
-      let active = this.props.userSession.active ? "yes" : "no";
+      let display: any;
+
+      if (!this.props.userSession.persist) {
+        let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
+        let expiresOn = dateFormat(this.props.userSession.expiresOn, "mmmm dS, yyyy, h:MM:ss TT");
+
+        display = (
+          <div>
+            <p>
+              <strong>Expires:</strong> {timeOutOn ? expiresOn : "Session timeout disabled in config."}
+            </p>
+            <p>
+              <strong>Remaining:</strong> {this.props.remainingTimeFormatted}
+            </p>
+          </div>
+        );
+      } else {
+        display = (
+          <div>
+            <p>
+              <strong>Expires:</strong> Never.
+            </p>
+          </div>
+        );
+      }
 
       layout = (
         <Card>
@@ -160,14 +180,7 @@ class Index extends React.Component<IProps, IState> {
             <h2>Session Data</h2>
           </CardHeader>
           <CardBody>
-            <div className="card-text">
-              <p>
-                <strong>Expires:</strong> {timeOutOn ? expiresOn : "Session timeout disabled in config."}
-              </p>
-              <p>
-                <strong>Remaining:</strong> {this.props.remainingTimeFormatted}
-              </p>
-            </div>
+            <div className="card-text">{display}</div>
           </CardBody>
         </Card>
       );

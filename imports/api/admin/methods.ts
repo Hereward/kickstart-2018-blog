@@ -59,7 +59,7 @@ export const deleteAllUsers = new ValidatedMethod({
       Profiles.remove({ owner: { $ne: this.userId } });
 
       if (imageId) {
-        let imagesCursor = Images.find({ _id: { $ne: imageId } });
+        let imagesCursor: any = Images.find({ _id: { $ne: imageId } });
         let imagesCount = imagesCursor.count();
         let imagesArray = imagesCursor.fetch();
 

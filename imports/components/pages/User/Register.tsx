@@ -31,6 +31,7 @@ interface IState {
   password1: string;
   password2: string;
   allowSubmit: boolean;
+  keepMeLoggedIn: boolean;
 }
 
 class Register extends React.Component<IProps, IState> {
@@ -40,10 +41,12 @@ class Register extends React.Component<IProps, IState> {
       email: "",
       password1: "",
       password2: "",
-      allowSubmit: true
+      allowSubmit: true,
+      keepMeLoggedIn: false
     };
     this.registerUser = this.registerUser.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleCheck = this.handleCheck.bind(this);
   }
 
   static propTypes = {
@@ -72,6 +75,11 @@ class Register extends React.Component<IProps, IState> {
     let id = target.id;
 
     this.setState({ [id]: value });
+  }
+
+  handleCheck(isInputChecked) {
+    this.setState({keepMeLoggedIn: isInputChecked});
+    log.info(`Register - handleCheck`, isInputChecked);
   }
 
   isValidPassword(password1, password2) {
@@ -131,7 +139,7 @@ class Register extends React.Component<IProps, IState> {
               }
             });
 
-            SessionMethods.createUserSession.call({ sessionToken: token }, (err, res) => {
+            SessionMethods.createUserSession.call({ sessionToken: token, keepMeLoggedIn: this.state.keepMeLoggedIn }, (err, res) => {
               if (err) {
                 console.log(`createSession error: [${err.reason}]`, err);
                 Library.modalErrorAlert(err.reason);
@@ -200,6 +208,7 @@ class Register extends React.Component<IProps, IState> {
         allowSubmit={this.state.allowSubmit}
         handleChange={this.handleChange}
         handleSubmit={this.registerUser}
+        handleCheck={this.handleCheck}
       />
     );
 
