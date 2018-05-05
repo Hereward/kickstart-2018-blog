@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session";
 import * as RLocalStorage from "meteor/simply:reactive-local-storage";
-import { keepAliveUserSession, restoreUserSession } from "../api/sessions/methods";
+import { keepAliveUserSession } from "../api/sessions/methods";
 
 const sessionTokenName = Meteor.settings.public.session.sessionTokenName;
 

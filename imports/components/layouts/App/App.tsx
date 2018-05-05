@@ -13,7 +13,6 @@ import * as User from "../../../modules/user";
 import { userSessions } from "../../../api/sessions/publish";
 import { userSettings } from "../../../api/settings/publish";
 import { Auth } from "../../../api/auth/publish";
-import { restoreUserSession } from "../../../api/sessions/methods";
 
 interface IProps {
   signedIn: boolean;

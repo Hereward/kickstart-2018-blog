@@ -9,7 +9,7 @@ import App from "../../components/layouts/App/App";
 import { addMeta } from "./meta";
 import * as Library from "../../modules/library";
 import * as ContentManagement from "../../modules/contentManagement";
-import { keepAliveUserSession, restoreUserSession } from "../../api/sessions/methods";
+import { keepAliveUserSession } from "../../api/sessions/methods";
 //import { validateUserLogin } from "../../api/auth/methods";
 import * as User from "../../modules/user";
 
@@ -38,7 +38,7 @@ const keepAlive = function keepAlive(activityDetected: any) {
   }
 };
 
-
+/*
 const restoreSession = function restoreSession() {
   if (User.id()) {
     let token = User.sessionToken('get');
@@ -49,7 +49,7 @@ const restoreSession = function restoreSession() {
     });
   }
 };
-
+*/
 
 /*
 const validateLogin = function validateLogin() {
