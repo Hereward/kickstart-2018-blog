@@ -205,7 +205,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   conditionalReroute() {
-    if (this.props.sessionReady && !this.loggingOut) {
+    if (Meteor.userId() && this.props.sessionReady && !this.loggingOut) {
       let path = this.props.location.pathname;
       let reRoute = "";
       let logout = false;
@@ -218,11 +218,6 @@ class Navigation extends React.Component<IProps, IState> {
         if (authEnabled === 0) {
           reRoute = "/";
         } else if (authEnabled === 1 && verified) {
-          reRoute = "/";
-        }
-      } else if (path.match(/verify-email/)) {
-        let emailVerified = Library.nested(["userData", "emails", 0, "verified"], this.props);
-        if (emailVerified === true) {
           reRoute = "/";
         }
       } else if (path === "/signin" && authEnabled === 0) {

@@ -151,6 +151,21 @@ export const purgeAllOtherSessions = new ValidatedMethod({
   }
 });
 
+export const purgeAllSessions = new ValidatedMethod({
+  name: "UserSession.purgeAllSessions",
+
+  validate: null,
+  
+  run(fields) {
+    if (!this.isSimulation) {
+      if (this.userId) {
+        userSessions.remove({ owner: this.userId });
+      }
+    }
+    return true;
+  }
+});
+
 /*
 export const restoreUserSession = new ValidatedMethod({
   name: "UserSession.restore",
@@ -398,7 +413,7 @@ export const keepAliveUserSession = new ValidatedMethod({
             }
           });
         }
-      } else {
+      } else if (!sessionRecord) {
         insert(this.userId, fields.sessionToken);
         log.info(`keepAliveUserSession - restoring session`);
       }

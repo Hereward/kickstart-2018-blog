@@ -10,7 +10,7 @@ import Transition from "../../partials/Transition";
 import * as Library from "../../../modules/library";
 import * as User from "../../../modules/user";
 import { Auth } from "../../../api/auth/publish";
-import { purgeAllOtherSessions } from "../../../api/sessions/methods";
+import { purgeAllSessions, createUserSession } from "../../../api/sessions/methods";
 import Spinner from "../../partials/Spinner";
 
 interface IProps {
@@ -49,33 +49,41 @@ class VerifyEmail extends React.Component<IProps, IState> {
     }
   }
 
-  /*
-  static propTypes = {
-    history: ReactRouterPropTypes.history,
-    sillyProp: PropTypes.string
-  };
-  */
+  createSession() {
+    let sessionToken = User.sessionToken("create");
+    createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: false }, (err, res) => {
+      if (err) {
+        console.log(`createSession error: [${err.reason}]`, err);
+        Library.modalErrorAlert(err.reason);
+      }
+    });
+  }
 
-  //
   checkTokenEmailVerify() {
     let verified = Library.nested(["userData", "emails", 0, "verified"], this.props);
     //log.info(`verify email checkToken`, verified);
     log.info(`checkTokenEmailVerify`, this.token, User.id(), verified, this.done);
-    if (!User.id() || (verified === false && !this.done)) {
+    let loggedInUser = User.id();
+    if (!loggedInUser || (verified === false && !this.done)) {
       let sessionToken = User.sessionToken("get");
       this.done = true;
+
       Accounts.verifyEmail(
         this.token,
         function verifyResponse(err) {
-          purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
-            if (err) {
-              Library.modalErrorAlert(err.reason);
-              console.log(`purgeAllOtherSessions error`, err);
-            }
-          });
-
           if (!err) {
-            Library.modalSuccessAlert({ message: "Your email address has been verified." });
+            purgeAllSessions.call({}, (err, res) => {
+              if (err) {
+                Library.modalErrorAlert(err.reason);
+                console.log(`purgeAllSessions error`, err);
+              }
+              Meteor.logout(() => {
+                //Meteor["connection"].setUserId(null);
+                this.props.history.push('/signin');
+              });
+            });
+
+            Library.modalSuccessAlert({ message: "Your email address has been verified. Please log in again." });
           } else {
             Library.modalErrorAlert({
               detail: err.reason,
@@ -84,6 +92,10 @@ class VerifyEmail extends React.Component<IProps, IState> {
             console.log(err);
             this.props.history.push("/");
           }
+
+          
+
+         
         }.bind(this)
       );
     }

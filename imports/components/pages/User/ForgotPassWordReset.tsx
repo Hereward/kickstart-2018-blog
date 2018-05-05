@@ -8,7 +8,7 @@ import { Link, withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
 import * as Library from "../../../modules/library";
-import { clearSessionAuthMethod, purgeAllOtherSessions } from "../../../api/sessions/methods";
+import { clearSessionAuthMethod, purgeAllSessions, createUserSession } from "../../../api/sessions/methods";
 import * as User from "../../../modules/user";
 
 interface IProps {
@@ -66,6 +66,18 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
     return form;
   }
 
+  createSession(destination) {
+    let sessionToken = User.sessionToken("create");
+    createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: false }, (err, res) => {
+      if (err) {
+        console.log(`createSession error: [${err.reason}]`, err);
+        Library.modalErrorAlert(err.reason);
+      } else if (destination) {
+        this.props.history.push(destination);
+      }
+    });
+  }
+
   resetPassword() {
     this.setState({ allowSubmit: false });
 
@@ -88,26 +100,18 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
         function reset(err) {
           let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
           if (!err) {
-            let token = User.sessionToken('get');
-            purgeAllOtherSessions.call({sessionToken: token}, (err, res) => {
+            purgeAllSessions.call({}, (err, res) => {
               if (err) {
                 Library.modalErrorAlert(err.reason);
-                console.log(`purgeAllOtherSessions error`, err);
+                console.log(`purgeAllSessions error`, err);
               }
-            });
-            if (authEnabled) {
-              clearSessionAuthMethod.call({ sessionToken: token }, (err, res) => {
-                if (err) {
-                  Library.modalErrorAlert(err.reason);
-                  console.log(`clearSessionAuthMethod error`, err);
-                }
-                this.props.history.push("/authenticate");
+              Meteor.logout(() => {
+                //Meteor["connection"].setUserId(null);
+                this.props.history.push('/signin');
               });
-            } else {
-              this.props.history.push("/");
-            }
+            });
 
-            Library.modalSuccessAlert({ message: "Your password was reset." });
+            Library.modalSuccessAlert({ message: "Your password was reset. Please log in with your new password." });
           } else {
             this.setState({ allowSubmit: true });
             Library.modalErrorAlert({ reason: err, title: "Password reset failed." });
