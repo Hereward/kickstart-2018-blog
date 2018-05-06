@@ -21,18 +21,24 @@ const authCheck = (methodName, userId) => {
 const sessionCheck = (methodName, sessionRecord = "", sessionToken = "") => {
   if (!sessionRecord) {
     log.error(`${methodName} - invalidSession`, sessionToken);
-    throw new Meteor.Error(`invalidSession`, "It appears you are logged out (no session). Please try again!");
+    //throw new Meteor.Error(`invalidSession`, "It appears you are logged out (no session). Please try again!");
   }
 };
 
-export const getSession = function getSession(userId, token = "") {
+export const getSession = function getSession(userId, sessionToken = "") {
+  if (!userId || !sessionToken) {
+    return null;
+  }
   let sessionRecord: any;
-  let hashedToken = hash(token);
+  let hashedToken = hash(sessionToken);
   sessionRecord = userSessions.findOne({ owner: userId, sessionToken: hashedToken, active: true });
   return sessionRecord;
 };
 
 export const clearSessionAuth = (userId, sessionToken) => {
+  if (!userId || !sessionToken) {
+    return null;
+  }
   let sessionRecord: any;
   sessionRecord = getSession(userId, sessionToken);
   if (sessionRecord) {
@@ -41,6 +47,10 @@ export const clearSessionAuth = (userId, sessionToken) => {
 };
 
 export const initSessionAuthVerified = (userId, sessionToken) => {
+  if (!userId) {
+    return null;
+  }
+  
   let sessionRecord: any;
   let sessionRecordUpdated: any;
   sessionRecord = getSession(userId, sessionToken);
@@ -59,7 +69,11 @@ export const initSessionAuthVerified = (userId, sessionToken) => {
   return sessionRecordUpdated;
 };
 
-const insert = function insert(userId, token = "", persist = false) {
+const insert = function insert(userId, sessionToken = "", persist = false) {
+  if (!userId || !sessionToken) {
+    return null;
+  }
+
   let inactivityTimeout: any;
   let removeOptions = {};
   inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
@@ -70,7 +84,7 @@ const insert = function insert(userId, token = "", persist = false) {
     expires = new Date(Date.now() + inactivityTimeout);
   }
 
-  let hashedToken = hash(token);
+  let hashedToken = hash(sessionToken);
 
   userSessions.remove({ sessionToken: hashedToken });
 
@@ -115,7 +129,7 @@ export const clearSessionAuthMethod = new ValidatedMethod({
 
   run(fields) {
     if (!this.isSimulation) {
-      authCheck("UserSession.clearSessionAuthMethod", this.userId);
+      //authCheck("UserSession.clearSessionAuthMethod", this.userId);
       clearSessionAuth(this.userId, fields.sessionToken);
     }
   }
@@ -155,7 +169,7 @@ export const purgeAllSessions = new ValidatedMethod({
   name: "UserSession.purgeAllSessions",
 
   validate: null,
-  
+
   run(fields) {
     if (!this.isSimulation) {
       if (this.userId) {
@@ -223,7 +237,7 @@ export const updateAuth = (userId, sessionToken, verified) => {
   let maxAttempts = Meteor.settings.public.enhancedAuth.maxAttempts;
 
   sessionRecord = initSessionAuthVerified(userId, sessionToken);
-  sessionCheck("updateAuth", sessionRecord, sessionToken);
+  //sessionCheck("updateAuth", sessionRecord, sessionToken);
   attemptsLeft = maxAttempts - sessionRecord.currentAttempts;
   currentAttempts = sessionRecord.currentAttempts + 1;
   userSessions.update(sessionRecord._id, {
@@ -310,7 +324,7 @@ export const killSession = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    authCheck("session.kill", fields.id);
+    //authCheck("session.kill", fields.id);
     let sessionRecord: any;
 
     sessionRecord = getSession(fields.id, fields.sessionToken);
@@ -335,7 +349,7 @@ export const destroySession = new ValidatedMethod({
     sessionToken: { type: String }
   }).validator(),
   run(fields) {
-    authCheck("session.destroySession", this.userId);
+    //authCheck("session.destroySession", this.userId);
     let sessionRecord: any;
     sessionRecord = getSession(this.userId, fields.sessionToken);
     sessionCheck("destroySession", sessionRecord, fields.sessionToken);
@@ -354,7 +368,7 @@ export const deActivateSession = new ValidatedMethod({
     sessionToken: { type: String }
   }).validator(),
   run(fields) {
-    authCheck("session.deActivate", this.userId);
+    //authCheck("session.deActivate", this.userId);
     let sessionRecord: any;
     //sessionRecord = userSessions.findOne({ owner: this.userId, sessionToken: fields.sessionToken });
     sessionRecord = getSession(this.userId, fields.sessionToken);
