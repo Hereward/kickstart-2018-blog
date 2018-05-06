@@ -205,15 +205,17 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   conditionalReroute() {
-    if (Meteor.userId() && this.props.sessionReady && !this.loggingOut) {
+    if (Meteor.userId() && this.props.userSession && this.props.sessionReady && !this.loggingOut) {
       let path = this.props.location.pathname;
-      let reRoute = "";
+      let reRoute = null;
       let logout = false;
       let verified = Library.nested(["userSession", "verified"], this.props);
       let authEnabled = this.props.userSettings.authEnabled;
 
       if (this.props.sessionActive && this.props.sessionExpired) {
         logout = true;
+      } else if (path.match(/forgot-password-reset/)) {
+        let reRoute = null;
       } else if (path === "/authenticate") {
         if (authEnabled === 0) {
           reRoute = "/";

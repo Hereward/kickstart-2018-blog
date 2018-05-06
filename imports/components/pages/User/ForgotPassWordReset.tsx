@@ -8,7 +8,12 @@ import { Link, withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
 import * as Library from "../../../modules/library";
-import { clearSessionAuthMethod, purgeAllSessions, createUserSession } from "../../../api/sessions/methods";
+import {
+  deActivateSession,
+  purgeAllOtherSessions,
+  purgeAllSessions,
+  createUserSession
+} from "../../../api/sessions/methods";
 import * as User from "../../../modules/user";
 
 interface IProps {
@@ -99,22 +104,27 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
         password1,
         function reset(err) {
           let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
+          let sessionToken = User.sessionToken("get");
           if (!err) {
-            purgeAllSessions.call({}, (err, res) => {
+            purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
               if (err) {
                 Library.modalErrorAlert(err.reason);
-                console.log(`purgeAllSessions error`, err);
+                console.log(`purgeAllOtherSessions error`, err);
               }
-              Meteor.logout(() => {
-                //Meteor["connection"].setUserId(null);
-                this.props.history.push('/signin');
+              deActivateSession.call({ sessionToken: sessionToken }, (err, res) => {
+                if (err) {
+                  console.log(`deActivateSession error`, err.reason);
+                }
+                Meteor.logout(() => {
+                  this.props.history.push("/signin");
+                });
               });
             });
 
             Library.modalSuccessAlert({ message: "Your password was reset. Please log in with your new password." });
           } else {
             this.setState({ allowSubmit: true });
-            Library.modalErrorAlert({ reason: err, title: "Password reset failed." });
+            Library.modalErrorAlert({ message: err.reason, title: "Password reset failed." });
 
             console.log(err);
           }

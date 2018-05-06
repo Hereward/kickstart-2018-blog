@@ -10,7 +10,12 @@ import Transition from "../../partials/Transition";
 import * as Library from "../../../modules/library";
 import * as User from "../../../modules/user";
 import { Auth } from "../../../api/auth/publish";
-import { purgeAllSessions, createUserSession } from "../../../api/sessions/methods";
+import {
+  deActivateSession,
+  purgeAllOtherSessions,
+  purgeAllSessions,
+  createUserSession
+} from "../../../api/sessions/methods";
 import Spinner from "../../partials/Spinner";
 
 interface IProps {
@@ -38,14 +43,16 @@ class VerifyEmail extends React.Component<IProps, IState> {
   }
 
   componentDidMount() {
-    if (!User.id()) {
+    if (!User.id() && !this.done) {
       this.checkTokenEmailVerify();
     }
   }
 
   componentDidUpdate() {
     if (this.props.sessionReady) {
-      this.checkTokenEmailVerify();
+      if (!this.done) {
+        this.checkTokenEmailVerify();
+      }
     }
   }
 
@@ -61,41 +68,43 @@ class VerifyEmail extends React.Component<IProps, IState> {
 
   checkTokenEmailVerify() {
     let verified = Library.nested(["userData", "emails", 0, "verified"], this.props);
-    //log.info(`verify email checkToken`, verified);
+    if (verified === true && !this.done) {
+      this.props.history.push("/");
+    }
     log.info(`checkTokenEmailVerify`, this.token, User.id(), verified, this.done);
     let loggedInUser = User.id();
-    if (!loggedInUser || (verified === false && !this.done)) {
-      let sessionToken = User.sessionToken("get");
-      this.done = true;
 
+    if (!loggedInUser || (verified === false && !this.done)) {
+      this.done = true;
       Accounts.verifyEmail(
         this.token,
         function verifyResponse(err) {
+          let sessionToken = User.sessionToken("get");
           if (!err) {
-            purgeAllSessions.call({}, (err, res) => {
+            purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
               if (err) {
                 Library.modalErrorAlert(err.reason);
-                console.log(`purgeAllSessions error`, err);
+                console.log(`purgeAllOtherSessions error`, err);
               }
-              Meteor.logout(() => {
-                //Meteor["connection"].setUserId(null);
-                this.props.history.push('/signin');
+              deActivateSession.call({ sessionToken: sessionToken }, (err, res) => {
+                if (err) {
+                  console.log(`deActivateSession error`, err.reason);
+                }
+                Meteor.logout(() => {
+                  this.props.history.push("/signin");
+                });
               });
             });
 
             Library.modalSuccessAlert({ message: "Your email address has been verified. Please log in again." });
           } else {
             Library.modalErrorAlert({
-              detail: err.reason,
+              message: err.reason,
               title: `Email verification failed`
             });
             console.log(err);
             this.props.history.push("/");
           }
-
-          
-
-         
         }.bind(this)
       );
     }

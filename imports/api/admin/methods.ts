@@ -5,6 +5,7 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Auth } from "../auth/publish";
 import { userSessions } from "../sessions/publish";
+import { userSettings } from "../settings/publish";
 import { Profiles } from "../profiles/publish";
 import { Images } from "../images/methods";
 
@@ -56,6 +57,7 @@ export const deleteAllUsers = new ValidatedMethod({
       Meteor.users.remove({ _id: { $ne: this.userId } });
       Auth.remove({ owner: { $ne: this.userId } });
       userSessions.remove({ owner: { $ne: this.userId } });
+      userSettings.remove({ owner: { $ne: this.userId } });
       Profiles.remove({ owner: { $ne: this.userId } });
 
       if (imageId) {

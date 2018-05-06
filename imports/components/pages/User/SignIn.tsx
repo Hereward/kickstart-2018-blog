@@ -107,7 +107,7 @@ class SignIn extends React.Component<IProps, IState> {
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
       this.setState({ allowSubmit: true });
       if (error) {
-        return Library.modalErrorAlert({ detail: error.reason, title: "Sign In Failed" });
+        return Library.modalErrorAlert({ message: error.reason, title: "Sign In Failed" });
       } else if (!allowMultiSession) {
         Accounts.logoutOtherClients();
       }
