@@ -173,13 +173,13 @@ export const verifyToken = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    authCheck("auth.verifyToken", this.userId);
-    let verified = false;
-    let operationType: string;
-    let authRecord: any;
-    authRecord = Auth.findOne({ owner: this.userId });
-
     if (!this.isSimulation) {
+      let verified = false;
+      let operationType: string;
+      authCheck("auth.verifyToken", this.userId);
+      
+      let authRecord: any;
+      authRecord = Auth.findOne({ owner: this.userId });
       let secret = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
 
       verified = speakeasy.time.verify({
@@ -190,8 +190,7 @@ export const verifyToken = new ValidatedMethod({
       });
 
       operationType = sessionUpdateAuth(this.userId, fields.sessionToken, verified);
+      return { verified: verified, operationIndicator: operationType };
     }
-
-    return { verified: verified, operationIndicator: operationType };
   }
 });

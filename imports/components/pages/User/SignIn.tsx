@@ -102,6 +102,7 @@ class SignIn extends React.Component<IProps, IState> {
         }
         if (!allowMultiSession) {
           Accounts.logoutOtherClients();
+          log.info(`Sign In - logout othere clients -DONE`);
           SessionMethods.purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
             if (err) {
               Library.modalErrorAlert(err.reason);

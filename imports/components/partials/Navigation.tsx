@@ -195,7 +195,7 @@ class Navigation extends React.Component<IProps, IState> {
         }
         Meteor.logout(() => {
           //Meteor["connection"].setUserId(null);
-          console.log(`Navigation logOut DONE`);
+          log.info(`Navigation logOut DONE`);
           this.loggingOut = false;
         });
       });

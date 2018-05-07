@@ -125,11 +125,9 @@ class Register extends React.Component<IProps, IState> {
             console.log(`createUser error`, err);
           } else {
             let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
-            if (!allowMultiSession) {
-              Accounts.logoutOtherClients();
-            }
-            let token = User.sessionToken("create"); //Accounts._storedsessionToken(); // this.props.sessionToken; //localStorage.getItem("Meteor.sessionToken");
-            log.info(`registerUser`, token);
+            
+            let sessionToken = User.sessionToken("create"); //Accounts._storedsessionToken(); // this.props.sessionToken; //localStorage.getItem("Meteor.sessionToken");
+            log.info(`registerUser`, sessionToken);
             //let hash = Library.hash(token);
 
             userSettingsMethods.createUserSettings.call({}, (err, res) => {
@@ -139,10 +137,20 @@ class Register extends React.Component<IProps, IState> {
               }
             });
 
-            SessionMethods.createUserSession.call({ sessionToken: token, keepMeLoggedIn: this.state.keepMeLoggedIn }, (err, res) => {
+            SessionMethods.createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: this.state.keepMeLoggedIn }, (err, res) => {
               if (err) {
                 console.log(`createSession error: [${err.reason}]`, err);
                 Library.modalErrorAlert(err.reason);
+              }
+              if (!allowMultiSession) {
+                Accounts.logoutOtherClients();
+                SessionMethods.purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
+                  if (err) {
+                    Library.modalErrorAlert(err.reason);
+                    console.log(`purgeAllOtherSessions error`, err);
+                  }
+                });
+                log.info(`Register - logout other clients - DONE`);
               }
             });
 

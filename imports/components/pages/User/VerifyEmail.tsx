@@ -91,6 +91,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
                   console.log(`deActivateSession error`, err.reason);
                 }
                 Meteor.logout(() => {
+                  log.info(`verify email - logout DONE`);
                   this.props.history.push("/signin");
                 });
               });
