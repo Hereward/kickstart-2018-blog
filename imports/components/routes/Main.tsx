@@ -36,6 +36,7 @@ const MainRouter = props => (
     <Route path="/profile" render={() => <Profile {...props} />} />
     <Route path="/verify-email" render={() => <VerifyEmail {...props} />} />
     <Route path="/signin" render={() => <SignIn {...props} />} />
+    <Route path="/forgot-password-reset" render={() => <ForgotPassWordReset {...props} />} />
     <AuthRoute
       path="/forgot-password"
       cProps={props}
@@ -44,13 +45,6 @@ const MainRouter = props => (
       redirect="/"
     />
 
-    <AuthRoute
-      path="/forgot-password-reset"
-      cProps={props}
-      component={ForgotPassWordReset}
-      condition={!User.id()}
-      redirect="/"
-    />
     <AuthRoute
       path="/change-password"
       cProps={props}

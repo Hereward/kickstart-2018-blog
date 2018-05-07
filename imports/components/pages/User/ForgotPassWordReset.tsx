@@ -49,6 +49,12 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
     this.handleChange = this.handleChange.bind(this);
   }
 
+  componentDidMount() {
+    if (User.id()) {
+      this.props.history.push("/");
+    }
+  }
+
   componentWillReceiveProps(nextProps) {}
 
   handleChange(e) {
@@ -71,17 +77,6 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
     return form;
   }
 
-  createSession(destination) {
-    let sessionToken = User.sessionToken("create");
-    createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: false }, (err, res) => {
-      if (err) {
-        console.log(`createSession error: [${err.reason}]`, err);
-        Library.modalErrorAlert(err.reason);
-      } else if (destination) {
-        this.props.history.push(destination);
-      }
-    });
-  }
 
   resetPassword() {
     this.setState({ allowSubmit: false });
@@ -106,6 +101,7 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
           let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
           let sessionToken = User.sessionToken("get");
           if (!err) {
+            
             purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
               if (err) {
                 Library.modalErrorAlert(err.reason);
