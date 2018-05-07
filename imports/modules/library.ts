@@ -1,19 +1,14 @@
 import * as User from "./user";
 
 const authErrors = {
-  invalidCode : "Invalid Code",
+  invalidCode: "Invalid Code",
   exceededAttempts: "Account Locked",
   invalidSession: "Invalid Session"
 };
 
-
 export const nested = (pathArr, nestedObj) => {
-  return pathArr.reduce((obj, key) =>
-      (obj && obj[key] !== 'undefined') ? obj[key] : null, nestedObj);
+  return pathArr.reduce((obj, key) => (obj && obj[key] !== "undefined" ? obj[key] : null), nestedObj);
 };
-
-
-//export const nestedx = (props, object) => props.reduce((prefix, val) => (prefix && prefix[val]) ? prefix[val] : null, object);
 
 export function invalidAuthCodeAlert(error) {
   let message: string;

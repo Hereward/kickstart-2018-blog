@@ -59,11 +59,10 @@ class SignIn extends React.Component<IProps, IState> {
     let id = target.id;
 
     this.setState({ [id]: value });
-    
   }
 
   handleCheck(isInputChecked) {
-    this.setState({keepMeLoggedIn: isInputChecked});
+    this.setState({ keepMeLoggedIn: isInputChecked });
     log.info(`SignIn - handleCheck`, isInputChecked);
   }
 
@@ -92,13 +91,16 @@ class SignIn extends React.Component<IProps, IState> {
   }
 
   createSession() {
-    let token = User.sessionToken("create"); //Accounts._storedsessionToken();
-    SessionMethods.createUserSession.call({ sessionToken: token, keepMeLoggedIn: this.state.keepMeLoggedIn }, (err, res) => {
-      if (err) {
-        console.log(`createSession error: [${err.reason}]`, err);
-        Library.modalErrorAlert(err.reason);
+    let token = User.sessionToken("create");
+    SessionMethods.createUserSession.call(
+      { sessionToken: token, keepMeLoggedIn: this.state.keepMeLoggedIn },
+      (err, res) => {
+        if (err) {
+          console.log(`createSession error: [${err.reason}]`, err);
+          Library.modalErrorAlert(err.reason);
+        }
       }
-    });
+    );
   }
 
   SignInUser() {
@@ -126,7 +128,6 @@ class SignIn extends React.Component<IProps, IState> {
 
 export default withRouter(
   withTracker(() => {
-    //let sessionDataReady = Meteor.subscribe("userSessions");
     return {};
   })(SignIn)
 );

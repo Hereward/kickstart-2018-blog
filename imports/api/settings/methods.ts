@@ -82,8 +82,6 @@ export const toggleAuthEnabledPending = new ValidatedMethod({
           authRec = Auth.findOne({ owner: this.userId });
           initAuth(authRec._id, this.userId);
         }
-
-        // log.info(`userSettings.toggleEnabledPending - DONE!`, currentState, targetState);
       }
     }
   }

@@ -106,9 +106,7 @@ class Navigation extends React.Component<IProps, IState> {
     }
   }
 
-  componentDidMount() {
-    //User.mountCheck(this.props);
-  }
+  componentDidMount() {}
 
   verifyEmailNotificationRequired() {
     let notify = false;

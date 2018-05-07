@@ -372,7 +372,6 @@ export const keepAliveUserSession = new ValidatedMethod({
 
       let sessionRecord: any;
       sessionRecord = getSession(this.userId, fields.sessionToken);
-      //log.info(`keepAliveUserSession`, this.userId, fields.sessionToken, sessionRecord);
 
       if (sessionRecord && sessionRecord.persist === false) {
         sessionDetected = true;

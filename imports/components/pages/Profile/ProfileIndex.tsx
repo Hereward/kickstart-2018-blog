@@ -25,7 +25,6 @@ import { purgeAllOtherSessions } from "../../../api/sessions/methods";
 import { Auth } from "../../../api/auth/publish";
 import * as User from "../../../modules/user";
 
-
 interface IProps {
   history: any;
   enhancedAuth: boolean;
@@ -253,15 +252,15 @@ class Profile extends React.Component<IProps, IState> {
   Toggle2FA() {
     this.setState({ processing2FArequest: true });
     Accounts.logoutOtherClients();
-    let token = User.sessionToken('get');
-    purgeAllOtherSessions.call({sessionToken: token}, (err, res) => {
+    let token = User.sessionToken("get");
+    purgeAllOtherSessions.call({ sessionToken: token }, (err, res) => {
       if (err) {
         Library.modalErrorAlert(err.reason);
         console.log(`purgeAllOtherSessions error`, err);
       }
     });
 
-    toggle2FA.call({sessionToken: token}, (err, res) => {
+    toggle2FA.call({ sessionToken: token }, (err, res) => {
       if (err) {
         this.setState({ processing2FArequest: false });
         Library.modalErrorAlert(err.reason);
@@ -269,36 +268,6 @@ class Profile extends React.Component<IProps, IState> {
       }
     });
   }
-
-  /*
-  render2FAPanel() {
-    let layout: any;
-    let activateMsg = "Activate 2 factor authentication on your account for enhanced security.";
-    let deActivateMsg = "De-activate 2 factor authentication.";
-    let activateBtnText = "Activate Now";
-    let deActivateBtnText = "De-activate Now";
-    let alertLevelActivate = "danger";
-    let alertLeveldeActivate = "warning";
-
-    layout = "";
-    if (this.props.admin) {
-      layout = (
-        <BlockUi tag="div" blocking={this.state.processing2FArequest}>
-          <Alert color={alertLevelActivate}>
-            <strong>{activateMsg}</strong>
-            <hr />{" "}
-            <Button onClick={this.Toggle2FA()} size="sm" color="primary">
-              {activateBtnText}
-            </Button>{" "}
-          </Alert>
-        </BlockUi>
-      );
-    }
-
-    return layout;
-  }
-*/
-
 
   renderImage() {
     let layout: any;
@@ -431,7 +400,6 @@ class Profile extends React.Component<IProps, IState> {
     );
     return layout;
   }
-
 
   render() {
     let layout = this.getLayout();

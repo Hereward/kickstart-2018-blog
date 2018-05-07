@@ -119,7 +119,6 @@ export default withTracker(() => {
     profile: profile,
     admin: admin,
     sessionToken: sessionToken,
-    sessionReady: sessionReady,
-    userSessionDataReady: userSessionHandle.ready()
+    sessionReady: sessionReady
   };
 })(App);
