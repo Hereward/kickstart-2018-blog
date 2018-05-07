@@ -28,3 +28,4 @@ let env = `smtp://${encodeURIComponent(smtp.username)}:${encodeURIComponent(smtp
 )}:${smtp.port}`;
 
 process.env.MAIL_URL = env;
+//process.env.DISABLE_WEBSOCKETS=1;
