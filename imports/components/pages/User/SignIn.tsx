@@ -91,13 +91,23 @@ class SignIn extends React.Component<IProps, IState> {
   }
 
   createSession() {
-    let token = User.sessionToken("create");
+    let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
+    let sessionToken = User.sessionToken("create");
     SessionMethods.createUserSession.call(
-      { sessionToken: token, keepMeLoggedIn: this.state.keepMeLoggedIn },
+      { sessionToken: sessionToken, keepMeLoggedIn: this.state.keepMeLoggedIn },
       (err, res) => {
         if (err) {
           console.log(`createSession error: [${err.reason}]`, err);
           Library.modalErrorAlert(err.reason);
+        }
+        if (!allowMultiSession) {
+          Accounts.logoutOtherClients();
+          SessionMethods.purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
+            if (err) {
+              Library.modalErrorAlert(err.reason);
+              console.log(`purgeAllOtherSessions error`, err);
+            }
+          });
         }
       }
     );
@@ -105,13 +115,11 @@ class SignIn extends React.Component<IProps, IState> {
 
   SignInUser() {
     this.setState({ allowSubmit: false });
-    let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
+
     Meteor.loginWithPassword(this.state.email, this.state.password, error => {
       this.setState({ allowSubmit: true });
       if (error) {
         return Library.modalErrorAlert({ message: error.reason, title: "Sign In Failed" });
-      } else if (!allowMultiSession) {
-        Accounts.logoutOtherClients();
       }
       this.createSession();
     });
