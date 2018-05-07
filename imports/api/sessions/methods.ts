@@ -274,7 +274,7 @@ export const updateAuth = (userId, sessionToken, verified) => {
 
 export const purgeInactiveSessions = userId => {
   let inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
-  let expires = new Date(Date.now() - inactivityTimeout * 3);
+  //let expires = new Date(Date.now() - inactivityTimeout * 3);
   let query = {
     $and: [
       {
@@ -290,7 +290,7 @@ export const purgeInactiveSessions = userId => {
   let count = cursor.count();
   let recs = cursor.fetch();
   if (recs) {
-    log.info(`purgeSessions user=[${userId}] count=[${count}] expires=[${expires}]`, recs);
+    log.info(`purgeSessions user=[${userId}] count=[${count}]`);
   } else {
     log.info(`purgeSessions user=[${userId}] count=[${count}] NO PURGE REQUIRED`);
   }
