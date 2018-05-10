@@ -1,16 +1,13 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import * as PropTypes from "prop-types";
-import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import * as React from "react";
-import { Link, withRouter, Redirect } from "react-router-dom";
-import * as AuthMethods from "../../../api/auth/methods";
+import { withRouter } from "react-router-dom";
 import * as SessionMethods from "../../../api/sessions/methods";
 import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
 import SignInForm from "../../forms/SignInForm";
-import * as ContentManagement from "../../../modules/contentManagement";
 import * as User from "../../../modules/user";
 
 interface IProps {
@@ -49,13 +46,6 @@ class SignIn extends React.Component<IProps, IState> {
   componentDidMount() {}
 
   componentWillReceiveProps(nextProps) {}
-
-  /*
-  static propTypes = {
-    history: ReactRouterPropTypes.history,
-    enhancedAuth: PropTypes.bool
-  };
-*/
 
   handleChange(e) {
     let target = e.target;

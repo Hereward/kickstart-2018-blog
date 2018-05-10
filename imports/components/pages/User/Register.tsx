@@ -91,18 +91,6 @@ class Register extends React.Component<IProps, IState> {
     }
   }
 
-  /*
-  hash(token) {
-    const crypto = require("crypto");
-    //let hash = crypto.createHash('md5').update(token).digest('hex');
-
-    const hash = crypto.createHash("sha256");
-    hash.update(token);
-    let hashString = hash.digest("hex");
-    log.info(`hash`, token, hashString);
-  }
-  */
-
   registerUser(event) {
     this.setState({ allowSubmit: false });
     let email = this.state.email.trim();
@@ -123,15 +111,14 @@ class Register extends React.Component<IProps, IState> {
             this.setState({ allowSubmit: true });
             Library.modalErrorAlert({
               message: err.reason,
-              title: `Registration Failed`,
+              title: `Registration Failed`
             });
             console.log(`createUser error`, err);
           } else {
             let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
 
-            let sessionToken = User.sessionToken("create"); //Accounts._storedsessionToken(); // this.props.sessionToken; //localStorage.getItem("Meteor.sessionToken");
+            let sessionToken = User.sessionToken("create");
             log.info(`registerUser`, sessionToken);
-            //let hash = Library.hash(token);
 
             userSettingsMethods.createUserSettings.call({}, (err, res) => {
               if (err) {
@@ -195,13 +182,6 @@ class Register extends React.Component<IProps, IState> {
             });
 
             this.props.history.push("/");
-            /*
-            if (this.props.enhancedAuth) {
-              this.props.history.push("/authenticate");
-            } else {
-              this.props.history.push("/");
-            }
-            */
           }
         }
       );

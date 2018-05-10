@@ -91,7 +91,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   }
 
   dashBoardTip(props) {
-    //let emailVerified = props.userData ? props.userData.emails[0].verified : false;
     let verifiedFlag: boolean = false;
     let hasAuth = !(props.enhancedAuth === false || (props.userSettings && props.userSettings.authEnabled === 0));
     let message: any = "We're not quite sure what's going on...";
@@ -104,25 +103,8 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     } else if (props.loggingOut) {
       message = tip.loggingOut;
     } else {
-      // ((props.userSession && props.userSession.verified) || !props.userSettings.authEnabled) && emailVerified;
-      /*
-      if (props.enhancedAuth === false || props.userSettings.authEnabled === 0) {
-        message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
-        return { verified: emailVerified, tip: message };
-      } else {
-        verifiedFlag = this.resolveVerification(props);
-        message = verifiedFlag ? tip.verified.enhanced.verified : tip.verified.enhanced.unverified;
-      }
-      */
-
       verifiedFlag = this.resolveVerification(props);
-
       if (hasAuth) {
-        /*
-        if (!emailVerified) {
-          message += tip.verified.enhanced.email;
-        }
-        */
         message = verifiedFlag ? tip.verified.enhanced.verified : tip.verified.enhanced.auth2FA;
       } else {
         message = verifiedFlag ? tip.verified.simple.verified : tip.verified.simple.unverified;
@@ -131,11 +113,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
 
     return { verified: verifiedFlag, tip: message };
   }
-  /*
-   } else if (props.enhancedAuth === false || props.userSettings.authEnabled === 0) {
-      verifiedFlag = emailVerified;
-      message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
-      */
 
   resolveVerification(props) {
     if (!props.userData || !props.userSettings) {
@@ -209,7 +186,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
 
   getVerifiedIndicator() {
     let layout: any;
-    //let obj = this.dashBoardTip(this.props);
     let verified = this.resolveVerification(this.props);
     let tag: any;
     let style: any;
@@ -235,8 +211,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     return layout || "";
   }
 
-  // if (!this.props.userId || !this.props.userData || !this.props.userSettings) {
-
   authVerifiedLayout() {
     let verifiedLayout: any;
     let emailDashDisplay = this.emailDashDisplay();
@@ -245,7 +219,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
         {this.getVerifiedIndicator()} <div className="d-none d-sm-inline-block">{emailDashDisplay}</div>
       </div>
     );
-
     return verifiedLayout || "";
   }
 

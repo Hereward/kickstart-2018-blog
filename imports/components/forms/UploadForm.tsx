@@ -190,29 +190,3 @@ export default class UploadForm extends React.Component<IProps, IState> {
   }
 }
 
-/*
-<div className="form-group row">
-<div className="col-auto">
-  <input
-    className="form-control"
-    type="text"
-    id="getImageFromServerURL"
-    ref={input => {
-      this.getImageFromServerURLObj = input;
-    }}
-    placeholder="Enter image URL"
-  />
-</div>
-<div className="col-auto">
-  <button
-    type="button"
-    className="btn btn-secondary"
-    id="getImageFromServer"
-    ref="getImageFromServer"
-    onClick={this.getImageFromServer}
-  >
-    GET
-  </button>
-</div>
-</div>
-*/

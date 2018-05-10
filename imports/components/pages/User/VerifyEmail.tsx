@@ -2,20 +2,12 @@ import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
 import { Accounts } from "meteor/accounts-base";
 import * as PropTypes from "prop-types";
-import ReactRouterPropTypes from "react-router-prop-types";
 import * as React from "react";
 import { withRouter } from "react-router-dom";
-
 import Transition from "../../partials/Transition";
 import * as Library from "../../../modules/library";
 import * as User from "../../../modules/user";
-import { Auth } from "../../../api/auth/publish";
-import {
-  deActivateSession,
-  purgeAllOtherSessions,
-  purgeAllSessions,
-  createUserSession
-} from "../../../api/sessions/methods";
+import { createUserSession } from "../../../api/sessions/methods";
 import Spinner from "../../partials/Spinner";
 
 interface IProps {
@@ -71,9 +63,11 @@ class VerifyEmail extends React.Component<IProps, IState> {
     Accounts.verifyEmail(
       this.token,
       function verifyResponse(err) {
-        
         if (!err) {
-          User.logoutAndPurgeSessions({title: "Your email address has been verified. Please log in again.", newLocation: "/signin"});
+          User.logoutAndPurgeSessions({
+            message: "Your email address has been verified. Please log in again.",
+            newLocation: "/signin"
+          });
         } else {
           Library.modalErrorAlert({
             message: err.reason,

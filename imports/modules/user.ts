@@ -104,8 +104,10 @@ export function logoutAndPurgeSessions(params: { title?: string; message?: strin
       Meteor.logout(() => {
         log.info(`User.logoutAndPurge() DONE`);
         clearLocalStorage();
-        if (params.title || params.newLocation) {
+        if (params.title || params.message) {
           Library.modalSuccessAlert({ title: params.title, message: params.message, location: params.newLocation });
+        } else if (params.newLocation) {
+          window.location = params.newLocation;
         }
       });
     });
