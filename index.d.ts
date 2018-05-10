@@ -21,7 +21,14 @@ declare var process: any;
 
 declare function dateFormat(date: any, options: any);
 
-declare function swal(options: object);
+//declare function swal(options: object, callback?: any);
+/*
+declare module "sweetAlert" {
+  function swal(options: object, callback?: any);
+}
+*/
+
+
 
 declare var console: Console;
 

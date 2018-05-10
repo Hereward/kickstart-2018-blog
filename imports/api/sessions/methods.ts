@@ -361,6 +361,7 @@ export const keepAliveUserSession = new ValidatedMethod({
   run(fields) {
     if (!this.isSimulation) {
       if (!authCheck("UserSession.keepAliveUserSession", this.userId)) {
+        log.info(`keepAliveUserSession - no user ID - exiting.`);
         return false;
       }
       let sessionDetected = false;

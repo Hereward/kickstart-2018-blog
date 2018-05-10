@@ -48,6 +48,7 @@ interface IProps {
   loggingIn: boolean;
   sessionToken: string;
   sessionReady: boolean;
+  status: any;
 }
 
 interface IState {
@@ -77,9 +78,17 @@ class Navigation extends React.Component<IProps, IState> {
     this.emailVerifyPrompted = false;
   }
 
-  componentWillReceiveProps(nextProps) {}
+  componentWillMount() {
+    this.conditionalReroute(this.props);
+  }
 
-  componentWillUpdate(nextProps) {}
+  componentWillReceiveProps(nextProps) {
+    this.conditionalReroute(nextProps);
+  }
+
+  componentWillUpdate(nextProps) {
+
+  }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!this.loggingOut) {
@@ -173,7 +182,7 @@ class Navigation extends React.Component<IProps, IState> {
       </DropdownMenu>
     );
 
-    return this.props.userData ? SignedInLayout : SignedOutLayout;
+    return this.props.sessionReady ? SignedInLayout : SignedOutLayout;
   }
 
   logOut() {
@@ -196,21 +205,22 @@ class Navigation extends React.Component<IProps, IState> {
         Meteor.logout(() => {
           //Meteor["connection"].setUserId(null);
           log.info(`Navigation logOut DONE`);
+          User.clearLocalStorage();
           this.loggingOut = false;
         });
       });
     }
   }
 
-  conditionalReroute() {
-    if (Meteor.userId() && this.props.userSession && this.props.sessionReady && !this.loggingOut) {
-      let path = this.props.location.pathname;
+  conditionalReroute(props) {
+    if (Meteor.userId() && props.userSession && props.sessionReady && !this.loggingOut) {
+      let path = props.location.pathname;
       let reRoute = null;
       let logout = false;
-      let verified = Library.nested(["userSession", "verified"], this.props);
-      let authEnabled = this.props.userSettings.authEnabled;
+      let verified = Library.nested(["userSession", "verified"], props);
+      let authEnabled = props.userSettings.authEnabled;
 
-      if (this.props.sessionActive && this.props.sessionExpired) {
+      if (props.sessionActive && props.sessionExpired) {
         logout = true;
       } else if (path.match(/forgot-password-reset/)) {
         let reRoute = null;
@@ -223,7 +233,7 @@ class Navigation extends React.Component<IProps, IState> {
       } else if (path === "/signin" && authEnabled === 0) {
         reRoute = "/";
       } else if (
-        (this.props.location.pathname !== "/authenticate" && authEnabled > 1) ||
+        (props.location.pathname !== "/authenticate" && authEnabled > 1) ||
         (authEnabled === 1 && !verified)
       ) {
         reRoute = "/authenticate";
@@ -232,14 +242,14 @@ class Navigation extends React.Component<IProps, IState> {
       if (logout) {
         this.logOut();
       } else if (reRoute) {
-        this.props.history.push(reRoute);
+        props.history.push(reRoute);
       }
 
       if (reRoute) {
         log.info(
           `conditionalReroute authEnabled = [${authEnabled}] NEW ROUTE = [${reRoute}]`,
-          this.props.location.pathname,
-          this.props
+          props.location.pathname,
+          props
         );
       }
     }
@@ -260,6 +270,8 @@ class Navigation extends React.Component<IProps, IState> {
               userData={this.props.userData}
               userId={this.props.userId}
               sessionExpired={this.props.sessionExpired}
+              status={this.props.status}
+              sessionReady={this.props.sessionReady}
             />
           </div>
           <NavbarToggler onClick={this.toggleNavbar} />
@@ -289,7 +301,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   render() {
-    this.conditionalReroute();
+    
     return this.navBar();
   }
 }

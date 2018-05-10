@@ -40,6 +40,8 @@ interface IProps {
   loggingIn: boolean;
   loggingOut: boolean;
   enhancedAuth: boolean;
+  status: any;
+  sessionReady: boolean;
 }
 
 interface IState {
@@ -48,6 +50,7 @@ interface IState {
 
 const tip = {
   loggedOut: "You are signed out.",
+  connecting: "Connecting...",
   loggingIn: "Signing in...",
   loggingOut: "Signing out...",
   verified: {
@@ -88,38 +91,66 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   }
 
   dashBoardTip(props) {
-    let emailVerified = props.userData ? props.userData.emails[0].verified : false;
+    //let emailVerified = props.userData ? props.userData.emails[0].verified : false;
     let verifiedFlag: boolean = false;
+    let hasAuth = !(props.enhancedAuth === false || (props.userSettings && props.userSettings.authEnabled === 0));
     let message: any = "We're not quite sure what's going on...";
-    if (props.loggingIn) {
+    if (props.status && props.status.connected === false) {
+      message = tip.connecting;
+    } else if (props.loggingIn) {
       message = tip.loggingIn;
-    } else if (!props.userId || !props.userData || !props.userSettings) {
+    } else if (!props.userId) {
       message = tip.loggedOut;
     } else if (props.loggingOut) {
       message = tip.loggingOut;
-    } else if (props.enhancedAuth === false || props.userSettings.authEnabled === 0) {
-      verifiedFlag = emailVerified;
-      message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
     } else {
-      verifiedFlag =
-        ((props.userSession && props.userSession.verified) ||
-          !props.userSettings.authEnabled) &&
-        emailVerified;
-      message = verifiedFlag ? tip.verified.enhanced.verified : tip.verified.enhanced.unverified;
-
-      if (!emailVerified) {
-        message += tip.verified.enhanced.email;
+      // ((props.userSession && props.userSession.verified) || !props.userSettings.authEnabled) && emailVerified;
+      /*
+      if (props.enhancedAuth === false || props.userSettings.authEnabled === 0) {
+        message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
+        return { verified: emailVerified, tip: message };
+      } else {
+        verifiedFlag = this.resolveVerification(props);
+        message = verifiedFlag ? tip.verified.enhanced.verified : tip.verified.enhanced.unverified;
       }
+      */
 
-      if (
-        props.userSession && !props.userSession.verified
-      ) {
-        message += emailVerified ? "" : " ";
-        message += tip.verified.enhanced.auth2FA;
+      verifiedFlag = this.resolveVerification(props);
+
+      if (hasAuth) {
+        /*
+        if (!emailVerified) {
+          message += tip.verified.enhanced.email;
+        }
+        */
+        message = verifiedFlag ? tip.verified.enhanced.verified : tip.verified.enhanced.auth2FA;
+      } else {
+        message = verifiedFlag ? tip.verified.simple.verified : tip.verified.simple.unverified;
       }
     }
 
     return { verified: verifiedFlag, tip: message };
+  }
+  /*
+   } else if (props.enhancedAuth === false || props.userSettings.authEnabled === 0) {
+      verifiedFlag = emailVerified;
+      message = emailVerified ? tip.verified.simple.verified : tip.verified.simple.unverified;
+      */
+
+  resolveVerification(props) {
+    if (!props.userData || !props.userSettings) {
+      return false;
+    }
+    let verifiedFlag: boolean = false;
+    let emailVerified = props.userData ? props.userData.emails[0].verified : false;
+    if (props.enhancedAuth === false || props.userSettings.authEnabled === 0) {
+      verifiedFlag = emailVerified;
+    } else {
+      verifiedFlag =
+        ((props.userSession && props.userSession.verified) || !props.userSettings.authEnabled) && emailVerified;
+    }
+
+    return verifiedFlag;
   }
 
   set(props) {
@@ -163,26 +194,34 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     return display;
   }
 
+  spinner() {
+    return (
+      <RefreshIndicator
+        loadingColor="orange"
+        size={20}
+        left={0}
+        top={0}
+        status="loading"
+        className="dashboard-spinner"
+      />
+    );
+  }
+
   getVerifiedIndicator() {
     let layout: any;
-    let obj = this.dashBoardTip(this.props);
-
+    //let obj = this.dashBoardTip(this.props);
+    let verified = this.resolveVerification(this.props);
     let tag: any;
     let style: any;
-    if (this.props.loggingIn || (this.props.loggingOut && this.props.userId)) {
-      tag = (
-        <RefreshIndicator
-          loadingColor="orange"
-          size={20}
-          left={0}
-          top={0}
-          status="loading"
-          className="dashboard-spinner"
-        />
-      );
-    } else if (!this.props.userId || !this.props.userData || !this.props.userSettings) {
+    if (!this.props.userId) {
+      tag = null;
+    } else if (this.props.status && !this.props.status.connected && this.props.status.retryCount > 1) {
+      tag = this.spinner();
+    } else if (this.props.status && !this.props.status.connected) {
       tag = <NotificationSyncProblem className="notification-sync-problem" />;
-    } else if (obj.verified) {
+    } else if (!this.props.sessionReady) {
+      tag = this.spinner();
+    } else if (verified) {
       tag = <ActionVerifiedUser className="action-verified-user" />;
     } else {
       tag = <ActionHighlightOff className="action-highlight-off" />;
@@ -195,6 +234,8 @@ export default class DashDisplay extends React.Component<IProps, IState> {
 
     return layout || "";
   }
+
+  // if (!this.props.userId || !this.props.userData || !this.props.userSettings) {
 
   authVerifiedLayout() {
     let verifiedLayout: any;

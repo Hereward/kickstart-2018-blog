@@ -3,11 +3,11 @@ import { Accounts } from "meteor/accounts-base";
 import "./api";
 import { purgeInactiveSessions } from "../../api/sessions/methods";
 
-/*
+
 Accounts.config({
-  loginExpirationInDays: 5
+  loginExpirationInDays: 3650
 });
-*/
+
 
 
 Accounts.urls.resetPassword = token => Meteor.absoluteUrl(`forgot-password-reset/${token}`);

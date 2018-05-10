@@ -8,8 +8,23 @@ body {
   /* background-color: #343a40; */
 }
 
-.spinner-container {
+.swal-text {
+  background-color: GhostWhite;
+  padding: 17px;
+  border: 1px solid silver;
+  border-radius: 3px;
+  display: block;
+  margin: 22px;
+  text-align: center;
+  color:black;
+}
+
+.spinner-component {
   margin-top: 20%;
+}
+
+.spinner-page {
+  margin-top: 10%;
 }
 
 .spinner-caption {

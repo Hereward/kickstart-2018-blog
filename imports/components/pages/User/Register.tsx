@@ -78,7 +78,7 @@ class Register extends React.Component<IProps, IState> {
   }
 
   handleCheck(isInputChecked) {
-    this.setState({keepMeLoggedIn: isInputChecked});
+    this.setState({ keepMeLoggedIn: isInputChecked });
     log.info(`Register - handleCheck`, isInputChecked);
   }
 
@@ -121,11 +121,14 @@ class Register extends React.Component<IProps, IState> {
           if (err) {
             console.log(`Error: ${err.reason}`);
             this.setState({ allowSubmit: true });
-            Library.modalErrorAlert(err.reason);
+            Library.modalErrorAlert({
+              message: err.reason,
+              title: `Registration Failed`,
+            });
             console.log(`createUser error`, err);
           } else {
             let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
-            
+
             let sessionToken = User.sessionToken("create"); //Accounts._storedsessionToken(); // this.props.sessionToken; //localStorage.getItem("Meteor.sessionToken");
             log.info(`registerUser`, sessionToken);
             //let hash = Library.hash(token);
@@ -137,22 +140,25 @@ class Register extends React.Component<IProps, IState> {
               }
             });
 
-            SessionMethods.createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: this.state.keepMeLoggedIn }, (err, res) => {
-              if (err) {
-                console.log(`createSession error: [${err.reason}]`, err);
-                Library.modalErrorAlert(err.reason);
+            SessionMethods.createUserSession.call(
+              { sessionToken: sessionToken, keepMeLoggedIn: this.state.keepMeLoggedIn },
+              (err, res) => {
+                if (err) {
+                  console.log(`createSession error: [${err.reason}]`, err);
+                  Library.modalErrorAlert(err.reason);
+                }
+                if (!allowMultiSession) {
+                  Accounts.logoutOtherClients();
+                  SessionMethods.purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
+                    if (err) {
+                      Library.modalErrorAlert(err.reason);
+                      console.log(`purgeAllOtherSessions error`, err);
+                    }
+                  });
+                  log.info(`Register - logout other clients - DONE`);
+                }
               }
-              if (!allowMultiSession) {
-                Accounts.logoutOtherClients();
-                SessionMethods.purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
-                  if (err) {
-                    Library.modalErrorAlert(err.reason);
-                    console.log(`purgeAllOtherSessions error`, err);
-                  }
-                });
-                log.info(`Register - logout other clients - DONE`);
-              }
-            });
+            );
 
             PagesMethods.createPages.call({}, (err, id) => {
               if (err) {
@@ -200,11 +206,9 @@ class Register extends React.Component<IProps, IState> {
         }
       );
     } else {
-      return swal({
-        title: "Password must be at least 6 characters.",
-        text: "Please try again",
-        showConfirmButton: true,
-        type: "error"
+      Library.modalErrorAlert({
+        message: "Please try again",
+        title: "Password must be at least 6 characters."
       });
     }
   }

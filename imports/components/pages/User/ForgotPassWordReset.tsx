@@ -77,7 +77,6 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
     return form;
   }
 
-
   resetPassword() {
     this.setState({ allowSubmit: false });
 
@@ -101,24 +100,8 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
           let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
           let sessionToken = User.sessionToken("get");
           if (!err) {
-            
-            purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
-              if (err) {
-                Library.modalErrorAlert(err.reason);
-                console.log(`purgeAllOtherSessions error`, err);
-              }
-              deActivateSession.call({ sessionToken: sessionToken }, (err, res) => {
-                if (err) {
-                  console.log(`deActivateSession error`, err.reason);
-                }
-                Meteor.logout(() => {
-                  log.info(`reset password - logout DONE`);
-                  this.props.history.push("/signin");
-                });
-              });
-            });
-
-            Library.modalSuccessAlert({ message: "Your password was reset. Please log in with your new password." });
+            User.logoutAndPurgeSessions({title: "Your password was reset. Please log in with your new password.", newLocation: "/signin"});
+            //this.props.history.push("/signin");
           } else {
             this.setState({ allowSubmit: true });
             Library.modalErrorAlert({ message: err.reason, title: "Password reset failed." });

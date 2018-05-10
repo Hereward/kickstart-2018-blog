@@ -138,7 +138,7 @@ export default class PageContent extends React.Component<IProps, IState> {
       }
     } else {
       // LOADING
-      layout = <Spinner caption="loading" />;
+      layout = <Spinner caption="loading" type='component' />;
     }
 
     return layout;

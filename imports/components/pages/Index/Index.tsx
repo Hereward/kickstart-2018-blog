@@ -39,6 +39,8 @@ interface IProps {
   remainingTime: any;
   timeNow: any;
   remainingTimeFormatted: any;
+  sessionReady: boolean;
+  userId: string;
 }
 
 interface IState {
@@ -103,9 +105,8 @@ class Index extends React.Component<IProps, IState> {
     let filteredTasks = this.props.tasks;
 
     return filteredTasks.map(task => {
-      const currentUserId = this.props.currentUser && this.props.currentUser._id;
-      const showPrivateButton = task.owner === currentUserId;
-      const allowDelete = task.owner === currentUserId;
+      const showPrivateButton = task.owner === this.props.userId;
+      const allowDelete = task.owner === this.props.userId;
 
       return (
         <Task
@@ -121,7 +122,7 @@ class Index extends React.Component<IProps, IState> {
   }
 
   getForm() {
-    if (this.props.currentUser) {
+    if (this.props.sessionReady) {
       return (
         <form id="todos-form" className="new-task" onSubmit={this.handleSubmitTodos}>
           <input
@@ -138,7 +139,7 @@ class Index extends React.Component<IProps, IState> {
   }
 
   getCheckBox() {
-    if (this.props.currentUser && this.props.taskCount) {
+    if (this.props.sessionReady && this.props.taskCount) {
       return (
         <Checkbox label="Hide Completed Tasks" checked={this.state.hideCompleted} onClick={this.toggleHideCompleted} />
       );
@@ -147,7 +148,7 @@ class Index extends React.Component<IProps, IState> {
 
   sessionData() {
     let layout: any;
-    if (this.props.currentUser && this.props.userSession) {
+    if (this.props.sessionReady && this.props.userSession) {
       let display: any;
 
       if (!this.props.userSession.persist) {
@@ -191,7 +192,7 @@ class Index extends React.Component<IProps, IState> {
 
   todosSection() {
     let tasks: any;
-    let loggedOutMsg = !this.props.currentUser ? (
+    let message = !this.props.sessionReady ? (
       <CardText>
         <em>You can add and remove tasks here when you are logged in to your account.</em>
       </CardText>
@@ -204,7 +205,7 @@ class Index extends React.Component<IProps, IState> {
       tasks = this.renderTasks();
     }
 
-    let loggedInContent = this.props.currentUser ? (
+    let content = this.props.sessionReady ? (
       <div className="card-text">
         <div className="todos-form-wrapper">
           {this.getCheckBox()}
@@ -222,8 +223,8 @@ class Index extends React.Component<IProps, IState> {
           <h2>Simple Todos App</h2>
         </CardHeader>
         <CardBody>
-          {loggedOutMsg}
-          {loggedInContent}
+          {message}
+          {content}
         </CardBody>
       </Card>
     );

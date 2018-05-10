@@ -16,8 +16,10 @@ import * as User from "../../../modules/user";
 interface IProps {
   history: any;
   enhancedAuth: boolean;
+  sessionReady: boolean;
   sessionToken: string;
   userSettings: any;
+  userData: any;
 }
 
 interface IState {
@@ -48,10 +50,12 @@ class SignIn extends React.Component<IProps, IState> {
 
   componentWillReceiveProps(nextProps) {}
 
+  /*
   static propTypes = {
     history: ReactRouterPropTypes.history,
     enhancedAuth: PropTypes.bool
   };
+*/
 
   handleChange(e) {
     let target = e.target;
@@ -76,14 +80,14 @@ class SignIn extends React.Component<IProps, IState> {
       />
     );
 
-    if (!User.data()) {
+    if (!this.props.sessionReady) {
       return form;
     } else {
       return (
         <div>
           <h2>Signed In</h2>
           <div>
-            You are signed in as <strong>{User.data().emails[0].address}</strong>.
+            You are signed in as <strong>{this.props.userData.emails[0].address}</strong>.
           </div>
         </div>
       );
@@ -100,6 +104,7 @@ class SignIn extends React.Component<IProps, IState> {
           console.log(`createSession error: [${err.reason}]`, err);
           Library.modalErrorAlert(err.reason);
         }
+       
         if (!allowMultiSession) {
           Accounts.logoutOtherClients();
           log.info(`Sign In - logout othere clients -DONE`);
@@ -121,6 +126,8 @@ class SignIn extends React.Component<IProps, IState> {
       this.setState({ allowSubmit: true });
       if (error) {
         return Library.modalErrorAlert({ message: error.reason, title: "Sign In Failed" });
+      } else {
+        log.info(`Sign In - SUCCESS!`);
       }
       this.createSession();
     });

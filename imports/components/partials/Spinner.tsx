@@ -4,6 +4,7 @@ import Loader from "react-loader-spinner";
 
 interface IProps {
   caption: string;
+  type: string;
 }
 
 export default class Spinner extends React.Component<IProps> {
@@ -12,14 +13,20 @@ export default class Spinner extends React.Component<IProps> {
     this.state = {};
   }
 
-  render() {
-    return (
-      <div className="d-flex align-items-center spinner-container">
+  getLayout() {
+    let spinnerClass = `d-flex align-items-center spinner-${this.props.type}`;
+    let layout = (
+      <div className={spinnerClass}>
         <div className="m-auto spinner-holder">
-          <Loader type="Oval" color="red" height="120" width="120" />
+          <Loader type="Oval" color="red" height="140" width="140" />
           <div className="mx-2 mt-2 spinner-caption">{this.props.caption}</div>
         </div>
       </div>
     );
+    return layout;
+  }
+
+  render() {
+    return this.getLayout();
   }
 }

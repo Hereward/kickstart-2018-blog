@@ -424,7 +424,6 @@ export default withRouter(
     if (props.userData) {
       emailVerified = props.userData.emails[0].verified;
       userEmail = props.userData.emails[0].address;
-      let id = User.id();
     }
 
     if (ImagesDataReady) {

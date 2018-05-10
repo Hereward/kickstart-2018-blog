@@ -1,4 +1,12 @@
+//import swal from 'sweetalert';
+//declare var _swal: any;
+import * as _swal from 'sweetalert';
+import { SweetAlert } from 'sweetalert/typings/core';
 import * as User from "./user";
+
+const temp: any = _swal;
+const swal: SweetAlert = temp;
+declare var window: any;
 
 const authErrors = {
   invalidCode: "Invalid Code",
@@ -20,10 +28,11 @@ export function invalidAuthCodeAlert(error) {
   swal({
     title: title,
     text: message,
-    showConfirmButton: true,
-    type: "error"
+    icon: "error"
   });
 }
+
+// showConfirmButton: true,
 
 export function modalSuccessAlert(params: any) {
   let message: string;
@@ -35,8 +44,12 @@ export function modalSuccessAlert(params: any) {
   swal({
     title: title,
     text: message,
-    showConfirmButton: true,
-    type: "success"
+    icon: "success"
+  }).then(value => {
+    if (obj.location) {
+      log.info(`changing page location [${location}]`);
+      window.location = obj.location;
+    }
   });
 }
 
@@ -45,10 +58,11 @@ export function modalErrorAlert(params: any) {
   let message: string;
   let title: string;
   let detail: string;
-  let text = "";
-
+  let text = '';
+  let location = '';
+  let obj = arguments[0];
   if (typeof arguments[0] === "object") {
-    let obj = arguments[0];
+    
     message = obj.message;
     title = obj.title || "Oops, something went wrong!";
     detail = obj.detail;
@@ -71,15 +85,21 @@ export function modalErrorAlert(params: any) {
   swal({
     title: title,
     text: `${text}`,
-    showConfirmButton: true,
-    type: "error"
+    icon: "error"
+  }).then(value => {
+    if (obj.location) {
+      //log.info(`changing page location [${location}]`);
+      window.location = obj.location;
+    }
   });
 }
 
 export function userModelessAlert(type, props) {
+  /*
   if (!User.data()) {
     return;
   }
+  */
 
   //let emailVerified = props.userData.emails[0].verified;
 

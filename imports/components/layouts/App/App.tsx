@@ -13,6 +13,7 @@ import * as User from "../../../modules/user";
 import { userSessions } from "../../../api/sessions/publish";
 import { userSettings } from "../../../api/settings/publish";
 import { Auth } from "../../../api/auth/publish";
+import Spinner from "../../partials/Spinner";
 
 interface IProps {
   signedIn: boolean;
@@ -21,6 +22,8 @@ interface IProps {
   MainTitle: string;
   ShortTitle: string;
   sessionToken: string;
+  status: any;
+  sessionReady: boolean;
 }
 
 interface IState {}
@@ -41,17 +44,21 @@ class App extends React.Component<IProps, IState> {
   componentWillMount() {}
 
   render() {
-    return (
-      <BrowserRouter>
-        <div className="router-parent d-flex flex-column">
-          <Header {...this.props} />
-          <main>
-            <MainRouter {...this.props} />
-          </main>
-          <Footer {...this.props} />
-        </div>
-      </BrowserRouter>
-    );
+    if (!this.props.sessionReady && this.props.status && !this.props.status.connected && this.props.status.retryCount>1) { 
+      return <Spinner caption="connecting" type='page' />;
+    } else {
+      return (
+        <BrowserRouter>
+          <div className="router-parent d-flex flex-column">
+            <Header {...this.props} />
+            <main>
+              <MainRouter {...this.props} />
+            </main>
+            <Footer {...this.props} />
+          </div>
+        </BrowserRouter>
+      );
+    }
   }
 }
 
@@ -62,31 +69,34 @@ export default withTracker(() => {
   let sessionReady = false;
   let userSession: any;
   let userSettingsRec: any;
-  let userData: any;
+  //let userData: any;
   let sessionActive: boolean = false;
   let sessionExpired: boolean = false;
   let enhancedAuth = Meteor.settings.public.enhancedAuth.active === false ? false : true;
   let sessionToken: string;
-  let loggingIn: boolean;
+  //let loggingIn: boolean;
   let userId = User.id();
-  loggingIn = User.loggingIn();
-  userData = User.data();
+  let loggingIn = User.loggingIn();
+  let userData = User.data();
+  let status = Meteor.status();
+
+  
 
   let admin = false;
   let profile: any;
 
-  if (userData && !loggingIn) {
+  if (userId && userData) {
     sessionToken = User.sessionToken("get");
     let hashedToken = sessionToken ? User.hash(sessionToken) : "";
 
-    profile = Profiles.findOne({ owner: userData._id });
+    profile = Profiles.findOne({ owner: userId });
     if (profile) {
       admin = profile.admin;
     }
 
-    userSettingsRec = userSettings.findOne({ owner: userData._id });
+    userSettingsRec = userSettings.findOne({ owner: userId });
 
-    userSession = userSessions.findOne({ owner: userData._id, sessionToken: hashedToken });
+    userSession = userSessions.findOne({ owner: userId, sessionToken: hashedToken });
 
     if (userSession) {
       sessionActive = userSession.active;
@@ -103,6 +113,8 @@ export default withTracker(() => {
     ) {
       sessionReady = true;
     }
+
+    // log.info(`Meteor vars: sessionReady userId loggingIn userData status`, sessionReady, userId, loggingIn, userData, status);
   }
 
   return {
@@ -119,6 +131,7 @@ export default withTracker(() => {
     profile: profile,
     admin: admin,
     sessionToken: sessionToken,
-    sessionReady: sessionReady
+    sessionReady: sessionReady,
+    status: status
   };
 })(App);

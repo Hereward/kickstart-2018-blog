@@ -3,6 +3,7 @@ import * as ReactDOM from "react-dom";
 import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session";
+import * as RLocalStorage from "meteor/simply:reactive-local-storage";
 import * as jquery from "jquery";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import App from "../../components/layouts/App/App";
@@ -12,6 +13,7 @@ import * as ContentManagement from "../../modules/contentManagement";
 import { keepAliveUserSession } from "../../api/sessions/methods";
 //import { validateUserLogin } from "../../api/auth/methods";
 import * as User from "../../modules/user";
+
 
 class Launch extends React.Component {
   constructor(props) {
@@ -62,6 +64,13 @@ const validateLogin = function validateLogin() {
   }
 };
 */
+
+Accounts.onLogin(() => {
+  let userData: any;
+  userData = User.data();
+  User.setUserDataCache(userData);
+  log.info(`Client login`, User.id(), userData, User.sessionToken('get'));
+});
 
 Accounts.onLogout(() => {
   log.info(`Client Logout`, User.sessionToken('get'));

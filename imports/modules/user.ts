@@ -1,9 +1,18 @@
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session";
 import * as RLocalStorage from "meteor/simply:reactive-local-storage";
-import { keepAliveUserSession } from "../api/sessions/methods";
+import * as Library from "./library";
+import {
+  keepAliveUserSession,
+  deActivateSession,
+  purgeAllOtherSessions,
+  purgeAllSessions,
+  createUserSession
+} from "../api/sessions/methods";
 
 const sessionTokenName = Meteor.settings.public.session.sessionTokenName;
+const userDataKey = Meteor.settings.public.session.userDataKey;
+declare var window: any;
 
 export function hash(token, algorithm = "md5") {
   const crypto = require("crypto");
@@ -18,8 +27,25 @@ export function id() {
 }
 
 export function data() {
-  const user = Meteor.user();
+  let user: any;
+  user = Meteor.user();
+  let userId = id();
+  if (!user && userId) {
+    let cachedUser = RLocalStorage.getItem(userDataKey);
+    if (cachedUser && cachedUser._id === userId) {
+      user = cachedUser;
+    }
+  }
   return user;
+}
+
+export function clearLocalStorage() {
+  localStorage.removeItem(sessionTokenName);
+  localStorage.removeItem(userDataKey);
+}
+
+export function setUserDataCache(userData) {
+  RLocalStorage.setItem(userDataKey, userData);
 }
 
 export function loggingIn() {
@@ -64,20 +90,49 @@ export function sessionToken(action, value?: string, key?: string) {
   return output;
 }
 
+export function logoutAndPurgeSessions(params: { title?: string; message?: string; newLocation?: string }) {
+  let sToken = sessionToken("get");
+  purgeAllOtherSessions.call({ sessionToken: sToken }, (err, res) => {
+    if (err) {
+      Library.modalErrorAlert(err.reason);
+      console.log(`purgeAllOtherSessions error`, err);
+    }
+    deActivateSession.call({ sessionToken: sToken }, (err, res) => {
+      if (err) {
+        console.log(`deActivateSession error`, err.reason);
+      }
+      Meteor.logout(() => {
+        log.info(`User.logoutAndPurge() DONE`);
+        clearLocalStorage();
+        if (params.title || params.newLocation) {
+          Library.modalSuccessAlert({ title: params.title, message: params.message, location: params.newLocation });
+        }
+      });
+    });
+  });
+}
+
 export function checkSessionToken(prevProps?, newProps?) {
   if (id() && !loggingIn() && newProps.userData && prevProps.userSession && !newProps.userSession) {
     let sessionTokenString = sessionToken("get");
     if (!sessionTokenString) {
-      sessionTokenString = sessionToken("create");
-      log.info(`restoreSession - token was re-generated. New token=`, sessionTokenString);
+      purgeAllSessions.call({}, (err, res) => {
+        if (err) {
+          console.log(`purgeAllSessions error`, err.reason);
+        }
+        Meteor.logout(() => {
+          clearLocalStorage();
+          window.location = "/signin";
+        });
+      });
     } else {
       log.info(`checkSessionToken - session dropped out! Token=`, sessionTokenString);
+      keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionTokenString }, (err, res) => {
+        if (err) {
+          console.log(`keepAliveUserSession client error`, err.reason);
+        }
+      });
     }
-    keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionTokenString }, (err, res) => {
-      if (err) {
-        console.log(`keepAliveUserSession client error`, err.reason);
-      }
-    });
   }
   return false;
 }
