@@ -185,7 +185,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
       tag = <NotificationSyncProblem className="notification-sync-problem" />;
     } else if (verified) {
       tag = <ActionVerifiedUser className="action-verified-user" />;
-    } else {
+    } else if (this.props.sessionReady) {
       tag = <ActionHighlightOff className="action-highlight-off" />;
     }
     layout = (
