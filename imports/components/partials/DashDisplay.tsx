@@ -172,7 +172,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     let verified = this.resolveVerification(this.props);
     let tag: any = null;
     let style: any;
-    if (this.props.loggingIn || (!this.props.connected && this.props.connectionRetryCount > 1)) {
+    if (this.props.loggingIn || this.props.loggingOut || (!this.props.connected && this.props.connectionRetryCount > 1)) {
       tag = this.spinner();
     } else if (!this.props.connected) {
       tag = <NotificationSyncProblem className="notification-sync-problem" />;
