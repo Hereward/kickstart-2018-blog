@@ -142,12 +142,13 @@ The following file names have been added to the included .gitignore file:
 * `iv` - Initialisation vector (16 character random string in UTF-8 encoding)
 * `algorithm` - Algorithm used to encrypt the private key
 
-`public/session` - use these settings to control the session timeout features
+`public/session` - use these settings to control session features
 * `heartbeatInterval (integer)` - interval between activity detection messages sent to server (ms - default: 300000)
 * `inactivityTimeout (integer)` - length of time before inactive users are logged out (ms - default: 3600000)
 * `timeOutOn (boolean)` - turn on or off the timeout feature (default: true)
 * `allowMultiSession` - allow multiple client sessions for the same user. 
-* `sessionTokenName` - name of token for sessions (uses HTML localStorage)
+* `sessionTokenName` - name of token for sessions (HTML localStorage)
+* `userDataKey` - name of key for caching user data (HTML localStorage)
 
 `private/smtp` - populate these settings with your SMTP server configuration
 

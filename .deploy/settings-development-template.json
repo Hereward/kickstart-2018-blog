@@ -15,7 +15,8 @@
       "inactivityTimeout": 3600000,
       "timeOutOn": true,
       "allowMultiSession": true,
-      "sessionTokenName": "Meteor.Kickstart2018.SessionToken"
+      "sessionTokenName": "Meteor.Kickstart2018.SessionToken",
+      "userDataKey": "Meteor.Kickstart2018.User"
     },
     "images": {
       "storagePath": "../../../../../.storage/images"
