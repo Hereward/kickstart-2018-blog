@@ -40,31 +40,6 @@ const keepAlive = function keepAlive(activityDetected: any) {
   }
 };
 
-/*
-const restoreSession = function restoreSession() {
-  if (User.id()) {
-    let token = User.sessionToken('get');
-    restoreUserSession.call({sessionToken: token}, (err, res) => {
-      if (err) {
-        console.log(`restoreUserSession client error`, err.reason);
-      }
-    });
-  }
-};
-*/
-
-/*
-const validateLogin = function validateLogin() {
-  if (User.id()) {
-    validateUserLogin.call({}, (err, res) => {
-      if (err) {
-        console.log(`validateUserLogin client error`, err.reason);
-      }
-    });
-  }
-};
-*/
-
 Accounts.onLogin(() => {
   let userData: any;
   userData = User.data();

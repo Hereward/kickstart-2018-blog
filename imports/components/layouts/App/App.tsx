@@ -104,7 +104,7 @@ export default withTracker(() => {
 
     userSettingsRec = userSettings.findOne({ owner: userId });
 
-    userSession = userSessions.findOne({ owner: userId, sessionToken: hashedToken });
+    userSession = userSessions.findOne({ owner: userId, sessionToken: hashedToken, active: true });
 
     if (userSession) {
       sessionActive = userSession.active;
