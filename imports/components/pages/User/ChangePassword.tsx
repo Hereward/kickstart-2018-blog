@@ -94,7 +94,6 @@ class ChangePassword extends React.Component<IProps, IState> {
                   Library.modalErrorAlert(err.reason);
                   console.log(`clearSessionAuthMethod error`, err);
                 }
-                this.props.history.push("/authenticate");
               });
             } else {
               this.props.history.push("/");
