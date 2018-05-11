@@ -143,13 +143,16 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   }
 
   emailDashDisplay() {
-    let display: string = null;
+    let display: string;
+
     if (this.props.loggingOut && this.props.userData) {
       display = ` ${tip.loggingOut}`;
     } else if (!this.props.sessionExpired && this.props.userData) {
       display = ` ${this.props.userData.emails[0].address}`;
     } else if (this.props.loggingIn) {
       display = ` ${tip.loggingIn}`;
+    } else {
+      display = null;
     }
     return display;
   }
@@ -172,9 +175,13 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     let verified = this.resolveVerification(this.props);
     let tag: any = null;
     let style: any;
-    if (this.props.loggingIn || this.props.loggingOut || (!this.props.connected && this.props.connectionRetryCount > 1)) {
+    if (
+      this.props.loggingIn ||
+      this.props.loggingOut ||
+      (!this.props.connected && this.props.connectionRetryCount > 1)
+    ) {
       tag = this.spinner();
-    } else if (!this.props.connected || !this.props.sessionReady) {
+    } else if (this.props.userData && (!this.props.connected || !this.props.sessionReady)) {
       tag = <NotificationSyncProblem className="notification-sync-problem" />;
     } else if (verified) {
       tag = <ActionVerifiedUser className="action-verified-user" />;
