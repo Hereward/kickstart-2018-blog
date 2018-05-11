@@ -174,11 +174,11 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     let style: any;
     if (this.props.loggingIn || this.props.loggingOut || (!this.props.connected && this.props.connectionRetryCount > 1)) {
       tag = this.spinner();
-    } else if (!this.props.connected) {
+    } else if (!this.props.connected || !this.props.sessionReady) {
       tag = <NotificationSyncProblem className="notification-sync-problem" />;
     } else if (verified) {
       tag = <ActionVerifiedUser className="action-verified-user" />;
-    } else if (this.props.sessionReady) {
+    } else {
       tag = <ActionHighlightOff className="action-highlight-off" />;
     }
     layout = (
