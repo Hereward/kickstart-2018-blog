@@ -49,6 +49,8 @@ interface IProps {
   sessionToken: string;
   sessionReady: boolean;
   status: any;
+  connected: boolean;
+  connectionRetryCount: number;
 }
 
 interface IState {
@@ -272,6 +274,8 @@ class Navigation extends React.Component<IProps, IState> {
               sessionExpired={this.props.sessionExpired}
               status={this.props.status}
               sessionReady={this.props.sessionReady}
+              connected={this.props.connected}
+              connectionRetryCount={this.props.connectionRetryCount}
             />
           </div>
           <NavbarToggler onClick={this.toggleNavbar} />

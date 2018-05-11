@@ -24,6 +24,8 @@ interface IProps {
   sessionToken: string;
   status: any;
   sessionReady: boolean;
+  connected: boolean;
+  connectionRetryCount: number;
 }
 
 interface IState {}
@@ -44,8 +46,12 @@ class App extends React.Component<IProps, IState> {
   componentWillMount() {}
 
   render() {
-    if (!this.props.sessionReady && this.props.status && !this.props.status.connected && this.props.status.retryCount>1) { 
-      return <Spinner caption="connecting" type='page' />;
+    if (
+      !this.props.sessionReady &&
+      !this.props.connected &&
+      this.props.connectionRetryCount > 1
+    ) {
+      return <Spinner caption="connecting" type="page" />;
     } else {
       return (
         <BrowserRouter>
@@ -78,9 +84,11 @@ export default withTracker(() => {
   let userId = User.id();
   let loggingIn = User.loggingIn();
   let userData = User.data();
-  let status = Meteor.status();
-
-  
+  let status: any;
+  let connected: boolean;
+  let connectionRetryCount: number = 0;
+  connected = Meteor.status().connected;
+  connectionRetryCount = Meteor.status().retryCount;
 
   let admin = false;
   let profile: any;
@@ -104,6 +112,7 @@ export default withTracker(() => {
     }
 
     if (
+      connected &&
       userId &&
       profilesHandle.ready() &&
       userSettingsHandle.ready() &&
@@ -113,9 +122,17 @@ export default withTracker(() => {
     ) {
       sessionReady = true;
     }
-
-    // log.info(`Meteor vars: sessionReady userId loggingIn userData status`, sessionReady, userId, loggingIn, userData, status);
   }
+  /*
+  log.info(
+    `Meteor vars: sessionReady userId loggingIn userData status`,
+    sessionReady,
+    userId,
+    loggingIn,
+    userData,
+    status
+  );
+  */
 
   return {
     MainTitle: Meteor.settings.public.MainTitle,
@@ -132,6 +149,8 @@ export default withTracker(() => {
     admin: admin,
     sessionToken: sessionToken,
     sessionReady: sessionReady,
-    status: status
+    status: status,
+    connected: connected,
+    connectionRetryCount: connectionRetryCount
   };
 })(App);

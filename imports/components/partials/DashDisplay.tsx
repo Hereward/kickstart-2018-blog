@@ -13,22 +13,6 @@ import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
 
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  NavLink,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Tooltip,
-  UncontrolledTooltip
-} from "reactstrap";
-
 import * as User from "../../modules/user";
 
 interface IProps {
@@ -42,6 +26,8 @@ interface IProps {
   enhancedAuth: boolean;
   status: any;
   sessionReady: boolean;
+  connected: boolean;
+  connectionRetryCount: number;
 }
 
 interface IState {
@@ -78,11 +64,11 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     };
   }
 
-  componentWillReceiveProps(nextProps) {}
-
-  componentWillUpdate(nextProps) {
+  componentWillReceiveProps(nextProps) {
     this.set(nextProps);
   }
+
+  componentWillUpdate(nextProps) {}
 
   componentDidUpdate() {}
 
@@ -94,11 +80,11 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     let verifiedFlag: boolean = false;
     let hasAuth = !(props.enhancedAuth === false || (props.userSettings && props.userSettings.authEnabled === 0));
     let message: any = "We're not quite sure what's going on...";
-    if (props.status && props.status.connected === false) {
+    if (props.connected === false) {
       message = tip.connecting;
     } else if (props.loggingIn) {
       message = tip.loggingIn;
-    } else if (!props.userId) {
+    } else if (!props.userData) {
       message = tip.loggedOut;
     } else if (props.loggingOut) {
       message = tip.loggingOut;
@@ -158,9 +144,9 @@ export default class DashDisplay extends React.Component<IProps, IState> {
 
   emailDashDisplay() {
     let display: string = null;
-    if (this.props.loggingOut && this.props.userId) {
+    if (this.props.loggingOut && this.props.userData) {
       display = ` ${tip.loggingOut}`;
-    } else if (!this.props.sessionExpired && this.props.userId && this.props.userData) {
+    } else if (!this.props.sessionExpired && this.props.userData) {
       display = ` ${this.props.userData.emails[0].address}`;
     } else if (this.props.loggingIn) {
       display = ` ${tip.loggingIn}`;
@@ -184,19 +170,15 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   getVerifiedIndicator() {
     let layout: any;
     let verified = this.resolveVerification(this.props);
-    let tag: any;
+    let tag: any = null;
     let style: any;
-    if (!this.props.userId) {
-      tag = null;
-    } else if (this.props.status && !this.props.status.connected && this.props.status.retryCount > 1) {
+    if (this.props.loggingIn || (!this.props.connected && this.props.connectionRetryCount > 1)) {
       tag = this.spinner();
-    } else if (this.props.status && !this.props.status.connected) {
+    } else if (!this.props.connected) {
       tag = <NotificationSyncProblem className="notification-sync-problem" />;
-    } else if (!this.props.sessionReady) {
-      tag = this.spinner();
     } else if (verified) {
       tag = <ActionVerifiedUser className="action-verified-user" />;
-    } else {
+    } else if (this.props.sessionReady) {
       tag = <ActionHighlightOff className="action-highlight-off" />;
     }
     layout = (
