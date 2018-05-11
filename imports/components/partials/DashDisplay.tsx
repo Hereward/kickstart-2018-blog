@@ -157,17 +157,14 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   }
 
   emailDashDisplay() {
-    let display: string;
-    if (this.props.loggingIn) {
-      display = ` ${tip.loggingIn}`;
-    } else if (this.props.loggingOut && this.props.userId) {
+    let display: string = null;
+    if (this.props.loggingOut && this.props.userId) {
       display = ` ${tip.loggingOut}`;
     } else if (!this.props.sessionExpired && this.props.userId && this.props.userData) {
       display = ` ${this.props.userData.emails[0].address}`;
-    } else if (!this.props.userId || !this.props.userData || !this.props.userSettings) {
-      display = null;
+    } else if (this.props.loggingIn) {
+      display = ` ${tip.loggingIn}`;
     }
-
     return display;
   }
 
