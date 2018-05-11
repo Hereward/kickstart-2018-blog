@@ -42,7 +42,8 @@ export const clearSessionAuth = (userId, sessionToken) => {
   let sessionRecord: any;
   sessionRecord = getSession(userId, sessionToken);
   if (sessionRecord) {
-    userSessions.update(sessionRecord._id, { $set: { verified: false, currentAttempts: 0 } });
+    //userSessions.update(sessionRecord._id, { $set: { verified: false, currentAttempts: 0 } });
+    userSessions.update(sessionRecord._id, { $unset: { verified: "", currentAttempts: "" } });
   }
 };
 
