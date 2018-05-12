@@ -181,10 +181,9 @@ export const purgeAllSessions = new ValidatedMethod({
 
   run(fields) {
     if (!this.isSimulation) {
-      if (!authCheck("UserSession.purgeAllSessions", this.userId)) {
-        return false;
+      if (this.userId) {
+        userSessions.remove({ owner: this.userId });
       }
-      userSessions.remove({ owner: this.userId });
     }
     return true;
   }

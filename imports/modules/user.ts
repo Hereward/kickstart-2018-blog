@@ -114,7 +114,7 @@ export function logoutAndPurgeSessions(params: { title?: string; message?: strin
   });
 }
 
-export function checkSessionToken(prevProps?, newProps?) {
+export function checkSessionStatus(prevProps?, newProps?) {
   if (id() && !loggingIn() && newProps.userData && prevProps.userSession && !newProps.userSession) {
     let sessionTokenString = sessionToken("get");
     if (!sessionTokenString) {
@@ -128,7 +128,7 @@ export function checkSessionToken(prevProps?, newProps?) {
         });
       });
     } else {
-      log.info(`checkSessionToken - session dropped out! Token=`, sessionTokenString);
+      log.info(`checkSessionStatus - session dropped out! Token=`, sessionTokenString);
       keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionTokenString }, (err, res) => {
         if (err) {
           console.log(`keepAliveUserSession client error`, err.reason);

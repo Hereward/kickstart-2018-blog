@@ -94,8 +94,7 @@ class Navigation extends React.Component<IProps, IState> {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!this.loggingOut) {
-      User.checkSessionToken(prevProps, this.props);
-
+      User.checkSessionStatus(prevProps, this.props);
       if (
         this.props.sessionReady &&
         !this.timerID &&
