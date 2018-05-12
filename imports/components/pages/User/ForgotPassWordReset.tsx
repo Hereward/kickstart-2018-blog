@@ -12,8 +12,10 @@ import {
   deActivateSession,
   purgeAllOtherSessions,
   purgeAllSessions,
-  createUserSession
+  createUserSession,
+  keepAliveUserSession
 } from "../../../api/sessions/methods";
+
 import * as User from "../../../modules/user";
 
 interface IProps {
@@ -98,9 +100,13 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
         password1,
         function reset(err) {
           let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
-          let sessionToken = User.sessionToken("get");
+
           if (!err) {
-            User.logoutAndPurgeSessions({message: "Your password was reset. Please log in with your new password.", newLocation: "/signin"});
+            let sessionToken = User.sessionToken("create");
+            User.logoutAndPurgeSessions({
+              message: "Your password was reset. Please log in with your new password.",
+              newLocation: "/signin"
+            });
           } else {
             this.setState({ allowSubmit: true });
             Library.modalErrorAlert({ message: err.reason, title: "Password reset failed." });

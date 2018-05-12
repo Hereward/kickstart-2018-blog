@@ -99,7 +99,7 @@ export function logoutAndPurgeSessions(params: { title?: string; message?: strin
     }
     deActivateSession.call({ sessionToken: sToken }, (err, res) => {
       if (err) {
-        console.log(`deActivateSession error`, err.reason);
+        console.log(`deActivateSession error`, err);
       }
       Meteor.logout(() => {
         log.info(`User.logoutAndPurge() DONE`);
