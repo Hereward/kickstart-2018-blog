@@ -226,6 +226,8 @@ class Navigation extends React.Component<IProps, IState> {
         logout = true;
       } else if (path.match(/verify-email/) && emailVerified === true && (!authEnabled || verified)) {
         reRoute = "/";
+      } else if (path.match(/forgot-password-reset/) && (!authEnabled || verified)) {
+        reRoute = "/";
       } else if (path === "/authenticate") {
         if (authEnabled === 0) {
           reRoute = "/";
