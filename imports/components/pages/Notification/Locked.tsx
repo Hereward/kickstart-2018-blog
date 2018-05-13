@@ -10,6 +10,7 @@ interface IProps {
   userSettings: any;
   userSession: any;
   history: any;
+  userData: any;
 }
 
 class Locked extends React.Component<IProps> {
@@ -18,11 +19,15 @@ class Locked extends React.Component<IProps> {
   }
 
   componentDidUpdate() {
+    this.checker();
+  }
+
+  checker() {
     let locked = Library.nested(["userSettings", "locked"], this.props);
     let verified = Library.nested(["userSession", "verified"], this.props);
     let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
     if (locked === false) {
-      if (authEnabled === false || (authEnabled === true && verified === true)) {
+      if (authEnabled === 0 || (authEnabled && verified === true)) {
         this.props.history.push("/");
       }
     }
@@ -33,7 +38,8 @@ class Locked extends React.Component<IProps> {
       <div className="container page-content">
         <h1>Account Locked</h1>
         <div>
-          You exceeded the maximum allowed number of authentication attempts while logging in. Your account is now locked on all client sessions. Please contact Admin to reinstate access.
+          You exceeded the maximum allowed number of authentication attempts while logging in. Your account is now
+          locked on all client sessions. Please contact Admin to reinstate access.
         </div>
       </div>
     );
@@ -46,11 +52,8 @@ class Locked extends React.Component<IProps> {
   }
 }
 
-
 export default withRouter(
   withTracker(() => {
     return {};
   })(Locked)
 );
-
-

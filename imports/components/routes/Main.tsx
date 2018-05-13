@@ -35,12 +35,11 @@ const MainRouter = props => (
     <Route exact path="/" render={() => <Index {...props} />} />
     <Route path="/about" render={() => <About {...props} />} />
     <Route path="/profile" render={() => <Profile {...props} />} />
-    <Route path="/locked" render={() => <Locked {...props} />} />
-    <Route path="/verify-email" render={() => <VerifyEmail {...props} />} />
+    <Route path="/verify-email" render={() => <Locked {...props} />} />
     <Route path="/signin" render={() => <SignIn {...props} />} />
     <Route path="/forgot-password-reset" render={() => <ForgotPassWordReset {...props} />} />
     <AuthRoute path="/forgot-password" cProps={props} component={ForgotPassWord} condition={!User.id()} redirect="/" />
-
+    <AuthRoute path="/locked" cProps={props} component={Locked} condition={User.id()} redirect="/" />
     <AuthRoute path="/change-password" cProps={props} component={ChangePassword} condition={User.id()} redirect="/" />
     <AuthRoute path="/register" cProps={props} component={Register} condition={!User.id()} redirect="/" />
     <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={User.id()} redirect="/" />
