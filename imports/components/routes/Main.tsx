@@ -7,6 +7,7 @@ import ForgotPassWord from "../pages/User/ForgotPassWord";
 import Authenticator from "../pages/User/Authenticator";
 import Register from "../pages/User/Register";
 import SignIn from "../pages/User/SignIn";
+import Locked from "../pages/Notification/Locked";
 import VerifyEmail from "../pages/User/VerifyEmail";
 import ForgotPassWordReset from "../pages/User/ForgotPassWordReset";
 import ChangePassword from "../pages/User/ChangePassword";
@@ -34,27 +35,15 @@ const MainRouter = props => (
     <Route exact path="/" render={() => <Index {...props} />} />
     <Route path="/about" render={() => <About {...props} />} />
     <Route path="/profile" render={() => <Profile {...props} />} />
+    <Route path="/locked" render={() => <Locked {...props} />} />
     <Route path="/verify-email" render={() => <VerifyEmail {...props} />} />
     <Route path="/signin" render={() => <SignIn {...props} />} />
     <Route path="/forgot-password-reset" render={() => <ForgotPassWordReset {...props} />} />
-    <AuthRoute
-      path="/forgot-password"
-      cProps={props}
-      component={ForgotPassWord}
-      condition={!User.id()}
-      redirect="/"
-    />
+    <AuthRoute path="/forgot-password" cProps={props} component={ForgotPassWord} condition={!User.id()} redirect="/" />
 
-    <AuthRoute
-      path="/change-password"
-      cProps={props}
-      component={ChangePassword}
-      condition={User.id()}
-      redirect="/"
-    />
+    <AuthRoute path="/change-password" cProps={props} component={ChangePassword} condition={User.id()} redirect="/" />
     <AuthRoute path="/register" cProps={props} component={Register} condition={!User.id()} redirect="/" />
     <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={User.id()} redirect="/" />
-    
   </Switch>
 );
 

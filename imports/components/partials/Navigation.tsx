@@ -88,9 +88,7 @@ class Navigation extends React.Component<IProps, IState> {
     this.conditionalReroute(nextProps);
   }
 
-  componentWillUpdate(nextProps) {
-
-  }
+  componentWillUpdate(nextProps) {}
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (!this.loggingOut) {
@@ -218,12 +216,16 @@ class Navigation extends React.Component<IProps, IState> {
       let reRoute = null;
       let logout = false;
       let verified = Library.nested(["userSession", "verified"], props);
-      let authEnabled = props.userSettings.authEnabled;
-
-      if (props.sessionActive && props.sessionExpired) {
+      let locked = Library.nested(["userSettings", "locked"], props);
+      let authEnabled = Library.nested(["userSettings", "authEnabled"], props); 
+      if (locked === true) {
+        if (path !== "/locked") {
+          reRoute = "locked";
+        }
+      } else if (props.sessionActive && props.sessionExpired) {
         logout = true;
       } else if (path.match(/forgot-password-reset/) && (!authEnabled || verified)) {
-          reRoute = "/";;
+        reRoute = "/";
       } else if (path === "/authenticate") {
         if (authEnabled === 0) {
           reRoute = "/";
@@ -232,10 +234,7 @@ class Navigation extends React.Component<IProps, IState> {
         }
       } else if (path === "/signin" && authEnabled === 0) {
         reRoute = "/";
-      } else if (
-        (props.location.pathname !== "/authenticate" && authEnabled > 1) ||
-        (authEnabled === 1 && !verified)
-      ) {
+      } else if ((props.location.pathname !== "/authenticate" && authEnabled > 1) || (authEnabled === 1 && !verified)) {
         reRoute = "/authenticate";
       }
 
@@ -303,7 +302,6 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   render() {
-    
     return this.navBar();
   }
 }

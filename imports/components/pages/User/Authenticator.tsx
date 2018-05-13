@@ -98,7 +98,9 @@ class Authenticator extends React.Component<IProps, IState> {
 
     Methods.verifyToken.call({ myToken: myToken, sessionToken: User.sessionToken("get") }, (err, res) => {
       if (err) {
-        Library.invalidAuthCodeAlert(err);
+        if (err.error === "invalidCode") {
+          Library.invalidAuthCodeAlert(err);
+        }
         console.log(`verifyToken error`, err);
         this.setState({ allowSubmit: true });
       } else {

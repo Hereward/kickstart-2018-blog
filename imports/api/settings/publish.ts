@@ -14,6 +14,7 @@ if (Meteor.isServer) {
       {
         fields: {
           authEnabled: 1,
+          locked: 1,
           owner: 1
         }
       }

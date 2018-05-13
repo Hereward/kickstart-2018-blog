@@ -188,16 +188,16 @@ export const purgeAllSessions = new ValidatedMethod({
       }
       return result;
     }
-    
   }
 });
 
-export const exceedAttemptsCheck = (verified, attemptsLeft) => {
+export const exceedAttemptsCheck = (verified, attemptsLeft, userId) => {
   let message: string;
   let recalctAttempts = attemptsLeft - 1;
   if ((attemptsLeft < 2 && !verified) || attemptsLeft < 1) {
     message =
       "You have exceeded the maximum allowed number of authentication attempts. Please contact Admin to reinstate access to your account.";
+    lockAccount(userId);
     throw new Meteor.Error(`exceededAttempts`, message);
   } else if (!verified && attemptsLeft > 0) {
     let attemptsLabel = recalctAttempts > 1 ? "attempts" : "attempt";
@@ -207,6 +207,16 @@ export const exceedAttemptsCheck = (verified, attemptsLeft) => {
   } else {
     return true;
   }
+};
+
+const lockAccount = userId => {
+  userSessions.remove({ owner: userId });
+  userSettings.update(
+    { owner: userId },
+    {
+      $set: { locked: true }
+    }
+  );
 };
 
 export const updateAuth = (userId, sessionToken, verified) => {
@@ -228,7 +238,7 @@ export const updateAuth = (userId, sessionToken, verified) => {
     $set: { currentAttempts: currentAttempts }
   });
 
-  let attemptsOK = exceedAttemptsCheck(verified, attemptsLeft);
+  let attemptsOK = exceedAttemptsCheck(verified, attemptsLeft, userId);
   let settings: any;
   settings = userSettings.findOne({ owner: userId });
 

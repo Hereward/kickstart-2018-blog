@@ -32,6 +32,7 @@ export const createUserSettings = new ValidatedMethod({
 
     let authId = userSettings.insert({
       authEnabled: 0,
+      locked: false,
       owner: this.userId
     });
 

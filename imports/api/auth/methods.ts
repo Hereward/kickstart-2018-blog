@@ -5,7 +5,7 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "../sessions/publish";
 import { userSettings } from "../settings/publish";
 import { Auth } from "./publish";
-import { getSession, exceedAttemptsCheck, updateAuth as sessionUpdateAuth } from "../sessions/methods";
+import { getSession, updateAuth as sessionUpdateAuth } from "../sessions/methods";
 
 let Future: any;
 let QRCode: any;
