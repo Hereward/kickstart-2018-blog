@@ -215,15 +215,19 @@ class Navigation extends React.Component<IProps, IState> {
       let path = props.location.pathname;
       let reRoute = null;
       let logout = false;
+      let emailVerified = Library.nested(["userData", "emails", 0, "verified"], props);
+      //props.userData.emails[0].verified
       let verified = Library.nested(["userSession", "verified"], props);
       let locked = Library.nested(["userSettings", "locked"], props);
-      let authEnabled = Library.nested(["userSettings", "authEnabled"], props); 
+      let authEnabled = Library.nested(["userSettings", "authEnabled"], props);
       if (locked === true) {
         if (path !== "/locked") {
           reRoute = "locked";
         }
       } else if (props.sessionActive && props.sessionExpired) {
         logout = true;
+      } else if (path.match(/verify-email/) && emailVerified === true && (!authEnabled || verified)) {
+        reRoute = "/";
       } else if (path.match(/forgot-password-reset/) && (!authEnabled || verified)) {
         reRoute = "/";
       } else if (path === "/authenticate") {

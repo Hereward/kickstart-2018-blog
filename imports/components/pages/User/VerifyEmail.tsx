@@ -28,24 +28,12 @@ class VerifyEmail extends React.Component<IProps, IState> {
 
   constructor(props) {
     super(props);
-    this.checkVerify = this.checkVerify.bind(this);
     let url = window.location.href;
     this.token = url.substr(url.lastIndexOf("/") + 1);
-    this.done = false;
   }
 
   componentDidMount() {
-    if (!User.id() && !this.done) {
-      this.verify();
-    }
-  }
-
-  componentDidUpdate() {
-    if (this.props.sessionReady) {
-      if (!this.done) {
-        this.checkVerify();
-      }
-    }
+    this.verify();
   }
 
   createSession() {
@@ -53,52 +41,35 @@ class VerifyEmail extends React.Component<IProps, IState> {
     createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: true }, (err, res) => {
       if (err) {
         console.log(`createSession error: [${err.reason}]`, err);
-        Library.modalErrorAlert(err.reason);
       }
       purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
         if (err) {
           Library.modalErrorAlert(err.reason);
           console.log(`purgeAllOtherSessions error`, err);
         }
-        Library.modalSuccessAlert({ message: "Your email address has been verified.", location: "/" });
+        Library.modalSuccessAlert({ message: "Your email address has been verified." });
       });
     });
   }
 
   verify() {
-    this.done = true;
-    Accounts.verifyEmail(
-      this.token,
-      function verifyResponse(err) {
-        if (!err) {
-          this.createSession();
-          /*
-          User.logoutAndPurgeSessions({
-            message: "Your email address has been verified. Please log in again.",
-            newLocation: "/signin"
-          });
-          */
-        } else {
-          Library.modalErrorAlert({
-            message: err.reason,
-            title: `Email verification failed`,
-            location: "/"
-          });
-          console.log(err);
-        }
-      }.bind(this)
-    );
-  }
-
-  checkVerify() {
-    let verified = Library.nested(["userData", "emails", 0, "verified"], this.props);
-    if (verified === true && !this.done) {
-      this.props.history.push("/");
-    }
-    log.info(`checkVerify`, this.token, User.id(), verified, this.done);
-
-    if (verified === false && !this.done) {
-      this.verify();
+    let emailVerified = Library.nested(["userData", "emails", 0, "verified"], this.props);
+    if (!emailVerified) {
+      Accounts.verifyEmail(
+        this.token,
+        function verifyResponse(err) {
+          if (!err) {
+            this.createSession();
+          } else {
+            Library.modalErrorAlert({
+              message: err.reason,
+              title: `Email verification failed`,
+              location: "/"
+            });
+            console.log(err);
+          }
+        }.bind(this)
+      );
     }
   }
 

@@ -116,21 +116,11 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
         this.token,
         password1,
         function reset(err) {
-          let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
-
           if (!err) {
             this.createSession();
-            /*
-            let sessionToken = User.sessionToken("create");
-            User.logoutAndPurgeSessions({
-              message: "Your password was reset. Please log in with your new password.",
-              newLocation: "/signin"
-            });
-            */
           } else {
             this.setState({ allowSubmit: true });
             Library.modalErrorAlert({ message: err.reason, title: "Password reset failed." });
-
             console.log(err);
           }
         }.bind(this)
