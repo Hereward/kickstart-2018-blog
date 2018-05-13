@@ -219,24 +219,20 @@ class Navigation extends React.Component<IProps, IState> {
       let authEnabled = Library.nested(["userSettings", "authEnabled"], props);
       let authRequired = authEnabled > 1 || (authEnabled === 1 && !verified);
 
-      if (locked === true) {
-        if (path !== "/locked") {
-          reRoute = "locked";
-        }
+      if (locked === true && path !== "/locked") {
+        reRoute = "locked";
       } else if (props.sessionActive && props.sessionExpired) {
         logout = true;
       } else if (path.match(/verify-email/) && emailVerified === true && !authRequired) {
         reRoute = "/";
       } else if (path.match(/signin/) && !authRequired) {
         reRoute = "/";
-      } else if (path.match(/forgot-password-reset/) && !authRequired) {
+      } else if (path.match(/register/) && !authRequired) {
         reRoute = "/";
-      } else if (path === "/authenticate") {
-        if (authEnabled === 0) {
-          reRoute = "/";
-        } else if (authEnabled === 1 && verified) {
-          reRoute = "/";
-        }
+      } else if (path.match(/forgot-password/) && !authRequired) {
+        reRoute = "/";
+      } else if (path === "/authenticate" && !authRequired) {
+        reRoute = "/";
       } else if (props.location.pathname !== "/authenticate" && authRequired) {
         reRoute = "/authenticate";
       }

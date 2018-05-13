@@ -36,15 +36,15 @@ const MainRouter = props => (
     <Route path="/about" render={() => <About {...props} />} />
     <Route path="/verify-email" render={() => <VerifyEmail {...props} />} />
     <Route path="/forgot-password-reset" render={() => <ForgotPassWordReset {...props} />} />
+    <Route path="/forgot-password" render={() => <ForgotPassWord {...props} />} />
+    <Route path="/register" render={() => <Register {...props} />} />
+    <Route path="/signin" render={() => <SignIn {...props} />} />
 
     <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={User.id()} redirect="/" />
     <AuthRoute path="/profile" cProps={props} component={Profile} condition={User.id()} redirect="/" />
     <AuthRoute path="/locked" cProps={props} component={Locked} condition={User.id()} redirect="/" />
     <AuthRoute path="/change-password" cProps={props} component={ChangePassword} condition={User.id()} redirect="/" />
 
-    <AuthRoute path="/forgot-password" cProps={props} component={ForgotPassWord} condition={!User.id()} redirect="/" />
-    <AuthRoute path="/register" cProps={props} component={Register} condition={!User.id()} redirect="/" />
-    <AuthRoute path="/signin" cProps={props} component={SignIn} condition={!User.id()} redirect="/" />
   </Switch>
 );
 
