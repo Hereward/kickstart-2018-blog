@@ -7,6 +7,7 @@ export const Profiles = new Mongo.Collection("profiles");
 
 if (Meteor.isServer) {
   Meteor.publish("profiles", function profilesPublication() {
+    if (!this.userId) return this.ready();
     //return Profiles.find({ owner: this.userId });
 
     return Profiles.find(

@@ -49,6 +49,7 @@ Accounts.onLogin(() => {
 
 Accounts.onLogout(() => {
   log.info(`Client Logout`, User.sessionToken('get'));
+  User.clearLocalStorage();
 });
 
 Meteor.startup(() => {

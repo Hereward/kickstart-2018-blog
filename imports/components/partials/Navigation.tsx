@@ -206,7 +206,6 @@ class Navigation extends React.Component<IProps, IState> {
         Meteor.logout(() => {
           //Meteor["connection"].setUserId(null);
           log.info(`Navigation logOut DONE`);
-          User.clearLocalStorage();
           this.loggingOut = false;
         });
       });
@@ -223,8 +222,8 @@ class Navigation extends React.Component<IProps, IState> {
 
       if (props.sessionActive && props.sessionExpired) {
         logout = true;
-      } else if (path.match(/forgot-password-reset/)) {
-        let reRoute = null;
+      } else if (path.match(/forgot-password-reset/) && (!authEnabled || verified)) {
+          reRoute = "/";;
       } else if (path === "/authenticate") {
         if (authEnabled === 0) {
           reRoute = "/";

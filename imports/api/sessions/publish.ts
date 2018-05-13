@@ -7,7 +7,9 @@ export const userSessions = new Mongo.Collection("userSessions");
 //export const userSessionsAuth = new Mongo.Collection("userSessionsAuth");
 
 if (Meteor.isServer) {
+
   Meteor.publish("userSessions", function sessionsPublication() {
+    if (!this.userId) return this.ready();
     return userSessions.find(
       { owner: this.userId },
       {

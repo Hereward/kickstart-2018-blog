@@ -36,11 +36,12 @@ export default class AuthCodeDisplay extends React.Component<IProps, IState> {
   }
 
   componentDidMount() {
+    this.checkTokens();
     this.setTimer();
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setTimer();
+    //this.setTimer();
   }
 
   componentWillUpdate(nextProps) {}
@@ -49,7 +50,7 @@ export default class AuthCodeDisplay extends React.Component<IProps, IState> {
 
   setTimer() {
     if (!this.timerWasSet) {
-      this.timerID = Meteor.setInterval(() => this.checkTokens(), 2000);
+      this.timerID = Meteor.setInterval(() => this.checkTokens(), 15000);
       this.timerWasSet = true;
     }
   }

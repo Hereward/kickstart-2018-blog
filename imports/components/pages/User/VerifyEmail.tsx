@@ -7,7 +7,7 @@ import { withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import * as Library from "../../../modules/library";
 import * as User from "../../../modules/user";
-import { createUserSession } from "../../../api/sessions/methods";
+import { purgeAllOtherSessions, createUserSession } from "../../../api/sessions/methods";
 import Spinner from "../../partials/Spinner";
 
 interface IProps {
@@ -50,11 +50,18 @@ class VerifyEmail extends React.Component<IProps, IState> {
 
   createSession() {
     let sessionToken = User.sessionToken("create");
-    createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: false }, (err, res) => {
+    createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: true }, (err, res) => {
       if (err) {
         console.log(`createSession error: [${err.reason}]`, err);
         Library.modalErrorAlert(err.reason);
       }
+      purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
+        if (err) {
+          Library.modalErrorAlert(err.reason);
+          console.log(`purgeAllOtherSessions error`, err);
+        }
+        Library.modalSuccessAlert({ message: "Your email address has been verified.", location: "/" });
+      });
     });
   }
 
@@ -64,10 +71,13 @@ class VerifyEmail extends React.Component<IProps, IState> {
       this.token,
       function verifyResponse(err) {
         if (!err) {
+          this.createSession();
+          /*
           User.logoutAndPurgeSessions({
             message: "Your email address has been verified. Please log in again.",
             newLocation: "/signin"
           });
+          */
         } else {
           Library.modalErrorAlert({
             message: err.reason,

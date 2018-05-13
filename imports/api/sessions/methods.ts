@@ -181,11 +181,14 @@ export const purgeAllSessions = new ValidatedMethod({
 
   run(fields) {
     if (!this.isSimulation) {
+      let result = false;
       if (this.userId) {
+        result = true;
         userSessions.remove({ owner: this.userId });
       }
+      return result;
     }
-    return true;
+    
   }
 });
 
@@ -359,42 +362,36 @@ export const keepAliveUserSession = new ValidatedMethod({
 
   run(fields) {
     if (!this.isSimulation) {
-      if (!authCheck("UserSession.keepAliveUserSession", this.userId)) {
-        log.info(`keepAliveUserSession - no user ID - exiting.`);
-        return false;
-      }
-      let sessionDetected = false;
-      let killRequired = false;
-      let inactivityTimeout: any;
-      inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
-      let now: any;
-      now = new Date();
-
-      let sessionRecord: any;
-      sessionRecord = getSession(this.userId, fields.sessionToken);
-
-      if (sessionRecord && sessionRecord.persist === false) {
-        sessionDetected = true;
-        let diff = sessionRecord.expiresOn - now;
-
-        if (diff < 0) {
-          killRequired = true;
-          killSession.call({ id: this.userId, sessionToken: fields.sessionToken }, () => {});
-        } else if (fields.activityDetected) {
-          let expires = new Date(Date.now() + inactivityTimeout);
-          userSessions.update(sessionRecord._id, {
-            $set: {
-              expiresOn: expires,
-              diff: diff
-            }
-          });
+      if (this.userId) {
+        let sessionDetected = false;
+        let killRequired = false;
+        let inactivityTimeout: any;
+        inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
+        let now: any;
+        now = new Date();
+        let sessionRecord: any;
+        sessionRecord = getSession(this.userId, fields.sessionToken);
+        if (sessionRecord && sessionRecord.persist === false) {
+          sessionDetected = true;
+          let diff = sessionRecord.expiresOn - now;
+          if (diff < 0) {
+            killRequired = true;
+            killSession.call({ id: this.userId, sessionToken: fields.sessionToken }, () => {});
+          } else if (fields.activityDetected) {
+            let expires = new Date(Date.now() + inactivityTimeout);
+            userSessions.update(sessionRecord._id, {
+              $set: {
+                expiresOn: expires,
+                diff: diff
+              }
+            });
+          }
+        } else if (!sessionRecord) {
+          log.info(`keepAliveUserSession - restoring session`);
+          insert(this.userId, fields.sessionToken);
         }
-      } else if (!sessionRecord) {
-        log.info(`keepAliveUserSession - restoring session`);
-        insert(this.userId, fields.sessionToken);
       }
     }
-
     return true;
   }
 });

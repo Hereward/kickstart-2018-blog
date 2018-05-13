@@ -103,11 +103,11 @@ export function logoutAndPurgeSessions(params: { title?: string; message?: strin
       }
       Meteor.logout(() => {
         log.info(`User.logoutAndPurge() DONE`);
-        clearLocalStorage();
+        //clearLocalStorage();
         if (params.title || params.message) {
           Library.modalSuccessAlert({ title: params.title, message: params.message, location: params.newLocation });
         } else if (params.newLocation) {
-          window.location = params.newLocation;
+          window.location.assign(params.newLocation);
         }
       });
     });
@@ -118,17 +118,21 @@ export function checkSessionStatus(prevProps?, newProps?) {
   if (id() && !loggingIn() && newProps.userData && prevProps.userSession && !newProps.userSession) {
     let sessionTokenString = sessionToken("get");
     if (!sessionTokenString) {
+      log.info(`User.checkSessionStatus no sessionTokenString!`, id(), data(), prevProps, newProps);
       purgeAllSessions.call({}, (err, res) => {
         if (err) {
           console.log(`purgeAllSessions error`, err.reason);
         }
-        Meteor.logout(() => {
-          clearLocalStorage();
-          window.location = "/signin";
-        });
+        if (res) {
+          Meteor.logout(() => {
+            log.info(`User.checkSessionStatus logout() DONE`);
+            //clearLocalStorage();
+            //window.location = "/signin";
+          });
+        }
       });
     } else {
-      log.info(`checkSessionStatus - session dropped out! Token=`, sessionTokenString);
+      log.info(`checkSessionStatus - session dropped out! Token=[${sessionTokenString}]`, id(), data(), prevProps, newProps);
       keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionTokenString }, (err, res) => {
         if (err) {
           console.log(`keepAliveUserSession client error`, err.reason);

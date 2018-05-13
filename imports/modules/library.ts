@@ -48,7 +48,8 @@ export function modalSuccessAlert(params: any) {
   }).then(value => {
     if (obj.location) {
       log.info(`changing page location [${location}]`);
-      window.location = obj.location;
+      //window.location = obj.location;
+      window.location.assign(obj.location);
     }
   });
 }
@@ -89,7 +90,8 @@ export function modalErrorAlert(params: any) {
   }).then(value => {
     if (obj.location) {
       //log.info(`changing page location [${location}]`);
-      window.location = obj.location;
+      //window.location = obj.location;
+      window.location.assign(obj.location);
     }
   });
 }

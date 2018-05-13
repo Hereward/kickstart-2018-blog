@@ -103,14 +103,6 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
             </div>
 
             <div className="form-group">
-              <Checkbox
-                id="keepMeLoggedIn"
-                label="Keep me signed in"
-                onCheck={(event, isInputChecked) => this.handleCheck(event, isInputChecked)}
-              />
-            </div>
-
-            <div className="form-group">
               <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
             </div>
           </form>

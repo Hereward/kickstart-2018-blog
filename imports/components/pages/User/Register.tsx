@@ -128,7 +128,7 @@ class Register extends React.Component<IProps, IState> {
             });
 
             SessionMethods.createUserSession.call(
-              { sessionToken: sessionToken, keepMeLoggedIn: this.state.keepMeLoggedIn },
+              { sessionToken: sessionToken, keepMeLoggedIn: true },
               (err, res) => {
                 if (err) {
                   console.log(`createSession error: [${err.reason}]`, err);

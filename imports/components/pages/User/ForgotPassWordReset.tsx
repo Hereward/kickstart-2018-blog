@@ -79,6 +79,23 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
     return form;
   }
 
+  createSession() {
+    let sessionToken = User.sessionToken("create");
+    createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: true }, (err, res) => {
+      if (err) {
+        console.log(`createSession error: [${err.reason}]`, err);
+        Library.modalErrorAlert(err.reason);
+      }
+      purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
+        if (err) {
+          Library.modalErrorAlert(err.reason);
+          console.log(`purgeAllOtherSessions error`, err);
+        }
+        Library.modalSuccessAlert({ message: "Your password was reset." });
+      });
+    });
+  }
+
   resetPassword() {
     this.setState({ allowSubmit: false });
 
@@ -102,11 +119,14 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
           let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
 
           if (!err) {
+            this.createSession();
+            /*
             let sessionToken = User.sessionToken("create");
             User.logoutAndPurgeSessions({
               message: "Your password was reset. Please log in with your new password.",
               newLocation: "/signin"
             });
+            */
           } else {
             this.setState({ allowSubmit: true });
             Library.modalErrorAlert({ message: err.reason, title: "Password reset failed." });

@@ -145,19 +145,20 @@ export const currentValidToken = new ValidatedMethod({
   validate: null,
 
   run() {
-    authCheck("auth.currentValidToken", this.userId);
-    let token: any = "initialising...";
-
-    let authRecord: any;
+    let token: any;
     if (!this.isSimulation) {
-      authRecord = Auth.findOne({ owner: this.userId });
-      if (authRecord && authRecord.private_key_enc) {
-        let secret = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
-
-        token = speakeasy.totp({
-          secret: secret,
-          encoding: "base32"
-        });
+      //authCheck("auth.currentValidToken", this.userId);
+      if (this.userId) {
+        token = "initialising...";
+        let authRecord: any;
+        authRecord = Auth.findOne({ owner: this.userId });
+        if (authRecord && authRecord.private_key_enc) {
+          let secret = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
+          token = speakeasy.totp({
+            secret: secret,
+            encoding: "base32"
+          });
+        }
       }
     }
 
@@ -177,7 +178,7 @@ export const verifyToken = new ValidatedMethod({
       let verified = false;
       let operationType: string;
       authCheck("auth.verifyToken", this.userId);
-      
+
       let authRecord: any;
       authRecord = Auth.findOne({ owner: this.userId });
       let secret = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
