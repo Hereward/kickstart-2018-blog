@@ -1,21 +1,12 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
-import * as PropTypes from "prop-types";
-import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import * as React from "react";
-import { Link, withRouter } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
 import * as Library from "../../../modules/library";
-import {
-  deActivateSession,
-  purgeAllOtherSessions,
-  purgeAllSessions,
-  createUserSession,
-  keepAliveUserSession
-} from "../../../api/sessions/methods";
-
+import { purgeAllOtherSessions, createUserSession } from "../../../api/sessions/methods";
 import * as User from "../../../modules/user";
 
 interface IProps {

@@ -49,6 +49,3 @@ const MainRouter = props => (
 );
 
 export default MainRouter;
-
-// <AuthRoute path="/authenticate" cProps={props} component={Authenticator} condition={!User.id()} redirect="/" />
-// <Route path="/authenticate" render={() => <Authenticator {...props} />} />
