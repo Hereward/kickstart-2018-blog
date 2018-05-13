@@ -51,12 +51,6 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidMount() {
-    if (User.id()) {
-      this.props.history.push("/");
-    }
-  }
-
   componentWillReceiveProps(nextProps) {}
 
   handleChange(e) {

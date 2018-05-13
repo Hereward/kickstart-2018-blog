@@ -191,11 +191,9 @@ class Navigation extends React.Component<IProps, IState> {
       if (this.timerID) {
         clearTimeout(this.timerID);
       }
-
       this.timerID = 0;
       this.loggingOut = true;
       this.props.history.push("/");
-
       console.log(`Navigation logOut`, User.id());
       SessionMethods.deActivateSession.call({ sessionToken: User.sessionToken("get") }, (err, res) => {
         if (err) {
@@ -228,16 +226,12 @@ class Navigation extends React.Component<IProps, IState> {
         logout = true;
       } else if (path.match(/verify-email/) && emailVerified === true && (!authEnabled || verified)) {
         reRoute = "/";
-      } else if (path.match(/forgot-password-reset/) && (!authEnabled || verified)) {
-        reRoute = "/";
       } else if (path === "/authenticate") {
         if (authEnabled === 0) {
           reRoute = "/";
         } else if (authEnabled === 1 && verified) {
           reRoute = "/";
         }
-      } else if (path === "/signin" && authEnabled === 0) {
-        reRoute = "/";
       } else if ((props.location.pathname !== "/authenticate" && authEnabled > 1) || (authEnabled === 1 && !verified)) {
         reRoute = "/authenticate";
       }
