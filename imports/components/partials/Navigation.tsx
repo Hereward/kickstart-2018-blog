@@ -218,15 +218,20 @@ class Navigation extends React.Component<IProps, IState> {
       let verified = Library.nested(["userSession", "verified"], props);
       let locked = Library.nested(["userSettings", "locked"], props);
       let authEnabled = Library.nested(["userSettings", "authEnabled"], props);
+      //let authNotRequired = ((authEnabled === 0) || (verified && (authEnabled === 1)));
+      let authRequired = ((authEnabled > 1) || (authEnabled === 1 && !verified));
+
       if (locked === true) {
         if (path !== "/locked") {
           reRoute = "locked";
         }
       } else if (props.sessionActive && props.sessionExpired) {
         logout = true;
-      } else if (path.match(/verify-email/) && emailVerified === true && (!authEnabled || verified)) {
+      } else if (path.match(/verify-email/) && emailVerified === true && !authRequired) {
         reRoute = "/";
-      } else if (path.match(/forgot-password-reset/) && (!authEnabled || verified)) {
+      } else if (path.match(/signin/) && !authRequired) {
+        reRoute = "/";
+      } else if (path.match(/forgot-password-reset/) && !authRequired) {
         reRoute = "/";
       } else if (path === "/authenticate") {
         if (authEnabled === 0) {
@@ -234,7 +239,7 @@ class Navigation extends React.Component<IProps, IState> {
         } else if (authEnabled === 1 && verified) {
           reRoute = "/";
         }
-      } else if ((props.location.pathname !== "/authenticate" && authEnabled > 1) || (authEnabled === 1 && !verified)) {
+      } else if (props.location.pathname !== "/authenticate" && authRequired) {
         reRoute = "/authenticate";
       }
 
