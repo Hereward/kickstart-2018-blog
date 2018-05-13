@@ -126,7 +126,6 @@ export function checkSessionStatus(prevProps?, newProps?) {
         if (res) {
           Meteor.logout(() => {
             log.info(`User.checkSessionStatus logout() DONE`);
-            //clearLocalStorage();
             //window.location = "/signin";
           });
         }
