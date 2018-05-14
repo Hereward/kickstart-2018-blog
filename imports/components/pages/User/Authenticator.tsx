@@ -50,6 +50,7 @@ class Authenticator extends React.Component<IProps, IState> {
     this.handleQRClick = this.handleQRClick.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.cancel2FA = this.cancel2FA.bind(this);
     this.renderExpiredTokens = this.renderExpiredTokens.bind(this);
     this.oldToken = "";
     this.counter = 0;
