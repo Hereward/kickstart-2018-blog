@@ -123,16 +123,19 @@ export default withTracker(() => {
       sessionReady = true;
     }
   }
+  
   /*
   log.info(
     `Meteor vars: sessionReady userId loggingIn userData status`,
+    sessionToken,
     sessionReady,
     userId,
     loggingIn,
     userData,
-    status
+    status,
   );
   */
+  
 
   return {
     MainTitle: Meteor.settings.public.MainTitle,

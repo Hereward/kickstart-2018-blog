@@ -46,6 +46,18 @@ export const clearSessionAuth = (userId, sessionToken) => {
   }
 };
 
+export const cancel2FASession = (userId, sessionToken, authEnabled) => {
+  let sessionRecord: any;
+  sessionRecord = getSession(userId, sessionToken);
+  if (sessionRecord) {
+    if (authEnabled === 3) {
+      userSessions.update(sessionRecord._id, { $unset: { verified: "", currentAttempts: "" } });
+    } else {
+      userSessions.update(sessionRecord._id, { $set: { verified: true, currentAttempts: 0 } });
+    }
+  }
+};
+
 export const initSessionAuthVerified = (userId, sessionToken) => {
   if (!userId) {
     return null;

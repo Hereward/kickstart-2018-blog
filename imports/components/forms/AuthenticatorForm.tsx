@@ -5,7 +5,6 @@ import PropTypes from "prop-types";
 import * as BlockUi from "react-block-ui";
 import RaisedButton from "material-ui/RaisedButton";
 import * as Validation from "../../modules/validation";
-import { cancel2FA } from "../../api/settings/methods";
 import * as Library from "../../modules/library";
 
 interface IProps {
@@ -13,6 +12,7 @@ interface IProps {
   handleSubmit: any;
   allowSubmit: boolean;
   userSettings: any;
+  cancel2FA: any;
 }
 
 interface IState {}
@@ -42,19 +42,14 @@ export default class AuthenticatorForm extends React.Component<IProps, IState> {
   }
 
   cancel2FA() {
-    this.setState({cancelEnabled: false});
-    cancel2FA.call({}, (err, res) => {
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        console.log(`cancel2FA error`, err);
-      }
-    });
+    // this.setState({cancelEnabled: false});
+     this.props.cancel2FA();
   }
 
   cancelButton() {
     let layout: any;
     if (this.props.userSettings && this.props.userSettings.authEnabled > 1) {
-      layout =  <RaisedButton type="submit" secondary={true} label="Cancel" onClick={this.cancel2FA} />;
+      layout =  <RaisedButton secondary={true} label="Cancel" onClick={this.cancel2FA} />;
     }
     return layout;
   }

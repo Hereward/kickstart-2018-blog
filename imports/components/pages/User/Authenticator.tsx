@@ -12,6 +12,7 @@ import { Auth } from "../../../api/auth/publish";
 import * as User from "../../../modules/user";
 import AuthCodeDisplay from "../../partials/AuthCodeDisplay";
 import QRCodeContainer from "../../partials/QRCode";
+import { cancel2FA } from "../../../api/settings/methods";
 
 interface IProps {
   history: any;
@@ -93,6 +94,15 @@ class Authenticator extends React.Component<IProps, IState> {
     this.setState({ [id]: value });
   }
 
+  cancel2FA() {
+    cancel2FA.call({sessionToken: User.sessionToken("get")}, (err, res) => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`cancel2FA error`, err);
+      }
+    });
+  }
+
   verifyToken() {
     let myToken = this.state.authCode.trim();
 
@@ -134,6 +144,7 @@ class Authenticator extends React.Component<IProps, IState> {
             handleChange={this.handleChange}
             handleSubmit={this.handleSubmit}
             userSettings={this.props.userSettings}
+            cancel2FA={this.cancel2FA}
           />
 
           {Meteor.settings.public.enhancedAuth.displayCode ? <AuthCodeDisplay /> : ""}

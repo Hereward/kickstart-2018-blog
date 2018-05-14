@@ -87,6 +87,7 @@ class SignIn extends React.Component<IProps, IState> {
   createSession() {
     let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
     let sessionToken = User.sessionToken("create");
+    //log.info(`Signin - createSession`, sessionToken);
     SessionMethods.createUserSession.call(
       { sessionToken: sessionToken, keepMeLoggedIn: this.state.keepMeLoggedIn },
       (err, res) => {

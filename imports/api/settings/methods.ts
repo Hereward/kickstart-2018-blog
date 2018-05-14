@@ -7,7 +7,7 @@ import { userSessions } from "../sessions/publish";
 import { userSettings } from "./publish";
 import { Auth } from "../auth/publish";
 import { insertAuth, initAuth } from "../auth/methods";
-import { clearSessionAuth, initSessionAuthVerified, getSession } from "../sessions/methods";
+import { clearSessionAuth, initSessionAuthVerified, getSession, cancel2FASession } from "../sessions/methods";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -91,16 +91,20 @@ export const toggleAuthEnabledPending = new ValidatedMethod({
 export const cancel2FA = new ValidatedMethod({
   name: "auth.cancel",
 
-  validate: null,
+  validate: new SimpleSchema({
+    sessionToken: { type: String }
+  }).validator(),
 
   run(fields) {
     authCheck("settings.cancel2FA", this.userId);
-    if (!this.isSimulation) {
+    if (!this.isSimulation && this.userId) {
       let settingsRecord: any;
+      let targetauthEnabledVal: number;
       settingsRecord = userSettings.findOne({ owner: this.userId });
       if (settingsRecord) {
-        let targetVal = (settingsRecord.authEnabled === 3) ? 0 : 1;
-        userSettings.update(settingsRecord._id, { $set: { authEnabled: targetVal } });
+        cancel2FASession(this.userId, fields.sessionToken, settingsRecord.authEnabled);
+        targetauthEnabledVal = settingsRecord.authEnabled === 3 ? 0 : 1;
+        userSettings.update(settingsRecord._id, { $set: { authEnabled: targetauthEnabledVal } });
       }
     }
   }
