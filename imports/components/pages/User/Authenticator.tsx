@@ -95,8 +95,10 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 
   cancel2FA() {
+    this.setState({ allowSubmit: false });
     cancel2FA.call({sessionToken: User.sessionToken("get")}, (err, res) => {
       if (err) {
+        this.setState({ allowSubmit: true });
         Library.modalErrorAlert(err.reason);
         console.log(`cancel2FA error`, err);
       }
