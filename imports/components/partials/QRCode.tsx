@@ -44,7 +44,6 @@ class QRCode extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.handleQRClick = this.handleQRClick.bind(this);
-    this.cancel2FA = this.cancel2FA.bind(this);
     this.state = {
       QRCodeURL: "",
       privateKey: "",
@@ -77,7 +76,7 @@ class QRCode extends React.Component<IProps, IState> {
   handleQRClick() {
     this.props.handleQRclick();
   }
-
+/*
   cancel2FA() {
     this.setState({cancelEnabled: false});
     cancel2FA.call({}, (err, res) => {
@@ -87,6 +86,7 @@ class QRCode extends React.Component<IProps, IState> {
       }
     });
   }
+  */
 
   getLoadingPlaceHolder() {
     let tag = (
@@ -127,9 +127,6 @@ class QRCode extends React.Component<IProps, IState> {
           <p className="lead">Please scan the QR code or manually enter the private key into Google Authenticator.</p>
           <Button color="primary" id="QRDone" onClick={this.handleQRClick}>
             Click Here When Done
-          </Button> &nbsp;
-          <Button color="secondary" disabled={this.state.cancelEnabled} id="cancel2FA" onClick={this.cancel2FA}>
-            Cancel
           </Button>
         </div>
       </Transition>

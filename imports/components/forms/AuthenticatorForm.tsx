@@ -5,11 +5,14 @@ import PropTypes from "prop-types";
 import * as BlockUi from "react-block-ui";
 import RaisedButton from "material-ui/RaisedButton";
 import * as Validation from "../../modules/validation";
+import { cancel2FA } from "../../api/settings/methods";
+import * as Library from "../../modules/library";
 
 interface IProps {
   handleChange: any;
   handleSubmit: any;
   allowSubmit: boolean;
+  userSettings: any;
 }
 
 interface IState {}
@@ -23,6 +26,7 @@ export default class AuthenticatorForm extends React.Component<IProps, IState> {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.cancel2FA = this.cancel2FA.bind(this);
   }
 
   componentDidMount() {
@@ -35,6 +39,24 @@ export default class AuthenticatorForm extends React.Component<IProps, IState> {
 
   handleSubmit() {
     this.props.handleSubmit();
+  }
+
+  cancel2FA() {
+    this.setState({cancelEnabled: false});
+    cancel2FA.call({}, (err, res) => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`cancel2FA error`, err);
+      }
+    });
+  }
+
+  cancelButton() {
+    let layout: any;
+    if (this.props.userSettings && this.props.userSettings.authEnabled > 1) {
+      layout =  <RaisedButton type="submit" secondary={true} label="Cancel" onClick={this.cancel2FA} />;
+    }
+    return layout;
   }
 
   render() {
@@ -55,7 +77,8 @@ export default class AuthenticatorForm extends React.Component<IProps, IState> {
               />
             </div>
             <div className="form-group">
-              <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
+              <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" /> {" "}
+              {this.cancelButton()}
             </div>
           </form>
         </BlockUi>

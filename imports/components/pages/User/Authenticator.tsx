@@ -133,6 +133,7 @@ class Authenticator extends React.Component<IProps, IState> {
             allowSubmit={this.state.allowSubmit}
             handleChange={this.handleChange}
             handleSubmit={this.handleSubmit}
+            userSettings={this.props.userSettings}
           />
 
           {Meteor.settings.public.enhancedAuth.displayCode ? <AuthCodeDisplay /> : ""}

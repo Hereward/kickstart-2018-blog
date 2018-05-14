@@ -99,7 +99,8 @@ export const cancel2FA = new ValidatedMethod({
       let settingsRecord: any;
       settingsRecord = userSettings.findOne({ owner: this.userId });
       if (settingsRecord) {
-        userSettings.update(settingsRecord._id, { $set: { authEnabled: 0 } });
+        let targetVal = (settingsRecord.authEnabled === 3) ? 0 : 1;
+        userSettings.update(settingsRecord._id, { $set: { authEnabled: targetVal } });
       }
     }
   }
