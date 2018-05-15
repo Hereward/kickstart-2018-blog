@@ -80,26 +80,26 @@ class Navigation extends React.Component<IProps, IState> {
     this.emailVerifyPrompted = false;
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.conditionalReroute(this.props);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.conditionalReroute(nextProps);
   }
 
   componentWillUpdate(nextProps) {}
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (!this.loggingOut) {
-      User.checkSessionStatus(prevProps, this.props);
-      if (
-        this.props.sessionReady &&
-        !this.timerID &&
-        this.props.location.pathname === "/" &&
-        !this.props.userData.emails[0].verified
-      ) {
-        this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
+    if (this.props !== prevProps) {
+      this.conditionalReroute(this.props);
+
+      if (!this.loggingOut) {
+        User.checkSessionStatus(prevProps, this.props);
+        if (
+          this.props.sessionReady &&
+          !this.timerID &&
+          this.props.location.pathname === "/" &&
+          !this.props.userData.emails[0].verified
+        ) {
+          this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
+        }
       }
     }
   }
@@ -113,8 +113,6 @@ class Navigation extends React.Component<IProps, IState> {
       this.timerID = 0;
     }
   }
-
-  componentDidMount() {}
 
   verifyEmailNotificationRequired() {
     let notify = false;
@@ -209,6 +207,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   conditionalReroute(props) {
+    
     if (Meteor.userId() && props.userSession && props.sessionReady && !this.loggingOut) {
       let path = props.location.pathname;
       let reRoute = null;
@@ -219,8 +218,10 @@ class Navigation extends React.Component<IProps, IState> {
       let authEnabled = Library.nested(["userSettings", "authEnabled"], props);
       let authRequired = authEnabled > 1 || (authEnabled === 1 && !verified);
 
-      if (locked === true && path !== "/locked") {
+      if (locked && path !== "/locked") {
         reRoute = "locked";
+      } else if (locked && path === "/locked" && !authRequired) {
+        reRoute = "/";
       } else if (props.sessionActive && props.sessionExpired) {
         logout = true;
       } else if (path.match(/verify-email/) && emailVerified === true && !authRequired) {
@@ -233,7 +234,7 @@ class Navigation extends React.Component<IProps, IState> {
         reRoute = "/";
       } else if (path === "/authenticate" && !authRequired) {
         reRoute = "/";
-      } else if (props.location.pathname !== "/authenticate" && authRequired) {
+      } else if (props.location.pathname !== "/authenticate" && authRequired && locked === false) {
         reRoute = "/authenticate";
       }
 
