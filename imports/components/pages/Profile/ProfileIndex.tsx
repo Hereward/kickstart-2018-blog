@@ -5,11 +5,7 @@ import { Accounts } from "meteor/accounts-base";
 import * as React from "react";
 import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
-import IconButton from "material-ui/IconButton";
-import * as BlockUi from "react-block-ui";
-import EditorModeEdit from "material-ui/svg-icons/editor/mode-edit";
 import * as dateFormat from "dateformat";
-import { Alert, Button } from "reactstrap";
 import Transition from "../../partials/Transition";
 import ProfileForm from "../../forms/ProfileForm";
 import * as ProfileMethods from "../../../api/profiles/methods";
@@ -22,8 +18,8 @@ import Image from "../../partials/Image";
 import Notification from "../../partials/Notification";
 import { toggleAuthEnabledPending as toggle2FA } from "../../../api/settings/methods";
 import { purgeAllOtherSessions } from "../../../api/sessions/methods";
-import { Auth } from "../../../api/auth/publish";
 import * as User from "../../../modules/user";
+import Spinner from "../../partials/Spinner";
 
 interface IProps {
   history: any;
@@ -351,7 +347,7 @@ class Profile extends React.Component<IProps, IState> {
         </div>
       );
     } else {
-      layout = <div>Loading...</div>;
+      layout = <Spinner caption="loading" type="component" />;
     }
     return <div className="profile-details">{layout}</div>;
   }
