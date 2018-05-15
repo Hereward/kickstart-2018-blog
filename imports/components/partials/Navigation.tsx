@@ -220,7 +220,7 @@ class Navigation extends React.Component<IProps, IState> {
 
       if (locked && path !== "/locked") {
         reRoute = "locked";
-      } else if (locked && path === "/locked" && !authRequired) {
+      } else if (locked === false && path === "/locked" && !authRequired) {
         reRoute = "/";
       } else if (props.sessionActive && props.sessionExpired) {
         logout = true;

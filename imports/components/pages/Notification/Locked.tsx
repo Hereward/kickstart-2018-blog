@@ -18,21 +18,6 @@ class Locked extends React.Component<IProps> {
     super(props);
   }
 
-  componentDidUpdate() {
-    this.checker();
-  }
-
-  checker() {
-    let locked = Library.nested(["userSettings", "locked"], this.props);
-    let verified = Library.nested(["userSession", "verified"], this.props);
-    let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
-    if (locked === false) {
-      if (authEnabled === 0 || (authEnabled && verified === true)) {
-        this.props.history.push("/");
-      }
-    }
-  }
-
   layout() {
     let layout = (
       <div className="container page-content">
