@@ -154,12 +154,6 @@ class Profile extends React.Component<IProps, IState> {
     });
   }
 
-  componentWillMount() {
-    if (!User.id()) {
-      this.props.history.push("/");
-    }
-  }
-
   componentDidUpdate() {}
 
   componentDidMount() {
