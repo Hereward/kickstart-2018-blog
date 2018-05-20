@@ -1,0 +1,125 @@
+// TODOS 
+  
+.todos {
+  /*
+  margin-bottom: 2rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  */
+}
+
+.todos h2 {
+  margin-bottom: 0;
+}
+
+.new-task ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: lightblue;
+  opacity: 1; /* Firefox */
+}
+
+.new-task input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 30px white inset;
+}
+
+.new-task input {
+    //box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid lightblue;
+    background: transparent;
+    //border: none;
+    width: 16rem;
+    //padding-right: 80px;
+    font-size: 1em;
+  }
+  
+  .new-task input:focus {
+    outline: 0;
+  }
+  
+  .todos ul {
+    margin: 0;
+    padding: 0;
+    background: white;
+    max-width: 50rem;
+    /* display:none; */
+    
+  }
+  
+  .todos .delete {
+    font-weight: bold;
+    background: none;
+    font-size: 1em;
+    border: none;
+    position: relative;
+  }
+
+  .todos .checkbox {
+    position: relative;
+    top: 3px;
+  }
+  
+  .todos li {
+    position: relative;
+    list-style: none;
+    padding: 15px;
+    border-bottom: #eee solid 1px;
+  }
+  
+  .todos li .text {
+    display: inline-block;
+    margin-left: 0;
+    margin-top: 1rem;
+  }
+  
+  .todos li.checked {
+    color: #888;
+  }
+  
+  .todos li.hidden {
+    display: none;
+  }
+  
+  .todos li.checked .text {
+    text-decoration: line-through;
+  }
+  
+  .todos li.private {
+    background: #eee;
+    border-color: #ddd;
+  }
+  
+  div.todos-top-section .hide-completed {
+    // float: right;
+  }
+
+  div.todos-form-wrapper {
+    //margin-top: 2rem;
+  }
+
+  form#todos-form {
+    margin-top: 1rem;
+  }
+
+  
+  .toggle-private {
+    margin-left: 5px;
+  }
+
+  @media (min-width: 576px) {
+    .todos {
+      /*
+      padding-left: 0;
+      padding-right: 0;
+      */
+    }
+    
+  }
+
+  @media (min-width: 768px) {
+    .todos li .text {
+      /* margin-left: 2rem; */
+      margin-top: 0;
+    }
+    
+  }
+  

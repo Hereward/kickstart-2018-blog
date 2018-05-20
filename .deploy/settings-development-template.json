@@ -1,0 +1,44 @@
+{
+  "public": {
+    "MainTitle": "Meteor/React/Typescript/Bootstrap Kickstart 2018",
+    "ShortTitle": "Kickstart-2018",
+    "ShortTitleExternalLink": "https://github.com/Hereward/meteor-react-kickstart-2018",
+    "copyright": "\u00A9 MyCompany 2018. All rights reserved.",
+    "logLevel": "trace",
+    "enhancedAuth": {
+      "active": true,
+      "maxAttempts": 3,
+      "displayCode": true
+    },
+    "session": {
+      "heartbeatInterval": 300000,
+      "inactivityTimeout": 3600000,
+      "timeOutOn": true,
+      "allowMultiSession": true,
+      "sessionTokenName": "Meteor.Kickstart2018.SessionToken",
+      "userDataKey": "Meteor.Kickstart2018.User"
+    },
+    "images": {
+      "storagePath": "../../../../../.storage/images"
+    },
+    "defaultContent": {
+      "about": {
+        "heading": "About Page",
+        "body": "<p>This is the About page. You can edit it when logged in to your account.</p>"
+      }
+    }
+  },
+  "private": {
+    "enhancedAuth": {
+      "iv": "4E3p7FWVgjYE3HBk",
+      "algorithm": "aes-256-ctr"
+    },
+    "adminEmail": "",
+    "smtp": {
+      "username": "",
+      "password": "",
+      "server": "smtp.gmail.com",
+      "port": "587"
+    }
+  }
+}

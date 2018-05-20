@@ -1,0 +1,51 @@
+.idea/
+.storage/
+
+.vscode/
+
+remMongo.bat
+
+# Meteor
+settings-production.json
+settings-development.json
+settings-staging.json
+.deploy/settings-development.json
+.deploy/mup.js
+
+### Windows ###
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+# Folder config file
+Desktop.ini
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+# Windows shortcuts
+*.lnk
+
+# Typescript
+typings/*
+!typings/meteor/
+
+# Grunt intermediate storage (http://gruntjs.com/creating-plugins#storing-task-files)
+.grunt
+
+### Node/NPM ###
+node_modules
+npm-debug.log
+
+# Typescript v1 declaration files
+typings/
+
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output of 'npm pack'
+*.tgz
+
+
+
+
