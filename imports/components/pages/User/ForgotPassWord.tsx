@@ -4,7 +4,7 @@ import { Accounts } from "meteor/accounts-base";
 import PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Authenticator from "./Authenticator";
 import Transition from "../../partials/Transition";
 import ForgotPassWordForm from "../../forms/ForgotPassWordForm";
@@ -29,7 +29,7 @@ class ForgotPassWord extends React.Component<IProps, IState> {
     this.handleChange = this.handleChange.bind(this);
 
     this.state = {
-      email: '',
+      email: "",
       allowSubmit: true
     };
   }
@@ -47,7 +47,13 @@ class ForgotPassWord extends React.Component<IProps, IState> {
 
   getLayout() {
     if (!this.props.signedIn) {
-      return <ForgotPassWordForm allowSubmit={this.state.allowSubmit} handleChange={this.handleChange} handleSubmit={this.handleSubmit} />;
+      return (
+        <ForgotPassWordForm
+          allowSubmit={this.state.allowSubmit}
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+        />
+      );
     } else {
       return <div>Already signed in.</div>;
     }
@@ -91,8 +97,6 @@ class ForgotPassWord extends React.Component<IProps, IState> {
   }
 }
 
-export default withRouter(
-  withTracker(() => {
-    return {};
-  })(ForgotPassWord)
-);
+export default withTracker(() => {
+  return {};
+})(ForgotPassWord);

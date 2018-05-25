@@ -2,7 +2,6 @@ import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import { withTracker } from "meteor/react-meteor-data";
 import * as React from "react";
-import { withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
 import * as Library from "../../../modules/library";
@@ -127,8 +126,6 @@ class ForgotPassWordReset extends React.Component<IProps, IState> {
   }
 }
 
-export default withRouter(
-  withTracker(() => {
-    return {};
-  })(ForgotPassWordReset)
-);
+export default withTracker(() => {
+  return {};
+})(ForgotPassWordReset);

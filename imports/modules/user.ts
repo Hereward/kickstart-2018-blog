@@ -14,6 +14,8 @@ const sessionTokenName = Meteor.settings.public.session.sessionTokenName;
 const userDataKey = Meteor.settings.public.session.userDataKey;
 declare var window: any;
 
+
+
 export function hash(token, algorithm = "md5") {
   const crypto = require("crypto");
   const hash = crypto.createHash(algorithm);
@@ -131,7 +133,13 @@ export function checkSessionStatus(prevProps?, newProps?) {
         }
       });
     } else {
-      log.info(`checkSessionStatus - session dropped out! Token=[${sessionTokenString}]`, id(), data(), prevProps, newProps);
+      log.info(
+        `checkSessionStatus - session dropped out! Token=[${sessionTokenString}]`,
+        id(),
+        data(),
+        prevProps,
+        newProps
+      );
       keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionTokenString }, (err, res) => {
         if (err) {
           console.log(`keepAliveUserSession client error`, err.reason);
@@ -140,4 +148,22 @@ export function checkSessionStatus(prevProps?, newProps?) {
     }
   }
   return false;
+}
+
+export function authRequired(props) {
+  //log.info(`authRequired`, props);
+  //let emailVerified = Library.nested(["userData", "emails", 0, "verified"], props);
+  let verified = Library.nested(["userSession", "verified"], props);
+ // let locked = Library.nested(["userSettings", "locked"], props);
+  let authEnabled = Library.nested(["userSettings", "authEnabled"], props);
+  let loggingOut = props.loggingOut;
+  let authRequired = false;
+
+  if (id() && props.userSession && props.sessionReady && loggingOut === false) {
+    if (authEnabled > 1 || (authEnabled === 1 && !verified)) {
+      authRequired = true;
+    }
+  }
+
+  return authRequired;
 }

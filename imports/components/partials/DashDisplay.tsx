@@ -24,7 +24,6 @@ interface IProps {
   loggingIn: boolean;
   loggingOut: boolean;
   enhancedAuth: boolean;
-  status: any;
   sessionReady: boolean;
   connected: boolean;
   connectionRetryCount: number;

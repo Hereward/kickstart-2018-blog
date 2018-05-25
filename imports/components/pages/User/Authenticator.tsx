@@ -3,7 +3,6 @@ import { Meteor } from "meteor/meteor";
 import * as speakeasy from "speakeasy";
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
-import { withRouter } from "react-router-dom";
 import AuthenticatorForm from "../../forms/AuthenticatorForm";
 import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
@@ -97,7 +96,7 @@ class Authenticator extends React.Component<IProps, IState> {
 
   cancel2FA() {
     this.setState({ allowSubmit: false });
-    cancel2FA.call({sessionToken: User.sessionToken("get")}, (err, res) => {
+    cancel2FA.call({ sessionToken: User.sessionToken("get") }, (err, res) => {
       if (err) {
         this.setState({ allowSubmit: true });
         Library.modalErrorAlert(err.reason);
@@ -168,8 +167,6 @@ class Authenticator extends React.Component<IProps, IState> {
   }
 }
 
-export default withRouter(
-  withTracker(() => {
-    return {};
-  })(Authenticator)
-);
+export default withTracker(() => {
+  return {};
+})(Authenticator);

@@ -3,7 +3,6 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 import { Accounts } from "meteor/accounts-base";
 import ReactRouterPropTypes from "react-router-prop-types";
-import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import QRCode from "react-qr-code";
 import { Alert } from "reactstrap";
@@ -127,25 +126,22 @@ class Register extends React.Component<IProps, IState> {
               }
             });
 
-            SessionMethods.createUserSession.call(
-              { sessionToken: sessionToken, keepMeLoggedIn: true },
-              (err, res) => {
-                if (err) {
-                  console.log(`createSession error: [${err.reason}]`, err);
-                  Library.modalErrorAlert(err.reason);
-                }
-                if (!allowMultiSession) {
-                  Accounts.logoutOtherClients();
-                  SessionMethods.purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
-                    if (err) {
-                      Library.modalErrorAlert(err.reason);
-                      console.log(`purgeAllOtherSessions error`, err);
-                    }
-                  });
-                  log.info(`Register - logout other clients - DONE`);
-                }
+            SessionMethods.createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: true }, (err, res) => {
+              if (err) {
+                console.log(`createSession error: [${err.reason}]`, err);
+                Library.modalErrorAlert(err.reason);
               }
-            );
+              if (!allowMultiSession) {
+                Accounts.logoutOtherClients();
+                SessionMethods.purgeAllOtherSessions.call({ sessionToken: sessionToken }, (err, res) => {
+                  if (err) {
+                    Library.modalErrorAlert(err.reason);
+                    console.log(`purgeAllOtherSessions error`, err);
+                  }
+                });
+                log.info(`Register - logout other clients - DONE`);
+              }
+            });
 
             PagesMethods.createPages.call({}, (err, id) => {
               if (err) {
@@ -216,8 +212,6 @@ class Register extends React.Component<IProps, IState> {
   }
 }
 
-export default withRouter(
-  withTracker(() => {
-    return {};
-  })(Register)
-);
+export default withTracker(() => {
+  return {};
+})(Register);

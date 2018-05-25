@@ -3,7 +3,6 @@ import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import { Button } from "reactstrap";
 import { withTracker } from "meteor/react-meteor-data";
-import { withRouter } from "react-router-dom";
 import Loader from "react-loader-spinner";
 import styled from "styled-components";
 import * as Library from "../../modules/library";

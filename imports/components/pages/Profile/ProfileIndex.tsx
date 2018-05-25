@@ -3,7 +3,6 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import * as React from "react";
-import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import * as dateFormat from "dateformat";
 import Transition from "../../partials/Transition";
@@ -404,29 +403,27 @@ class Profile extends React.Component<IProps, IState> {
   }
 }
 
-export default withRouter(
-  withTracker(props => {
-    let myImages: any;
-    let ImagesDataReady = Meteor.subscribe("allImages");
-    let userEmail: string;
-    let emailVerified: boolean = false;
+export default withTracker(props => {
+  let myImages: any;
+  let ImagesDataReady = Meteor.subscribe("allImages");
+  let userEmail: string;
+  let emailVerified: boolean = false;
 
-    if (props.userData) {
-      emailVerified = props.userData.emails[0].verified;
-      userEmail = props.userData.emails[0].address;
-    }
+  if (props.userData) {
+    emailVerified = props.userData.emails[0].verified;
+    userEmail = props.userData.emails[0].address;
+  }
 
-    if (ImagesDataReady) {
-      if (props.profile) {
-        let cursor: any = Images.find({ _id: props.profile.image_id });
-        myImages = cursor.fetch();
-      }
+  if (ImagesDataReady) {
+    if (props.profile) {
+      let cursor: any = Images.find({ _id: props.profile.image_id });
+      myImages = cursor.fetch();
     }
-    return {
-      admin: props.admin,
-      myImages: myImages,
-      userEmail: userEmail,
-      emailVerified: emailVerified
-    };
-  })(Profile)
-);
+  }
+  return {
+    admin: props.admin,
+    myImages: myImages,
+    userEmail: userEmail,
+    emailVerified: emailVerified
+  };
+})(Profile);

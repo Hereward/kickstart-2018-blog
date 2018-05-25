@@ -1,5 +1,4 @@
 import { Meteor } from "meteor/meteor";
-import { withRouter } from "react-router-dom";
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import Transition from "../../partials/Transition";
@@ -37,8 +36,6 @@ class Locked extends React.Component<IProps> {
   }
 }
 
-export default withRouter(
-  withTracker(() => {
-    return {};
-  })(Locked)
-);
+export default withTracker(() => {
+  return {};
+})(Locked);

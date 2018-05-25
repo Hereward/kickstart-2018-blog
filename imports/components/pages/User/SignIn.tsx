@@ -3,7 +3,7 @@ import { Accounts } from "meteor/accounts-base";
 import * as PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import * as React from "react";
-import { withRouter } from "react-router-dom";
+import { connect } from "react-redux";
 import * as SessionMethods from "../../../api/sessions/methods";
 import * as Library from "../../../modules/library";
 import Transition from "../../partials/Transition";
@@ -95,7 +95,7 @@ class SignIn extends React.Component<IProps, IState> {
           console.log(`createSession error: [${err.reason}]`, err);
           Library.modalErrorAlert(err.reason);
         }
-       
+
         if (!allowMultiSession) {
           Accounts.logoutOtherClients();
           log.info(`Sign In - logout othere clients -DONE`);
@@ -133,8 +133,6 @@ class SignIn extends React.Component<IProps, IState> {
   }
 }
 
-export default withRouter(
-  withTracker(() => {
-    return {};
-  })(SignIn)
-);
+export default withTracker(() => {
+  return {};
+})(SignIn);

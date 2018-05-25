@@ -4,7 +4,7 @@ import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import * as React from "react";
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import ChangePasswordForm from "../../forms/ChangePasswordForm";
 import * as Library from "../../../modules/library";
@@ -81,8 +81,8 @@ class ChangePassword extends React.Component<IProps, IState> {
         function sv(err) {
           let authEnabled = Library.nested(["userSettings", "authEnabled"], this.props);
           if (!err) {
-            let token = User.sessionToken('get');
-            purgeAllOtherSessions.call({sessionToken: token}, (err, res) => {
+            let token = User.sessionToken("get");
+            purgeAllOtherSessions.call({ sessionToken: token }, (err, res) => {
               if (err) {
                 Library.modalErrorAlert(err.reason);
                 console.log(`purgeAllOtherSessions error`, err);
@@ -125,8 +125,6 @@ class ChangePassword extends React.Component<IProps, IState> {
   }
 }
 
-export default withRouter(
-  withTracker(() => {
-    return {};
-  })(ChangePassword)
-);
+export default withTracker(() => {
+  return {};
+})(ChangePassword);

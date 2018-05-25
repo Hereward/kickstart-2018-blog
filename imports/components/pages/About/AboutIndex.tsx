@@ -1,5 +1,4 @@
 import { Meteor } from "meteor/meteor";
-import { withRouter } from "react-router-dom";
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import Transition from "../../partials/Transition";
@@ -16,7 +15,6 @@ class About extends React.Component<IProps> {
     super(props);
   }
 
-
   createMarkup(html) {
     return { __html: html };
   }
@@ -31,23 +29,16 @@ class About extends React.Component<IProps> {
     return layout;
   }
 
-
   render() {
-    return (
-      <Transition>
-        {User.id() ? <PageContent page={this.props.page} /> : this.defaultLayout()}
-      </Transition>
-    );
+    return <Transition>{User.id() ? <PageContent page={this.props.page} /> : this.defaultLayout()}</Transition>;
   }
 }
 
-export default withRouter(
-  withTracker(props => {
-    let page: any;
-    let PagesDataReady = Meteor.subscribe("pages");
-    if (PagesDataReady) {
-      page = Pages.findOne({ name: "about" });
-    }
-    return { page: page };
-  })(About)
-);
+export default withTracker(props => {
+  let page: any;
+  let PagesDataReady = Meteor.subscribe("pages");
+  if (PagesDataReady) {
+    page = Pages.findOne({ name: "about" });
+  }
+  return { page: page };
+})(About);

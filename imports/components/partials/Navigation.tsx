@@ -3,10 +3,10 @@ import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
 import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
-import { Link, withRouter } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
-
 import { Session } from "meteor/session";
+import { connect } from "react-redux";
 
 import {
   Collapse,
@@ -48,9 +48,10 @@ interface IProps {
   loggingIn: boolean;
   sessionToken: string;
   sessionReady: boolean;
-  status: any;
   connected: boolean;
   connectionRetryCount: number;
+  dispatch: any;
+  loggingOut: boolean;
 }
 
 interface IState {
@@ -62,7 +63,6 @@ interface IState {
 class Navigation extends React.Component<IProps, IState> {
   tipInitialised: boolean = false;
   clearTip: boolean = false;
-  loggingOut: boolean = false;
   timerID: any;
 
   emailVerifyPrompted: boolean;
@@ -81,16 +81,16 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   componentDidMount() {
-    this.conditionalReroute(this.props);
+    this.conditionalLogout(this.props);
   }
 
   componentWillUpdate(nextProps) {}
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props !== prevProps) {
-      this.conditionalReroute(this.props);
+      this.conditionalLogout(this.props);
 
-      if (!this.loggingOut) {
+      if (!this.props.loggingOut) {
         User.checkSessionStatus(prevProps, this.props);
         if (
           this.props.sessionReady &&
@@ -121,7 +121,7 @@ class Navigation extends React.Component<IProps, IState> {
       this.props.location.pathname === "/" &&
       this.props.profile.verificationEmailSent &&
       !this.emailVerifyPrompted &&
-      !this.loggingOut &&
+      !this.props.loggingOut &&
       !this.props.userData.emails[0].verified &&
       this.props.userSettings.authEnabled < 2
     ) {
@@ -184,15 +184,15 @@ class Navigation extends React.Component<IProps, IState> {
 
   logOut() {
     if (this.props.sessionReady) {
+      this.props.dispatch({ type: "NAV_LOGOUT" });
       this.closeNavbar();
       this.emailVerifyPrompted = false;
       if (this.timerID) {
         clearTimeout(this.timerID);
       }
       this.timerID = 0;
-      this.loggingOut = true;
       this.props.history.push("/");
-      console.log(`Navigation logOut`, User.id());
+      log.info(`Navigation logOut`, User.id());
       SessionMethods.deActivateSession.call({ sessionToken: User.sessionToken("get") }, (err, res) => {
         if (err) {
           console.log(`deActivateSession error`, err.reason);
@@ -200,57 +200,14 @@ class Navigation extends React.Component<IProps, IState> {
         Meteor.logout(() => {
           //Meteor["connection"].setUserId(null);
           log.info(`Navigation logOut DONE`);
-          this.loggingOut = false;
         });
       });
     }
   }
 
-  conditionalReroute(props) {
-    
-    if (Meteor.userId() && props.userSession && props.sessionReady && !this.loggingOut) {
-      let path = props.location.pathname;
-      let reRoute = null;
-      let logout = false;
-      let emailVerified = Library.nested(["userData", "emails", 0, "verified"], props);
-      let verified = Library.nested(["userSession", "verified"], props);
-      let locked = Library.nested(["userSettings", "locked"], props);
-      let authEnabled = Library.nested(["userSettings", "authEnabled"], props);
-      let authRequired = authEnabled > 1 || (authEnabled === 1 && !verified);
-
-      if (locked && path !== "/locked") {
-        reRoute = "locked";
-      } else if (locked === false && path === "/locked" && !authRequired) {
-        reRoute = "/";
-      } else if (props.sessionActive && props.sessionExpired) {
-        logout = true;
-      } else if (path.match(/verify-email/) && emailVerified === true && !authRequired) {
-        reRoute = "/";
-      } else if (path.match(/signin/) && !authRequired) {
-        reRoute = "/";
-      } else if (path.match(/register/) && !authRequired) {
-        reRoute = "/";
-      } else if (path.match(/forgot-password/) && !authRequired) {
-        reRoute = "/";
-      } else if (path === "/authenticate" && !authRequired) {
-        reRoute = "/";
-      } else if (props.location.pathname !== "/authenticate" && authRequired && locked === false) {
-        reRoute = "/authenticate";
-      }
-
-      if (logout) {
-        this.logOut();
-      } else if (reRoute) {
-        props.history.push(reRoute);
-      }
-
-      if (reRoute) {
-        log.info(
-          `conditionalReroute authEnabled = [${authEnabled}] NEW ROUTE = [${reRoute}]`,
-          props.location.pathname,
-          props
-        );
-      }
+  conditionalLogout(props) {
+    if (props.userId && !this.props.loggingOut && props.sessionActive && props.sessionExpired) {
+      this.logOut();
     }
   }
 
@@ -264,12 +221,11 @@ class Navigation extends React.Component<IProps, IState> {
               userSession={this.props.userSession}
               userSettings={this.props.userSettings}
               enhancedAuth={this.props.enhancedAuth}
-              loggingOut={this.loggingOut}
+              loggingOut={this.props.loggingOut}
               loggingIn={this.props.loggingIn}
               userData={this.props.userData}
               userId={this.props.userId}
               sessionExpired={this.props.sessionExpired}
-              status={this.props.status}
               sessionReady={this.props.sessionReady}
               connected={this.props.connected}
               connectionRetryCount={this.props.connectionRetryCount}
@@ -306,8 +262,4 @@ class Navigation extends React.Component<IProps, IState> {
   }
 }
 
-export default withRouter(
-  withTracker(() => {
-    return {};
-  })(Navigation)
-);
+export default connect(state => state)(Navigation);

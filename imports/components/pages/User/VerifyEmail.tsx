@@ -3,7 +3,6 @@ import { withTracker } from "meteor/react-meteor-data";
 import { Accounts } from "meteor/accounts-base";
 import * as PropTypes from "prop-types";
 import * as React from "react";
-import { withRouter } from "react-router-dom";
 import Transition from "../../partials/Transition";
 import * as Library from "../../../modules/library";
 import * as User from "../../../modules/user";
@@ -86,8 +85,6 @@ class VerifyEmail extends React.Component<IProps, IState> {
   }
 }
 
-export default withRouter(
-  withTracker(({ params }) => {
-    return {};
-  })(VerifyEmail)
-);
+export default withTracker(({ params }) => {
+  return {};
+})(VerifyEmail);
