@@ -1,4 +1,5 @@
 import * as React from "react";
+import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import * as PropTypes from "prop-types";
 import DatePicker from "material-ui/DatePicker";
 import * as dateFormat from "dateformat";
@@ -59,19 +60,21 @@ export default class DateWidget extends React.Component<IProps, IState> {
 
   date() {
     let layout = (
-      <div className="form-group">
-        <label htmlFor={this.props.name}>{this.props.label || "Enter Text"}</label>
-        <DatePicker
-          name={this.props.name}
-          id={this.props.name}
-          hintText={this.hintText}
-          className={this.baseCSSClass}
-          value={this.state.controlledDate}
-          onChange={this.handleChange}
-          formatDate={date => dateFormat(date, "dd mmmm yyyy")}
-          required={this.props.required === false ? false : true}
-        />
-      </div>
+      <MuiThemeProvider>
+        <div className="form-group">
+          <label htmlFor={this.props.name}>{this.props.label || "Enter Text"}</label>
+          <DatePicker
+            name={this.props.name}
+            id={this.props.name}
+            hintText={this.hintText}
+            className={this.baseCSSClass}
+            value={this.state.controlledDate}
+            onChange={this.handleChange}
+            formatDate={date => dateFormat(date, "dd mmmm yyyy")}
+            required={this.props.required === false ? false : true}
+          />
+        </div>
+      </MuiThemeProvider>
     );
 
     return layout;

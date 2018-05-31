@@ -1,6 +1,7 @@
 ///<reference path="../../../index.d.ts"/>
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
+import { Roles } from "meteor/alanning:roles";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Auth } from "../auth/publish";
@@ -8,13 +9,12 @@ import { userSessions } from "../sessions/publish";
 import { userSettings } from "../settings/publish";
 import { Profiles } from "../profiles/publish";
 import { Images } from "../images/methods";
+import { can as userCan } from "../../modules/user";
 
-const authCheck = (methodName, userId) => {
+const authCheck = (methodName, userId, threshold = "") => {
   let auth = false;
   if (userId) {
-    let email = Meteor.user().emails[0].address;
-
-    if (email === Meteor.settings.private.adminEmail) {
+    if (userCan({ do: methodName, threshold: threshold })) {
       auth = true;
     }
   }
@@ -29,12 +29,36 @@ const authCheck = (methodName, userId) => {
   return auth;
 };
 
-export const deleteUser = new ValidatedMethod({
-  name: "admin.deleteUser",
+export const assignRolesNewUser = new ValidatedMethod({
+  name: "admin.assignRoles",
   validate: null,
+
   run(fields) {
     if (!this.isSimulation) {
-      authCheck("admin.deleteUser", this.userId);
+      authCheck("assignRoles", this.userId);
+      let userType = "user";
+      let email = Meteor.user().emails[0].address;
+      if (email === Meteor.settings.private.adminEmail) {
+        userType = "super-admin";
+      }
+
+      Roles.setUserRoles(this.userId, userType);
+      log.info(`assignRolesNewUser - DONE`, email, userType);
+      //Roles.addRolesToParent('USERS_VIEW', 'admin');
+    }
+    return true;
+  }
+});
+
+export const deleteUser = new ValidatedMethod({
+  name: "admin.deleteUser",
+  validate: new SimpleSchema({
+    id: { type: String }
+  }).validator(),
+
+  run(fields) {
+    if (!this.isSimulation) {
+      authCheck("deleteUser", this.userId, "admin");
       Meteor.users.remove(fields.id);
     }
     return true;
@@ -42,12 +66,12 @@ export const deleteUser = new ValidatedMethod({
 });
 
 export const deleteAllUsers = new ValidatedMethod({
-  name: "admin.deleteAllUsers",
+  name: "deleteAllUsers",
   validate: null,
 
   run(fields) {
     if (!this.isSimulation) {
-      authCheck("admin.deleteAllUsers", this.userId);
+      authCheck("admin.deleteAllUsers", this.userId, "admin");
 
       let profileRecord: any;
       profileRecord = Profiles.findOne({ owner: this.userId });

@@ -2,6 +2,7 @@ import * as React from "react";
 import { Redirect, Switch, Route } from "react-router-dom";
 import Index from "../pages/Index/Index";
 import About from "../pages/About/AboutIndex";
+import Admin from "../pages/Admin/AdminIndex";
 import Profile from "../pages/Profile/ProfileIndex";
 import ForgotPassWord from "../pages/User/ForgotPassWord";
 import Authenticator from "../pages/User/Authenticator";
@@ -51,6 +52,7 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
 const MainRouter = props => (
   <Switch>
     <AuthRoute exact path="/" cProps={props} component={Index} type="any" />
+    <AuthRoute path="/admin" cProps={props} component={Admin} type="any" />
     <AuthRoute path="/about" cProps={props} component={About} type="any" />
     <AuthRoute path="/verify-email" cProps={props} component={VerifyEmail} type="emailVerify" />
     <AuthRoute path="/forgot-password-reset" cProps={props} component={ForgotPassWordReset} type="guest" />

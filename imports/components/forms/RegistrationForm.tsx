@@ -2,7 +2,8 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import * as BlockUi from "react-block-ui";
-import RaisedButton from "material-ui/RaisedButton";
+//import RaisedButton from "material-ui/RaisedButton";
+import Button from "@material-ui/core/Button";
 import Checkbox from "material-ui/Checkbox";
 import * as Validation from "../../modules/validation";
 
@@ -12,7 +13,6 @@ interface IProps {
   allowSubmit: boolean;
   handleCheck: any;
 }
-
 
 interface IState {
   disableSubmit: boolean;
@@ -103,7 +103,9 @@ export default class RegistrationForm extends React.Component<IProps, IState> {
             </div>
 
             <div className="form-group">
-              <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
+              <Button disabled={!this.props.allowSubmit} variant="raised" type="submit" color="primary">
+                Submit
+              </Button>
             </div>
           </form>
         </BlockUi>

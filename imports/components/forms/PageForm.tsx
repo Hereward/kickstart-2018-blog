@@ -5,7 +5,8 @@ import * as jquery from "jquery";
 import Loader from "react-loader-spinner";
 import * as BlockUi from "react-block-ui";
 import "react-block-ui/style.css";
-import RaisedButton from "material-ui/RaisedButton";
+//import RaisedButton from "material-ui/RaisedButton";
+import Button from '@material-ui/core/Button';
 import "react-quill/dist/quill.snow.css";
 import * as Icon from "../../modules/icons";
 import Widget from "./Widget";
@@ -149,10 +150,13 @@ export default class PageForm extends React.Component<IProps, IState> {
           </div>
 
           <div className="form-group">
-            <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
+          <Button variant="raised" type="submit" color="primary">Submit</Button>
+            
           </div>
         </form>
       </BlockUi>
     );
   }
 }
+
+// <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />

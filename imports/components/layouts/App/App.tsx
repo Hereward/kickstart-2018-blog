@@ -29,6 +29,7 @@ store.subscribe(() => {
 */
 
 interface IProps {
+  history: any;
   signedIn: boolean;
   enhancedAuth: boolean;
   Email: string;
@@ -58,6 +59,7 @@ class App extends React.Component<IProps, IState> {
   componentWillMount() {}
 
   getLayout() {
+    const path = this.props.history.location.pathname;
     if (!this.props.sessionReady && !this.props.connected && this.props.connectionRetryCount > 1) {
       return <Spinner caption="connecting" type="page" />;
     } else {
@@ -67,7 +69,7 @@ class App extends React.Component<IProps, IState> {
           <main>
             <MainRouter {...this.props} />
           </main>
-          <Footer {...this.props} />
+          {!path.match(/admin/) ? <Footer {...this.props} /> : ""}
         </div>
       );
     }
@@ -78,7 +80,8 @@ class App extends React.Component<IProps, IState> {
   }
 }
 
-export default withRouter(connect(state => state)(
+export default withRouter(
+  connect(state => state)(
     withTracker(() => {
       let profilesHandle = Meteor.subscribe("profiles");
       let userSettingsHandle = Meteor.subscribe("userSettings");

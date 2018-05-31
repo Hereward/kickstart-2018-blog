@@ -3,10 +3,12 @@ import { Meteor } from "meteor/meteor";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Loader from "react-loader-spinner";
-import RefreshIndicator from "material-ui/RefreshIndicator";
-import ActionVerifiedUser from "material-ui/svg-icons/action/verified-user";
-import ActionHighlightOff from "material-ui/svg-icons/action/highlight-off";
-import NotificationSyncProblem from "material-ui/svg-icons/notification/sync-problem";
+import SvgIcon from "@material-ui/core/SvgIcon";
+//import RefreshIndicator from "material-ui/RefreshIndicator";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import VerifiedUser from "@material-ui/icons/VerifiedUser";
+import HighlightOff from "@material-ui/icons/HighlightOff";
+import SyncProblem from "@material-ui/icons/SyncProblem";
 import * as jquery from "jquery";
 import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
@@ -157,8 +159,11 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   }
 
   spinner() {
-    return (
-      <RefreshIndicator
+    return <CircularProgress className="dashboard-spinner" size={20} />;
+  }
+
+  /*
+     <RefreshIndicator
         loadingColor="orange"
         size={20}
         left={0}
@@ -166,8 +171,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
         status="loading"
         className="dashboard-spinner"
       />
-    );
-  }
+      */
 
   getVerifiedIndicator() {
     let layout: any;
@@ -181,11 +185,11 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     ) {
       tag = this.spinner();
     } else if (this.props.userData && (!this.props.connected || !this.props.sessionReady)) {
-      tag = <NotificationSyncProblem className="notification-sync-problem" />;
+      tag = <SyncProblem className="notification-sync-problem" />;
     } else if (verified) {
-      tag = <ActionVerifiedUser className="action-verified-user" />;
+      tag = <VerifiedUser className="action-verified-user" />;
     } else if (this.props.sessionReady) {
-      tag = <ActionHighlightOff className="action-highlight-off" />;
+      tag = <HighlightOff className="action-highlight-off" />;
     }
     layout = (
       <div className="d-inline-block" id="VerifiedIndicator">

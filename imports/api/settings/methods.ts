@@ -6,8 +6,13 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "../sessions/publish";
 import { userSettings } from "./publish";
 import { Auth } from "../auth/publish";
-import { insertAuth, initAuth } from "../auth/methods";
-import { clearSessionAuth, initSessionAuthVerified, getSession, cancel2FASession } from "../sessions/methods";
+import { insertAuth } from "../auth/methods";
+import { cancel2FASession } from "../sessions/methods";
+
+let serverAuth: any;
+if (Meteor.isServer) {
+  serverAuth = require('../../server/auth');
+}
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -41,7 +46,7 @@ export const createUserSettings = new ValidatedMethod({
 });
 
 export const toggleAuthEnabledPending = new ValidatedMethod({
-  name: "userSettings.toggleEnabledPending",
+  name: "userSettings.toggleAuthEnabledPending",
 
   validate: new SimpleSchema({
     sessionToken: { type: String }
@@ -81,7 +86,7 @@ export const toggleAuthEnabledPending = new ValidatedMethod({
         if (targetState === 3) {
           let authRec: any;
           authRec = Auth.findOne({ owner: this.userId });
-          initAuth(authRec._id, this.userId);
+          serverAuth.initAuth(authRec._id, this.userId);
         }
       }
     }

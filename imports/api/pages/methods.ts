@@ -21,13 +21,9 @@ export const createPages = new ValidatedMethod({
 
   run() {
     authCheck("pages.create", this.userId);
-    let admin = false;
+    //let admin = false;
     let id: string;
-
-    if (!this.isSimulation) {
-      admin = Meteor.settings.private.adminEmail === Meteor.user().emails[0].address;
-    }
-
+ 
     //Profiles.remove({});
 
     let exists = Pages.findOne({ name: "about" });

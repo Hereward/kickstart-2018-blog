@@ -1,8 +1,11 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import Checkbox from "material-ui/Checkbox";
+//import Checkbox from "material-ui/Checkbox";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import * as PropTypes from "prop-types";
-import RaisedButton from "material-ui/RaisedButton";
+//import RaisedButton from "material-ui/RaisedButton";
+import Button from "@material-ui/core/Button";
 import * as BlockUi from "react-block-ui";
 import * as Validation from "../../modules/validation";
 
@@ -54,9 +57,16 @@ export default class SignInForm extends React.Component<IProps, IState> {
     this.props.handleChange(e);
   }
 
-  handleCheck(event, isInputChecked) {
+  /*
+  zhandleCheck(event, isInputChecked) {
     this.props.handleCheck(isInputChecked);
   }
+  */
+
+  handleCheck = name => event => {
+    this.props.handleCheck(event.target.checked);
+    //this.setState({ [name]: event.target.checked });
+  };
 
   render() {
     return (
@@ -89,20 +99,16 @@ export default class SignInForm extends React.Component<IProps, IState> {
             </div>
 
             <div className="form-group">
-              <Checkbox
-                id="keepMeLoggedIn"
+              <FormControlLabel
+                control={<Checkbox onChange={this.handleCheck("keepMeLoggedIn")} id="keepMeLoggedIn" value="checked" />}
                 label="Keep me signed in"
-                onCheck={(event, isInputChecked) => this.handleCheck(event, isInputChecked)}
               />
             </div>
 
             <div className="form-group">
-              <RaisedButton
-                disabled={!this.props.allowSubmit}
-                type="submit"
-                primary={true}
-                label={this.state.SubmitText}
-              />
+              <Button disabled={!this.props.allowSubmit} variant="raised" type="submit" color="primary">
+                {this.state.SubmitText}
+              </Button>
             </div>
 
             <div className="form-group">
@@ -121,3 +127,13 @@ export default class SignInForm extends React.Component<IProps, IState> {
     );
   }
 }
+
+/*
+
+ <Checkbox
+                id="keepMeLoggedIn"
+                label="Keep me signed in"
+                onCheck={(event, isInputChecked) => this.handleCheck(event, isInputChecked)}
+              />
+
+              */

@@ -4,8 +4,7 @@ import * as PropTypes from "prop-types";
 import { Accounts } from "meteor/accounts-base";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
-import QRCode from "react-qr-code";
-import { Alert } from "reactstrap";
+import { Roles } from "meteor/alanning:roles";
 import Transition from "../../partials/Transition";
 import RegistrationForm from "../../forms/RegistrationForm";
 import * as ProfileMethods from "../../../api/profiles/methods";
@@ -15,6 +14,7 @@ import * as SessionMethods from "../../../api/sessions/methods";
 import * as PagesMethods from "../../../api/pages/methods";
 import * as User from "../../../modules/user";
 import * as userSettingsMethods from "../../../api/settings/methods";
+import { assignRolesNewUser } from "../../../api/admin/methods";
 
 import SignInForm from "../../forms/SignInForm";
 
@@ -114,6 +114,13 @@ class Register extends React.Component<IProps, IState> {
             });
             console.log(`createUser error`, err);
           } else {
+
+            assignRolesNewUser.call({}, (err, res) => {
+              if (err) {
+                console.log(`assignRolesNewUser error: [${err.reason}]`, err);
+              }
+            });
+            
             let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
 
             let sessionToken = User.sessionToken("create");

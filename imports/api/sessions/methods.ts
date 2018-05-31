@@ -8,6 +8,13 @@ import { userSettings } from "../settings/publish";
 import { Auth } from "../auth/publish";
 import { hash } from "../../modules/user";
 
+/*
+let serverAuth: any;
+if (Meteor.isServer) {
+  serverAuth = require("../../server/auth");
+}
+*/
+
 const authCheck = (methodName, userId) => {
   let auth = true;
   if (!userId) {
@@ -17,15 +24,27 @@ const authCheck = (methodName, userId) => {
   return auth;
 };
 
+const lockAccount = userId => {
+  userSessions.remove({ owner: userId });
+  userSettings.update(
+    { owner: userId },
+    {
+      $set: { locked: true }
+    }
+  );
+};
+
 const sessionCheck = (methodName, sessionRecord = "", sessionToken = "") => {
   if (!sessionRecord) {
     log.error(`${methodName} - invalidSession`, sessionToken);
   }
 };
 
-export const getSession = function getSession(userId, sessionToken = "") {
+const getSession = function getSession(userId, sessionToken = "") {
   if (!userId || !sessionToken) {
-    log.warn(`getSession - invalid - userId=[${userId}] sessionToken=[${sessionToken}]`);
+    log.warn(
+      `getSession - invalid - userId=[${userId}] sessionToken=[${sessionToken} Meteor.isServer=[${Meteor.isServer}]]`
+    );
     return null;
   }
   let sessionRecord: any;
@@ -34,7 +53,7 @@ export const getSession = function getSession(userId, sessionToken = "") {
   return sessionRecord;
 };
 
-export const clearSessionAuth = (userId, sessionToken) => {
+const clearSessionAuth = (userId, sessionToken) => {
   if (!userId || !sessionToken) {
     log.warn(`clearSessionAuth - invalid - userId=[${userId}] sessionToken=[${sessionToken}]`);
     return null;
@@ -58,32 +77,9 @@ export const cancel2FASession = (userId, sessionToken, authEnabled) => {
   }
 };
 
-export const initSessionAuthVerified = (userId, sessionToken) => {
-  if (!userId) {
-    return null;
-  }
-
-  let sessionRecord: any;
-  let sessionRecordUpdated: any;
-  sessionRecord = getSession(userId, sessionToken);
-  if (!sessionRecord) {
-    insert(userId, sessionToken);
-    sessionRecord = getSession(userId, sessionToken);
-  }
-
-  if (sessionRecord && sessionRecord.currentAttempts) {
-    userSessions.update(sessionRecord._id, { $set: { verified: false } });
-  } else if (sessionRecord) {
-    userSessions.update(sessionRecord._id, { $set: { verified: false, currentAttempts: 0 } });
-  }
-
-  sessionRecordUpdated = userSessions.findOne(sessionRecord._id);
-  return sessionRecordUpdated;
-};
-
-const insert = function insert(userId, sessionToken = "", persist = false) {
+const insertNewSession = function insert(userId, sessionToken = "", persist = false) {
   if (!userId || !sessionToken) {
-    log.warn(`insert session - invalid - userId=[${userId}] sessionToken=[${sessionToken}]`);
+    log.warn(`insertNewSession - invalid - userId=[${userId}] sessionToken=[${sessionToken}]`);
     return null;
   }
 
@@ -114,6 +110,31 @@ const insert = function insert(userId, sessionToken = "", persist = false) {
   return id;
 };
 
+const initSessionAuthVerified = (userId, sessionToken) => {
+  if (!userId) {
+    return null;
+  }
+
+  let sessionRecord: any;
+  let sessionRecordUpdated: any;
+  sessionRecord = getSession(userId, sessionToken);
+  if (!sessionRecord) {
+    insertNewSession(userId, sessionToken);
+    sessionRecord = getSession(userId, sessionToken);
+  }
+
+  if (sessionRecord && sessionRecord.currentAttempts) {
+    userSessions.update(sessionRecord._id, { $set: { verified: false } });
+  } else if (sessionRecord) {
+    userSessions.update(sessionRecord._id, { $set: { verified: false, currentAttempts: 0 } });
+  }
+
+  sessionRecordUpdated = userSessions.findOne(sessionRecord._id);
+  return sessionRecordUpdated;
+};
+
+
+
 export const createUserSession = new ValidatedMethod({
   name: "UserSession.create",
 
@@ -129,7 +150,7 @@ export const createUserSession = new ValidatedMethod({
       }
 
       let persist = fields.keepMeLoggedIn === true;
-      let sessionId = insert(this.userId, fields.sessionToken, persist);
+      let sessionId = insertNewSession(this.userId, fields.sessionToken, persist);
       let settings: any;
     }
   }
@@ -207,8 +228,7 @@ export const exceedAttemptsCheck = (verified, attemptsLeft, userId) => {
   let message: string;
   let recalctAttempts = attemptsLeft - 1;
   if ((attemptsLeft < 2 && !verified) || attemptsLeft < 1) {
-    message =
-      "You have exceeded the maximum allowed number of authentication attempts.";
+    message = "You have exceeded the maximum allowed number of authentication attempts.";
     lockAccount(userId);
     throw new Meteor.Error(`invalidCode`, message);
   } else if (!verified && attemptsLeft > 0) {
@@ -219,16 +239,6 @@ export const exceedAttemptsCheck = (verified, attemptsLeft, userId) => {
   } else {
     return true;
   }
-};
-
-const lockAccount = userId => {
-  userSessions.remove({ owner: userId });
-  userSettings.update(
-    { owner: userId },
-    {
-      $set: { locked: true }
-    }
-  );
 };
 
 export const updateAuth = (userId, sessionToken, verified) => {
@@ -329,20 +339,22 @@ export const killSession = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    if (!authCheck("UserSession.kill", this.userId)) {
-      return false;
-    }
-    let sessionRecord: any;
+    if (!this.isSimulation) {
+      if (!authCheck("UserSession.kill", this.userId)) {
+        return false;
+      }
+      let sessionRecord: any;
 
-    sessionRecord = getSession(fields.id, fields.sessionToken);
-    sessionCheck("killSession", sessionRecord, fields.sessionToken);
+      sessionRecord = getSession(fields.id, fields.sessionToken);
+      sessionCheck("killSession", sessionRecord, fields.sessionToken);
 
-    if (sessionRecord) {
-      userSessions.update(sessionRecord._id, {
-        $set: {
-          expired: true
-        }
-      });
+      if (sessionRecord) {
+        userSessions.update(sessionRecord._id, {
+          $set: {
+            expired: true
+          }
+        });
+      }
     }
 
     return true;
@@ -356,18 +368,20 @@ export const deActivateSession = new ValidatedMethod({
     sessionToken: { type: String }
   }).validator(),
   run(fields) {
-    if (!authCheck("UserSession.deActivate", this.userId)) {
-      return false;
-    }
-    let sessionRecord: any;
-    sessionRecord = getSession(this.userId, fields.sessionToken);
+    if (!this.isSimulation) {
+      if (!authCheck("UserSession.deActivate", this.userId)) {
+        return false;
+      }
+      let sessionRecord: any;
+      sessionRecord = getSession(this.userId, fields.sessionToken);
 
-    if (sessionRecord) {
-      userSessions.update(sessionRecord._id, {
-        $set: {
-          active: false
-        }
-      });
+      if (sessionRecord) {
+        userSessions.update(sessionRecord._id, {
+          $set: {
+            active: false
+          }
+        });
+      }
     }
     return true;
   }
@@ -410,7 +424,7 @@ export const keepAliveUserSession = new ValidatedMethod({
           }
         } else if (!sessionRecord) {
           log.info(`keepAliveUserSession - restoring session`);
-          insert(this.userId, fields.sessionToken);
+          insertNewSession(this.userId, fields.sessionToken);
         }
       }
     }

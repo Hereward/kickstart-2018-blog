@@ -30,7 +30,7 @@ interface IProps {
   userSettings: any;
   userEmail: string;
   emailVerified: boolean;
-  admin: boolean;
+  userId: string;
 }
 
 interface IState {
@@ -132,7 +132,7 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   sendVerificationEmail() {
-    let id = User.id();
+    let id = this.props.userId;
     this.setState({ disableVerify: true });
 
     ProfileMethods.sendVerificationEmail.call({ id: id }, (err, res) => {
@@ -376,7 +376,7 @@ class Profile extends React.Component<IProps, IState> {
           />
         ) : null}
 
-        {this.props.admin ? (
+        {User.can({threshold: 'admin'}) ? (
           <Notification
             mainFunction={this.handleDeleteAllUsers}
             panel="action"
@@ -421,7 +421,6 @@ export default withTracker(props => {
     }
   }
   return {
-    admin: props.admin,
     myImages: myImages,
     userEmail: userEmail,
     emailVerified: emailVerified

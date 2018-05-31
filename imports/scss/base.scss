@@ -8,6 +8,30 @@ body {
   /* background-color: #343a40; */
 }
 
+.fixed-top {
+  z-index: 2000;
+}
+
+/*
+.mobile-drawer-container {
+  z-index: 3000 !important;
+}
+
+.admin-drawer {
+  margin: 1rem 0;
+  font-weight: bold;
+}
+
+.container.admin {
+  width: 100%;
+  max-width: 100%;
+  top: 3.5rem;
+  position: absolute;
+  //height: 20rem;
+  //overflow: hidden;
+}
+*/
+
 .swal-text {
   background-color: GhostWhite;
   padding: 17px;
@@ -149,7 +173,7 @@ footer {
 }
 
 .cancel-edit-icon {
-  top: 5px;
+  // top: 5px;
 }
 
 .ql-video {

@@ -1,14 +1,20 @@
 /// <reference path="../../../index.d.ts" />
 import { Accounts } from "meteor/accounts-base";
-import "./api";
+import { Roles } from "meteor/alanning:roles";
+import "../../server/api";
 import { purgeInactiveSessions } from "../../api/sessions/methods";
 
+function initRoles() {
+  const defaultRoles = ["user", "editor", "moderator", "admin", "super-admin"];
+  defaultRoles.forEach(role => {
+    //let allRoles = Roles.getAllRoles().fetch();
+    Roles.createRole(role, { unlessExists: true });
+  });
+}
 
 Accounts.config({
   loginExpirationInDays: 3650
 });
-
-
 
 Accounts.urls.resetPassword = token => Meteor.absoluteUrl(`forgot-password-reset/${token}`);
 Accounts.urls.verifyEmail = token => Meteor.absoluteUrl(`verify-email/${token}`);
@@ -20,6 +26,8 @@ Accounts.onLogin(user => {
 });
 
 Accounts.onLogout(user => {});
+
+initRoles();
 
 let smtp = Meteor.settings.private.smtp;
 

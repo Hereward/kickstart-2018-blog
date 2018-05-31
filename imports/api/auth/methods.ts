@@ -5,19 +5,20 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "../sessions/publish";
 import { userSettings } from "../settings/publish";
 import { Auth } from "./publish";
-import { getSession, updateAuth as sessionUpdateAuth } from "../sessions/methods";
+import { updateAuth as sessionUpdateAuth } from "../sessions/methods";
+//import { initAuth } from '../../server/auth';
 
-let Future: any;
-let QRCode: any;
+//let Future: any;
+//let QRCode: any;
 let speakeasy = require("speakeasy");
+let serverAuth: any;
 
-declare var Npm: any;
+//declare var Npm: any;
 
 let crypto = require("crypto");
 
 if (Meteor.isServer) {
-  Future = Npm.require("fibers/future");
-  QRCode = require("qrcode");
+  serverAuth = require('../../server/auth');
 }
 
 const authCheck = (methodName, userId) => {
@@ -46,6 +47,7 @@ export const insertAuth = function insert(userId) {
   return id;
 };
 
+/*
 export const initAuth = (authId, userId) => {
   let key: any;
   let secret: any;
@@ -103,6 +105,7 @@ function decrypt(text, password) {
   dec += decipher.final("utf8");
   return dec;
 }
+*/
 
 export const createAuth = new ValidatedMethod({
   name: "auth.create",
@@ -131,8 +134,8 @@ export const getDecrpytedAuthData = new ValidatedMethod({
       let authRecord: any;
       authRecord = Auth.findOne({ owner: this.userId });
       if (authRecord) {
-        privateKey = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
-        url = decrypt(authRecord.QRCodeURL_enc, authRecord.cryptoKey);
+        privateKey = serverAuth.decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
+        url = serverAuth.decrypt(authRecord.QRCodeURL_enc, authRecord.cryptoKey);
         privateData = { key: privateKey, url: url };
       }
     }
@@ -153,7 +156,7 @@ export const currentValidToken = new ValidatedMethod({
         let authRecord: any;
         authRecord = Auth.findOne({ owner: this.userId });
         if (authRecord && authRecord.private_key_enc) {
-          let secret = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
+          let secret = serverAuth.decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
           token = speakeasy.totp({
             secret: secret,
             encoding: "base32"
@@ -181,7 +184,7 @@ export const verifyToken = new ValidatedMethod({
 
       let authRecord: any;
       authRecord = Auth.findOne({ owner: this.userId });
-      let secret = decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
+      let secret = serverAuth.decrypt(authRecord.private_key_enc, authRecord.cryptoKey);
 
       verified = speakeasy.time.verify({
         secret: secret,

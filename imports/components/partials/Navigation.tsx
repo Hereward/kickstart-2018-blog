@@ -244,6 +244,11 @@ class Navigation extends React.Component<IProps, IState> {
                   About
                 </NavLink>
               </NavItem>
+              {User.can({ threshold: "admin" }) ? (
+                <NavLink onClick={this.closeNavbar} tag={Link} to="admin">
+                  Admin
+                </NavLink>
+              ) : null}
               <UncontrolledDropdown nav inNavbar>
                 <DropdownToggle nav caret>
                   Members

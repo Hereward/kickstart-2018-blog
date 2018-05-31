@@ -6,8 +6,9 @@ import * as dateFormat from "dateformat";
 import * as moment from "moment";
 import * as momentDurationFormatSetup from "moment-duration-format";
 import { Card, Button, CardHeader, CardFooter, CardBody, CardTitle, CardText } from "reactstrap";
-
-import Checkbox from "material-ui/Checkbox";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+//import Checkbox from "material-ui/Checkbox";
 import { Tasks } from "../../../api/tasks/publish";
 import Task from "../../partials/Task";
 import PageContent from "../../partials/PageContent";
@@ -95,11 +96,11 @@ class Index extends React.Component<IProps, IState> {
     this.setState({ [id]: value });
   }
 
-  toggleHideCompleted() {
+  toggleHideCompleted = () => event => {
     this.setState({
       hideCompleted: !this.state.hideCompleted
     });
-  }
+  };
 
   renderTasks() {
     let filteredTasks = this.props.tasks;
@@ -141,10 +142,15 @@ class Index extends React.Component<IProps, IState> {
   getCheckBox() {
     if (this.props.sessionReady && this.props.taskCount) {
       return (
-        <Checkbox label="Hide Completed Tasks" checked={this.state.hideCompleted} onClick={this.toggleHideCompleted} />
+        <FormControlLabel
+          control={<Checkbox onChange={this.toggleHideCompleted()} value="checked" />}
+          label="Hide Completed Tasks"
+        />
       );
     }
   }
+
+  // <Checkbox label="Hide Completed Tasks" checked={this.state.hideCompleted} onClick={this.toggleHideCompleted} />
 
   sessionData() {
     let layout: any;

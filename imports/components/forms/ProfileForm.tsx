@@ -1,7 +1,8 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
-import RaisedButton from "material-ui/RaisedButton";
+//import RaisedButton from "material-ui/RaisedButton";
+import Button from "@material-ui/core/Button";
 import * as BlockUi from "react-block-ui";
 import * as Validation from "../../modules/validation";
 import Widget from "./Widget";
@@ -98,7 +99,9 @@ export default class ProfileForm extends React.Component<IProps, IState> {
             {this.getWidget({ name: "postcode", label: "Postal Code" })}
 
             <div className="form-group">
-              <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
+              <Button disabled={!this.props.allowSubmit} variant="raised" type="submit" color="primary">
+                Submit
+              </Button>
             </div>
           </form>
         </BlockUi>

@@ -1,13 +1,13 @@
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session";
 import * as RLocalStorage from "meteor/simply:reactive-local-storage";
+import { Roles } from "meteor/alanning:roles";
 import * as Library from "./library";
 import {
   keepAliveUserSession,
   deActivateSession,
   purgeAllOtherSessions,
   purgeAllSessions,
-  createUserSession
 } from "../api/sessions/methods";
 
 const sessionTokenName = Meteor.settings.public.session.sessionTokenName;
@@ -23,6 +23,7 @@ export function hash(token, algorithm = "md5") {
   let hashString = hash.digest("hex");
   return hashString;
 }
+
 
 export function id() {
   return Meteor.userId();
@@ -166,4 +167,21 @@ export function authRequired(props) {
   }
 
   return authRequired;
+}
+
+export function can(params: {do?: string, threshold?: any}) {
+  let allowed: boolean;
+  let userId = id();
+
+  if (!userId) {
+    allowed = false;
+  } else if (Roles.userIsInRole(id(), "super-admin")) {
+    allowed = true;
+  } else if (params.threshold) {
+    allowed = Roles.userIsInRole(id(), params.threshold);
+  } else {
+    allowed = true;
+  }
+
+  return allowed;
 }

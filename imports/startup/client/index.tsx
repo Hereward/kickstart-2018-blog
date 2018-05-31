@@ -8,7 +8,8 @@ import { createStore } from "redux";
 import { Provider } from "react-redux";
 import * as RLocalStorage from "meteor/simply:reactive-local-storage";
 import * as jquery from "jquery";
-import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
+import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import blue from "@material-ui/core/colors/blue";
 import App from "../../components/layouts/App/App";
 import { addMeta } from "./meta";
 import * as Library from "../../modules/library";
@@ -17,6 +18,14 @@ import { keepAliveUserSession } from "../../api/sessions/methods";
 //import { validateUserLogin } from "../../api/auth/methods";
 import * as User from "../../modules/user";
 import rootReducer from "../../redux/reducers";
+
+/*
+const muiTheme = createMuiTheme({
+  palette: {
+    primary: blue
+  }
+});
+*/
 
 declare var window: any;
 
@@ -27,15 +36,17 @@ class Launch extends React.Component {
     super(props);
   }
 
+  // <MuiThemeProvider>
+
+  // <MuiThemeProvider theme={muiTheme}>
+
   render() {
     return (
-      <MuiThemeProvider>
-        <BrowserRouter>
-          <Provider store={store}>
-            <App />
-          </Provider>
-        </BrowserRouter>
-      </MuiThemeProvider>
+      <BrowserRouter>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </BrowserRouter>
     );
   }
 }
@@ -64,7 +75,7 @@ Accounts.onLogin(() => {
 Accounts.onLogout(() => {
   log.info(`Client Logout`, User.sessionToken("get"));
   User.clearLocalStorage();
-  store.dispatch({ type: 'LOGOUT_DONE' });
+  store.dispatch({ type: "LOGOUT_DONE" });
 });
 
 Meteor.startup(() => {

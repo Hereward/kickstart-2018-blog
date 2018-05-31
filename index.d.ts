@@ -3,17 +3,18 @@ declare module "meteor/react-meteor-data" {
 
   var withTracker: any;
 
-  type ComponentConstructor<P> =
-    | React.ComponentClass<P>
-    | React.StatelessComponent<P>;
+  type ComponentConstructor<P> = React.ComponentClass<P> | React.StatelessComponent<P>;
 
   export function createContainer<InP, D, OutP extends InP & D>(
-    options: (
-      props: InP
-    ) => D | { getMeteorData: (props: InP) => D; pure?: boolean },
+    options: (props: InP) => D | { getMeteorData: (props: InP) => D; pure?: boolean },
     reactComponent: ComponentConstructor<OutP>
   ): ComponentConstructor<InP>;
 }
+
+//declare var IconButton:any;
+
+//declare var IconButton:any;
+//declare var  IconButtonProps: any;
 
 declare var Bert: any;
 
@@ -28,7 +29,19 @@ declare module "sweetAlert" {
 }
 */
 
+declare module "meteor/alanning:roles" {
+  namespace Roles {
+    function createRole(role: string, conditions: any): string;
 
+    function userIsInRole(
+      user: string | string[] | Object | Object[],
+      roles: string | string[],
+      group?: string
+    ): boolean;
+
+    function setUserRoles(user: string | string[] | Object | Object[], roles: string | string[], group?: string): void;
+  }
+}
 
 declare var console: Console;
 
@@ -36,19 +49,16 @@ declare namespace Meteor.User {
   let verificationEmailSent: boolean;
 }
 
-
 declare var log: any;
 
-
-declare module 'meteor/simply:reactive-local-storage' {
+declare module "meteor/simply:reactive-local-storage" {
   function setItem(key: string, value: string): any;
   function getItem(key: string): any;
 }
 
-
 declare module "meteor/meteor" {
   var process: any;
-  
+
   namespace Meteor {
     interface User {
       _id?: string;
@@ -60,7 +70,6 @@ declare module "meteor/meteor" {
       verificationEmailSent?: number;
       enhancedAuth: any;
     }
-
   }
 }
 
@@ -88,10 +97,8 @@ declare class SimpleSchema {
   validator(): any;
 }
 
-
 declare module "meteor/accounts-base" {
   namespace Accounts {
-
     var urls: URLS;
     var emailTemplates: EmailTemplates;
     var _lastLoginTokenWhenPolled: any;
@@ -112,17 +119,9 @@ declare module "meteor/accounts-base" {
       callback?: Function
     ): void;
 
-    function resetPassword(
-      token: string,
-      newPassword: string,
-      callback?: Function
-    ): void;
+    function resetPassword(token: string, newPassword: string, callback?: Function): void;
 
-    function changePassword(
-      oldPassword: string,
-      newPassword: string,
-      callback?: Function
-    ): void;
+    function changePassword(oldPassword: string, newPassword: string, callback?: Function): void;
 
     function verifyEmail(token: string, func: any): any;
     function sendVerificationEmail(id: string): any;
@@ -182,13 +181,10 @@ interface JQuery {
    *
    * @param options options for validation
    */
-  validate(
-    options?: JQueryValidation.ValidationOptions
-  ): JQueryValidation.Validator;
+  validate(options?: JQueryValidation.ValidationOptions): JQueryValidation.Validator;
 }
 
 // Meteor-Files
-
 
 declare module "meteor/ostrio:files" {
   //import { Mongo } from "meteor/mongo";
@@ -237,12 +233,7 @@ declare module "meteor/ostrio:files" {
     cacheControl?: string;
     responseHeaders?:
       | { [x: string]: string }
-      | ((
-          responseCode?,
-          fileRef?,
-          versionRef?,
-          version?
-        ) => { [x: string]: string });
+      | ((responseCode?, fileRef?, versionRef?, version?) => { [x: string]: string });
     throttle?: number | boolean;
     downloadRoute?: string;
     schema?: Object;
@@ -360,12 +351,7 @@ declare module "meteor/ostrio:files" {
       callback: (err: any, fileRef: FileRef) => any,
       proceedAfterUpload: boolean
     );
-    load(
-      url: string,
-      opts: LoadOptions,
-      callback: (err: any, fileRef: FileRef) => any,
-      proceedAfterUpload: boolean
-    );
+    load(url: string, opts: LoadOptions, callback: (err: any, fileRef: FileRef) => any, proceedAfterUpload: boolean);
     write(
       buffer: Buffer,
       opts: LoadOptions,

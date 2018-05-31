@@ -85,7 +85,7 @@
     "one-var": "warn",
     "no-var": "warn",
     "no-plusplus": "warn",
-    "func-names": "warn",
+    "func-names": "off",
     "eqeqeq": "warn",
     "radix": "warn",
     "strict": "warn",
@@ -97,9 +97,13 @@
     "no-extra-bind": "warn",
     "no-empty": "off",
     "react/no-unused-state": "react/no-unused-state",
+    "no-unused-expressions": "warn",
     "semi": ["error", "always"],
     "no-lonely-if": "warn",
-    "prefer-arrow-callback": ["warn",
+    "no-continue": "warn",
+    "yoda": "warn",
+    "react/jsx-curly-brace-presence": "warn",
+    "prefer-arrow-callback": ["off",
       {
         "allowNamedFunctions": true
       }

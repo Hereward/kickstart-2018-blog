@@ -2,7 +2,8 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as BlockUi from "react-block-ui";
 import PropTypes from "prop-types";
-import RaisedButton from "material-ui/RaisedButton";
+//import RaisedButton from "material-ui/RaisedButton";
+import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
 import "react-block-ui/style.css";
 import * as Validation from "../../modules/validation";
@@ -73,7 +74,9 @@ export default class ForgotPassWordForm extends React.Component<IProps, IState> 
             </div>
 
             <div className="form-group">
-              <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
+              <Button disabled={!this.props.allowSubmit} variant="raised" type="submit" color="primary">
+                Submit
+              </Button>
             </div>
 
             <div className="form-group">
