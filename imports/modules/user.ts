@@ -7,14 +7,12 @@ import {
   keepAliveUserSession,
   deActivateSession,
   purgeAllOtherSessions,
-  purgeAllSessions,
+  purgeAllSessions
 } from "../api/sessions/methods";
 
 const sessionTokenName = Meteor.settings.public.session.sessionTokenName;
 const userDataKey = Meteor.settings.public.session.userDataKey;
 declare var window: any;
-
-
 
 export function hash(token, algorithm = "md5") {
   const crypto = require("crypto");
@@ -23,7 +21,6 @@ export function hash(token, algorithm = "md5") {
   let hashString = hash.digest("hex");
   return hashString;
 }
-
 
 export function id() {
   return Meteor.userId();
@@ -155,7 +152,7 @@ export function authRequired(props) {
   //log.info(`authRequired`, props);
   //let emailVerified = Library.nested(["userData", "emails", 0, "verified"], props);
   let verified = Library.nested(["userSession", "verified"], props);
- // let locked = Library.nested(["userSettings", "locked"], props);
+  // let locked = Library.nested(["userSettings", "locked"], props);
   let authEnabled = Library.nested(["userSettings", "authEnabled"], props);
   let loggingOut = props.loggingOut;
   let authRequired = false;
@@ -169,7 +166,7 @@ export function authRequired(props) {
   return authRequired;
 }
 
-export function can(params: {do?: string, threshold?: any}) {
+export function can(params: { do?: string; threshold?: any }) {
   let allowed: boolean;
   let userId = id();
 
@@ -177,6 +174,8 @@ export function can(params: {do?: string, threshold?: any}) {
     allowed = false;
   } else if (Roles.userIsInRole(id(), "super-admin")) {
     allowed = true;
+  } else if (params.threshold && params.threshold === "admin") {
+    allowed = Roles.userIsInRole(this.userId, ["super-admin", "admin"]);
   } else if (params.threshold) {
     allowed = Roles.userIsInRole(id(), params.threshold);
   } else {
@@ -185,3 +184,5 @@ export function can(params: {do?: string, threshold?: any}) {
 
   return allowed;
 }
+
+// Roles.userIsInRole(this.userId, ["super-admin", "admin"]);

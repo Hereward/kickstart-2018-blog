@@ -97,11 +97,13 @@
     "no-extra-bind": "warn",
     "no-empty": "off",
     "react/no-unused-state": "react/no-unused-state",
+    "react/jsx-closing-bracket-location": "off",
     "no-unused-expressions": "warn",
     "semi": ["error", "always"],
     "no-lonely-if": "warn",
     "no-continue": "warn",
     "yoda": "warn",
+    "react/jsx-first-prop-new-line": "off",
     "react/jsx-curly-brace-presence": "warn",
     "prefer-arrow-callback": ["off",
       {

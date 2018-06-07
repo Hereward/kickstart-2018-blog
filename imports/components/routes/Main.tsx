@@ -9,6 +9,7 @@ import Authenticator from "../pages/User/Authenticator";
 import Register from "../pages/User/Register";
 import SignIn from "../pages/User/SignIn";
 import Locked from "../pages/Notification/Locked";
+import Offline from "../partials/Offline";
 import VerifyEmail from "../pages/User/VerifyEmail";
 import ForgotPassWordReset from "../pages/User/ForgotPassWordReset";
 import ChangePassword from "../pages/User/ChangePassword";
@@ -25,16 +26,19 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
   let locked = Library.nested(["userSettings", "locked"], cProps);
   let path = cProps.location.pathname;
   let redirectTo: string;
+  let admin = User.can({ threshold: "super-admin" });
 
   if (locked && path !== "/locked") {
     redirectTo = "/locked";
-  } else if (authRequired && path !== "/authenticate") {
+  } else if (authRequired && path !== "/members/authenticate") {
     redirectTo = "/authenticate";
-  } else if (cProps.userId && locked === false && path === "/locked") {
+  } else if (cProps.userId && locked === false && path === "/members/locked") {
     redirectTo = "/";
-  } else if (!authRequired && path === "/authenticate") {
+  } else if (!authRequired && path === "/members/authenticate") {
     redirectTo = "/";
   } else if (emailVerified === true && type === "emailVerify") {
+    redirectTo = "/";
+  } else if (type === "admin" && !User.loggingIn() && !admin) {
     redirectTo = "/";
   } else if (!cProps.userId && type === "user") {
     redirectTo = "/";
@@ -44,6 +48,8 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
 
   if (redirectTo) {
     return <RedirectRoute {...rest} path={redirectTo} />;
+  } else if (cProps.systemSettings && cProps.systemSettings.systemOnline !== true && !admin) {
+    return <Route {...rest} render={props => <Offline {...cProps} {...props} />} />;
   } else {
     return <Route {...rest} render={props => <Component {...cProps} {...props} />} />;
   }
@@ -52,17 +58,17 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
 const MainRouter = props => (
   <Switch>
     <AuthRoute exact path="/" cProps={props} component={Index} type="any" />
-    <AuthRoute path="/admin" cProps={props} component={Admin} type="any" />
+    <AuthRoute path="/admin" cProps={props} component={Admin} type="admin" />
     <AuthRoute path="/about" cProps={props} component={About} type="any" />
-    <AuthRoute path="/verify-email" cProps={props} component={VerifyEmail} type="emailVerify" />
-    <AuthRoute path="/forgot-password-reset" cProps={props} component={ForgotPassWordReset} type="guest" />
-    <AuthRoute path="/forgot-password" cProps={props} component={ForgotPassWord} type="guest" />
-    <AuthRoute path="/register" cProps={props} component={Register} type="guest" />
-    <AuthRoute path="/signin" cProps={props} component={SignIn} type="guest" />
-    <AuthRoute path="/authenticate" cProps={props} component={Authenticator} type="user" />
-    <AuthRoute path="/profile" cProps={props} component={Profile} type="user" />
-    <AuthRoute path="/locked" cProps={props} component={Locked} type="user" />
-    <AuthRoute path="/change-password" cProps={props} component={ChangePassword} type="user" />
+    <AuthRoute path="/members/verify-email" cProps={props} component={VerifyEmail} type="emailVerify" />
+    <AuthRoute path="/members/forgot-password-reset" cProps={props} component={ForgotPassWordReset} type="guest" />
+    <AuthRoute path="/members/forgot-password" cProps={props} component={ForgotPassWord} type="guest" />
+    <AuthRoute path="/members/register" cProps={props} component={Register} type="guest" />
+    <AuthRoute path="/members/signin" cProps={props} component={SignIn} type="guest" />
+    <AuthRoute path="/members/authenticate" cProps={props} component={Authenticator} type="user" />
+    <AuthRoute path="/members/profile" cProps={props} component={Profile} type="user" />
+    <AuthRoute path="/members/locked" cProps={props} component={Locked} type="user" />
+    <AuthRoute path="/members/change-password" cProps={props} component={ChangePassword} type="user" />
   </Switch>
 );
 

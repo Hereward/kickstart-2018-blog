@@ -12,4 +12,5 @@ import '../api/sessions/publish';
 import '../api/sessions/methods';
 import '../api/settings/publish'; 
 import '../api/settings/methods';
+import '../api/admin/publish';
 import '../api/admin/methods';

@@ -1,5 +1,6 @@
 import * as React from "react";
-import PropTypes from "prop-types";
+//import PropTypes from "prop-types";
+import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import { ListGroup, ListGroupItem } from "reactstrap";
 import UsersIcon from "@material-ui/icons/Contacts";
@@ -17,10 +18,23 @@ import Hidden from "@material-ui/core/Hidden";
 import Divider from "@material-ui/core/Divider";
 import MenuIcon from "@material-ui/icons/Menu";
 import * as Icon from "../../../modules/icons";
-//import { mailFolderListItems, otherMailFolderListItems } from './tileData';
+import Settings from "../../admin/panels/Settings";
 
 const drawerWidth = 240;
 let styles: any;
+
+interface IProps {
+  classes: any;
+  theme: any;
+  systemSettings: any;
+}
+
+interface IState {
+  showUsers: boolean;
+  mobileOpen: boolean;
+  ShowSettings: boolean;
+  panel: any;
+}
 
 styles = theme => ({
   smallTitle: {
@@ -38,6 +52,9 @@ styles = theme => ({
     maxWidth: "100%",
     top: "1.2rem",
     position: "absolute"
+  },
+  panelGroups: {
+    maxWidth: "40rem"
   },
   dashItem: {
     marginTop: "0.5rem"
@@ -57,6 +74,7 @@ styles = theme => ({
   },
   appBar: {
     position: "absolute",
+   // height: '4rem',
     marginLeft: drawerWidth,
     [theme.breakpoints.up("md")]: {
       width: `calc(100% - ${drawerWidth}px)`
@@ -77,38 +95,27 @@ styles = theme => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3
+    padding: theme.spacing.unit * 3,
+    [theme.breakpoints.down("sm")]: {
+      marginTop: '4rem',
+      paddingBottom: '8rem'
+    },
+    
   }
 });
-
-interface IProps {
-  classes: any;
-  theme: any;
-}
-
-interface IState {
-  showUsers: boolean;
-  mobileOpen: boolean;
-  ShowSettings: boolean;
-  panelText: string;
-}
-
-const labels = {
-  users: "You are editing users",
-  settings: "You are editing settings"
-}
 
 class Admin extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.handleSetState = this.handleSetState.bind(this);
     this.activatePanel = this.activatePanel.bind(this);
+    //this.toggleOnline = this.toggleOnline.bind(this);
 
     this.state = {
       showUsers: false,
       ShowSettings: false,
       mobileOpen: false,
-      panelText: labels.settings
+      panel: "settings"
     };
   }
 
@@ -116,6 +123,16 @@ class Admin extends React.Component<IProps, IState> {
   state = {
     mobileOpen: false
   };
+  */
+  /*
+  toggleOnline() {
+    toggleSystemOnline.call({}, err => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`toggleSystemOnline failed`, err);
+      }
+    });
+  }
   */
 
   handleDrawerToggle = () => {
@@ -126,8 +143,9 @@ class Admin extends React.Component<IProps, IState> {
     this.setState({ [sVar]: sVal });
   }
 
-  activatePanel(panel="") {
-    this.setState({panelText: labels[panel]});
+  activatePanel(panel = "") {
+    this.setState({ panel: panel, mobileOpen: false });
+    
     return true;
   }
 
@@ -139,7 +157,36 @@ class Admin extends React.Component<IProps, IState> {
     return <Icon.SettingsIcon onClick={this.handleSetState} stateName="ShowSettings" />;
   }
 
+  panel() {
+    return this.state.panel;
+  }
+
+  settingsPanel() {
+    return this.props.systemSettings ? <Settings systemSettings={this.props.systemSettings} /> : '' ;
+  }
+
+  renderPanel() {
+    let layout: any;
+
+    if (this.props.systemSettings) {
+      let name = this.state.panel;
+      switch (name) {
+        case "settings":
+          layout = this.settingsPanel();
+          break;
+        case "users":
+          layout = this.settingsPanel();
+          break;
+        default:
+          layout = "";
+      }
+    }
+
+    return layout;
+  }
+
   render() {
+    log.info(`ADMIN INDEX - settings`, this.props.systemSettings);
     const { classes, theme } = this.props;
 
     const drawer = (
@@ -149,21 +196,28 @@ class Admin extends React.Component<IProps, IState> {
         </Hidden>
         <Divider />
         <List component="nav">
-          <ListItem  onClick={() => {
-            this.activatePanel("settings");
-          }} button>
+          <ListItem
+            onClick={() => {
+              this.activatePanel("settings");
+            }}
+            button
+          >
             <ListItemIcon>
               <SettingsIcon />
             </ListItemIcon>
             <ListItemText primary="Settings" />
           </ListItem>
-          <ListItem onClick={() => {
-            this.activatePanel("users");
-          }} button>
+
+          <ListItem
+            onClick={() => {
+              this.activatePanel("users");
+            }}
+            button
+          >
             <ListItemIcon>
               <UsersIcon />
             </ListItemIcon>
-            <ListItemText primary="Users" />
+            <ListItemText primary="Manage Users" />
           </ListItem>
         </List>
       </div>
@@ -218,154 +272,23 @@ class Admin extends React.Component<IProps, IState> {
           </Drawer>
         </Hidden>
         <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <Typography noWrap>{this.state.panelText}</Typography>
+          <div className={classes.panelGroups}>{this.renderPanel()}</div>
         </main>
       </div>
     );
   }
 }
 
-export default withStyles(styles, { withTheme: true })(Admin);
-
 /*
+const bundle = withStyles(styles, { withTheme: true })(Admin);
 
-import * as React from "react";
-import PropTypes from "prop-types";
-import classNames from "classnames";
-import { withStyles } from "@material-ui/core/styles";
-import Drawer from "@material-ui/core/Drawer";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import List from "@material-ui/core/List";
-import MenuItem from "@material-ui/core/MenuItem";
-import TextField from "@material-ui/core/TextField";
-import Typography from "@material-ui/core/Typography";
-import Divider from "@material-ui/core/Divider";
-//import { mailFolderListItems, otherMailFolderListItems } from './tileData';
-
-const mailFolderListItems = "boo";
-const otherMailFolderListItems = "wee";
-
-const drawerWidth = 240;
-
-const styles = theme => ({
-  root: {
-    flexGrow: 1
-  },
-  appFrame: {
-    height: 430,
-    zIndex: 1,
-    overflow: "hidden",
-    position: "relative",
-    display: "flex",
-    width: "100%"
-  },
-  appBar: {
-    width: `calc(100% - ${drawerWidth}px)`
-  },
-  "appBar-left": {
-    marginLeft: drawerWidth
-  },
-  "appBar-right": {
-    marginRight: drawerWidth
-  },
-  drawerPaper: {
-    position: "relative",
-    width: drawerWidth
-  },
-  toolbar: theme.mixins.toolbar,
-  content: {
-    flexGrow: 1,
-    backgroundColor: theme.palette.background.default,
-    padding: theme.spacing.unit * 3
-  }
-});
-
-interface IProps {
-  classes: any;
-  theme: any;
-}
-
-interface IState {
-  anchor: string;
-}
-
-class Admin extends React.Component<IProps, IState> {
-  state = {
-    anchor: "left"
+export default withTracker(props => {
+ 
+  return {
+    
   };
-
-  handleChange = event => {
-    this.setState({
-      anchor: event.target.value
-    });
-  };
-
-  render() {
-    const { classes } = this.props;
-    const { anchor } = this.state;
-
-    const drawer = (
-      <Drawer
-        variant="permanent"
-        classes={{
-          paper: classes.drawerPaper
-        }}
-        anchor={anchor}
-      >
-        <div className={classes.toolbar} />
-        <Divider />
-        <List>{mailFolderListItems}</List>
-        <Divider />
-        <List>{otherMailFolderListItems}</List>
-      </Drawer>
-    );
-
-    let before = null;
-    let after = null;
-
-    if (anchor === "left") {
-      before = drawer;
-    } else {
-      after = drawer;
-    }
-
-    return (
-      <div className={classes.root}>
-        <TextField
-          id="permanent-anchor"
-          select
-          label="Anchor"
-          value={anchor}
-          onChange={this.handleChange}
-          margin="normal"
-        >
-          <MenuItem value="left">left</MenuItem>
-          <MenuItem value="right">right</MenuItem>
-        </TextField>
-        <div className={classes.appFrame}>
-          <AppBar position="absolute" className={classNames(classes.appBar, classes[`appBar-${anchor}`])}>
-            <Toolbar>
-              <Typography variant="title" color="inherit" noWrap>
-                Permanent drawer
-              </Typography>
-            </Toolbar>
-          </AppBar>
-          {before}
-          <main className={classes.content}>
-            <div className={classes.toolbar} />
-            <Typography>{"You think water moves fast? You should see ice."}</Typography>
-          </main>
-          {after}
-        </div>
-      </div>
-    );
-  }
-}
-
-
-
-export default withStyles(styles)(Admin);
-
+})(bundle);
 */
+
+export default withStyles(styles, { withTheme: true })(Admin);
+//systemSettings: systemSettings

@@ -10,6 +10,7 @@ import { userSettings } from "../settings/publish";
 import { Profiles } from "../profiles/publish";
 import { Images } from "../images/methods";
 import { can as userCan } from "../../modules/user";
+import { systemSettings } from "./publish";
 
 const authCheck = (methodName, userId, threshold = "") => {
   let auth = false;
@@ -28,6 +29,31 @@ const authCheck = (methodName, userId, threshold = "") => {
   }
   return auth;
 };
+
+
+
+export const toggleSystemOnline = new ValidatedMethod({
+  name: "admin.toggleSystemOnline",
+
+  validate: null,
+
+  run(fields) {
+    
+    if (!this.isSimulation) {
+      authCheck("toggleSystemOnline", this.userId, "admin");
+      //let ownerId = this.userId;
+      let settingsRecord: any;
+      settingsRecord = systemSettings.findOne({ active: true });
+
+      if (settingsRecord) {
+        let currentState = settingsRecord.systemOnline;
+        let newState = !currentState;
+        systemSettings.update(settingsRecord._id, { $set: { systemOnline: newState } });
+      }
+    }
+  }
+});
+
 
 export const assignRolesNewUser = new ValidatedMethod({
   name: "admin.assignRoles",

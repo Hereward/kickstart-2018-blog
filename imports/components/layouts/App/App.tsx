@@ -15,8 +15,11 @@ import { Profiles } from "../../../api/profiles/publish";
 import * as User from "../../../modules/user";
 import { userSessions } from "../../../api/sessions/publish";
 import { userSettings } from "../../../api/settings/publish";
+import { systemSettings } from "../../../api/admin/publish";
 import { Auth } from "../../../api/auth/publish";
 import Spinner from "../../partials/Spinner";
+import Offline from "../../partials/Offline";
+import * as Library from "../../../modules/library";
 //import rootReducer from "../../../redux/reducers";
 
 //declare var window: any;
@@ -39,6 +42,7 @@ interface IProps {
   sessionReady: boolean;
   connected: boolean;
   connectionRetryCount: number;
+  systemSettings: any;
 }
 
 interface IState {}
@@ -54,14 +58,21 @@ class App extends React.Component<IProps, IState> {
 
   componentWillUpdate() {}
 
-  componentDidUpdate(prevProps, prevState, snapshot) {}
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (prevProps.systemSettings !== this.props.systemSettings) {
+      Library.addMeta(this.props.systemSettings);
+    }
+  }
 
   componentWillMount() {}
 
   getLayout() {
     const path = this.props.history.location.pathname;
+    let admin = User.can({ threshold: "super-admin" });
     if (!this.props.sessionReady && !this.props.connected && this.props.connectionRetryCount > 1) {
       return <Spinner caption="connecting" type="page" />;
+      //} else if (this.props.systemSettings && this.props.systemSettings.systemOnline !== true && !admin) {
+      // return <Offline />;
     } else {
       return (
         <div className="router-parent d-flex flex-column">
@@ -86,8 +97,10 @@ export default withRouter(
       let profilesHandle = Meteor.subscribe("profiles");
       let userSettingsHandle = Meteor.subscribe("userSettings");
       let userSessionHandle = Meteor.subscribe("userSessions");
+      let systemSettingsHandle = Meteor.subscribe("systemSettings");
       let sessionReady = false;
       let userSession: any;
+      let systemSettingsRec = systemSettings.findOne();
       let userSettingsRec: any;
       //let userData: any;
       let sessionActive: boolean = false;
@@ -130,11 +143,14 @@ export default withRouter(
           profilesHandle.ready() &&
           userSettingsHandle.ready() &&
           userSessionHandle.ready() &&
+          systemSettingsHandle.ready() &&
           userData &&
           !loggingIn
         ) {
           sessionReady = true;
         }
+
+        log.info(`APP - settings`, systemSettingsRec);
       }
 
       /*
@@ -164,7 +180,8 @@ export default withRouter(
         sessionToken: sessionToken,
         sessionReady: sessionReady,
         connected: connected,
-        connectionRetryCount: connectionRetryCount
+        connectionRetryCount: connectionRetryCount,
+        systemSettings: systemSettingsRec
       };
     })(App)
   )

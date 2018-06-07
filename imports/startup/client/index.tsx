@@ -11,7 +11,7 @@ import * as jquery from "jquery";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import blue from "@material-ui/core/colors/blue";
 import App from "../../components/layouts/App/App";
-import { addMeta } from "./meta";
+//import { addMeta } from "./meta";
 import * as Library from "../../modules/library";
 import * as ContentManagement from "../../modules/contentManagement";
 import { keepAliveUserSession } from "../../api/sessions/methods";
@@ -83,7 +83,7 @@ Meteor.startup(() => {
 
   //let token = localStorage.getItem('Meteor.sessionToken');
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
-  addMeta();
+  //addMeta();
   //validateLogin();
 
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;

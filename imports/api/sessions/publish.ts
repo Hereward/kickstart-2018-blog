@@ -2,9 +2,7 @@
 import { Meteor } from "meteor/meteor";
 
 declare var Mongo: any;
-
 export const userSessions = new Mongo.Collection("userSessions");
-//export const userSessionsAuth = new Mongo.Collection("userSessionsAuth");
 
 if (Meteor.isServer) {
 
@@ -28,36 +26,6 @@ if (Meteor.isServer) {
       }
     );
   });
-/*
-  userSessionsAuth.deny({
-    insert() {
-      return true;
-    },
-    update() {
-      return true;
-    },
-    remove() {
-      return true;
-    }
-  });
-
-  Meteor.publish("userSessionsAuth", function userSessionsAuthPublication() {
-    return userSessionsAuth.find(
-      { owner: this.userId },
-      {
-        fields: {
-          _id: 1,
-          sessionToken: 1,
-          currentAttempts: 1,
-          verified: 1,
-          owner: 1
-        }
-      }
-    );
-  });
-  */
-
-  // userSessions.remove({});
 
   userSessions.deny({
     insert() {

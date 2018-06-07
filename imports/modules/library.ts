@@ -1,12 +1,20 @@
 //import swal from 'sweetalert';
 //declare var _swal: any;
-import * as _swal from 'sweetalert';
-import { SweetAlert } from 'sweetalert/typings/core';
+import * as _swal from "sweetalert";
+import { SweetAlert } from "sweetalert/typings/core";
 import * as User from "./user";
 
 const temp: any = _swal;
 const swal: SweetAlert = temp;
 declare var window: any;
+
+declare var DocHead: any;
+
+export function addMeta(systemSettings) {
+  let metaInfo = { name: "viewport", content: "width=device-width, initial-scale=1" };
+  DocHead.addMeta(metaInfo);
+  DocHead.setTitle(systemSettings.mainTitle);
+}
 
 const authErrors = {
   invalidCode: "Invalid Code",
@@ -59,11 +67,10 @@ export function modalErrorAlert(params: any) {
   let message: string;
   let title: string;
   let detail: string;
-  let text = '';
-  let location = '';
+  let text = "";
+  let location = "";
   let obj = arguments[0];
   if (typeof arguments[0] === "object") {
-    
     message = obj.message;
     title = obj.title || "Oops, something went wrong!";
     detail = obj.detail;

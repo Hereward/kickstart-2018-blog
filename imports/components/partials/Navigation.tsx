@@ -52,6 +52,7 @@ interface IProps {
   connectionRetryCount: number;
   dispatch: any;
   loggingOut: boolean;
+  systemSettings: any;
 }
 
 interface IState {
@@ -154,11 +155,11 @@ class Navigation extends React.Component<IProps, IState> {
           Sign Out
         </DropdownItem>
 
-        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/profile">
+        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/members/profile">
           Profile
         </DropdownItem>
 
-        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/change-password">
+        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/members/change-password">
           Change Password
         </DropdownItem>
       </DropdownMenu>
@@ -166,14 +167,14 @@ class Navigation extends React.Component<IProps, IState> {
 
     let SignedOutLayout = (
       <DropdownMenu>
-        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/register">
+        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/members/register">
           Register
         </DropdownItem>
 
-        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/signin">
+        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/members/signin">
           Sign In
         </DropdownItem>
-        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/forgot-password">
+        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/members/forgot-password">
           Forgot Password
         </DropdownItem>
       </DropdownMenu>
@@ -212,51 +213,65 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   navBar() {
+    const cPath = this.props.history.location.pathname;
+    log.info(`NAV cPATH`, cPath);
+    let admin = User.can({ threshold: "super-admin" });
     return (
       <div>
         <Navbar color="dark" expand="md" className="main-nav fixed-top" dark>
           <div className="navbar-brand verified">
             {this.props.ShortTitle}{" "}
-            <DashDisplay
-              userSession={this.props.userSession}
-              userSettings={this.props.userSettings}
-              enhancedAuth={this.props.enhancedAuth}
-              loggingOut={this.props.loggingOut}
-              loggingIn={this.props.loggingIn}
-              userData={this.props.userData}
-              userId={this.props.userId}
-              sessionExpired={this.props.sessionExpired}
-              sessionReady={this.props.sessionReady}
-              connected={this.props.connected}
-              connectionRetryCount={this.props.connectionRetryCount}
-            />
+            {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin ? (
+              <DashDisplay
+                userSession={this.props.userSession}
+                userSettings={this.props.userSettings}
+                enhancedAuth={this.props.enhancedAuth}
+                loggingOut={this.props.loggingOut}
+                loggingIn={this.props.loggingIn}
+                userData={this.props.userData}
+                userId={this.props.userId}
+                sessionExpired={this.props.sessionExpired}
+                sessionReady={this.props.sessionReady}
+                connected={this.props.connected}
+                connectionRetryCount={this.props.connectionRetryCount}
+              />
+            ) : (
+              ""
+            )}
           </div>
+
           <NavbarToggler onClick={this.toggleNavbar} />
-          <Collapse isOpen={!this.state.collapsed} navbar>
-            <Nav className="ml-auto" navbar>
-              <NavItem>
-                <NavLink onClick={this.closeNavbar} tag={Link} to="/">
-                  Home
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink onClick={this.closeNavbar} tag={Link} to="About">
-                  About
-                </NavLink>
-              </NavItem>
-              {User.can({ threshold: "admin" }) ? (
-                <NavLink onClick={this.closeNavbar} tag={Link} to="admin">
-                  Admin
-                </NavLink>
-              ) : null}
-              <UncontrolledDropdown nav inNavbar>
-                <DropdownToggle nav caret>
-                  Members
-                </DropdownToggle>
-                {this.getAuthLayout()}
-              </UncontrolledDropdown>
-            </Nav>
-          </Collapse>
+          {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin ? (
+            <Collapse isOpen={!this.state.collapsed} navbar>
+              <Nav className="ml-auto" navbar>
+                <NavItem className={cPath === "/" ? "active" : ""}>
+                  <NavLink onClick={this.closeNavbar} tag={Link} to="/">
+                    Home
+                  </NavLink>
+                </NavItem>
+                <NavItem className={cPath.match(/about/) ? "active" : ""}>
+                  <NavLink onClick={this.closeNavbar} tag={Link} to="/about">
+                    About
+                  </NavLink>
+                </NavItem>
+                {User.can({ threshold: "admin" }) ? (
+                  <NavItem className={cPath.match(/admin/) ? "active" : ""}>
+                    <NavLink onClick={this.closeNavbar} tag={Link} to="/admin">
+                      Admin
+                    </NavLink>
+                  </NavItem>
+                ) : null}
+                <UncontrolledDropdown nav inNavbar>
+                  <DropdownToggle className={cPath.match(/members/) ? "active" : ""} nav caret>
+                    Members
+                  </DropdownToggle>
+                  {this.getAuthLayout()}
+                </UncontrolledDropdown>
+              </Nav>
+            </Collapse>
+          ) : (
+            ""
+          )}
         </Navbar>
       </div>
     );
