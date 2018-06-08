@@ -3,7 +3,7 @@ import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
 import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import { Session } from "meteor/session";
 import { connect } from "react-redux";
@@ -15,7 +15,6 @@ import {
   NavbarBrand,
   Nav,
   NavItem,
-  NavLink,
   UncontrolledDropdown,
   DropdownToggle,
   DropdownMenu,
@@ -151,31 +150,44 @@ class Navigation extends React.Component<IProps, IState> {
   getAuthLayout() {
     let SignedInLayout = (
       <DropdownMenu>
-        <DropdownItem onClick={this.logOut} tag={Link} to="#" className="nav-link">
-          Sign Out
+        <DropdownItem>
+          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="#">
+            Sign Out
+          </NavLink>
         </DropdownItem>
 
-        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/members/profile">
-          Profile
+        <DropdownItem>
+          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/members/profile">
+            Profile
+          </NavLink>
         </DropdownItem>
 
-        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/members/change-password">
-          Change Password
+        <DropdownItem>
+          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/members/change-password">
+            Change Password
+          </NavLink>
         </DropdownItem>
       </DropdownMenu>
     );
 
     let SignedOutLayout = (
       <DropdownMenu>
-        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/members/register">
-          Register
+        <DropdownItem>
+          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/members/register">
+            Register
+          </NavLink>
         </DropdownItem>
 
-        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/members/signin">
-          Sign In
+        <DropdownItem>
+          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/members/signin">
+            Sign In
+          </NavLink>
         </DropdownItem>
-        <DropdownItem onClick={this.closeNavbar} className="nav-link" tag={Link} to="/members/forgot-password">
-          Forgot Password
+
+        <DropdownItem>
+          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/members/forgot-password">
+            Forgot Password
+          </NavLink>
         </DropdownItem>
       </DropdownMenu>
     );
@@ -212,9 +224,11 @@ class Navigation extends React.Component<IProps, IState> {
     }
   }
 
+  // className={cPath === "/" ? "active" : ""}
+
   navBar() {
     const cPath = this.props.history.location.pathname;
-    log.info(`NAV cPATH`, cPath);
+    //log.info(`NAV cPATH`, cPath);
     let admin = User.can({ threshold: "super-admin" });
     return (
       <div>
@@ -244,19 +258,19 @@ class Navigation extends React.Component<IProps, IState> {
           {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin ? (
             <Collapse isOpen={!this.state.collapsed} navbar>
               <Nav className="ml-auto" navbar>
-                <NavItem className={cPath === "/" ? "active" : ""}>
-                  <NavLink onClick={this.closeNavbar} tag={Link} to="/">
+                <NavItem>
+                  <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/">
                     Home
                   </NavLink>
                 </NavItem>
-                <NavItem className={cPath.match(/about/) ? "active" : ""}>
-                  <NavLink onClick={this.closeNavbar} tag={Link} to="/about">
+                <NavItem>
+                  <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/about">
                     About
                   </NavLink>
                 </NavItem>
                 {User.can({ threshold: "admin" }) ? (
                   <NavItem className={cPath.match(/admin/) ? "active" : ""}>
-                    <NavLink onClick={this.closeNavbar} tag={Link} to="/admin">
+                    <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/admin">
                       Admin
                     </NavLink>
                   </NavItem>

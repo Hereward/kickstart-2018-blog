@@ -24,6 +24,7 @@ const drawerWidth = 240;
 let styles: any;
 
 interface IProps {
+  history: any;
   classes: any;
   theme: any;
   systemSettings: any;
@@ -37,6 +38,9 @@ interface IState {
 }
 
 styles = theme => ({
+  selected: {
+    color: "red"
+  },
   smallTitle: {
     fontSize: "small"
   },
@@ -56,6 +60,9 @@ styles = theme => ({
   panelGroups: {
     maxWidth: "40rem"
   },
+  fuckyou: {
+    color: "red"
+  },
   dashItem: {
     marginTop: "0.5rem"
   },
@@ -74,7 +81,7 @@ styles = theme => ({
   },
   appBar: {
     position: "absolute",
-   // height: '4rem',
+    // height: '4rem',
     marginLeft: drawerWidth,
     [theme.breakpoints.up("md")]: {
       width: `calc(100% - ${drawerWidth}px)`
@@ -97,10 +104,9 @@ styles = theme => ({
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
     [theme.breakpoints.down("sm")]: {
-      marginTop: '4rem',
-      paddingBottom: '8rem'
-    },
-    
+      marginTop: "4rem",
+      paddingBottom: "8rem"
+    }
   }
 });
 
@@ -117,6 +123,7 @@ class Admin extends React.Component<IProps, IState> {
       mobileOpen: false,
       panel: "settings"
     };
+    //log.info(`Admin CONSTRUCTOR`, this.props.history);
   }
 
   /*
@@ -145,7 +152,7 @@ class Admin extends React.Component<IProps, IState> {
 
   activatePanel(panel = "") {
     this.setState({ panel: panel, mobileOpen: false });
-    
+
     return true;
   }
 
@@ -162,7 +169,7 @@ class Admin extends React.Component<IProps, IState> {
   }
 
   settingsPanel() {
-    return this.props.systemSettings ? <Settings systemSettings={this.props.systemSettings} /> : '' ;
+    return this.props.systemSettings ? <Settings systemSettings={this.props.systemSettings} /> : "";
   }
 
   renderPanel() {
@@ -185,8 +192,18 @@ class Admin extends React.Component<IProps, IState> {
     return layout;
   }
 
+  getNavStyle(panel = "") {
+    let out: any;
+    const { classes, theme } = this.props;
+    if (panel === this.state.panel) {
+      out = classes.selected;
+    }
+
+    return out;
+  }
+
   render() {
-    log.info(`ADMIN INDEX - settings`, this.props.systemSettings);
+    //log.info(`ADMIN INDEX - settings`, this.props.systemSettings);
     const { classes, theme } = this.props;
 
     const drawer = (
@@ -202,10 +219,10 @@ class Admin extends React.Component<IProps, IState> {
             }}
             button
           >
-            <ListItemIcon>
+            <ListItemIcon classes={{ root: this.getNavStyle("settings") }}>
               <SettingsIcon />
             </ListItemIcon>
-            <ListItemText primary="Settings" />
+            <ListItemText classes={{ primary: this.getNavStyle("settings") }} primary="Settings" />
           </ListItem>
 
           <ListItem
@@ -214,10 +231,10 @@ class Admin extends React.Component<IProps, IState> {
             }}
             button
           >
-            <ListItemIcon>
+            <ListItemIcon classes={{ root: this.getNavStyle("users") }}>
               <UsersIcon />
             </ListItemIcon>
-            <ListItemText primary="Manage Users" />
+            <ListItemText classes={{ primary: this.getNavStyle("users") }} primary="Manage Users" />
           </ListItem>
         </List>
       </div>

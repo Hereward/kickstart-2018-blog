@@ -150,7 +150,7 @@ export default withRouter(
           sessionReady = true;
         }
 
-        log.info(`APP - settings`, systemSettingsRec);
+        //log.info(`APP - settings`, systemSettingsRec);
       }
 
       /*

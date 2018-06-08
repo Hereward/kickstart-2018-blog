@@ -58,17 +58,17 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
 const MainRouter = props => (
   <Switch>
     <AuthRoute exact path="/" cProps={props} component={Index} type="any" />
-    <AuthRoute path="/admin" cProps={props} component={Admin} type="admin" />
-    <AuthRoute path="/about" cProps={props} component={About} type="any" />
+    <AuthRoute exact path="/admin" cProps={props} component={Admin} type="admin" />
+    <AuthRoute exact path="/about" cProps={props} component={About} type="any" />
     <AuthRoute path="/members/verify-email" cProps={props} component={VerifyEmail} type="emailVerify" />
     <AuthRoute path="/members/forgot-password-reset" cProps={props} component={ForgotPassWordReset} type="guest" />
-    <AuthRoute path="/members/forgot-password" cProps={props} component={ForgotPassWord} type="guest" />
-    <AuthRoute path="/members/register" cProps={props} component={Register} type="guest" />
-    <AuthRoute path="/members/signin" cProps={props} component={SignIn} type="guest" />
-    <AuthRoute path="/members/authenticate" cProps={props} component={Authenticator} type="user" />
-    <AuthRoute path="/members/profile" cProps={props} component={Profile} type="user" />
-    <AuthRoute path="/members/locked" cProps={props} component={Locked} type="user" />
-    <AuthRoute path="/members/change-password" cProps={props} component={ChangePassword} type="user" />
+    <AuthRoute exact path="/members/forgot-password" cProps={props} component={ForgotPassWord} type="guest" />
+    <AuthRoute exact path="/members/register" cProps={props} component={Register} type="guest" />
+    <AuthRoute exact path="/members/signin" cProps={props} component={SignIn} type="guest" />
+    <AuthRoute exact path="/members/authenticate" cProps={props} component={Authenticator} type="user" />
+    <AuthRoute exact path="/members/profile" cProps={props} component={Profile} type="user" />
+    <AuthRoute exact path="/members/locked" cProps={props} component={Locked} type="user" />
+    <AuthRoute exact path="/members/change-password" cProps={props} component={ChangePassword} type="user" />
   </Switch>
 );
 
