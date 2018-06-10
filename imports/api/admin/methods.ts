@@ -30,6 +30,31 @@ const authCheck = (methodName, userId, threshold = "") => {
   return auth;
 };
 
+export const updateSettings = new ValidatedMethod({
+  name: "admin.updateSettings",
+  validate: new SimpleSchema({
+    mainTitle: { type: String },
+    shortTitle: { type: String },
+    copyright: { type: String }
+  }).validator(),
+
+  run(fields) {
+    if (!this.isSimulation) {
+      authCheck("updateSettings", this.userId, "admin");
+
+      systemSettings.update({ active: true }, {
+          $set: {
+            mainTitle: fields.mainTitle,
+            shortTitle: fields.shortTitle,
+            copyright: fields.copyright,
+          }
+        });
+    }
+
+    return true;
+  }
+});
+
 
 
 export const toggleSystemOnline = new ValidatedMethod({

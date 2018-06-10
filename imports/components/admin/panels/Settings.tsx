@@ -12,7 +12,7 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import PowerIcon from "@material-ui/icons/SettingsPower";
 import Typography from "@material-ui/core/Typography";
-import { toggleSystemOnline } from "../../../api/admin/methods";
+import { toggleSystemOnline, updateSettings } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import SettingsForm from "../../admin/forms/SettingsForm";
 
@@ -24,7 +24,6 @@ interface IProps {
   theme: any;
   SystemOnline: boolean;
   systemSettings: any;
-  settings: any;
 }
 
 interface IState {
@@ -32,6 +31,7 @@ interface IState {
   mainTitle: string;
   shortTitle: string;
   copyright: string;
+  updateDone: boolean;
 }
 
 styles = theme => ({
@@ -59,13 +59,32 @@ styles = theme => ({
 class Settings extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+
     this.state = {
       allowSubmit: true,
-      mainTitle: "",
-      shortTitle: "",
-      copyright: ""
+      mainTitle: this.props.systemSettings.mainTitle,
+      shortTitle: this.props.systemSettings.shortTitle,
+      copyright: this.props.systemSettings.copyright,
+      updateDone: false
     };
   }
+
+  /*
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (!nextProps.systemSettings) {
+      return null;
+    }
+
+    log.info(`getDerivedStateFromProps - FUCKING YOU UP`, nextProps);
+    return {
+      mainTitle: nextProps.systemSettings.mainTitle,
+      shortTitle: nextProps.systemSettings.shortTitle,
+      copyright: nextProps.systemSettings.copyright
+    };
+  }
+  */
 
   toggleOnline = () => event => {
     toggleSystemOnline.call({}, err => {
@@ -76,30 +95,33 @@ class Settings extends React.Component<IProps, IState> {
     });
   };
 
-  zhandleChange = name => event => {
-    log.info(`admin handleChange`, name, event.target.value);
-    /*
-    this.setState({
-      [name]: event.target.value,
-    });
-    */
-  };
-
   handleChange(e) {
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let id = target.id;
-    this.setState({ [id]: value });
+    this.setState({ [id]: value, updateDone: false });
+    log.info(`admin handleChange`, id, value, this.state);
   }
 
   handleSubmit() {
     log.info(`admin submit`, this.state);
+    this.setState({ allowSubmit: false, updateDone: true });
+    const settings = {
+      mainTitle: this.state.mainTitle,
+      shortTitle: this.state.shortTitle,
+      copyright: this.state.copyright
+    };
+
+    updateSettings.call(settings, err => {
+      this.setState({ allowSubmit: true });
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+      }
+    });
   }
 
-  handleSetState() {}
-
   layout() {
-    
+    //log.info(`Settings`, this.props, this.state);
     return (
       <div>
         <h2 className={this.props.classes.heading}>General Settings</h2>
@@ -114,8 +136,8 @@ class Settings extends React.Component<IProps, IState> {
           allowSubmit={this.state.allowSubmit}
           handleChange={this.handleChange}
           handleSubmit={this.handleSubmit}
-          handleSetState={this.handleSetState}
-          settingsObj={this.props.settings}
+          settingsObj={this.props.systemSettings}
+          updateDone={this.state.updateDone}
         />
       </div>
     );

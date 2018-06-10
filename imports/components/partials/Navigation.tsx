@@ -151,7 +151,7 @@ class Navigation extends React.Component<IProps, IState> {
     let SignedInLayout = (
       <DropdownMenu>
         <DropdownItem>
-          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="#">
+          <NavLink exact className="nav-link" onClick={this.logOut} to="#">
             Sign Out
           </NavLink>
         </DropdownItem>
@@ -234,7 +234,7 @@ class Navigation extends React.Component<IProps, IState> {
       <div>
         <Navbar color="dark" expand="md" className="main-nav fixed-top" dark>
           <div className="navbar-brand verified">
-            {this.props.ShortTitle}{" "}
+            {this.props.systemSettings ? this.props.systemSettings.shortTitle: ''}{" "}
             {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin ? (
               <DashDisplay
                 userSession={this.props.userSession}

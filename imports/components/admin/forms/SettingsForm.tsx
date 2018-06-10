@@ -1,5 +1,6 @@
 import * as React from "react";
 import { withStyles } from "@material-ui/core/styles";
+import Done from "@material-ui/icons/Done";
 //import RaisedButton from "material-ui/RaisedButton";
 import Button from "@material-ui/core/Button";
 import * as BlockUi from "react-block-ui";
@@ -13,6 +14,7 @@ interface IProps {
   allowSubmit: boolean;
   settingsObj: any;
   classes: any;
+  updateDone: boolean;
 }
 
 interface IState {}
@@ -20,9 +22,18 @@ interface IState {}
 const styles = theme => ({
   adminSettingsForm: {
     marginTop: '1rem',
-    marginBottom: '1rem'
-  }
+    marginBottom: '1rem',
+  },
+
+  done: {
+    color: "red",
+    marginLeft: '1rem',
+    verticalAlign: 'middle'
+    //position: 'relative'
+  },
 });
+
+
 
 class SettingsForm extends React.Component<IProps, IState> {
   formID: string = "SettingsForm";
@@ -31,17 +42,19 @@ class SettingsForm extends React.Component<IProps, IState> {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.handleSetStateUpstream = this.handleSetStateUpstream.bind(this);
+
   }
 
   componentDidMount() {
     Validation.validate(this);
   }
 
+  /*
   handleSetStateUpstream(sVar, sVal) {
     this.props.handleSetState(sVar, sVal);
   }
 
+*/
   handleSubmit() {
     this.props.handleSubmit();
   }
@@ -75,6 +88,7 @@ class SettingsForm extends React.Component<IProps, IState> {
               <Button disabled={!this.props.allowSubmit} variant="raised" type="submit" color="primary">
                 Save
               </Button>
+              {this.props.updateDone ? <Done className={this.props.classes.done} /> : ''}
             </div>
           </form>
         </BlockUi>
