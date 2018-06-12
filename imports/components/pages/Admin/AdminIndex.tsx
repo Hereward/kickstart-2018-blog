@@ -19,6 +19,7 @@ import Divider from "@material-ui/core/Divider";
 import MenuIcon from "@material-ui/icons/Menu";
 import * as Icon from "../../../modules/icons";
 import Settings from "../../admin/panels/Settings";
+import Users from "../../admin/panels/Users";
 
 const drawerWidth = 240;
 let styles: any;
@@ -172,6 +173,10 @@ class Admin extends React.Component<IProps, IState> {
     return this.props.systemSettings ? <Settings systemSettings={this.props.systemSettings} /> : "";
   }
 
+  usersPanel() {
+    return this.props.systemSettings ? <Users systemSettings={this.props.systemSettings} /> : "";
+  }
+
   renderPanel() {
     let layout: any;
 
@@ -182,7 +187,7 @@ class Admin extends React.Component<IProps, IState> {
           layout = this.settingsPanel();
           break;
         case "users":
-          layout = this.settingsPanel();
+          layout = this.usersPanel();
           break;
         default:
           layout = "";

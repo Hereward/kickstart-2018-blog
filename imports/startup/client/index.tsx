@@ -1,4 +1,5 @@
 import * as React from "react";
+import * as PropTypes from "prop-types";
 import * as ReactDOM from "react-dom";
 import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
@@ -30,6 +31,15 @@ const muiTheme = createMuiTheme({
 declare var window: any;
 
 const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+
+/*
+Provider.childContextTypes = {
+  store: PropTypes.object
+};
+*/
+
+//log.info("INDEX.TSX - REDUX STORE", store.getState());
+//App.contextTypes = { store: PropTypes.object };
 
 class Launch extends React.Component {
   constructor(props) {
@@ -79,7 +89,7 @@ Accounts.onLogout(() => {
 });
 
 Meteor.startup(() => {
-  log.info(`Meteor.startup`, User.sessionToken("get"));
+  //log.info(`Meteor.startup`, User.sessionToken("get"));
 
   //let token = localStorage.getItem('Meteor.sessionToken');
   ReactDOM.render(<Launch />, document.getElementById("react-root"));

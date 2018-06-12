@@ -52,6 +52,7 @@ interface IProps {
   dispatch: any;
   loggingOut: boolean;
   systemSettings: any;
+  reduxState: any;
 }
 
 interface IState {
@@ -64,9 +65,10 @@ class Navigation extends React.Component<IProps, IState> {
   tipInitialised: boolean = false;
   clearTip: boolean = false;
   timerID: any;
+  reduxStore: any;
 
   emailVerifyPrompted: boolean;
-  constructor(props) {
+  constructor(props, context) {
     super(props);
     this.toggleNavbar = this.toggleNavbar.bind(this);
     this.closeNavbar = this.closeNavbar.bind(this);
@@ -78,6 +80,9 @@ class Navigation extends React.Component<IProps, IState> {
       tip: ""
     };
     this.emailVerifyPrompted = false;
+    
+    const { store } = context;
+    //log.info(`NAVIGATION PROPS`, this.props);
   }
 
   componentDidMount() {
@@ -228,13 +233,12 @@ class Navigation extends React.Component<IProps, IState> {
 
   navBar() {
     const cPath = this.props.history.location.pathname;
-    //log.info(`NAV cPATH`, cPath);
     let admin = User.can({ threshold: "super-admin" });
     return (
       <div>
         <Navbar color="dark" expand="md" className="main-nav fixed-top" dark>
           <div className="navbar-brand verified">
-            {this.props.systemSettings ? this.props.systemSettings.shortTitle: ''}{" "}
+            {this.props.systemSettings ? this.props.systemSettings.shortTitle : ""}{" "}
             {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin ? (
               <DashDisplay
                 userSession={this.props.userSession}
@@ -292,8 +296,12 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   render() {
+    //log.info(`NAVIGATION  - props`, this.props);
+
     return this.navBar();
   }
 }
 
-export default connect(state => state)(Navigation);
+export default Navigation;
+
+// state => state

@@ -9,23 +9,36 @@ export const systemSettings = new Mongo.Collection("systemSettings");
 
 if (Meteor.isServer) {
   Meteor.publish("systemSettings", function systemSettingsPublication() {
+    return systemSettings.find(
+      { active: true },
+      {
+        fields: {
+          systemOnline: 1,
+          active: 1,
+          mainTitle: 1,
+          shortTitle: 1,
+          copyright: 1
+        }
+      }
+    );
+  });
+
+  Meteor.publish("allUsers", function allUsersPublication() {
     let admin = false;
     if (this.userId) {
       admin = Roles.userIsInRole(this.userId, ["super-admin", "admin"]);
     }
-    
-    return systemSettings.find(
-      { active: true },
-      {
-      fields: {
-        systemOnline: 1,
-        active: 1,
-        mainTitle: 1,
-        shortTitle: 1,
-        copyright: 1,
-      }
-    });
+
+    if (!admin) {
+      return this.ready();
+    } else {
+      return Meteor.users.find({});
+    }
   });
+
+  // const MAX_USERS = 1000;
+  // sort({createdAt: -1})
+  // .limit(limit);
 
   Meteor.startup(function settingsStart() {
     let settingsRecord = systemSettings.findOne({ active: true });
@@ -40,7 +53,7 @@ if (Meteor.isServer) {
         createdAt: new Date()
       });
     }
-  }); 
+  });
 
   systemSettings.deny({
     insert() {

@@ -1,3 +1,5 @@
+
+/*
 declare var DocHead: any;
 
 export function addMeta() {
@@ -5,3 +7,5 @@ export function addMeta() {
   DocHead.addMeta(metaInfo);
   DocHead.setTitle(Meteor.settings.public.MainTitle);
 }
+
+*/

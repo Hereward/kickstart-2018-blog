@@ -1,5 +1,8 @@
 import * as React from "react";
+import { connect } from "react-redux";
+import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -15,6 +18,7 @@ import { toggleSystemOnline, updateSettings } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import SettingsForm from "../../admin/forms/SettingsForm";
 import Snackbar from "../../partials/Snackbar";
+import { systemSettings } from "../../../api/admin/publish";
 
 const drawerWidth = 240;
 let styles: any;
@@ -24,6 +28,8 @@ interface IProps {
   theme: any;
   SystemOnline: boolean;
   systemSettings: any;
+  dispatch: any;
+  cursorLimit: number;
 }
 
 interface IState {
@@ -33,6 +39,7 @@ interface IState {
   copyright: string;
   updateDone: boolean;
   snackbarIsOpen: boolean;
+  queryLimit: number;
 }
 
 styles = theme => ({
@@ -57,12 +64,16 @@ styles = theme => ({
   heading: { color: "dimGray" }
 });
 
-class Settings extends React.Component<IProps, IState> {
+class Users extends React.Component<IProps, IState> {
+  cursorBlock: number = 1;
+  currentLimitVal: number = 1;
+
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.closeSnackbar = this.closeSnackbar.bind(this);
+    this.loadMore = this.loadMore.bind(this);
 
     this.state = {
       allowSubmit: true,
@@ -70,13 +81,14 @@ class Settings extends React.Component<IProps, IState> {
       shortTitle: this.props.systemSettings.shortTitle,
       copyright: this.props.systemSettings.copyright,
       updateDone: false,
-      snackbarIsOpen: false
+      snackbarIsOpen: false,
+      queryLimit: 1
     };
   }
 
   closeSnackbar() {
     this.setState({ snackbarIsOpen: false });
-    log.info(`closing snackbar`);
+    //log.info(`closing snackbar`);
   }
 
   toggleOnline = () => event => {
@@ -113,33 +125,54 @@ class Settings extends React.Component<IProps, IState> {
     });
   }
 
+  loadMore() {
+    this.props.dispatch({ type: "LOAD_MORE", cursorBlock: this.cursorBlock });
+  }
+
   layout() {
     //log.info(`Settings`, this.props, this.state);
     return (
       <div>
-        <h2 className={this.props.classes.heading}>General Settings</h2>
+        <h2 className={this.props.classes.heading}>User Settings</h2>
 
-        <div className="form-group">
-          <div>
-            System Online: <Switch onChange={this.toggleOnline()} checked={this.props.systemSettings.systemOnline} />
-          </div>
+        <div>
+          <Button variant="raised" onClick={this.loadMore} size="medium" color="primary">
+            Load More
+          </Button>{" "}
+          CURRENT LIMIT: {this.props.cursorLimit}
         </div>
-
-        <SettingsForm
-          allowSubmit={this.state.allowSubmit}
-          handleChange={this.handleChange}
-          handleSubmit={this.handleSubmit}
-          settingsObj={this.props.systemSettings}
-          updateDone={this.state.updateDone}
-        />
         <Snackbar message="Update Succesful." close={this.closeSnackbar} isOpen={this.state.snackbarIsOpen} />
       </div>
     );
   }
 
   render() {
+    //log.info(`USERS PANEL PROPS`, this.props);
     return this.layout();
   }
 }
 
-export default withStyles(styles, { withTheme: true })(Settings);
+//const bundle = withStyles(styles, { withTheme: true });
+
+//export default withStyles(styles, { withTheme: true })(Users);
+
+const mapStateToProps = state => {
+  return { cursorLimit: state.cursorLimit };
+};
+
+export default connect(mapStateToProps)(
+  withTracker(props => {
+    const usersHandle = Meteor.subscribe("allUsers");
+    const options = {
+      sort: { createdAt: -1 },  
+      limit: props.cursorLimit
+    };
+    const users = Meteor.users.find({}, options).fetch();
+    //log.info(`ADMIN PROPS`, props);
+    log.info(`ADMIN USERS`, users);
+
+    return {
+      allUsers: users
+    };
+  })(withStyles(styles, { withTheme: true })(Users))
+);

@@ -36,13 +36,12 @@ interface IProps {
   signedIn: boolean;
   enhancedAuth: boolean;
   Email: string;
-  MainTitle: string;
-  ShortTitle: string;
   sessionToken: string;
   sessionReady: boolean;
   connected: boolean;
   connectionRetryCount: number;
   systemSettings: any;
+  reduxState: any;
 }
 
 interface IState {}
@@ -87,13 +86,21 @@ class App extends React.Component<IProps, IState> {
   }
 
   render() {
+    //log.info(`APP INTERNAL PROPS = `, this.props);
     return this.getLayout();
   }
 }
 
+// (state) => state
 export default withRouter(
-  connect(state => state)(
-    withTracker(() => {
+  connect(state => {
+    return { reduxState: state };
+  })(
+    withTracker(props => {
+       //log.info("APP PROPS", props);
+      // props.store.getState()
+      //let reduxState = state;
+
       let profilesHandle = Meteor.subscribe("profiles");
       let userSettingsHandle = Meteor.subscribe("userSettings");
       let userSessionHandle = Meteor.subscribe("userSessions");
@@ -101,6 +108,8 @@ export default withRouter(
       let sessionReady = false;
       let userSession: any;
       let systemSettingsRec = systemSettings.findOne();
+      //log.info("APP systemSettingsRec", systemSettingsRec);
+
       let userSettingsRec: any;
       //let userData: any;
       let sessionActive: boolean = false;
@@ -118,6 +127,8 @@ export default withRouter(
 
       let admin = false;
       let profile: any;
+
+      //log.info("APP userId", userId);
 
       if (userId && userData) {
         sessionToken = User.sessionToken("get");
@@ -165,8 +176,6 @@ export default withRouter(
   */
 
       return {
-        MainTitle: Meteor.settings.public.MainTitle,
-        ShortTitle: Meteor.settings.public.ShortTitle,
         enhancedAuth: enhancedAuth,
         userSettings: userSettingsRec,
         userSession: userSession,

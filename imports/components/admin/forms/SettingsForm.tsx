@@ -88,7 +88,6 @@ class SettingsForm extends React.Component<IProps, IState> {
               <Button disabled={!this.props.allowSubmit} variant="raised" type="submit" color="primary">
                 Save
               </Button>
-              {this.props.updateDone ? <Done className={this.props.classes.done} /> : ''}
             </div>
           </form>
         </BlockUi>
