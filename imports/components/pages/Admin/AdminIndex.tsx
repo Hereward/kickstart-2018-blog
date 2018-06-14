@@ -29,9 +29,11 @@ interface IProps {
   classes: any;
   theme: any;
   systemSettings: any;
+  sessionReady: boolean;
 }
 
 interface IState {
+  [x: number]: any;
   showUsers: boolean;
   mobileOpen: boolean;
   ShowSettings: boolean;
@@ -170,11 +172,11 @@ class Admin extends React.Component<IProps, IState> {
   }
 
   settingsPanel() {
-    return this.props.systemSettings ? <Settings systemSettings={this.props.systemSettings} /> : "";
+    return this.props.sessionReady ? <Settings systemSettings={this.props.systemSettings} /> : "";
   }
 
   usersPanel() {
-    return this.props.systemSettings ? <Users systemSettings={this.props.systemSettings} /> : "";
+    return this.props.sessionReady ? <Users systemSettings={this.props.systemSettings} /> : "";
   }
 
   renderPanel() {

@@ -32,6 +32,24 @@ body {
 }
 */
 
+.navbar-dark .navbar-nav .show > .nav-link {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+  color: #fff;
+}
+
+/*
+.navbar-dark .navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+  color: rgba(255, 255, 255, 1) !important;
+}
+*/
+
 .swal-text {
   background-color: GhostWhite;
   padding: 17px;

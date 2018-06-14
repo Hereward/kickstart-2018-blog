@@ -42,6 +42,8 @@ interface IProps {
   connectionRetryCount: number;
   systemSettings: any;
   reduxState: any;
+  loggingIn: boolean;
+  userId: string;
 }
 
 interface IState {}
@@ -67,8 +69,8 @@ class App extends React.Component<IProps, IState> {
 
   getLayout() {
     const path = this.props.history.location.pathname;
-    let admin = User.can({ threshold: "super-admin" });
-    if (!this.props.sessionReady && !this.props.connected && this.props.connectionRetryCount > 1) {
+    //let admin = User.can({ threshold: "super-admin" });
+    if (!this.props.systemSettings || (!this.props.connected && this.props.connectionRetryCount > 1)) {
       return <Spinner caption="connecting" type="page" />;
       //} else if (this.props.systemSettings && this.props.systemSettings.systemOnline !== true && !admin) {
       // return <Offline />;
@@ -77,7 +79,11 @@ class App extends React.Component<IProps, IState> {
         <div className="router-parent d-flex flex-column">
           <Header {...this.props} />
           <main>
-            <MainRouter {...this.props} />
+            {this.props.userId && (this.props.loggingIn || !this.props.sessionReady) ? (
+              <Spinner caption="logging in" type="page" />
+            ) : (
+              <MainRouter {...this.props} />
+            )}
           </main>
           {!path.match(/admin/) ? <Footer {...this.props} /> : ""}
         </div>
@@ -97,21 +103,17 @@ export default withRouter(
     return { reduxState: state };
   })(
     withTracker(props => {
-       //log.info("APP PROPS", props);
+      //log.info("APP PROPS", props);
       // props.store.getState()
       //let reduxState = state;
-
+      let userSettingsRec: any;
+      let systemSettingsRec = systemSettings.findOne();
       let profilesHandle = Meteor.subscribe("profiles");
       let userSettingsHandle = Meteor.subscribe("userSettings");
       let userSessionHandle = Meteor.subscribe("userSessions");
       let systemSettingsHandle = Meteor.subscribe("systemSettings");
       let sessionReady = false;
       let userSession: any;
-      let systemSettingsRec = systemSettings.findOne();
-      //log.info("APP systemSettingsRec", systemSettingsRec);
-
-      let userSettingsRec: any;
-      //let userData: any;
       let sessionActive: boolean = false;
       let sessionExpired: boolean = false;
       let enhancedAuth = Meteor.settings.public.enhancedAuth.active === false ? false : true;

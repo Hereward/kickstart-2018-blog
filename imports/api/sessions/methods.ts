@@ -34,6 +34,26 @@ const lockAccount = userId => {
   );
 };
 
+export const lockAccountToggle = userId => {
+  const settings = userSettings.findOne({ owner: userId });
+  
+  if (settings) {
+    const newSetting = !settings.locked;
+    if (newSetting === false) {
+      userSessions.remove({ owner: userId });
+    }
+
+    log.info(`lockAccountToggle`, newSetting, userId, settings);
+
+    userSettings.update(
+      { owner: userId },
+      {
+        $set: { locked: newSetting }
+      }
+    );
+  }
+};
+
 const sessionCheck = (methodName, sessionRecord = "", sessionToken = "") => {
   if (!sessionRecord) {
     log.error(`${methodName} - invalidSession`, sessionToken);
@@ -132,8 +152,6 @@ const initSessionAuthVerified = (userId, sessionToken) => {
   sessionRecordUpdated = userSessions.findOne(sessionRecord._id);
   return sessionRecordUpdated;
 };
-
-
 
 export const createUserSession = new ValidatedMethod({
   name: "UserSession.create",

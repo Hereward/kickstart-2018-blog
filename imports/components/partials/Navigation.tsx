@@ -19,6 +19,7 @@ import {
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
+  Dropdown,
   Tooltip,
   UncontrolledTooltip
 } from "reactstrap";
@@ -57,8 +58,7 @@ interface IProps {
 
 interface IState {
   collapsed: boolean;
-  tip: string;
-  verified: boolean;
+  dropdownOpen: boolean;
 }
 
 class Navigation extends React.Component<IProps, IState> {
@@ -72,15 +72,15 @@ class Navigation extends React.Component<IProps, IState> {
     super(props);
     this.toggleNavbar = this.toggleNavbar.bind(this);
     this.closeNavbar = this.closeNavbar.bind(this);
+    this.toggleDropDown = this.toggleDropDown.bind(this);
     this.logOut = this.logOut.bind(this);
     this.timerID = 0;
     this.state = {
       collapsed: true,
-      verified: false,
-      tip: ""
+      dropdownOpen: false
     };
     this.emailVerifyPrompted = false;
-    
+
     const { store } = context;
     //log.info(`NAVIGATION PROPS`, this.props);
   }
@@ -132,18 +132,22 @@ class Navigation extends React.Component<IProps, IState> {
     ) {
       notify = true;
     }
+    /*
     log.info(
       `verifyEmailNotificationRequired | notify=[${notify}]`,
       this.props.location.pathname,
       this.props.userSettings.authEnabled
     );
+    */
     return notify;
   }
 
+  toggleDropDown() {
+    this.setState({ dropdownOpen: !this.state.dropdownOpen });
+  }
+
   closeNavbar() {
-    if (!this.state.collapsed) {
-      this.setState({ collapsed: true });
-    }
+    this.setState({ collapsed: true, dropdownOpen: false });
   }
 
   toggleNavbar() {
@@ -155,45 +159,33 @@ class Navigation extends React.Component<IProps, IState> {
   getAuthLayout() {
     let SignedInLayout = (
       <DropdownMenu>
-        <DropdownItem>
-          <NavLink exact className="nav-link" onClick={this.logOut} to="#">
-            Sign Out
-          </NavLink>
-        </DropdownItem>
+        <NavLink exact className="dropdown-item nav-link" onClick={this.logOut} to="#">
+          Sign Out
+        </NavLink>
 
-        <DropdownItem>
-          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/members/profile">
-            Profile
-          </NavLink>
-        </DropdownItem>
+        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to="/members/profile">
+          Profile
+        </NavLink>
 
-        <DropdownItem>
-          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/members/change-password">
-            Change Password
-          </NavLink>
-        </DropdownItem>
+        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to="/members/change-password">
+          Change Password
+        </NavLink>
       </DropdownMenu>
     );
 
     let SignedOutLayout = (
       <DropdownMenu>
-        <DropdownItem>
-          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/members/register">
-            Register
-          </NavLink>
-        </DropdownItem>
+        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to="/members/register">
+          Register
+        </NavLink>
 
-        <DropdownItem>
-          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/members/signin">
-            Sign In
-          </NavLink>
-        </DropdownItem>
+        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to="/members/signin">
+          Sign In
+        </NavLink>
 
-        <DropdownItem>
-          <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/members/forgot-password">
-            Forgot Password
-          </NavLink>
-        </DropdownItem>
+        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to="/members/forgot-password">
+          Forgot Password
+        </NavLink>
       </DropdownMenu>
     );
 
@@ -230,7 +222,6 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   // className={cPath === "/" ? "active" : ""}
-
   navBar() {
     const cPath = this.props.history.location.pathname;
     let admin = User.can({ threshold: "super-admin" });
@@ -279,12 +270,13 @@ class Navigation extends React.Component<IProps, IState> {
                     </NavLink>
                   </NavItem>
                 ) : null}
-                <UncontrolledDropdown nav inNavbar>
+
+                <Dropdown nav inNavbar isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown}>
                   <DropdownToggle className={cPath.match(/members/) ? "active" : ""} nav caret>
                     Members
                   </DropdownToggle>
                   {this.getAuthLayout()}
-                </UncontrolledDropdown>
+                </Dropdown>
               </Nav>
             </Collapse>
           ) : (
@@ -295,8 +287,12 @@ class Navigation extends React.Component<IProps, IState> {
     );
   }
 
+  // nav inNavbar
+
+  // <UncontrolledDropdown nav inNavbar>
+
   render() {
-    //log.info(`NAVIGATION  - props`, this.props);
+    log.info(`NAVIGATION STATE`, this.state);
 
     return this.navBar();
   }

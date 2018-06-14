@@ -22,8 +22,7 @@ class Locked extends React.Component<IProps> {
       <div className="container page-content">
         <h1>Account Locked</h1>
         <div>
-          You exceeded the maximum allowed number of authentication attempts while logging in. Your account is now
-          locked on all client sessions. Please contact Admin to reinstate access.
+          Your account has been locked. This can happen for a variety of reasons. Please contact Admin to reinstate access.
         </div>
       </div>
     );

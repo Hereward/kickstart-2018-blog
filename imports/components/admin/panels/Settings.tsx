@@ -1,7 +1,13 @@
 import * as React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import TextField from "@material-ui/core/TextField";
 import Switch from "@material-ui/core/Switch";
+import { toggleSystemOnline, updateSettings } from "../../../api/admin/methods";
+import * as Library from "../../../modules/library";
+import SettingsForm from "../../admin/forms/SettingsForm";
+import Snackbar from "../../partials/Snackbar";
+
+/*
+import TextField from "@material-ui/core/TextField";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -11,10 +17,7 @@ import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import PowerIcon from "@material-ui/icons/SettingsPower";
 import Typography from "@material-ui/core/Typography";
-import { toggleSystemOnline, updateSettings } from "../../../api/admin/methods";
-import * as Library from "../../../modules/library";
-import SettingsForm from "../../admin/forms/SettingsForm";
-import Snackbar from "../../partials/Snackbar";
+*/
 
 const drawerWidth = 240;
 let styles: any;
@@ -27,6 +30,7 @@ interface IProps {
 }
 
 interface IState {
+  [x: number]: any;
   allowSubmit: boolean;
   mainTitle: string;
   shortTitle: string;

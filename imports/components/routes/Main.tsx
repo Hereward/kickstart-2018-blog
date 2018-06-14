@@ -30,6 +30,8 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
 
   if (locked && path !== "/locked") {
     redirectTo = "/locked";
+  } else if (!locked && !authRequired && path === "/locked") {
+    redirectTo = "/";
   } else if (authRequired && path !== "/members/authenticate") {
     redirectTo = "/authenticate";
   } else if (cProps.userId && locked === false && path === "/members/locked") {
@@ -67,7 +69,7 @@ const MainRouter = props => (
     <AuthRoute exact path="/members/signin" cProps={props} component={SignIn} type="guest" />
     <AuthRoute exact path="/members/authenticate" cProps={props} component={Authenticator} type="user" />
     <AuthRoute exact path="/members/profile" cProps={props} component={Profile} type="user" />
-    <AuthRoute exact path="/members/locked" cProps={props} component={Locked} type="user" />
+    <AuthRoute exact path="/locked" cProps={props} component={Locked} type="user" />
     <AuthRoute exact path="/members/change-password" cProps={props} component={ChangePassword} type="user" />
   </Switch>
 );

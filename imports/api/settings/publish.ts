@@ -1,5 +1,6 @@
 //import { Mongo } from "meteor/mongo";
 import { Meteor } from "meteor/meteor";
+import { Roles } from "meteor/alanning:roles";
 
 declare var Mongo: any;
 
@@ -20,6 +21,20 @@ if (Meteor.isServer) {
       }
     );
   });
+
+  Meteor.publish("allSettings", function allUsersPublication() {
+    let admin = false;
+    if (this.userId) {
+      admin = Roles.userIsInRole(this.userId, ["super-admin", "admin"]);
+    }
+
+    if (!admin) {
+      return this.ready();
+    } else {
+      return userSettings.find({});
+    }
+  });
+
 
   userSettings.deny({
     insert() {

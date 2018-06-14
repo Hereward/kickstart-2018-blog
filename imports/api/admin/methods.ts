@@ -11,6 +11,7 @@ import { Profiles } from "../profiles/publish";
 import { Images } from "../images/methods";
 import { can as userCan } from "../../modules/user";
 import { systemSettings } from "./publish";
+import { lockAccountToggle } from "../sessions/methods";
 
 const authCheck = (methodName, userId, threshold = "") => {
   let auth = false;
@@ -42,20 +43,35 @@ export const updateSettings = new ValidatedMethod({
     if (!this.isSimulation) {
       authCheck("updateSettings", this.userId, "admin");
 
-      systemSettings.update({ active: true }, {
+      systemSettings.update(
+        { active: true },
+        {
           $set: {
             mainTitle: fields.mainTitle,
             shortTitle: fields.shortTitle,
-            copyright: fields.copyright,
+            copyright: fields.copyright
           }
-        });
+        }
+      );
     }
 
     return true;
   }
 });
 
+export const toggleLocked = new ValidatedMethod({
+  name: "admin.toggleLocked",
 
+  validate: new SimpleSchema({
+    id: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("toggleLocked", this.userId, "admin");
+    //log.info(`toggleLocked`, fields);
+    lockAccountToggle(fields.id);
+  }
+});
 
 export const toggleSystemOnline = new ValidatedMethod({
   name: "admin.toggleSystemOnline",
@@ -63,22 +79,18 @@ export const toggleSystemOnline = new ValidatedMethod({
   validate: null,
 
   run(fields) {
-    
-    if (!this.isSimulation) {
-      authCheck("toggleSystemOnline", this.userId, "admin");
-      //let ownerId = this.userId;
-      let settingsRecord: any;
-      settingsRecord = systemSettings.findOne({ active: true });
+    authCheck("toggleSystemOnline", this.userId, "admin");
+    //let ownerId = this.userId;
+    let settingsRecord: any;
+    settingsRecord = systemSettings.findOne({ active: true });
 
-      if (settingsRecord) {
-        let currentState = settingsRecord.systemOnline;
-        let newState = !currentState;
-        systemSettings.update(settingsRecord._id, { $set: { systemOnline: newState } });
-      }
+    if (settingsRecord) {
+      let currentState = settingsRecord.systemOnline;
+      let newState = !currentState;
+      systemSettings.update(settingsRecord._id, { $set: { systemOnline: newState } });
     }
   }
 });
-
 
 export const assignRolesNewUser = new ValidatedMethod({
   name: "admin.assignRoles",

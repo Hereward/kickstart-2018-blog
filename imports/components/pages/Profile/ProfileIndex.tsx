@@ -34,6 +34,7 @@ interface IProps {
 }
 
 interface IState {
+  [x: number]: any;
   editImage: boolean;
   editProfile: boolean;
   disableVerify: boolean;

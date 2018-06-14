@@ -1,10 +1,17 @@
-export const cursorLimit = (state = 1, action) => {
+import { Meteor } from "meteor/meteor";
+const basePaginationUnit = Meteor.settings.public.admin.basePaginationUnit;
+
+export const cursorLimit = (state = basePaginationUnit, action) => {
   switch (action.type) {
     case "LOAD_MORE": {
-      //return action.currentVal + action.cursorBlock;
-      //log.info(`REDUX - cursorLimit`, state, action);
-      return state + action.cursorBlock;
+      const nextBlock = action.cursorBlock ? action.cursorBlock : basePaginationUnit;
+      return state + nextBlock;
     }
+
+    case "LOAD_INIT": {
+      return basePaginationUnit;
+    }
+
 
     default:
       return state;
