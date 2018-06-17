@@ -167,19 +167,21 @@ export function authRequired(props) {
 }
 
 export function can(params: { do?: string; threshold?: any }) {
-  let allowed: boolean;
-  let userId = id();
+  let allowed: boolean = false;
+  const userId = id();
 
-  if (!userId) {
-    allowed = false;
-  } else if (Roles.userIsInRole(id(), "super-admin")) {
-    allowed = true;
-  } else if (params.threshold && params.threshold === "admin") {
-    allowed = Roles.userIsInRole(this.userId, ["super-admin", "admin"]);
-  } else if (params.threshold) {
-    allowed = Roles.userIsInRole(id(), params.threshold);
-  } else {
-    allowed = true;
+  if (userId) {
+    if (Roles.userIsInRole(userId, "god")) {
+      allowed = true;
+    } else if (params.threshold && params.threshold === "super-admin") {
+      allowed = Roles.userIsInRole(userId, ["super-admin"]);
+    } else if (params.threshold && params.threshold === "admin") {
+      allowed = Roles.userIsInRole(userId, ["super-admin", "admin"]);
+    } else if (params.threshold) {
+      allowed = Roles.userIsInRole(userId, params.threshold);
+    } else if (params.do === "assignRolesNewUser") {
+      allowed = true;
+    }
   }
 
   return allowed;

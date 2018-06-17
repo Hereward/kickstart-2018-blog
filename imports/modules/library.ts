@@ -1,3 +1,4 @@
+
 //import swal from 'sweetalert';
 //declare var _swal: any;
 import * as _swal from "sweetalert";
@@ -41,6 +42,24 @@ export function invalidAuthCodeAlert(error) {
 }
 
 // showConfirmButton: true,
+
+export function confirmDialog(title = "", message = "") {
+  title = !title ? "Are you sure?" : title;
+  message = !message ? "You cannot undo this operation." : message;
+
+  return swal({
+    title: title,
+    text: message,
+    icon: "warning",
+    buttons: [true, true]
+  });
+
+}
+
+/*
+ cancel: { text: "Cancel" },
+      confirm: { text: "Confirm" }
+      */
 
 export function modalSuccessAlert(params: any) {
   let message: string;

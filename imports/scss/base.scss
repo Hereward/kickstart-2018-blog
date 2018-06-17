@@ -211,6 +211,12 @@ h1,
 
 h2 {
   font-size: 1.4rem;
+  margin-bottom: 1rem;
+}
+
+
+h3 {
+  font-size: 1.2rem;
 }
 
 .page-content {
@@ -274,9 +280,7 @@ p.shitty_green {
   color: $funny-color;
 }
 
-h2 {
-  margin-bottom: 1rem;
-}
+
 
 .QRcode {
   margin-bottom: 1rem;
@@ -389,6 +393,10 @@ nav.main-nav {
     font-size: 1.7rem;
   }
 
+  h3 {
+    font-size: 1.4rem;
+  }
+
   nav.main-nav {
     padding-left: 4rem;
     padding-right: 4rem;
@@ -410,21 +418,4 @@ nav.main-nav {
 @media (min-width: 2561px) {
 }
 
-/*
-   
-  @media (max-width: 600px) {
-    li {
-      padding: 12px 15px;
-    }
-   
-    .search {
-      width: 150px;
-      clear: both;
-    }
-   
-    .new-task input {
-      padding-bottom: 5px;
-    }
-  }
 
-  */

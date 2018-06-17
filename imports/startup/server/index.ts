@@ -5,7 +5,7 @@ import "../../server/api";
 import { purgeInactiveSessions } from "../../api/sessions/methods";
 
 function initRoles() {
-  const defaultRoles = ["user", "editor", "moderator", "admin", "super-admin"];
+  const defaultRoles = Meteor.settings.public.admin.roles; 
   defaultRoles.forEach(role => {
     //let allRoles = Roles.getAllRoles().fetch();
     Roles.createRole(role, { unlessExists: true });

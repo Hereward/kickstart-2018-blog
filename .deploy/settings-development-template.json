@@ -26,6 +26,10 @@
         "heading": "About Page",
         "body": "<p>This is the About page. You can edit it when logged in to your account.</p>"
       }
+    },
+    "admin": {
+      "basePaginationUnit": 1,
+      "roles": ["user", "banned", "creator", "editor", "moderator", "admin", "super-admin"]
     }
   },
   "private": {

@@ -22,7 +22,7 @@ declare var process: any;
 
 declare function dateFormat(date: any, options: any);
 
-//declare function swal(options: object, callback?: any);
+//declare function swal2(options: object, callback?: any);
 /*
 declare module "sweetAlert" {
   function swal(options: object, callback?: any);
@@ -131,6 +131,7 @@ declare module "meteor/accounts-base" {
     function logoutOtherClients(): any;
 
     function _storedLoginToken(): any;
+    function findUserByEmail(options: any): any;
   }
 }
 
