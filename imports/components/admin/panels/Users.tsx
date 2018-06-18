@@ -4,6 +4,16 @@ import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
+import DropUpIcon from "@material-ui/icons/ArrowDropUp";
+import DropDownIcon from "@material-ui/icons/ArrowDropDown";
+
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import DeleteIcon from '@material-ui/icons/Delete';
+
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -20,6 +30,7 @@ import Snackbar from "../../partials/Snackbar";
 import { userSettings } from "../../../api/settings/publish";
 import * as UserModule from "../../../modules/user";
 import User from "./User";
+import OptionGroup from "../components/OptionGroup";
 
 /*
 import TextField from "@material-ui/core/TextField";
@@ -59,6 +70,7 @@ interface IState {
   queryLimit: number;
   expanded: string;
   block: boolean;
+  showGodOptions: boolean;
 }
 
 styles = theme => ({
@@ -66,9 +78,6 @@ styles = theme => ({
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
     width: 250
-  },
-  deleteAll: {
-    margin: "2rem 0"
   },
   heading: { color: "dimGray" },
   loadMore: {
@@ -87,12 +96,10 @@ styles = theme => ({
   summaryDataID: {
     fontWeight: "bold"
   },
-  godOptions: {
-    marginTop: "2rem",
-    marginBottom: "1rem"
-  },
-  godOptionsSummaryData: {
-    fontWeight: "bold"
+  deleteAllRoot: {
+    width: "100%",
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper
   }
 });
 
@@ -110,6 +117,8 @@ class Users extends React.Component<IProps, IState> {
     this.deleteAll = this.deleteAll.bind(this);
     this.confirmDeleteAll = this.confirmDeleteAll.bind(this);
     this.loadMore = this.loadMore.bind(this);
+    this.toggleGodOptions = this.toggleGodOptions.bind(this);
+
     this.state = {
       allowSubmit: true,
       mainTitle: this.props.systemSettings.mainTitle,
@@ -119,7 +128,8 @@ class Users extends React.Component<IProps, IState> {
       snackbarIsOpen: false,
       queryLimit: 1,
       expanded: "",
-      block: false
+      block: false,
+      showGodOptions: false
     };
   }
 
@@ -179,37 +189,36 @@ class Users extends React.Component<IProps, IState> {
     });
   }
 
-  godOptions() {
+  toggleGodOptions() {
+    const vis = !this.state.showGodOptions;
+    this.setState({ showGodOptions: vis });
+  }
+
+  godOptionsDetail() {
     const { classes } = this.props;
-    const { expanded } = this.state;
-    const allowed = UserModule.can({ threshold: "god" });
-    const sectionID = "god_options";
-
-    if (!allowed) {
-      return "";
-    }
-
     const layout = (
-      <div>
-        <ExpansionPanel
-          className={classes.godOptions}
-          expanded={expanded === sectionID}
-          onChange={this.handleExPanelChange(sectionID)}
-        >
-          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-            <div className={classes.godOptionsSummaryData}> GOD OPTIONS </div>
-          </ExpansionPanelSummary>
-          <ExpansionPanelDetails className={classes.userDetails}>
-            <div className={classes.deleteAll}>
-              <Button variant="raised" onClick={this.confirmDeleteAll} size="small" color="secondary">
-                Delete ALL users
-              </Button>
-            </div>
-          </ExpansionPanelDetails>
-        </ExpansionPanel>
-        <hr />
+      <div className={classes.deleteAllRoot}>
+        <List component="nav">
+          <ListItem onClick={this.confirmDeleteAll} button>
+          <ListItemIcon>
+            <DeleteIcon />
+          </ListItemIcon>
+            <ListItemText primary="Delete ALL users" />
+          </ListItem>
+        </List>
       </div>
     );
+
+    return layout;
+  }
+
+  godOptions() {
+    const layout = (
+      <OptionGroup show={this.state.showGodOptions} label="Bulk Operations" action={this.toggleGodOptions}>
+        {this.godOptionsDetail()}
+      </OptionGroup>
+    );
+
     return layout;
   }
 
@@ -245,7 +254,7 @@ class Users extends React.Component<IProps, IState> {
     return (
       <BlockUi tag="div" blocking={this.state.block}>
         <h2 className={classes.heading}>User Settings</h2>
-        {this.godOptions()}
+        {UserModule.can({ threshold: "god" }) ? this.godOptions() : ""}
 
         <div>
           {this.props.allUsers ? this.users(this.props.allUsers) : ""}
