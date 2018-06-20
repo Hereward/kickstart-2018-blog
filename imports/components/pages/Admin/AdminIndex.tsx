@@ -31,6 +31,7 @@ interface IProps {
   systemSettings: any;
   sessionReady: boolean;
   userData: any;
+  userId: string;
 }
 
 interface IState {
@@ -177,7 +178,7 @@ class Admin extends React.Component<IProps, IState> {
   }
 
   usersPanel() {
-    return this.props.sessionReady ? <Users userData={this.props.userData} systemSettings={this.props.systemSettings} /> : "";
+    return this.props.sessionReady ? <Users userId={this.props.userId} userData={this.props.userData} systemSettings={this.props.systemSettings} /> : "";
   }
 
   renderPanel() {

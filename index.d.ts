@@ -33,6 +33,9 @@ declare module "meteor/alanning:roles" {
   namespace Roles {
     function createRole(role: string, conditions: any): string;
 
+    function removeUsersFromRoles(optionsA: any, optionsB: any): any;
+    function addUsersToRoles(optionsA: any, optionsB: any): any;
+
     function userIsInRole(
       user: string | string[] | Object | Object[],
       roles: string | string[],

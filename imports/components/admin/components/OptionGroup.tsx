@@ -17,19 +17,23 @@ interface IProps {
 interface IState {}
 
 styles = theme => ({
-  main: {
-    marginTop: "2rem",
+  root: {
+    marginTop: "1rem",
     marginBottom: "1rem"
   },
   toggleButton: {
     boxShadow: "none",
     backgroundColor: "transparent",
-    border: "1px solid lightgray"
+    border: "1px solid lightgray",
+    width: '12rem'
   },
   optionsDetail: {
     marginTop: "0.5rem",
     padding: 0
-  }
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
 });
 
 class OptionGroup extends React.Component<IProps, IState> {
@@ -46,10 +50,10 @@ class OptionGroup extends React.Component<IProps, IState> {
     const { classes } = this.props;
 
     const layout = (
-      <div className={classes.main}>
+      <div className={classes.root}>
         <div>
-          <Button onClick={this.props.action} variant="contained" className={classes.toggleButton}>
-            {this.props.label} {this.props.show ? <DropUpIcon /> : <DropDownIcon />}
+          <Button onClick={this.props.action} variant="contained" size="small" className={classes.toggleButton}>
+            {this.props.label} {this.props.show ? <DropUpIcon className={classes.rightIcon} /> : <DropDownIcon className={classes.rightIcon} />}
           </Button>
           {this.props.show ? this.detail() : ""}
         </div>
@@ -66,7 +70,6 @@ class OptionGroup extends React.Component<IProps, IState> {
   }
 
   render() {
-    log.info(`OptionGroup`, this.props);
     return this.layout();
   }
 }

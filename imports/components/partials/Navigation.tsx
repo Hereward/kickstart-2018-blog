@@ -292,7 +292,7 @@ class Navigation extends React.Component<IProps, IState> {
   // <UncontrolledDropdown nav inNavbar>
 
   render() {
-    log.info(`NAVIGATION STATE`, this.state);
+    //log.info(`NAVIGATION STATE`, this.state);
 
     return this.navBar();
   }

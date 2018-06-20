@@ -7,11 +7,28 @@ export const cursorLimit = (state = basePaginationUnit, action) => {
       const nextBlock = action.cursorBlock ? action.cursorBlock : basePaginationUnit;
       return state + nextBlock;
     }
-
     case "LOAD_INIT": {
       return basePaginationUnit;
     }
 
+    default:
+      return state;
+  }
+};
+
+export const filters = (state = {}, action) => {
+  switch (action.type) {
+    case "FILTER_USERS": {
+      let newState: any;
+      newState = Object.assign({}, state, action.filters);
+      //log.info(`filters action`, action, newState);
+
+      return newState;
+    }
+
+    case "FILTER_INIT": {
+      return {};
+    }
 
     default:
       return state;

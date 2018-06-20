@@ -50,6 +50,10 @@ body {
 }
 */
 
+button:focus {
+  outline: none;
+}
+
 .swal-text {
   background-color: GhostWhite;
   padding: 17px;

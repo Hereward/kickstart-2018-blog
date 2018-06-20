@@ -1,7 +1,9 @@
-import { Meteor } from "meteor/meteor";
+//import { Meteor } from "meteor/meteor";
 import { Roles } from "meteor/alanning:roles";
 //import { can as userCan } from "../../modules/user";
 //import { Mongo } from "meteor/mongo";
+
+declare var Meteor: any;
 
 declare var Mongo: any;
 
@@ -34,6 +36,21 @@ if (Meteor.isServer) {
     } else {
       return Meteor.users.find({});
     }
+  });
+
+  Meteor.publish("roles", function pagesPublication() {
+    let admin = false;
+    if (this.userId) {
+      admin = Roles.userIsInRole(this.userId, ["super-admin", "admin"]);
+    }
+
+    if (!admin) {
+      return this.ready();
+    } else {
+      return Meteor.roles.find({});
+    }
+
+    //return Pages.find();
   });
 
   // const MAX_USERS = 1000;

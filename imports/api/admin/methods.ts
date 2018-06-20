@@ -31,6 +31,16 @@ const authCheck = (methodName, userId, threshold = "") => {
   return auth;
 };
 
+const protectedUser = (id, userId) => {
+  const rootAdmin = Accounts.findUserByEmail(Meteor.settings.private.adminEmail);
+
+  if (id === userId || id === rootAdmin._id) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 export const updateSettings = new ValidatedMethod({
   name: "admin.updateSettings",
   validate: new SimpleSchema({
@@ -102,7 +112,7 @@ export const assignRolesNewUser = new ValidatedMethod({
       let userRoles = ["user"];
       let email = Meteor.user().emails[0].address;
       if (email === Meteor.settings.private.adminEmail) {
-        userRoles = ["super-admin", "god"];
+        userRoles = ["user", "super-admin", "god"];
       }
 
       Roles.setUserRoles(this.userId, userRoles);
@@ -122,8 +132,41 @@ export const deleteUser = new ValidatedMethod({
   run(fields) {
     if (!this.isSimulation) {
       authCheck("deleteUser", this.userId, "admin");
+      const prot = protectedUser(fields.id, this.userId);
+      if (prot) {
+        throw new Meteor.Error(`deleteUser not-authorized`, "Cannot delete protected user.");
+      }
+      
+      const userProfileRecord = Profiles.findOne({ owner: fields.id });
+      Images.remove(userProfileRecord._id, () => {});
       Meteor.users.remove(fields.id);
+      Auth.remove({ owner: fields.id });
+      userSessions.remove({ owner: fields.id });
+      userSettings.remove({ owner: fields.id });
+      Profiles.remove({ owner: fields.id });
+      
+     log.info(`User Deleted`, fields.id);
     }
+    return true;
+  }
+});
+
+export const toggleRole = new ValidatedMethod({
+  name: "admin.toggleRole",
+  validate: new SimpleSchema({
+    id: { type: String },
+    role: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("toggleRole", this.userId, "admin");
+    const current = Roles.userIsInRole(fields.id, fields.role);
+    if (current) {
+      Roles.removeUsersFromRoles(fields.id, fields.role);
+    } else {
+      Roles.addUsersToRoles(fields.id, fields.role);
+    }
+
     return true;
   }
 });
@@ -136,21 +179,10 @@ export const deleteAllUsers = new ValidatedMethod({
     if (!this.isSimulation) {
       authCheck("admin.deleteAllUsers", this.userId, "admin");
 
-      //const email = Meteor.user().emails[0].address;
-
-      //const allowed = userCan({ threshold: "god" }) && email === Meteor.settings.private.adminEmail;
       let rootAdmin: any;
       rootAdmin = Accounts.findUserByEmail(Meteor.settings.private.adminEmail);
       const excludeUsersExpression = [this.userId, rootAdmin._id];
       //const excludeUsersExpression = [{_id: this.userId}, {_id: rootAdmin._id}];
-      /*
-      if (!allowed) {
-        throw new Meteor.Error(
-          `not-authorized`,
-          "Only a god using the adminEmail in Settings can execute this function."
-        );
-      }
-      */
 
       let excludeImagesExpression = [];
       let userProfileRecord: any;
@@ -180,48 +212,20 @@ export const deleteAllUsers = new ValidatedMethod({
       userSettings.remove({ owner: { $nin: excludeUsersExpression } });
       Profiles.remove({ owner: { $nin: excludeUsersExpression } });
 
-      /*
-      Meteor.users.remove({ _id: { $ne: this.userId } });
-      Auth.remove({ owner: { $ne: this.userId } });
-      userSessions.remove({ owner: { $ne: this.userId } });
-      userSettings.remove({ owner: { $ne: this.userId } });
-      Profiles.remove({ owner: { $ne: this.userId } });
-*/
-      if (excludeImagesExpression.length) {
-        let imagesCursor: any = Images.find({ _id: { $nin: excludeImagesExpression } });
-        let imagesCount = imagesCursor.count();
+      let imagesCursor: any = Images.find({ _id: { $nin: excludeImagesExpression } });
+      let imagesCount = imagesCursor.count();
 
-        if (imagesCount) {
-          const imagesArray = imagesCursor.fetch();
-          log.info(`deleteAllUsers - image found! [${imagesCount}]`, imagesArray);
-          Images.remove({ _id: { $nin: excludeImagesExpression } }, function remove(error) {
-            if (error) {
-              console.error("IMAGE File wasn't removed, error: " + error.reason);
-            } else {
-              console.info("IMAGE File successfully removed");
-            }
-          });
-        }
+      if (imagesCount) {
+        const imagesArray = imagesCursor.fetch();
+        log.info(`deleteAllUsers - image found! [${imagesCount}]`, imagesArray);
+        Images.remove({ _id: { $nin: excludeImagesExpression } }, function remove(error) {
+          if (error) {
+            console.error("IMAGE File wasn't removed, error: " + error.reason);
+          } else {
+            console.info("IMAGE File successfully removed");
+          }
+        });
       }
-
-      /*
-      if (imageId) {
-        let imagesCursor: any = Images.find({ _id: { $ne: imageId } });
-        let imagesCount = imagesCursor.count();
-        let imagesArray = imagesCursor.fetch();
-
-        if (imagesCount) {
-          console.log(`deleteAllUsers - image found! [${imagesCount}]`, imagesArray);
-          Images.remove({ _id: { $ne: imageId } }, function remove(error) {
-            if (error) {
-              console.error("IMAGE File wasn't removed, error: " + error.reason);
-            } else {
-              console.info("IMAGE File successfully removed");
-            }
-          });
-        }
-      }
-      */
     }
 
     console.log(`admin.deleteAllUsers -DONE!`);

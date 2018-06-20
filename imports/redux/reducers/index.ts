@@ -1,8 +1,9 @@
 import { combineReducers } from "redux";
 import { loggingOut } from "./user";
-import { cursorLimit } from "./admin";
+import { cursorLimit, filters } from "./admin";
 
 export default combineReducers({
   loggingOut,
-  cursorLimit
+  cursorLimit,
+  filters
 });

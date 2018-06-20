@@ -1,5 +1,7 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
+import { Roles } from "meteor/alanning:roles";
+import * as BlockUi from "react-block-ui";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
@@ -12,10 +14,11 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Typography from "@material-ui/core/Typography";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
-import { toggleLocked } from "../../../api/admin/methods";
+import { toggleLocked, toggleRole, deleteUser } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import { userSettings } from "../../../api/settings/publish";
-import * as UserModule  from "../../../modules/user";
+import * as UserModule from "../../../modules/user";
+import OptionGroup from "../components/OptionGroup";
 
 const defaultRoles = Meteor.settings.public.admin.roles;
 const drawerWidth = 240;
@@ -34,18 +37,19 @@ interface IProps {
 interface IState {
   [x: number]: any;
   allowSubmit: boolean;
+  blockUI: boolean;
 }
 
 styles = theme => ({
   heading: {
     color: "#4d4d4d"
   },
-  details: {
-    margin: "1rem 0"
-  },
   switchLabel: {
     fontWeight: "bold",
     color: "#4d4d4d"
+  },
+  innerSection: {
+    margin: "1rem"
   }
 });
 
@@ -58,9 +62,11 @@ class User extends React.Component<IProps, IState> {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    //this.confirmDelete = this.confirmDelete.bind(this);
 
     this.state = {
-      allowSubmit: true
+      allowSubmit: true,
+      blockUI: false
     };
   }
 
@@ -68,27 +74,50 @@ class User extends React.Component<IProps, IState> {
     toggleLocked.call({ id: userId }, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
-        console.log(`toggleLocked failed`, err);
+        log.error(`toggleLocked failed`, err);
       }
     });
   };
 
-  toggleRole = role => event => {};
+  toggleRole = role => event => {
+    toggleRole.call({ role: role, id: this.props.userId }, err => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        log.error(`toggleRole failed`, err);
+      }
+    });
+  };
 
   getRoleStatus(role) {
-    return true;
+    const val = Roles.userIsInRole(this.props.userId, role);
+    return val;
   }
 
   handleChange = panel => (event, expanded) => {};
 
   handleSubmit() {}
 
+  confirmDelete = (event) => {
+    this.setState({ blockUI: true });
+    Library.confirmDialog().then(result => {
+      if (result) {
+        deleteUser.call({ id: this.props.userId }, err => {
+          if (err) {
+            Library.modalErrorAlert(err.reason);
+            log.error(`deleteUser failed`, err);
+          }
+          this.setState({ blockUI: false });
+        });
+      }
+    });
+  };
+
   layout() {
     const { classes } = this.props;
     return this.props.ready ? (
-      <div>
+      <BlockUi tag="div" blocking={this.state.blockUI}>
         <h3 className={classes.heading}>Data</h3>
-        <div className={classes.details}>
+        <div className={classes.innerSection}>
           <ul className="list-group">
             <li className="list-group-item">
               <strong>id:</strong> {this.props.user._id}
@@ -99,20 +128,26 @@ class User extends React.Component<IProps, IState> {
           </ul>
         </div>
 
-        <h3 className={classes.heading}>Actions</h3>
-        <div>
+        <h3 className={classes.heading}>Properties</h3>
+        <div className={classes.innerSection}>
           <FormControlLabel
-            classes={{ label: classes.switchLabel }}
             control={<Switch onChange={this.toggleLocked(this.props.userId)} checked={this.props.settings.locked} />}
             label={this.props.settings.locked ? "Locked" : "Unlocked"}
           />
+        </div>
+
+        <h3 className={classes.heading}>Actions</h3>
+        <div className={classes.innerSection}>
+          <Button onClick={this.confirmDelete} variant="raised" size="small" color="secondary">
+            Delete User
+          </Button>
         </div>
 
         <div>
           <h3 className={classes.heading}>Groups</h3>
           <List>{this.mapRoles()}</List>
         </div>
-      </div>
+      </BlockUi>
     ) : (
       "loading..."
     );
