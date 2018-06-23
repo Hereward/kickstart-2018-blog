@@ -24,7 +24,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { Alert } from "reactstrap";
 import * as BlockUi from "react-block-ui";
-import { toggleLocked, deleteAllUsers } from "../../../api/admin/methods";
+import { toggleLocked, deleteAllUsers, deleteUserList, sendInvitation } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import SettingsForm from "../../admin/forms/SettingsForm";
 import Snackbar from "../../partials/Snackbar";
@@ -74,7 +74,10 @@ interface IState {
   block: boolean;
   showGodOptions: boolean;
   showFilterOptions: boolean;
+  showInviteOptions: boolean;
   selectedUsers: any;
+  inviteMessage: string;
+  inviteEmail: string;
 }
 
 styles = theme => ({
@@ -104,7 +107,7 @@ styles = theme => ({
     width: "100%"
     //backgroundColor: theme.palette.background.paper
   },
-  filtersRoot: {
+  optionsRoot: {
     margin: "1rem"
   },
   userListItem: {
@@ -115,6 +118,9 @@ styles = theme => ({
   },
   expandedExpansionPanel: {
     margin: 0
+  },
+  messageField: {
+    marginBottom: "1rem"
   }
 });
 
@@ -149,7 +155,10 @@ class Users extends React.Component<IProps, IState> {
       block: false,
       showGodOptions: false,
       showFilterOptions: false,
-      selectedUsers: {}
+      showInviteOptions: false,
+      selectedUsers: {},
+      inviteMessage: "",
+      inviteEmail: ""
     };
   }
 
@@ -196,32 +205,10 @@ class Users extends React.Component<IProps, IState> {
     const selected = currentState[id] === true;
     currentState[id] = !selected;
     this.setState({ selectedUsers: currentState });
-    //let selected = this.selectedUsers.indexOf(id);
-    // array.splice(index, 1);
-    /*
-    if (this.selectedUsers.indexOf(id) === -1) {
-      this.selectedUsers.push(id);
-    }
-    */
-
-    //let selectedUsers = [];
-    //let myArray = [];
-
-    /*
-    const selectedUsers = Object.keys(currentState).map((key: any, index) => {
-      //myObject[key] *= 2;
-
-      if (currentState[key]) {
-        return key;
-      } else {
-        return "";
-      }
-    });
-    */
 
     this.selectedUsers = Object.keys(currentState).reduce((filtered, option) => {
       if (currentState[option]) {
-         filtered.push(option);
+        filtered.push(option);
       }
       return filtered;
     }, []);
@@ -241,13 +228,35 @@ class Users extends React.Component<IProps, IState> {
     });
   }
 
+  confirmDeleteSelected = () => {
+    Library.confirmDialog().then(result => {
+      if (result) {
+        this.deleteSelected();
+      }
+    });
+  };
+
+  deleteSelected() {
+    log.info(`deleteSelected`);
+    this.setState({ block: true });
+    deleteUserList.call({ selected: this.state.selectedUsers }, err => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        log.error(`deleteUserList failed`, err);
+      } else {
+        this.snackbarMessage = "Selected users (excluding protected) were deleted!";
+        this.setState({ block: false, snackbarIsOpen: true });
+      }
+    });
+  }
+
   deleteAll() {
     log.info(`deleteAll`);
     this.setState({ block: true });
     deleteAllUsers.call({}, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
-        console.log(`deleteAllUsers failed`, err);
+        log.error(`deleteAllUsers failed`, err);
       } else {
         this.snackbarMessage = "All users were deleted!";
         this.setState({ block: false, snackbarIsOpen: true });
@@ -259,6 +268,11 @@ class Users extends React.Component<IProps, IState> {
     const vis = !this.state.showGodOptions;
     this.setState({ showGodOptions: vis });
   }
+
+  toggleInviteOptions = () => {
+    const vis = !this.state.showInviteOptions;
+    this.setState({ showInviteOptions: vis });
+  };
 
   toggleFilterOptions() {
     const vis = !this.state.showFilterOptions;
@@ -275,6 +289,12 @@ class Users extends React.Component<IProps, IState> {
               <DeleteIcon />
             </ListItemIcon>
             <ListItemText primary="Delete ALL users" />
+          </ListItem>
+          <ListItem onClick={this.confirmDeleteSelected} button>
+            <ListItemIcon>
+              <DeleteIcon />
+            </ListItemIcon>
+            <ListItemText primary="Delete SELECTED" />
           </ListItem>
         </List>
       </div>
@@ -304,7 +324,7 @@ class Users extends React.Component<IProps, IState> {
   filterOptionsDetail() {
     const { classes } = this.props;
     const layout = (
-      <div className={classes.filtersRoot}>
+      <div className={classes.optionsRoot}>
         <TextField
           id="userId"
           InputLabelProps={{
@@ -326,6 +346,75 @@ class Users extends React.Component<IProps, IState> {
           onChange={this.changeFilter("email")}
         />
       </div>
+    );
+
+    return layout;
+  }
+
+  changeInviteText = name => event => {
+    this.setState({ [name]: event.target.value });
+    //this.setState({ inviteMessage: event.target.value });
+  };
+
+  sendInvitation = () => {
+    this.setState({ block: true });
+    sendInvitation.call({ email: this.state.inviteEmail, message: this.state.inviteMessage }, err => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        log.error(`sendInvitation failed`, err);
+      } else {
+        this.snackbarMessage = `Invitation sent to ${this.state.inviteEmail}.`;
+        this.setState({ snackbarIsOpen: true });
+      }
+      this.setState({ block: false });
+    });
+  };
+
+  inviteOptionsDetail() {
+    const { classes } = this.props;
+    const layout = (
+      <div className={classes.optionsRoot}>
+        <TextField
+          className={classes.messageField}
+          type="email"
+          name="email"
+          InputLabelProps={{
+            shrink: true
+          }}
+          placeholder="email"
+          fullWidth
+          margin="normal"
+          onChange={this.changeInviteText("inviteEmail")}
+        />
+        <TextField
+          className={classes.messageField}
+          helperText="Add a personalised message"
+          type="text"
+          name="inviteMessage"
+          InputLabelProps={{
+            shrink: true
+          }}
+          placeholder="message"
+          fullWidth
+          margin="normal"
+          onChange={this.changeInviteText("inviteMessage")}
+        />
+        <div>
+          <Button variant="raised" onClick={this.sendInvitation} color="secondary" size="small">
+            Send
+          </Button>
+        </div>
+      </div>
+    );
+
+    return layout;
+  }
+
+  inviteOptions() {
+    const layout = (
+      <OptionGroup show={this.state.showInviteOptions} label="Send Invitation" action={this.toggleInviteOptions}>
+        {this.inviteOptionsDetail()}
+      </OptionGroup>
     );
 
     return layout;
@@ -395,6 +484,7 @@ class Users extends React.Component<IProps, IState> {
     //log.info(`Settings`, this.props, this.state);
     return (
       <BlockUi tag="div" blocking={this.state.block}>
+        {this.inviteOptions()}
         {UserModule.can({ threshold: "god" }) ? this.godOptions() : ""}
         {this.filterOptions()}
 
@@ -413,7 +503,7 @@ class Users extends React.Component<IProps, IState> {
   }
 
   render() {
-    log.info(`USERS PANEL - selectedUsers`, this.state.selectedUsers, this.selectedUsers);
+    log.info(`USERS PANEL `, this.state, this.props);
     //log.info(`USERS PANEL PROPS`, this.props);
     return this.layout();
   }

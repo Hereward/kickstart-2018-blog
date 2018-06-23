@@ -41,6 +41,18 @@ const protectedUser = (id, userId) => {
   }
 };
 
+function deleteOne(id) {
+  const userProfileRecord = Profiles.findOne({ owner: id });
+  if (userProfileRecord) {
+    Images.remove(userProfileRecord._id, () => {});
+  }
+  Meteor.users.remove(id);
+  Auth.remove({ owner: id });
+  userSessions.remove({ owner: id });
+  userSettings.remove({ owner: id });
+  Profiles.remove({ owner: id });
+}
+
 export const updateSettings = new ValidatedMethod({
   name: "admin.updateSettings",
   validate: new SimpleSchema({
@@ -80,6 +92,34 @@ export const toggleLocked = new ValidatedMethod({
     authCheck("toggleLocked", this.userId, "admin");
     //log.info(`toggleLocked`, fields);
     lockAccountToggle(fields.id);
+  }
+});
+
+export const sendInvitation = new ValidatedMethod({
+  name: "admin.sendInvitation",
+
+  validate: new SimpleSchema({
+    email: { type: String },
+    message: { type: String, optional: true }
+  }).validator(),
+
+  run(fields) {
+    if (!this.isSimulation) {
+      authCheck("sendInvitation", this.userId, "admin");
+      log.info(`admin.sendInvitation`, fields.email);
+      const exists = Accounts.findUserByEmail(fields.email);
+      if (exists) {
+        throw new Meteor.Error(`create-user not-authorized`, "Cannot create user - email address already in use.");
+      }
+      const id = Accounts.createUser({
+        email: fields.email
+      });
+
+      log.info(`admin.sendInvitation - account created`, id);
+
+      Accounts.sendEnrollmentEmail(id);
+      
+    }
   }
 });
 
@@ -123,6 +163,49 @@ export const assignRolesNewUser = new ValidatedMethod({
   }
 });
 
+export const deleteUserList = new ValidatedMethod({
+  name: "admin.deleteUserList",
+  validate: new SimpleSchema({
+    selected: { type: Object, blackbox: true }
+  }).validator(),
+
+  run(fields) {
+    if (!this.isSimulation) {
+      authCheck("deleteUser", this.userId, "admin");
+      /*
+      const idList = Object.keys(fields.selected).reduce((filtered, option) => {
+        if (fields.selected[option]) {
+          filtered.push(option);
+        }
+        return filtered;
+      }, []);
+
+      let funnyList = Object.keys(fields.selected).filter(id => {
+        return fields.selected[id];
+      });
+*/
+      const keys = Object.keys(fields.selected);
+      let deletedList = [];
+      log.info(`admin.deleteUserList`, keys);
+      for (var i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+        const val = fields.selected[key];
+
+        if (val === true) {
+          const prot = protectedUser(key, this.userId);
+          if (!prot) {
+            deletedList.push(key);
+            deleteOne(key);
+          }
+        }
+      }
+
+      log.info(`Selected Users Deleted`, deletedList);
+    }
+    return true;
+  }
+});
+
 export const deleteUser = new ValidatedMethod({
   name: "admin.deleteUser",
   validate: new SimpleSchema({
@@ -136,7 +219,9 @@ export const deleteUser = new ValidatedMethod({
       if (prot) {
         throw new Meteor.Error(`deleteUser not-authorized`, "Cannot delete protected user.");
       }
-      
+
+      deleteOne(fields.id);
+      /*
       const userProfileRecord = Profiles.findOne({ owner: fields.id });
       Images.remove(userProfileRecord._id, () => {});
       Meteor.users.remove(fields.id);
@@ -144,8 +229,8 @@ export const deleteUser = new ValidatedMethod({
       userSessions.remove({ owner: fields.id });
       userSettings.remove({ owner: fields.id });
       Profiles.remove({ owner: fields.id });
-      
-     log.info(`User Deleted`, fields.id);
+*/
+      log.info(`User Deleted`, fields.id);
     }
     return true;
   }

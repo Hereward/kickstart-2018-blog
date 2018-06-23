@@ -34,6 +34,9 @@ styles = theme => ({
   rightIcon: {
     marginLeft: theme.spacing.unit,
   },
+  buttonLabel: {
+    justifyContent: "space-between"
+  }
 });
 
 class OptionGroup extends React.Component<IProps, IState> {
@@ -52,7 +55,7 @@ class OptionGroup extends React.Component<IProps, IState> {
     const layout = (
       <div className={classes.root}>
         <div>
-          <Button onClick={this.props.action} variant="contained" size="small" className={classes.toggleButton}>
+          <Button classes={{ label: classes.buttonLabel }} onClick={this.props.action} variant="contained" size="small" className={classes.toggleButton}>
             {this.props.label} {this.props.show ? <DropUpIcon className={classes.rightIcon} /> : <DropDownIcon className={classes.rightIcon} />}
           </Button>
           {this.props.show ? this.detail() : ""}
