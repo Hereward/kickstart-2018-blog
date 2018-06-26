@@ -42,7 +42,7 @@ interface IProps {
   connected: boolean;
   connectionRetryCount: number;
   systemSettings: any;
-  reduxState: any;
+  miniAlert: any;
   loggingIn: boolean;
   userId: string;
   dispatch: any;
@@ -94,9 +94,9 @@ class App extends React.Component<IProps, IState> {
           </main>
           {!path.match(/admin/) ? <Footer {...this.props} /> : ""}
           <Snackbar
-            message={this.props.reduxState.miniAlert.message}
+            message={this.props.miniAlert.message}
             close={this.closeMiniAlert}
-            isOpen={this.props.reduxState.miniAlert.on}
+            isOpen={this.props.miniAlert.on}
           />
         </div>
       );
@@ -117,7 +117,7 @@ export default withRouter(
     withTracker(props => {
       //log.info("APP PROPS", props);
       // props.store.getState()
-      log.info(`App - reduxState`, props.reduxState);
+      //log.info(`App - reduxState`, props.reduxState);
       let userSettingsRec: any;
       let systemSettingsRec = systemSettings.findOne();
       let profilesHandle = Meteor.subscribe("profiles");
@@ -131,6 +131,7 @@ export default withRouter(
       let enhancedAuth = Meteor.settings.public.enhancedAuth.active === false ? false : true;
       let sessionToken: string;
       let loggingOut = props.reduxState.loggingOut;
+      let miniAlert = props.reduxState.miniAlert;
       //let loggingIn: boolean;
       let userId = User.id();
       let loggingIn = User.loggingIn();
@@ -207,7 +208,7 @@ export default withRouter(
         connectionRetryCount: connectionRetryCount,
         systemSettings: systemSettingsRec,
         loggingOut: loggingOut,
-        reduxState: props.reduxState
+        miniAlert: miniAlert
       };
     })(App)
   )

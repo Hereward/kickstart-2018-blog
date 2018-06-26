@@ -97,7 +97,7 @@ export const cancel2FASession = (userId, sessionToken, authEnabled) => {
   }
 };
 
-const insertNewSession = function insert(userId, sessionToken = "", persist = false) {
+export const insertNewSession = function insert(userId, sessionToken = "", persist = false) {
   if (!userId || !sessionToken) {
     log.warn(`insertNewSession - invalid - userId=[${userId}] sessionToken=[${sessionToken}]`);
     return null;
@@ -172,7 +172,7 @@ export const createUserSession = new ValidatedMethod({
 
       let persist = fields.keepMeLoggedIn === true;
       let sessionId = insertNewSession(userId, fields.sessionToken, persist);
-      let settings: any;
+      //let settings: any;
     }
   }
 });

@@ -13,7 +13,7 @@ import {
 } from "../api/sessions/methods";
 
 import * as userSettingsMethods from "../api/settings/methods";
-import { assignRolesNewUser } from "../api/admin/methods";
+import { assignRolesNewUser, configureNewUser as configureNewUserMethod } from "../api/admin/methods";
 import * as ProfileMethods from "../api/profiles/methods";
 import * as AuthMethods from "../api/auth/methods";
 //import * as SessionMethods from "../api/sessions/methods";
@@ -111,7 +111,6 @@ export function logoutAndPurgeSessions(params: { title?: string; message?: strin
       }
       Meteor.logout(() => {
         log.info(`User.logoutAndPurge() DONE`);
-        //clearLocalStorage();
         if (params.title || params.message) {
           Library.modalSuccessAlert({ title: params.title, message: params.message, location: params.newLocation });
         } else if (params.newLocation) {
@@ -188,7 +187,7 @@ export function can(params: { do?: string; threshold?: any }) {
       allowed = Roles.userIsInRole(userId, ["super-admin", "admin"]);
     } else if (params.threshold) {
       allowed = Roles.userIsInRole(userId, params.threshold);
-    } else if (params.do === "assignRolesNewUser") {
+    } else if (params.do === "configureNewUser") {
       allowed = true;
     }
   }
@@ -198,6 +197,16 @@ export function can(params: { do?: string; threshold?: any }) {
 
 export function configureNewUser(params: { type: string; userId?: string }) {
   const userId = params.userId ? params.userId : id();
+  const newSessionToken = sessionToken("create");
+
+  configureNewUserMethod.call({ userId: userId, sessionToken: newSessionToken, type: params.type }, (err, res) => {
+    if (err) {
+      log.error(`configureNewUserMethod error: [${err.reason}]`, err);
+    }
+  });
+  
+
+  /*
 
   if (params.type === "register") {
     assignRolesNewUser.call({ userId: userId }, (err, res) => {
@@ -208,9 +217,6 @@ export function configureNewUser(params: { type: string; userId?: string }) {
   }
 
   let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
-
-  const newSessionToken = sessionToken("create");
-  //log.info(`registerUser`, newSessionToken);
 
   userSettingsMethods.createUserSettings.call({ userId: userId }, (err, res) => {
     if (err) {
@@ -265,8 +271,9 @@ export function configureNewUser(params: { type: string; userId?: string }) {
             log.error(`sendVerificationEmail error`, err);
           }
         });
-        //this.sendVerificationEmail(id);
       }
     }
   );
+  */
+
 }

@@ -426,7 +426,7 @@ class Users extends React.Component<IProps, IState> {
 
     const mapped = usersArray.map(user => {
       //const disabled = (value === "god" || value === "super-admin") && !isGod;
-      const disabled = Roles.userIsInRole(user._id, ["god", "super-admin"]) && !isGod;
+      const disabled = user._id === this.props.userId || (Roles.userIsInRole(user._id, ["god", "super-admin"]) && !isGod);
       const checked = this.state.selectedUsers[user._id] === true;
       const layout = (
         <div className={classes.userListItem} key={user._id}>

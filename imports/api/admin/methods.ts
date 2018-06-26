@@ -11,7 +11,9 @@ import { Profiles } from "../profiles/publish";
 import { Images } from "../images/methods";
 import { can as userCan } from "../../modules/user";
 import { systemSettings } from "./publish";
-import { lockAccountToggle } from "../sessions/methods";
+import { lockAccountToggle, insertNewSession, purgeAllOtherSessions } from "../sessions/methods";
+import { createAuth } from "../auth/methods";
+import { createProfile, sendVerificationEmail } from "../profiles/methods";
 
 const authCheck = (methodName, userId, threshold = "") => {
   let auth = false;
@@ -34,8 +36,8 @@ const authCheck = (methodName, userId, threshold = "") => {
 const protectedUser = (id, userId) => {
   let status = false;
   const rootAdmin = Accounts.findUserByEmail(Meteor.settings.private.adminEmail);
-  const rootId = (rootAdmin) ? rootAdmin._id : '';
-  const untouchable = (rootId && (id === userId || id === rootId));
+  const rootId = rootAdmin ? rootAdmin._id : "";
+  const untouchable = rootId && (id === userId || id === rootId);
   const god = Roles.userIsInRole(userId, ["god"]);
   const elevated = Roles.userIsInRole(id, ["god", "super-admin"]);
 
@@ -59,6 +61,77 @@ function deleteOne(id) {
   userSettings.remove({ owner: id });
   Profiles.remove({ owner: id });
 }
+
+
+export const configureNewUser = new ValidatedMethod({
+  name: "admin.configureNewUser",
+  validate: new SimpleSchema({
+    type: { type: String },
+    userId: { type: String },
+    sessionToken: { type: String }
+  }).validator(),
+
+  run(fields) {
+    if (!this.isSimulation) {
+      authCheck("configureNewUser", this.userId);
+      const allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
+
+      //const userId = fields.userId ? fields.userId : this.userId;
+      const userId = fields.userId;
+
+      // ROLES
+      if (fields.type === "register") {
+        let userRoles = ["user"];
+        const email = Meteor.user().emails[0].address;
+        if (email === Meteor.settings.private.adminEmail) {
+          userRoles = ["user", "super-admin", "god"];
+        }
+
+        Roles.setUserRoles(userId, userRoles);
+      }
+
+      // USER SETTINGS
+      let key: any;
+      let secret: any;
+      userSettings.remove({ owner: userId });
+
+      let authId = userSettings.insert({
+        authEnabled: 0,
+        locked: false,
+        owner: userId
+      });
+
+      // USER SESSION
+      const sessionId = insertNewSession(userId, fields.sessionToken);
+      if (!allowMultiSession) {
+        Accounts.logoutOtherClients();
+        purgeAllOtherSessions.call({ sessionToken: fields.sessionToken }, (err, res) => {});
+      }
+
+      // CREATE AUTH
+      createAuth.call({ userId: userId }, (err, id) => {});
+
+      // CREATE PROFILE
+
+      createProfile.call(
+        {
+          fname: "",
+          initial: "",
+          lname: "",
+          userId: userId
+        },
+        (err, profileId) => {
+          if (fields.type === "register") {
+            sendVerificationEmail.call({ profileId: profileId, userId: userId }, (err, res) => {});
+          }
+        }
+      );
+    }
+
+    return true;
+  }
+});
+
 
 export const updateSettings = new ValidatedMethod({
   name: "admin.updateSettings",

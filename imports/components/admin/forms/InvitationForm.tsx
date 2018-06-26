@@ -16,7 +16,7 @@ import * as UserModule from "../../../modules/user";
 import { sendInvitation } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 
-const defaultRoles = ["creator", "editor", "moderator", "admin", "super-admin"];
+const defaultRoles = ["creator", "editor", "moderator", "admin"];
 
 interface IProps {
   classes: any;
@@ -61,7 +61,7 @@ class InvitationForm extends React.Component<IProps, IState> {
       inviteMessage: "",
       inviteEmail: "",
       inviteName: "",
-      inviteRoles: { creator: false, editor: false, admin: false, moderator: false, "super-admin": false }
+      inviteRoles: { creator: false, editor: false, admin: false, moderator: false }
     };
   }
 
@@ -113,11 +113,12 @@ class InvitationForm extends React.Component<IProps, IState> {
           Library.modalErrorAlert(err.reason);
           log.error(`sendInvitation failed`, err);
         } else {
+          this.miniAlert(`Invitation was sent to ${this.state.inviteEmail}`);
           //this.snackbarMessage = `Invitation sent to ${this.state.inviteEmail}.`;
           //this.setState({ snackbarIsOpen: true });
         }
         this.setState({ block: false });
-        this.miniAlert(`Invitation was sent to ${this.state.inviteEmail}`);
+       
         //this.props.dispatch({ type: "MINI_ALERT_ON", message: `Invitation was sent to ${this.state.inviteEmail}` });
         //this.props.miniAlert(`Invitation was sent to ${this.state.inviteEmail}`);
       }
