@@ -115,13 +115,16 @@ class Register extends React.Component<IProps, IState> {
             });
             console.log(`createUser error`, err);
           } else {
+            User.configureNewUser({type: "register"});
+
+            /*
 
             assignRolesNewUser.call({}, (err, res) => {
               if (err) {
                 console.log(`assignRolesNewUser error: [${err.reason}]`, err);
               }
             });
-            
+
             let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
 
             let sessionToken = User.sessionToken("create");
@@ -150,7 +153,7 @@ class Register extends React.Component<IProps, IState> {
                 log.info(`Register - logout other clients - DONE`);
               }
             });
-
+            
             PagesMethods.createPages.call({}, (err, id) => {
               if (err) {
                 this.setState({ allowSubmit: true });
@@ -159,21 +162,23 @@ class Register extends React.Component<IProps, IState> {
               }
             });
 
-            let profileFields = {
-              fname: "",
-              initial: "",
-              lname: ""
-            };
 
-            ProfileMethods.createProfile.call(profileFields, (err, id) => {
-              if (err) {
-                this.setState({ allowSubmit: true });
-                Library.modalErrorAlert(err.reason);
-                console.log(`createProfile error`, err);
-              } else {
-                this.sendVerificationEmail(id);
+            ProfileMethods.createProfile.call(
+              {
+                fname: "",
+                initial: "",
+                lname: ""
+              },
+              (err, id) => {
+                if (err) {
+                  this.setState({ allowSubmit: true });
+                  Library.modalErrorAlert(err.reason);
+                  console.log(`createProfile error`, err);
+                } else {
+                  this.sendVerificationEmail(id);
+                }
               }
-            });
+            );
 
             AuthMethods.createAuth.call({}, (err, id) => {
               if (err) {
@@ -184,6 +189,8 @@ class Register extends React.Component<IProps, IState> {
                 console.log(`auth successfully created. res = [${id}]`);
               }
             });
+
+            */
 
             this.props.history.push("/");
           }

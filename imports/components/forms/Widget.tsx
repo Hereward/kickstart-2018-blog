@@ -4,14 +4,17 @@ import * as PropTypes from "prop-types";
 interface IProps {
   handleChange: any;
   wProps: any;
-  dataObj: any;
+  dataObj?: any;
   widgetType: string;
 }
 
 interface IState {}
 
+
+
 export default class Widget extends React.Component<IProps, IState> {
   baseCSSClass: string = "form-control tooltipster";
+  simpleInputTypes: Array<string> = ["simple", "email", "text", "url"];
 
   constructor(props) {
     super(props);
@@ -51,7 +54,8 @@ export default class Widget extends React.Component<IProps, IState> {
 
   render() {
     let props = this.props.wProps;
-    if (this.props.widgetType === "simple") {
+    const simple = this.simpleInputTypes.includes(this.props.widgetType);
+    if (simple) {
       return <div>{this.simple(props)}</div>;
     }
   }

@@ -52,7 +52,7 @@ export default class AuthenticatorForm extends React.Component<IProps, IState> {
     if (this.props.userSettings && this.props.userSettings.authEnabled > 1) {
       //layout =  <RaisedButton secondary={true} label="Cancel" onClick={this.cancel2FA} />;
       layout = (
-        <Button variant="raised" color="primary" onClick={this.cancel2FA}>
+        <Button variant="raised" color="secondary" onClick={this.cancel2FA}>
           Cancel
         </Button>
       );

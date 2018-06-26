@@ -1,14 +1,22 @@
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session";
 import * as RLocalStorage from "meteor/simply:reactive-local-storage";
+import { Accounts } from "meteor/accounts-base";
 import { Roles } from "meteor/alanning:roles";
 import * as Library from "./library";
 import {
   keepAliveUserSession,
   deActivateSession,
   purgeAllOtherSessions,
-  purgeAllSessions
+  purgeAllSessions,
+  createUserSession
 } from "../api/sessions/methods";
+
+import * as userSettingsMethods from "../api/settings/methods";
+import { assignRolesNewUser } from "../api/admin/methods";
+import * as ProfileMethods from "../api/profiles/methods";
+import * as AuthMethods from "../api/auth/methods";
+//import * as SessionMethods from "../api/sessions/methods";
 
 const sessionTokenName = Meteor.settings.public.session.sessionTokenName;
 const userDataKey = Meteor.settings.public.session.userDataKey;
@@ -163,6 +171,7 @@ export function authRequired(props) {
     }
   }
 
+  // log.info(`authRequired`, authEnabled, authRequired, props);
   return authRequired;
 }
 
@@ -187,4 +196,77 @@ export function can(params: { do?: string; threshold?: any }) {
   return allowed;
 }
 
-// Roles.userIsInRole(this.userId, ["super-admin", "admin"]);
+export function configureNewUser(params: { type: string; userId?: string }) {
+  const userId = params.userId ? params.userId : id();
+
+  if (params.type === "register") {
+    assignRolesNewUser.call({ userId: userId }, (err, res) => {
+      if (err) {
+        log.error(`assignRolesNewUser error: [${err.reason}]`, err);
+      }
+    });
+  }
+
+  let allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
+
+  const newSessionToken = sessionToken("create");
+  //log.info(`registerUser`, newSessionToken);
+
+  userSettingsMethods.createUserSettings.call({ userId: userId }, (err, res) => {
+    if (err) {
+      log.error(`createUserSettings error: [${err.reason}]`, err);
+      Library.modalErrorAlert(err.reason);
+    }
+  });
+
+  createUserSession.call({ sessionToken: newSessionToken, keepMeLoggedIn: true, userId: userId }, (err, res) => {
+    if (err) {
+      log.error(`createSession error: [${err.reason}]`, err);
+      Library.modalErrorAlert(err.reason);
+    }
+    if (!allowMultiSession) {
+      Accounts.logoutOtherClients();
+      purgeAllOtherSessions.call({ sessionToken: newSessionToken }, (err, res) => {
+        if (err) {
+          Library.modalErrorAlert(err.reason);
+          log.error(`purgeAllOtherSessions error`, err);
+        }
+      });
+      log.info(`Register - logout other clients - DONE`);
+    }
+  });
+
+  AuthMethods.createAuth.call({ userId: userId }, (err, id) => {
+    if (err) {
+      this.setState({ allowSubmit: true });
+      Library.modalErrorAlert(err.reason);
+      log.error(`createAuth error: [${err.reason}]`, err);
+    } else {
+      log.info(`auth successfully created. res = [${id}]`);
+    }
+  });
+
+  ProfileMethods.createProfile.call(
+    {
+      fname: "",
+      initial: "",
+      lname: "",
+      userId: userId
+    },
+    (err, profileId) => {
+      if (err) {
+        this.setState({ allowSubmit: true });
+        Library.modalErrorAlert(err.reason);
+        log.error(`createProfile error`, err);
+      } else if (params.type === "register") {
+        ProfileMethods.sendVerificationEmail.call({ profileId: profileId, userId: userId }, (err, res) => {
+          if (err) {
+            Library.modalErrorAlert(err.reason);
+            log.error(`sendVerificationEmail error`, err);
+          }
+        });
+        //this.sendVerificationEmail(id);
+      }
+    }
+  );
+}

@@ -1,16 +1,18 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
+import { Roles } from "meteor/alanning:roles";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import DropUpIcon from "@material-ui/icons/ArrowDropUp";
-import DropDownIcon from "@material-ui/icons/ArrowDropDown";
+//import IconButton from "@material-ui/core/IconButton";
+//import DropUpIcon from "@material-ui/icons/ArrowDropUp";
+//import DropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+//import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -18,20 +20,21 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import Typography from "@material-ui/core/Typography";
+//import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
-import { Alert } from "reactstrap";
+//import FormControlLabel from "@material-ui/core/FormControlLabel";
+//import Switch from "@material-ui/core/Switch";
+//import { Alert } from "reactstrap";
 import * as BlockUi from "react-block-ui";
 import { toggleLocked, deleteAllUsers, deleteUserList, sendInvitation } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
-import SettingsForm from "../../admin/forms/SettingsForm";
+//import SettingsForm from "../../admin/forms/SettingsForm";
 import Snackbar from "../../partials/Snackbar";
-import { userSettings } from "../../../api/settings/publish";
+//import { userSettings } from "../../../api/settings/publish";
 import * as UserModule from "../../../modules/user";
 import User from "./User";
 import OptionGroup from "../components/OptionGroup";
+import InvitationForm from "../../admin/forms/InvitationForm";
 
 /*
 import TextField from "@material-ui/core/TextField";
@@ -45,6 +48,8 @@ import PowerIcon from "@material-ui/icons/SettingsPower";
 */
 
 //import { systemSettings } from "../../../api/admin/publish";
+
+const defaultRoles = Meteor.settings.public.admin.roles;
 
 const drawerWidth = 240;
 let styles: any;
@@ -68,16 +73,13 @@ interface IState {
   shortTitle: string;
   copyright: string;
   updateDone: boolean;
-  snackbarIsOpen: boolean;
   queryLimit: number;
   expanded: string;
   block: boolean;
-  showGodOptions: boolean;
+  showBulkOptions: boolean;
   showFilterOptions: boolean;
   showInviteOptions: boolean;
   selectedUsers: any;
-  inviteMessage: string;
-  inviteEmail: string;
 }
 
 styles = theme => ({
@@ -127,7 +129,6 @@ styles = theme => ({
 class Users extends React.Component<IProps, IState> {
   cursorBlock: number = 1;
   currentLimitVal: number = 1;
-  snackbarMessage: string = "Operation completed normally.";
   selectedUsers = [];
   //state: any;
 
@@ -135,7 +136,6 @@ class Users extends React.Component<IProps, IState> {
     super(props);
     this.handleExPanelChange = this.handleExPanelChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.closeSnackbar = this.closeSnackbar.bind(this);
     this.deleteAll = this.deleteAll.bind(this);
     this.confirmDeleteAll = this.confirmDeleteAll.bind(this);
     this.loadMore = this.loadMore.bind(this);
@@ -149,16 +149,13 @@ class Users extends React.Component<IProps, IState> {
       shortTitle: this.props.systemSettings.shortTitle,
       copyright: this.props.systemSettings.copyright,
       updateDone: false,
-      snackbarIsOpen: false,
       queryLimit: 1,
       expanded: "",
       block: false,
-      showGodOptions: false,
+      showBulkOptions: false,
       showFilterOptions: false,
       showInviteOptions: false,
-      selectedUsers: {},
-      inviteMessage: "",
-      inviteEmail: ""
+      selectedUsers: {}
     };
   }
 
@@ -167,10 +164,10 @@ class Users extends React.Component<IProps, IState> {
     this.props.dispatch({ type: "FILTER_INIT" });
   }
 
-  closeSnackbar() {
-    this.setState({ snackbarIsOpen: false });
-    //log.info(`closing snackbar`);
-  }
+
+  miniAlert = (message="") => {
+    this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
+  };
 
   toggleLocked = userId => event => {
     toggleLocked.call({ id: userId }, err => {
@@ -217,7 +214,14 @@ class Users extends React.Component<IProps, IState> {
   };
 
   userDetail(id) {
-    return this.state.expanded === id ? <User userId={id} /> : <div>boojam</div>;
+    const isGod = UserModule.can({ threshold: "god" });
+    const selfEdit = id === this.props.userId;
+    const protectedUser = Roles.userIsInRole(id, ["god", "super-admin"]);
+    return this.state.expanded === id && (!selfEdit && (!protectedUser || isGod)) ? (
+      <User loggedInUserId={this.props.userId} userId={id} />
+    ) : (
+      <div>Protected User: [{id}]</div>
+    );
   }
 
   confirmDeleteAll() {
@@ -237,15 +241,15 @@ class Users extends React.Component<IProps, IState> {
   };
 
   deleteSelected() {
-    log.info(`deleteSelected`);
+    //log.info(`deleteSelected`);
     this.setState({ block: true });
     deleteUserList.call({ selected: this.state.selectedUsers }, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
         log.error(`deleteUserList failed`, err);
       } else {
-        this.snackbarMessage = "Selected users (excluding protected) were deleted!";
-        this.setState({ block: false, snackbarIsOpen: true });
+        this.miniAlert("Selected users were deleted!");
+        this.setState({ block: false });
       }
     });
   }
@@ -258,15 +262,15 @@ class Users extends React.Component<IProps, IState> {
         Library.modalErrorAlert(err.reason);
         log.error(`deleteAllUsers failed`, err);
       } else {
-        this.snackbarMessage = "All users were deleted!";
-        this.setState({ block: false, snackbarIsOpen: true });
+        this.miniAlert("All users were deleted!");
+        this.setState({ block: false });
       }
     });
   }
 
   toggleGodOptions() {
-    const vis = !this.state.showGodOptions;
-    this.setState({ showGodOptions: vis });
+    const vis = !this.state.showBulkOptions;
+    this.setState({ showBulkOptions: vis });
   }
 
   toggleInviteOptions = () => {
@@ -279,17 +283,22 @@ class Users extends React.Component<IProps, IState> {
     this.setState({ showFilterOptions: vis });
   }
 
-  godOptionsDetail() {
+  bulkOptionsDetail() {
     const { classes } = this.props;
+    const isGod = UserModule.can({ threshold: "god" });
     const layout = (
       <div className={classes.deleteAllRoot}>
         <List component="nav">
-          <ListItem onClick={this.confirmDeleteAll} button>
-            <ListItemIcon>
-              <DeleteIcon />
-            </ListItemIcon>
-            <ListItemText primary="Delete ALL users" />
-          </ListItem>
+          {isGod ? (
+            <ListItem onClick={this.confirmDeleteAll} button>
+              <ListItemIcon>
+                <DeleteIcon />
+              </ListItemIcon>
+              <ListItemText primary="Delete ALL users" />
+            </ListItem>
+          ) : (
+            ""
+          )}
           <ListItem onClick={this.confirmDeleteSelected} button>
             <ListItemIcon>
               <DeleteIcon />
@@ -303,10 +312,10 @@ class Users extends React.Component<IProps, IState> {
     return layout;
   }
 
-  godOptions() {
+  bulkOptions() {
     const layout = (
-      <OptionGroup show={this.state.showGodOptions} label="Bulk Operations" action={this.toggleGodOptions}>
-        {this.godOptionsDetail()}
+      <OptionGroup show={this.state.showBulkOptions} label="Bulk Operations" action={this.toggleGodOptions}>
+        {this.bulkOptionsDetail()}
       </OptionGroup>
     );
 
@@ -351,64 +360,20 @@ class Users extends React.Component<IProps, IState> {
     return layout;
   }
 
-  changeInviteText = name => event => {
-    this.setState({ [name]: event.target.value });
-    //this.setState({ inviteMessage: event.target.value });
-  };
-
-  sendInvitation = () => {
-    this.setState({ block: true });
-    sendInvitation.call({ email: this.state.inviteEmail, message: this.state.inviteMessage }, err => {
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        log.error(`sendInvitation failed`, err);
-      } else {
-        this.snackbarMessage = `Invitation sent to ${this.state.inviteEmail}.`;
-        this.setState({ snackbarIsOpen: true });
-      }
-      this.setState({ block: false });
-    });
-  };
+  
 
   inviteOptionsDetail() {
     const { classes } = this.props;
     const layout = (
       <div className={classes.optionsRoot}>
-        <TextField
-          className={classes.messageField}
-          type="email"
-          name="email"
-          InputLabelProps={{
-            shrink: true
-          }}
-          placeholder="email"
-          fullWidth
-          margin="normal"
-          onChange={this.changeInviteText("inviteEmail")}
-        />
-        <TextField
-          className={classes.messageField}
-          helperText="Add a personalised message"
-          type="text"
-          name="inviteMessage"
-          InputLabelProps={{
-            shrink: true
-          }}
-          placeholder="message"
-          fullWidth
-          margin="normal"
-          onChange={this.changeInviteText("inviteMessage")}
-        />
-        <div>
-          <Button variant="raised" onClick={this.sendInvitation} color="secondary" size="small">
-            Send
-          </Button>
-        </div>
+        <InvitationForm />
       </div>
     );
 
     return layout;
   }
+
+  
 
   inviteOptions() {
     const layout = (
@@ -457,11 +422,15 @@ class Users extends React.Component<IProps, IState> {
 
   mapUsers(usersArray) {
     const { classes } = this.props;
+    const isGod = UserModule.can({ threshold: "god" });
+
     const mapped = usersArray.map(user => {
+      //const disabled = (value === "god" || value === "super-admin") && !isGod;
+      const disabled = Roles.userIsInRole(user._id, ["god", "super-admin"]) && !isGod;
       const checked = this.state.selectedUsers[user._id] === true;
       const layout = (
         <div className={classes.userListItem} key={user._id}>
-          <Checkbox onChange={this.toggleUserSelect(user._id)} checked={checked} />
+          <Checkbox disabled={disabled} onChange={this.toggleUserSelect(user._id)} checked={checked} />
           {this.renderUser(user)}
         </div>
       );
@@ -485,7 +454,8 @@ class Users extends React.Component<IProps, IState> {
     return (
       <BlockUi tag="div" blocking={this.state.block}>
         {this.inviteOptions()}
-        {UserModule.can({ threshold: "god" }) ? this.godOptions() : ""}
+
+        {this.bulkOptions()}
         {this.filterOptions()}
 
         <div>
@@ -497,13 +467,12 @@ class Users extends React.Component<IProps, IState> {
             </Button>
           </div>
         </div>
-        <Snackbar message={this.snackbarMessage} close={this.closeSnackbar} isOpen={this.state.snackbarIsOpen} />
       </BlockUi>
     );
   }
 
   render() {
-    log.info(`USERS PANEL `, this.state, this.props);
+    //log.info(`USERS PANEL `, this.state, this.props);
     //log.info(`USERS PANEL PROPS`, this.props);
     return this.layout();
   }

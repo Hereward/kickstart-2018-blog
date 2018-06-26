@@ -7,6 +7,7 @@ import Profile from "../pages/Profile/ProfileIndex";
 import ForgotPassWord from "../pages/User/ForgotPassWord";
 import Authenticator from "../pages/User/Authenticator";
 import Register from "../pages/User/Register";
+import Enroll from "../pages/User/Enroll";
 import SignIn from "../pages/User/SignIn";
 import Locked from "../pages/Notification/Locked";
 import Offline from "../partials/Offline";
@@ -26,14 +27,14 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
   let locked = Library.nested(["userSettings", "locked"], cProps);
   let path = cProps.location.pathname;
   let redirectTo: string;
-  let admin = User.can({ threshold: "super-admin" });
+  let admin = User.can({ threshold: "admin" });
 
   if (locked && path !== "/locked") {
     redirectTo = "/locked";
   } else if (!locked && !authRequired && path === "/locked") {
     redirectTo = "/";
   } else if (authRequired && path !== "/members/authenticate") {
-    redirectTo = "/authenticate";
+    redirectTo = "/members/authenticate";
   } else if (cProps.userId && locked === false && path === "/members/locked") {
     redirectTo = "/";
   } else if (!authRequired && path === "/members/authenticate") {
@@ -63,6 +64,7 @@ const MainRouter = props => (
     <AuthRoute exact path="/admin" cProps={props} component={Admin} type="admin" />
     <AuthRoute exact path="/about" cProps={props} component={About} type="any" />
     <AuthRoute path="/members/verify-email" cProps={props} component={VerifyEmail} type="emailVerify" />
+    <AuthRoute path="/members/enroll" cProps={props} component={Enroll} type="enrollment" />
     <AuthRoute path="/members/forgot-password-reset" cProps={props} component={ForgotPassWordReset} type="guest" />
     <AuthRoute exact path="/members/forgot-password" cProps={props} component={ForgotPassWord} type="guest" />
     <AuthRoute exact path="/members/register" cProps={props} component={Register} type="guest" />

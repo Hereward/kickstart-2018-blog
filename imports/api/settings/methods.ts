@@ -27,18 +27,28 @@ const authCheck = (methodName, userId) => {
 export const createUserSettings = new ValidatedMethod({
   name: "userSettings.create",
 
-  validate: null,
+  validate: new SimpleSchema({
+    userId: { type: String, optional: true }
+  }).validator(),
 
-  run() {
+  run(fields) {
     authCheck("userSettings.create", this.userId);
+
+    const userId = fields.userId ? fields.userId : this.userId;
     let key: any;
     let secret: any;
-    userSettings.remove({ owner: this.userId });
+    userSettings.remove({ owner: userId });
+
+    /*
+    const rootAdminAccount = Accounts.findUserByEmail(Meteor.settings.private.adminEmail);
+    const rootId = (rootAdminAccount) ? rootAdminAccount._id : '';
+    const rootAdmin = (rootId === this.userId);
+*/
 
     let authId = userSettings.insert({
       authEnabled: 0,
       locked: false,
-      owner: this.userId
+      owner: userId
     });
 
     return authId;

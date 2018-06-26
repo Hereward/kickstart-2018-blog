@@ -135,6 +135,7 @@ declare module "meteor/accounts-base" {
 
     function _storedLoginToken(): any;
     function findUserByEmail(options: any): any;
+    function sendEnrollmentEmail(id);
   }
 }
 

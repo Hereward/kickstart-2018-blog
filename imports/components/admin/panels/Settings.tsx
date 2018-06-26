@@ -1,10 +1,10 @@
 import * as React from "react";
+import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import Switch from "@material-ui/core/Switch";
 import { toggleSystemOnline, updateSettings } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import SettingsForm from "../../admin/forms/SettingsForm";
-import Snackbar from "../../partials/Snackbar";
 
 /*
 import TextField from "@material-ui/core/TextField";
@@ -27,6 +27,7 @@ interface IProps {
   theme: any;
   SystemOnline: boolean;
   systemSettings: any;
+  dispatch: any;
 }
 
 interface IState {
@@ -36,7 +37,6 @@ interface IState {
   shortTitle: string;
   copyright: string;
   updateDone: boolean;
-  snackbarIsOpen: boolean;
 }
 
 styles = theme => ({
@@ -66,21 +66,14 @@ class Settings extends React.Component<IProps, IState> {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.closeSnackbar = this.closeSnackbar.bind(this);
 
     this.state = {
       allowSubmit: true,
       mainTitle: this.props.systemSettings.mainTitle,
       shortTitle: this.props.systemSettings.shortTitle,
       copyright: this.props.systemSettings.copyright,
-      updateDone: false,
-      snackbarIsOpen: false
+      updateDone: false
     };
-  }
-
-  closeSnackbar() {
-    this.setState({ snackbarIsOpen: false });
-    log.info(`closing snackbar`);
   }
 
   toggleOnline = () => event => {
@@ -96,7 +89,7 @@ class Settings extends React.Component<IProps, IState> {
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let id = target.id;
-    this.setState({ [id]: value, updateDone: false, snackbarIsOpen: false });
+    this.setState({ [id]: value, updateDone: false });
     log.info(`admin handleChange`, id, value, this.state);
   }
 
@@ -110,12 +103,17 @@ class Settings extends React.Component<IProps, IState> {
     };
 
     updateSettings.call(settings, err => {
-      this.setState({ allowSubmit: true, snackbarIsOpen: true });
+      this.setState({ allowSubmit: true });
+      this.miniAlert("Update Succesful.");
       if (err) {
         Library.modalErrorAlert(err.reason);
       }
     });
   }
+
+  miniAlert = (message = "") => {
+    this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
+  };
 
   layout() {
     //log.info(`Settings`, this.props, this.state);
@@ -136,7 +134,6 @@ class Settings extends React.Component<IProps, IState> {
           settingsObj={this.props.systemSettings}
           updateDone={this.state.updateDone}
         />
-        <Snackbar message="Update Succesful." close={this.closeSnackbar} isOpen={this.state.snackbarIsOpen} />
       </div>
     );
   }
@@ -146,4 +143,4 @@ class Settings extends React.Component<IProps, IState> {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(Settings);
+export default connect()(withStyles(styles, { withTheme: true })(Settings));

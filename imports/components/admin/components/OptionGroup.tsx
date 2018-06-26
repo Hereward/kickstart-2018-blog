@@ -12,6 +12,7 @@ interface IProps {
   show: boolean;
   action: any;
   label: string;
+  transparent?: boolean;
 }
 
 interface IState {}
@@ -36,6 +37,10 @@ styles = theme => ({
   },
   buttonLabel: {
     justifyContent: "space-between"
+  },
+  transparent: {
+    backgroundColor: "transparent",
+    border: "none"
   }
 });
 
@@ -68,7 +73,9 @@ class OptionGroup extends React.Component<IProps, IState> {
 
   detail() {
     const { classes } = this.props;
-    const layout = <div className={`card card-body ${classes.optionsDetail}`}>{this.props.children}</div>;
+    const transparent = this.props.transparent ? classes.transparent : '';
+
+    const layout = <div className={`card card-body ${classes.optionsDetail} ${transparent}`}>{this.props.children}</div>;
     return layout;
   }
 

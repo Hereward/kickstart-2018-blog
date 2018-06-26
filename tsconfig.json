@@ -9,7 +9,7 @@
         "allowJs": true,
         "noImplicitAny": false,
         "strictNullChecks": false,
-        "lib": [ "es6", "dom" ]
+        "lib": [ "es6", "es2017", "dom" ]
     },
     "include": [
         "client/**/*",

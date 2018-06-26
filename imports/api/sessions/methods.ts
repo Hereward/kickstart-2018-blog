@@ -158,7 +158,8 @@ export const createUserSession = new ValidatedMethod({
 
   validate: new SimpleSchema({
     sessionToken: { type: String },
-    keepMeLoggedIn: { type: Boolean, optional: true }
+    keepMeLoggedIn: { type: Boolean, optional: true },
+    userId: { type: String, optional: true }
   }).validator(),
 
   run(fields) {
@@ -167,8 +168,10 @@ export const createUserSession = new ValidatedMethod({
         return false;
       }
 
+      const userId = fields.userId ? fields.userId : this.userId;
+
       let persist = fields.keepMeLoggedIn === true;
-      let sessionId = insertNewSession(this.userId, fields.sessionToken, persist);
+      let sessionId = insertNewSession(userId, fields.sessionToken, persist);
       let settings: any;
     }
   }
@@ -195,7 +198,8 @@ export const purgeAllOtherSessions = new ValidatedMethod({
   name: "UserSession.purgeAllOtherSessions",
 
   validate: new SimpleSchema({
-    sessionToken: { type: String }
+    sessionToken: { type: String },
+    userId: { type: String, optional: true }
   }).validator(),
 
   run(fields) {
@@ -204,12 +208,13 @@ export const purgeAllOtherSessions = new ValidatedMethod({
         return false;
       }
       let sessionRecord: any;
-      sessionRecord = getSession(this.userId, fields.sessionToken);
+      const userId = fields.userId ? fields.userId : this.userId;
+      sessionRecord = getSession(userId, fields.sessionToken);
       if (sessionRecord) {
         let query = {
           $and: [
             {
-              owner: this.userId
+              owner: userId
             },
             {
               _id: { $ne: sessionRecord._id }
@@ -217,7 +222,7 @@ export const purgeAllOtherSessions = new ValidatedMethod({
           ]
         };
         userSessions.remove(query);
-        log.info(`purgeAllOtherSessions - SUCCESS!`, this.userId, sessionRecord);
+        log.info(`purgeAllOtherSessions - SUCCESS!`, userId, sessionRecord);
       }
     }
 

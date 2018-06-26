@@ -32,6 +32,7 @@ interface IProps {
   email: string;
   settings: any;
   ready: boolean;
+  loggedInUserId: string;
 }
 
 interface IState {
@@ -97,7 +98,7 @@ class User extends React.Component<IProps, IState> {
 
   handleSubmit() {}
 
-  confirmDelete = (event) => {
+  confirmDelete = event => {
     this.setState({ blockUI: true });
     Library.confirmDialog().then(result => {
       if (result) {
@@ -114,6 +115,8 @@ class User extends React.Component<IProps, IState> {
 
   layout() {
     const { classes } = this.props;
+    const protectedUser = Roles.userIsInRole(this.props.userId, ["god", "super-admin"]);
+    //const isGod = UserModule.can({ threshold: "god" });
     return this.props.ready ? (
       <BlockUi tag="div" blocking={this.state.blockUI}>
         <h3 className={classes.heading}>Data</h3>
@@ -131,7 +134,13 @@ class User extends React.Component<IProps, IState> {
         <h3 className={classes.heading}>Properties</h3>
         <div className={classes.innerSection}>
           <FormControlLabel
-            control={<Switch onChange={this.toggleLocked(this.props.userId)} checked={this.props.settings.locked} />}
+            control={
+              <Switch
+                disabled={protectedUser}
+                onChange={this.toggleLocked(this.props.userId)}
+                checked={this.props.settings.locked}
+              />
+            }
             label={this.props.settings.locked ? "Locked" : "Unlocked"}
           />
         </div>
@@ -144,7 +153,7 @@ class User extends React.Component<IProps, IState> {
         </div>
 
         <div>
-          <h3 className={classes.heading}>Groups</h3>
+          <h3 className={classes.heading}>Roles</h3>
           <List>{this.mapRoles()}</List>
         </div>
       </BlockUi>
@@ -156,12 +165,17 @@ class User extends React.Component<IProps, IState> {
   mapRoles() {
     const { classes } = this.props;
     const isGod = UserModule.can({ threshold: "god" });
+
     const layout = defaultRoles.map(value => {
-      return value !== "user" && (value !== "god" || isGod) ? (
+      //let disabled = false;
+      const disabled = (value === "god" || value === "super-admin") && !isGod; //{
+      //disabled = true;
+      //}
+      return value !== "user" ? (
         <ListItem key={value} dense button className={classes.listItem}>
           <ListItemText primary={value} />
           <ListItemSecondaryAction>
-            <Checkbox onChange={this.toggleRole(value)} checked={this.getRoleStatus(value)} />
+            <Checkbox onChange={this.toggleRole(value)} disabled={disabled} checked={this.getRoleStatus(value)} />
           </ListItemSecondaryAction>
         </ListItem>
       ) : (

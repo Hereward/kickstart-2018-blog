@@ -32,13 +32,20 @@ const authCheck = (methodName, userId, threshold = "") => {
 };
 
 const protectedUser = (id, userId) => {
+  let status = false;
   const rootAdmin = Accounts.findUserByEmail(Meteor.settings.private.adminEmail);
+  const rootId = (rootAdmin) ? rootAdmin._id : '';
+  const untouchable = (rootId && (id === userId || id === rootId));
+  const god = Roles.userIsInRole(userId, ["god"]);
+  const elevated = Roles.userIsInRole(id, ["god", "super-admin"]);
 
-  if (id === userId || id === rootAdmin._id) {
-    return true;
-  } else {
-    return false;
+  if (untouchable) {
+    status = true;
+  } else if (!god && elevated) {
+    status = true;
   }
+
+  return status;
 };
 
 function deleteOne(id) {
@@ -100,13 +107,24 @@ export const sendInvitation = new ValidatedMethod({
 
   validate: new SimpleSchema({
     email: { type: String },
-    message: { type: String, optional: true }
+    name: { type: String, optional: true },
+    message: { type: String, optional: true },
+    roles: { type: Object, blackbox: true }
   }).validator(),
 
   run(fields) {
     if (!this.isSimulation) {
       authCheck("sendInvitation", this.userId, "admin");
-      log.info(`admin.sendInvitation`, fields.email);
+      //log.info(`admin.sendInvitation`, fields.email);
+
+      const defaultMessage = `To get started, simply click the link below. \n\n`;
+      const salutation = fields.name ? `Hi ${fields.name},  \n\n` : "Hi there,  \n\n";
+      const message = fields.message ? `${fields.message}\n\n${defaultMessage}` : `${defaultMessage}`;
+
+      Accounts.emailTemplates.enrollAccount.text = (user, url) => {
+        return `${salutation}${message}${url}`;
+      };
+
       const exists = Accounts.findUserByEmail(fields.email);
       if (exists) {
         throw new Meteor.Error(`create-user not-authorized`, "Cannot create user - email address already in use.");
@@ -115,10 +133,24 @@ export const sendInvitation = new ValidatedMethod({
         email: fields.email
       });
 
-      log.info(`admin.sendInvitation - account created`, id);
+      //const userRoles = [];
+
+      const userRoles = Object.keys(fields.roles).reduce((filtered, option) => {
+        if (fields.roles[option]) {
+          filtered.push(option);
+        }
+        return filtered;
+      }, []);
+
+      if (userRoles.length) {
+        Roles.setUserRoles(id, userRoles);
+      }
+
+      //log.info(`admin.sendInvitation [${id}] [${salutation}${message}]`, fields.email, userRoles);
+
+      //log.info(`admin.sendInvitation - account created`, id);
 
       Accounts.sendEnrollmentEmail(id);
-      
     }
   }
 });
@@ -144,7 +176,9 @@ export const toggleSystemOnline = new ValidatedMethod({
 
 export const assignRolesNewUser = new ValidatedMethod({
   name: "admin.assignRoles",
-  validate: null,
+  validate: new SimpleSchema({
+    userId: { type: String, optional: true }
+  }).validator(),
 
   run(fields) {
     if (!this.isSimulation) {

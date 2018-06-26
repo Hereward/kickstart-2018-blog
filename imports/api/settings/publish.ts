@@ -25,7 +25,7 @@ if (Meteor.isServer) {
   Meteor.publish("allSettings", function allUsersPublication() {
     let admin = false;
     if (this.userId) {
-      admin = Roles.userIsInRole(this.userId, ["super-admin", "admin"]);
+      admin = Roles.userIsInRole(this.userId, ["god","super-admin", "admin"]);
     }
 
     if (!admin) {

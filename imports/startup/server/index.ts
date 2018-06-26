@@ -18,7 +18,7 @@ Accounts.config({
 
 Accounts.urls.resetPassword = token => Meteor.absoluteUrl(`forgot-password-reset/${token}`);
 Accounts.urls.verifyEmail = token => Meteor.absoluteUrl(`members/verify-email/${token}`);
-Accounts.urls.enrollAccount  = token => Meteor.absoluteUrl(`members/invitations/${token}`);
+Accounts.urls.enrollAccount  = token => Meteor.absoluteUrl(`members/enroll/${token}`);
 Accounts.emailTemplates.from = "Meteor Kickstart <postmaster@mg.truthnews.com.au>";
 
 Accounts.onLogin(user => {

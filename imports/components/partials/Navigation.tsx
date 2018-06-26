@@ -103,6 +103,7 @@ class Navigation extends React.Component<IProps, IState> {
           this.props.location.pathname === "/" &&
           !this.props.userData.emails[0].verified
         ) {
+          
           this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
         }
       }
@@ -120,6 +121,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   verifyEmailNotificationRequired() {
+    //log.info(`verifyEmailNotificationRequired`, this.emailVerifyPrompted, this.props);
     let notify = false;
     if (
       this.props.sessionReady &&
@@ -209,6 +211,7 @@ class Navigation extends React.Component<IProps, IState> {
         }
         Meteor.logout(() => {
           //Meteor["connection"].setUserId(null);
+          this.props.dispatch({ type: "LOGOUT_DONE" });
           log.info(`Navigation logOut DONE`);
         });
       });

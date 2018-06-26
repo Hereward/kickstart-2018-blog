@@ -110,12 +110,15 @@ function decrypt(text, password) {
 export const createAuth = new ValidatedMethod({
   name: "auth.create",
 
-  validate: null,
+  validate: new SimpleSchema({
+    userId: { type: String, optional: true }
+  }).validator(),
 
-  run() {
+  run(fields) {
     authCheck("auth.create", this.userId);
-    Auth.remove({ owner: this.userId });
-    let authId = insertAuth(this.userId);
+    const userId = fields.userId ? fields.userId : this.userId;
+    Auth.remove({ owner: userId });
+    let authId = insertAuth(userId);
     return authId;
   }
 });

@@ -20,6 +20,7 @@ import { Auth } from "../../../api/auth/publish";
 import Spinner from "../../partials/Spinner";
 import Offline from "../../partials/Offline";
 import * as Library from "../../../modules/library";
+import Snackbar from "../../partials/Snackbar";
 //import rootReducer from "../../../redux/reducers";
 
 //declare var window: any;
@@ -44,6 +45,7 @@ interface IProps {
   reduxState: any;
   loggingIn: boolean;
   userId: string;
+  dispatch: any;
 }
 
 interface IState {}
@@ -67,6 +69,11 @@ class App extends React.Component<IProps, IState> {
 
   componentWillMount() {}
 
+  closeMiniAlert = () => {
+    //this.setState({ miniAlert: false });
+    this.props.dispatch({ type: "MINI_ALERT_OFF" });
+  };
+
   getLayout() {
     const path = this.props.history.location.pathname;
     //let admin = User.can({ threshold: "super-admin" });
@@ -86,6 +93,11 @@ class App extends React.Component<IProps, IState> {
             )}
           </main>
           {!path.match(/admin/) ? <Footer {...this.props} /> : ""}
+          <Snackbar
+            message={this.props.reduxState.miniAlert.message}
+            close={this.closeMiniAlert}
+            isOpen={this.props.reduxState.miniAlert.on}
+          />
         </div>
       );
     }
@@ -105,7 +117,7 @@ export default withRouter(
     withTracker(props => {
       //log.info("APP PROPS", props);
       // props.store.getState()
-      //let reduxState = state;
+      log.info(`App - reduxState`, props.reduxState);
       let userSettingsRec: any;
       let systemSettingsRec = systemSettings.findOne();
       let profilesHandle = Meteor.subscribe("profiles");
@@ -118,6 +130,7 @@ export default withRouter(
       let sessionExpired: boolean = false;
       let enhancedAuth = Meteor.settings.public.enhancedAuth.active === false ? false : true;
       let sessionToken: string;
+      let loggingOut = props.reduxState.loggingOut;
       //let loggingIn: boolean;
       let userId = User.id();
       let loggingIn = User.loggingIn();
@@ -192,7 +205,9 @@ export default withRouter(
         sessionReady: sessionReady,
         connected: connected,
         connectionRetryCount: connectionRetryCount,
-        systemSettings: systemSettingsRec
+        systemSettings: systemSettingsRec,
+        loggingOut: loggingOut,
+        reduxState: props.reduxState
       };
     })(App)
   )

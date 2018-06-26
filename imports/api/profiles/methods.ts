@@ -20,14 +20,17 @@ export const createProfile = new ValidatedMethod({
   validate: new SimpleSchema({
     fname: { type: String },
     initial: { type: String },
-    lname: { type: String }
+    lname: { type: String },
+    userId: { type: String, optional: true }
   }).validator(),
 
-  run() {
+  run(fields) {
     authCheck("profiles.create", this.userId);
+
+    const userId = fields.userId ? fields.userId : this.userId;
     let admin = false;
 
-    Profiles.remove({ owner: this.userId });
+    Profiles.remove({ owner: userId });
 
     let id = Profiles.insert({
       fname: "",
@@ -44,7 +47,7 @@ export const createProfile = new ValidatedMethod({
       verificationEmailSent: 0,
       new: true,
       createdAt: new Date(),
-      owner: this.userId,
+      owner: userId
     });
 
     return id;
@@ -114,24 +117,34 @@ export const sendVerificationEmail = new ValidatedMethod({
   name: "profiles.sendVerificationEmail",
 
   validate: new SimpleSchema({
-    id: { type: String }
+    userId: { type: String, optional: true },
+    profileId: { type: String }
   }).validator(),
 
   run(fields) {
     authCheck("profiles.sendVerificationEmail", this.userId);
+    log.info(`sendVerificationEmail`, fields.userId, this.userId);
+    const userId = fields.userId ? fields.userId : this.userId;
 
     let verificationEmailSent = 1;
 
     if (!this.isSimulation) {
-      let emailResServer = Accounts.sendVerificationEmail(this.userId);
+      let emailResServer = Accounts.sendVerificationEmail(userId);
+      let error = false;
       if (!emailResServer) {
         verificationEmailSent = 2;
+        error = true;
+      }
+
+      Profiles.update(fields.profileId, {
+        $set: { verificationEmailSent: verificationEmailSent }
+      });
+
+      log.info(`sendVerificationEmail - UPDATED PROFILE`, userId, verificationEmailSent);
+
+      if (error) {
         throw new Meteor.Error("Could not send verification email");
       }
     }
-
-    Profiles.update(fields.id, {
-      $set: { verificationEmailSent: verificationEmailSent }
-    });
   }
 });

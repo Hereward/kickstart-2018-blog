@@ -65,11 +65,14 @@ class Authenticator extends React.Component<IProps, IState> {
       disableSubmit: false,
       allowSubmit: true
     };
+    log.info(`AUTHENTICATE CONSTRUCTOR`, this.props);
   }
 
   componentWillMount() {}
 
-  componentDidUpdate() {}
+  componentDidUpdate() {
+    log.info(`AUTHENTICATE`, this.props);
+  }
 
   componentWillReceiveProps(nextProps) {}
 
