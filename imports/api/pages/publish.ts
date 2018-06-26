@@ -10,14 +10,15 @@ if (Meteor.isServer) {
   });
 
   Meteor.startup(function pagesStart() {
-    Pages.remove({});
-
-    Pages.insert({
-      name: "about",
-      heading: Meteor.settings.public.defaultContent.about.heading,
-      body: Meteor.settings.public.defaultContent.about.body,
-      createdAt: new Date(),
-      owner: ""
-    });
+    const myPages = Pages.find();
+    if (!myPages.count()) {
+      Pages.insert({
+        name: "about",
+        heading: Meteor.settings.public.defaultContent.about.heading,
+        body: Meteor.settings.public.defaultContent.about.body,
+        createdAt: new Date(),
+        owner: ""
+      });
+    }
   });
 }

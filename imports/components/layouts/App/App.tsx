@@ -70,17 +70,14 @@ class App extends React.Component<IProps, IState> {
   componentWillMount() {}
 
   closeMiniAlert = () => {
-    //this.setState({ miniAlert: false });
     this.props.dispatch({ type: "MINI_ALERT_OFF" });
   };
 
   getLayout() {
     const path = this.props.history.location.pathname;
-    //let admin = User.can({ threshold: "super-admin" });
     if (!this.props.systemSettings || (!this.props.connected && this.props.connectionRetryCount > 1)) {
       return <Spinner caption="connecting" type="page" />;
-      //} else if (this.props.systemSettings && this.props.systemSettings.systemOnline !== true && !admin) {
-      // return <Offline />;
+      
     } else {
       return (
         <div className="router-parent d-flex flex-column">

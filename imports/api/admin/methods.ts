@@ -62,7 +62,6 @@ function deleteOne(id) {
   Profiles.remove({ owner: id });
 }
 
-
 export const configureNewUser = new ValidatedMethod({
   name: "admin.configureNewUser",
   validate: new SimpleSchema({
@@ -131,7 +130,6 @@ export const configureNewUser = new ValidatedMethod({
     return true;
   }
 });
-
 
 export const updateSettings = new ValidatedMethod({
   name: "admin.updateSettings",
@@ -352,11 +350,19 @@ export const toggleRole = new ValidatedMethod({
 
   run(fields) {
     authCheck("toggleRole", this.userId, "admin");
-    const current = Roles.userIsInRole(fields.id, fields.role);
-    if (current) {
-      Roles.removeUsersFromRoles(fields.id, fields.role);
-    } else {
-      Roles.addUsersToRoles(fields.id, fields.role);
+    let prot = false;
+
+    if (!this.isSimulation) {
+      prot = protectedUser(fields.id, this.userId);
+    }
+
+    if (!prot) {
+      const current = Roles.userIsInRole(fields.id, fields.role);
+      if (current) {
+        Roles.removeUsersFromRoles(fields.id, fields.role);
+      } else {
+        Roles.addUsersToRoles(fields.id, fields.role);
+      }
     }
 
     return true;

@@ -376,16 +376,6 @@ class Profile extends React.Component<IProps, IState> {
             processingRequest={this.state.processing2FArequest}
           />
         ) : null}
-
-        {User.can({threshold: 'admin'}) ? (
-          <Notification
-            mainFunction={this.handleDeleteAllUsers}
-            panel="action"
-            type="admin"
-            parentProps={this.props}
-            processingRequest={this.state.disableSubmitDeleteAllUsers}
-          />
-        ) : null}
       </div>
     );
     return layout;

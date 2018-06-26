@@ -164,8 +164,7 @@ class Users extends React.Component<IProps, IState> {
     this.props.dispatch({ type: "FILTER_INIT" });
   }
 
-
-  miniAlert = (message="") => {
+  miniAlert = (message = "") => {
     this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
   };
 
@@ -360,8 +359,6 @@ class Users extends React.Component<IProps, IState> {
     return layout;
   }
 
-  
-
   inviteOptionsDetail() {
     const { classes } = this.props;
     const layout = (
@@ -372,8 +369,6 @@ class Users extends React.Component<IProps, IState> {
 
     return layout;
   }
-
-  
 
   inviteOptions() {
     const layout = (
@@ -426,7 +421,8 @@ class Users extends React.Component<IProps, IState> {
 
     const mapped = usersArray.map(user => {
       //const disabled = (value === "god" || value === "super-admin") && !isGod;
-      const disabled = user._id === this.props.userId || (Roles.userIsInRole(user._id, ["god", "super-admin"]) && !isGod);
+      const disabled =
+        user._id === this.props.userId || (Roles.userIsInRole(user._id, ["god", "super-admin"]) && !isGod);
       const checked = this.state.selectedUsers[user._id] === true;
       const layout = (
         <div className={classes.userListItem} key={user._id}>
@@ -472,15 +468,9 @@ class Users extends React.Component<IProps, IState> {
   }
 
   render() {
-    //log.info(`USERS PANEL `, this.state, this.props);
-    //log.info(`USERS PANEL PROPS`, this.props);
     return this.layout();
   }
 }
-
-//const bundle = withStyles(styles, { withTheme: true });
-
-//export default withStyles(styles, { withTheme: true })(Users);
 
 const mapStateToProps = state => {
   return {
@@ -491,7 +481,6 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
-    //log.info(`ADMIN PROPS`, props);
     const usersHandle = Meteor.subscribe("allUsers");
     const settingsHandle = Meteor.subscribe("allSettings");
     const rolesHandle = Meteor.subscribe("roles");
@@ -511,7 +500,6 @@ export default connect(mapStateToProps)(
     if (idString) {
       filterCount += 1;
       let regex = new RegExp(`^${idString}.*`);
-      //let regex = `/^${idString}.*/`;
       idFilter = { _id: regex };
       combinedFilters = idFilter;
     }
@@ -519,15 +507,9 @@ export default connect(mapStateToProps)(
     if (emailString) {
       filterCount += 1;
       let regex = new RegExp(`^${emailString}.*`);
-      //let regex = `/^${idString}.*/`;
       emailFilter = { "emails.0.address": regex };
       combinedFilters = emailFilter;
     }
-
-    // emails[0].address
-    // $or: [{ private: { $ne: true } }, { owner: this.userId }]
-
-    //log.info(`ADMIN REGEX, filterCount = ${filterCount}`, idString, emailString, combinedFilters);
 
     let users: any;
     switch (filterCount) {
@@ -546,14 +528,6 @@ export default connect(mapStateToProps)(
     if (defaultSearch) {
       users = Meteor.users.find({}, options).fetch();
     }
-
-    //let god = UserModule.can({ threshold: "god" });
-    //let editor = Roles.userIsInRole(props.userId, ["editor"]);
-    //let god = Roles.userIsInRole(props.userId, ["god"]);
-    // log.info(`Users Admin - GOD`, props.userId, editor, god);
-
-    //
-    //log.info(`ADMIN USERS`, users);
 
     return {
       allUsers: users
