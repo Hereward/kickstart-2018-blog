@@ -12,6 +12,10 @@ body {
   z-index: 2000;
 }
 
+div, p, span {
+  // text-overflow: ellipsis;
+}
+
 /*
 .mobile-drawer-container {
   z-index: 3000 !important;
@@ -25,7 +29,7 @@ body {
 .container.admin {
   width: 100%;
   max-width: 100%;
-  top: 3.5rem;
+  top: 3.5rem; 
   position: absolute;
   //height: 20rem;
   //overflow: hidden;

@@ -102,13 +102,18 @@ styles = theme => ({
     color: "dimGray"
   },
   summaryDataEmail: {
-    maxWidth: "20rem",
-    overflow: "hidden",
     display: "none",
-    [theme.breakpoints.up("md")]: {
-      display: "inline-block",
+    maxWidth: "10rem",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    [theme.breakpoints.up("sm")]: {
+      maxWidth: "15rem",
       verticalAlign: "top",
-      marginLeft: "0.5rem"
+      marginLeft: "0.5rem",
+      display: "inline-block"
+    },
+    [theme.breakpoints.up("md")]: {
+      maxWidth: "20rem"
     }
   },
   summaryDataID: {

@@ -42,10 +42,11 @@ export function invalidAuthCodeAlert(error) {
 
 // showConfirmButton: true,
 
-export function confirmDialog(params?: { title?: string; message?: string; icon?: string }) {
+export function confirmDialog(params?: { title?: string; message?: string; icon?: string, buttons?: any }) {
   let title = "Are you sure ?";
   let message = "You cannot undo this operation.";
   let icon = "warning";
+  let buttons = [true, true];
   if (params) {
     if (params.title) {
       title = params.title;
@@ -57,13 +58,17 @@ export function confirmDialog(params?: { title?: string; message?: string; icon?
     if (params.icon) {
       icon = params.icon === "off" ? "" : params.icon;
     }
+
+    if (params.buttons) {
+      buttons = params.buttons;
+    }
   }
 
   return swal({
     title: title,
     text: message,
     icon: icon,
-    buttons: [true, true]
+    buttons: buttons
   });
 }
 

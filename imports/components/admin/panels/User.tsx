@@ -57,13 +57,16 @@ styles = theme => ({
     }
   },
   email: {
-    maxWidth: "20rem",
-    overflow: "hidden",
-    display: "none",
+    maxWidth: "10rem",
+    overflow: "auto",
+    display: "inline-block",
+    verticalAlign: "top",
+    marginLeft: "0.5rem",
+    [theme.breakpoints.up("sm")]: {
+      maxWidth: "18rem",
+    },
     [theme.breakpoints.up("md")]: {
-      display: "inline-block",
-      verticalAlign: "top",
-      marginLeft: "0.5rem"
+      maxWidth: "24rem"
     }
   },
   clickToView: {
@@ -75,9 +78,7 @@ styles = theme => ({
   clickToViewButton: {
     marginLeft: "1rem"
   },
-  listGroupItem: {
-   
-  }
+  listGroupItem: {}
 });
 
 class User extends React.Component<IProps, IState> {
@@ -140,8 +141,27 @@ class User extends React.Component<IProps, IState> {
   };
 
   viewData = type => {
+    let data: string;
+    if (type === "email") {
+      data = this.props.user.emails[0].address;
+    }
+    Library.confirmDialog({ title: data, message: "off", icon: "off" });
     return true;
   };
+
+  /*
+  <span className={classes.clickToView}>
+                <Button
+                  className={classes.clickToViewButton}
+                  onClick={e => this.viewData("email")}
+                  color="secondary"
+                  variant="raised"
+                  size="small"
+                >
+                  view
+                </Button>
+              </span>
+              */
 
   layout() {
     const { classes } = this.props;
@@ -158,17 +178,6 @@ class User extends React.Component<IProps, IState> {
             <li className={`list-group-item ${classes.listGroupItem}`}>
               <strong>email:</strong>
               <span className={classes.email}>{this.props.user.emails[0].address}</span>
-              <span className={classes.clickToView}>
-                <Button
-                  className={classes.clickToViewButton}
-                  onClick={e => this.viewData("email")}
-                  color="secondary"
-                  variant="raised"
-                  size="small"
-                >
-                  view
-                </Button>
-              </span>
             </li>
           </ul>
         </div>
