@@ -22,7 +22,7 @@ import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 //import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-//import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 //import Switch from "@material-ui/core/Switch";
 //import { Alert } from "reactstrap";
 import * as BlockUi from "react-block-ui";
@@ -101,7 +101,16 @@ styles = theme => ({
   summaryData: {
     color: "dimGray"
   },
-  summaryDataEmail: {},
+  summaryDataEmail: {
+    maxWidth: "20rem",
+    overflow: "hidden",
+    display: "none",
+    [theme.breakpoints.up("md")]: {
+      display: "inline-block",
+      verticalAlign: "top",
+      marginLeft: "0.5rem"
+    }
+  },
   summaryDataID: {
     fontWeight: "bold"
   },
@@ -123,6 +132,24 @@ styles = theme => ({
   },
   messageField: {
     marginBottom: "1rem"
+  },
+  checkBoxLarge: {
+    display: "none",
+    [theme.breakpoints.up("md")]: {
+      display: "inline-flex"
+    }
+  },
+  checkBoxSmall: {
+    display: "inline-flex",
+    [theme.breakpoints.down("md")]: {
+      display: "none"
+    }
+  },
+  checkBoxSmallContainer: {
+    display: "block",
+    [theme.breakpoints.up("md")]: {
+      display: "none"
+    }
   }
 });
 
@@ -130,6 +157,7 @@ class Users extends React.Component<IProps, IState> {
   cursorBlock: number = 1;
   currentLimitVal: number = 1;
   selectedUsers = [];
+  isGod: boolean = false;
   //state: any;
 
   constructor(props) {
@@ -142,6 +170,7 @@ class Users extends React.Component<IProps, IState> {
     this.toggleGodOptions = this.toggleGodOptions.bind(this);
     this.toggleFilterOptions = this.toggleFilterOptions.bind(this);
     this.changeFilter = this.changeFilter.bind(this);
+    this.isGod = UserModule.can({ threshold: "god" });
 
     this.state = {
       allowSubmit: true,
@@ -209,14 +238,26 @@ class Users extends React.Component<IProps, IState> {
       return filtered;
     }, []);
 
+    //log.info(`toggleUserSelect`, this.selectedUsers);
+
     return "";
   };
 
-  userDetail(id) {
-    const isGod = UserModule.can({ threshold: "god" });
+  allowUser(id) {
+    //let prot = false;
     const selfEdit = id === this.props.userId;
     const protectedUser = Roles.userIsInRole(id, ["god", "super-admin"]);
-    return this.state.expanded === id && (!selfEdit && (!protectedUser || isGod)) ? (
+    const allowed = !selfEdit && (!protectedUser || this.isGod);
+    return allowed;
+  }
+
+  userDetail(id) {
+    //const isGod = UserModule.can({ threshold: "god" });
+    //const selfEdit = id === this.props.userId;
+    //const protectedUser = Roles.userIsInRole(id, ["god", "super-admin"]);
+    // (!selfEdit && (!protectedUser || this.isGod))
+    const allowed = this.allowUser(id);
+    return this.state.expanded === id && allowed ? (
       <User loggedInUserId={this.props.userId} userId={id} />
     ) : (
       <div>Protected User: [{id}]</div>
@@ -284,11 +325,11 @@ class Users extends React.Component<IProps, IState> {
 
   bulkOptionsDetail() {
     const { classes } = this.props;
-    const isGod = UserModule.can({ threshold: "god" });
+    //const isGod = UserModule.can({ threshold: "god" });
     const layout = (
       <div className={classes.deleteAllRoot}>
         <List component="nav">
-          {isGod ? (
+          {this.isGod ? (
             <ListItem onClick={this.confirmDeleteAll} button>
               <ListItemIcon>
                 <DeleteIcon />
@@ -393,6 +434,12 @@ class Users extends React.Component<IProps, IState> {
   renderUser(userObj: any) {
     const { classes } = this.props;
     const { expanded } = this.state;
+
+    const disabledC = this.disableCheckBox(userObj);
+    const checkedC = this.checkCheckBox(userObj);
+
+    const checkBox = this.checkBox("default", disabledC, userObj, checkedC);
+
     return (
       <ExpansionPanel
         classes={{
@@ -404,29 +451,70 @@ class Users extends React.Component<IProps, IState> {
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <div className={classes.summaryData}>
-            <span className={classes.summaryDataID}>{userObj._id}:</span>{" "}
-            <span className={classes.summaryDataEmail}>{userObj.emails[0].address}</span>{" "}
+            <span className={classes.summaryDataID}>{userObj._id}</span>{" "}
+            <span className={classes.summaryDataEmail}>{userObj.emails[0].address}</span>
           </div>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.userDetails}>
-          <div>{this.userDetail(userObj._id)}</div>
+          <div>
+            {this.allowUser(userObj._id) ? (
+              <div className={classes.checkBoxSmallContainer}>
+                <FormControlLabel control={checkBox} label="selected" />
+              </div>
+            ) : (
+              ""
+            )}
+            {this.userDetail(userObj._id)}
+          </div>
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
   }
 
+  checkBox(type, disabled, user, checked) {
+    const { classes } = this.props;
+    let cssClass: string;
+
+    switch (type) {
+      case "small":
+        cssClass = classes.checkBoxSmall;
+        break;
+      case "large":
+        cssClass = classes.checkBoxLarge;
+        break;
+      case "default":
+        cssClass = "";
+        break;
+      default:
+        cssClass = "";
+    }
+
+    return (
+      <Checkbox className={cssClass} disabled={disabled} onChange={this.toggleUserSelect(user._id)} checked={checked} />
+    );
+  }
+
+  disableCheckBox(user) {
+    const disabled =
+      user._id === this.props.userId || (Roles.userIsInRole(user._id, ["god", "super-admin"]) && !this.isGod);
+    return disabled;
+  }
+
+  checkCheckBox(user) {
+    const checked = this.state.selectedUsers[user._id] === true;
+    return checked;
+  }
+
   mapUsers(usersArray) {
     const { classes } = this.props;
-    const isGod = UserModule.can({ threshold: "god" });
+    //const isGod = UserModule.can({ threshold: "god" });
 
     const mapped = usersArray.map(user => {
-      //const disabled = (value === "god" || value === "super-admin") && !isGod;
-      const disabled =
-        user._id === this.props.userId || (Roles.userIsInRole(user._id, ["god", "super-admin"]) && !isGod);
-      const checked = this.state.selectedUsers[user._id] === true;
+      const disabledC = this.disableCheckBox(user);
+      const checkedC = this.checkCheckBox(user);
       const layout = (
         <div className={classes.userListItem} key={user._id}>
-          <Checkbox disabled={disabled} onChange={this.toggleUserSelect(user._id)} checked={checked} />
+          {this.checkBox("large", disabledC, user, checkedC)}
           {this.renderUser(user)}
         </div>
       );

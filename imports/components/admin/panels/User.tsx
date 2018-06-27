@@ -50,7 +50,33 @@ styles = theme => ({
     color: "#4d4d4d"
   },
   innerSection: {
-    margin: "1rem"
+    margin: "1rem",
+    marginLeft: "0",
+    [theme.breakpoints.up("md")]: {
+      marginLeft: "1rem"
+    }
+  },
+  email: {
+    maxWidth: "20rem",
+    overflow: "hidden",
+    display: "none",
+    [theme.breakpoints.up("md")]: {
+      display: "inline-block",
+      verticalAlign: "top",
+      marginLeft: "0.5rem"
+    }
+  },
+  clickToView: {
+    display: "inline",
+    [theme.breakpoints.up("md")]: {
+      display: "none"
+    }
+  },
+  clickToViewButton: {
+    marginLeft: "1rem"
+  },
+  listGroupItem: {
+   
   }
 });
 
@@ -113,6 +139,10 @@ class User extends React.Component<IProps, IState> {
     });
   };
 
+  viewData = type => {
+    return true;
+  };
+
   layout() {
     const { classes } = this.props;
     const protectedUser = Roles.userIsInRole(this.props.userId, ["god", "super-admin"]);
@@ -122,11 +152,23 @@ class User extends React.Component<IProps, IState> {
         <h3 className={classes.heading}>Data</h3>
         <div className={classes.innerSection}>
           <ul className="list-group">
-            <li className="list-group-item">
+            <li className={`list-group-item ${classes.listGroupItem}`}>
               <strong>id:</strong> {this.props.user._id}
             </li>
-            <li className="list-group-item">
-              <strong>email:</strong> {this.props.user.emails[0].address}
+            <li className={`list-group-item ${classes.listGroupItem}`}>
+              <strong>email:</strong>
+              <span className={classes.email}>{this.props.user.emails[0].address}</span>
+              <span className={classes.clickToView}>
+                <Button
+                  className={classes.clickToViewButton}
+                  onClick={e => this.viewData("email")}
+                  color="secondary"
+                  variant="raised"
+                  size="small"
+                >
+                  view
+                </Button>
+              </span>
             </li>
           </ul>
         </div>
