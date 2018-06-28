@@ -11,7 +11,7 @@ import { cancel2FASession } from "../sessions/methods";
 
 let serverAuth: any;
 if (Meteor.isServer) {
-  serverAuth = require('../../server/auth');
+  serverAuth = require("../../server/auth");
 }
 
 const authCheck = (methodName, userId) => {
@@ -59,15 +59,15 @@ export const toggleAuthEnabledPending = new ValidatedMethod({
   name: "userSettings.toggleAuthEnabledPending",
 
   validate: new SimpleSchema({
-    sessionToken: { type: String }
+    id: { type: String, optional: true }
   }).validator(),
 
   run(fields) {
     authCheck("userSettings.toggleEnabledPending", this.userId);
     if (!this.isSimulation) {
-      let ownerId = this.userId;
+      let userId = fields.id || this.userId;
       let settingsRecord: any;
-      settingsRecord = userSettings.findOne({ owner: ownerId });
+      settingsRecord = userSettings.findOne({ owner: userId });
 
       if (settingsRecord) {
         let currentState = settingsRecord.authEnabled;
@@ -95,8 +95,8 @@ export const toggleAuthEnabledPending = new ValidatedMethod({
 
         if (targetState === 3) {
           let authRec: any;
-          authRec = Auth.findOne({ owner: this.userId });
-          serverAuth.initAuth(authRec._id, this.userId);
+          authRec = Auth.findOne({ owner: userId });
+          serverAuth.initAuth(authRec._id, userId);
         }
       }
     }

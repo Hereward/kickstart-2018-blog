@@ -36,7 +36,7 @@ const lockAccount = userId => {
 
 export const lockAccountToggle = userId => {
   const settings = userSettings.findOne({ owner: userId });
-  
+
   if (settings) {
     const newSetting = !settings.locked;
     if (newSetting === false) {
@@ -233,14 +233,20 @@ export const purgeAllOtherSessions = new ValidatedMethod({
 export const purgeAllSessions = new ValidatedMethod({
   name: "UserSession.purgeAllSessions",
 
-  validate: null,
+  validate: new SimpleSchema({
+    id: { type: String, optional: true }
+  }).validator(),
 
   run(fields) {
     if (!this.isSimulation) {
+      if (!authCheck("UserSession.purgeAllSessions", this.userId)) {
+        return false;
+      }
+      const userId = fields.id || this.userId;
       let result = false;
-      if (this.userId) {
+      if (userId) {
         result = true;
-        userSessions.remove({ owner: this.userId });
+        userSessions.remove({ owner: userId });
       }
       return result;
     }

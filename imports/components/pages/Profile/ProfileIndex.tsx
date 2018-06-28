@@ -243,7 +243,7 @@ class Profile extends React.Component<IProps, IState> {
     this.setState({ processing2FArequest: true });
     Accounts.logoutOtherClients();
     let token = User.sessionToken("get");
-    purgeAllOtherSessions.call({ sessionToken: token }, (err, res) => {
+    purgeAllOtherSessions.call({}, (err, res) => {
       if (err) {
         Library.modalErrorAlert(err.reason);
         console.log(`purgeAllOtherSessions error`, err);

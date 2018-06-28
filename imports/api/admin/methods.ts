@@ -15,6 +15,11 @@ import { lockAccountToggle, insertNewSession, purgeAllOtherSessions } from "../s
 import { createAuth } from "../auth/methods";
 import { createProfile, sendVerificationEmail } from "../profiles/methods";
 
+let serverAuth: any;
+if (Meteor.isServer) {
+  serverAuth = require("../../server/auth");
+}
+
 const authCheck = (methodName, userId, threshold = "") => {
   let auth = false;
   if (userId) {
@@ -61,6 +66,53 @@ function deleteOne(id) {
   userSettings.remove({ owner: id });
   Profiles.remove({ owner: id });
 }
+
+export const adminToggle2FA = new ValidatedMethod({
+  name: "admin.adminToggle2FA",
+
+  validate: new SimpleSchema({
+    id: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("admin.adminToggle2FA", this.userId, "admin");
+    if (!this.isSimulation) {
+      let userId = fields.id;
+      let settingsRecord: any;
+      settingsRecord = userSettings.findOne({ owner: userId });
+
+      if (settingsRecord) {
+        userSessions.remove({ owner: userId });
+        let currentState = settingsRecord.authEnabled;
+        let targetState: number;
+        switch (currentState) {
+          case 1:
+            targetState = 0;
+            break;
+          case 0:
+            targetState = 3;
+            break;
+          case 2:
+            targetState = 0;
+            break;
+          case 3:
+            targetState = 0;
+            break;
+          default:
+            targetState = 0;
+        }
+
+        userSettings.update(settingsRecord._id, { $set: { authEnabled: targetState } });
+
+        if (targetState === 3) {
+          let authRec: any;
+          authRec = Auth.findOne({ owner: userId });
+          serverAuth.initAuth(authRec._id, userId);
+        }
+      }
+    }
+  }
+});
 
 export const configureNewUser = new ValidatedMethod({
   name: "admin.configureNewUser",

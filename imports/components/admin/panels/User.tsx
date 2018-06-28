@@ -14,7 +14,9 @@ import Checkbox from "@material-ui/core/Checkbox";
 import Typography from "@material-ui/core/Typography";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
-import { toggleLocked, toggleRole, deleteUser } from "../../../api/admin/methods";
+import { toggleLocked, toggleRole, deleteUser, adminToggle2FA } from "../../../api/admin/methods";
+//import { toggleAuthEnabledPending } from "../../../api/settings/methods";
+//import { purgeAllSessions } from "../../../api/sessions/methods";
 import * as Library from "../../../modules/library";
 import { userSettings } from "../../../api/settings/publish";
 import * as UserModule from "../../../modules/user";
@@ -63,7 +65,7 @@ styles = theme => ({
     verticalAlign: "top",
     marginLeft: "0.5rem",
     [theme.breakpoints.up("sm")]: {
-      maxWidth: "18rem",
+      maxWidth: "18rem"
     },
     [theme.breakpoints.up("md")]: {
       maxWidth: "24rem"
@@ -78,7 +80,8 @@ styles = theme => ({
   clickToViewButton: {
     marginLeft: "1rem"
   },
-  listGroupItem: {}
+  listGroupItem: {},
+  switch: {}
 });
 
 class User extends React.Component<IProps, IState> {
@@ -97,6 +100,15 @@ class User extends React.Component<IProps, IState> {
       blockUI: false
     };
   }
+
+  toggle2FA = userId => event => {
+    adminToggle2FA.call({ id: userId }, err => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        log.error(`toggle2FA failed`, err);
+      }
+    });
+  };
 
   toggleLocked = userId => event => {
     toggleLocked.call({ id: userId }, err => {
@@ -165,6 +177,7 @@ class User extends React.Component<IProps, IState> {
 
   layout() {
     const { classes } = this.props;
+    const authEnabled = this.props.settings.authEnabled;
     const protectedUser = Roles.userIsInRole(this.props.userId, ["god", "super-admin"]);
     //const isGod = UserModule.can({ threshold: "god" });
     return this.props.ready ? (
@@ -185,6 +198,7 @@ class User extends React.Component<IProps, IState> {
         <h3 className={classes.heading}>Properties</h3>
         <div className={classes.innerSection}>
           <FormControlLabel
+            className={classes.switch}
             control={
               <Switch
                 disabled={protectedUser}
@@ -193,6 +207,18 @@ class User extends React.Component<IProps, IState> {
               />
             }
             label={this.props.settings.locked ? "Locked" : "Unlocked"}
+          />
+
+          <FormControlLabel
+            className={classes.switch}
+            control={
+              <Switch
+                disabled={protectedUser}
+                onChange={this.toggle2FA(this.props.userId)}
+                checked={authEnabled === 1 || authEnabled === 2 || authEnabled === 3}
+              />
+            }
+            label={this.props.settings.authEnabled ? "2F Auth ON" : "2F Auth OFF"}
           />
         </div>
 
