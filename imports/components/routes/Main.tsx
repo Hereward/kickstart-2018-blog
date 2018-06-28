@@ -33,7 +33,7 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
     redirectTo = "/locked";
   } else if (!locked && !authRequired && path === "/locked") {
     redirectTo = "/";
-  } else if (authRequired && path !== "/members/authenticate") {
+  } else if (authRequired && !locked && path !== "/members/authenticate") {
     redirectTo = "/members/authenticate";
   } else if (cProps.userId && locked === false && path === "/members/locked") {
     redirectTo = "/";
