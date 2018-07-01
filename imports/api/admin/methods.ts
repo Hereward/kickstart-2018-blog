@@ -12,8 +12,9 @@ import { Images } from "../images/methods";
 import { can as userCan } from "../../modules/user";
 import { systemSettings } from "./publish";
 import { lockAccountToggle, insertNewSession, purgeAllOtherSessions } from "../sessions/methods";
-import { createAuth } from "../auth/methods";
-import { createProfile, sendVerificationEmail } from "../profiles/methods";
+//import { createAuth } from "../auth/methods";
+import { sendVerificationEmail, newProfile } from "../profiles/methods";
+import { insertAuth } from "../auth/methods";
 
 let serverAuth: any;
 if (Meteor.isServer) {
@@ -130,6 +131,23 @@ export const configureNewUser = new ValidatedMethod({
       //const userId = fields.userId ? fields.userId : this.userId;
       const userId = fields.userId;
 
+      // USER SETTINGS
+      let key: any;
+      let secret: any;
+      userSettings.remove({ owner: userId });
+
+      const userSettingsId = userSettings.insert({
+        authEnabled: 0,
+        locked: false,
+        owner: userId
+      });
+
+      // CREATE USER SESSION
+      const sessionId = insertNewSession(userId, fields.sessionToken);
+
+      // CREATE PROFILE
+      const profileId = newProfile(userId);
+
       // ROLES
       if (fields.type === "register") {
         let userRoles = ["user"];
@@ -141,42 +159,17 @@ export const configureNewUser = new ValidatedMethod({
         Roles.setUserRoles(userId, userRoles);
       }
 
-      // USER SETTINGS
-      let key: any;
-      let secret: any;
-      userSettings.remove({ owner: userId });
+      // CREATE AUTH
+      Auth.remove({ owner: userId });
+      let authId = insertAuth(userId);
+      //createAuth.call({ userId: userId }, (err, id) => {});
 
-      let authId = userSettings.insert({
-        authEnabled: 0,
-        locked: false,
-        owner: userId
-      });
+      sendVerificationEmail.call({ profileId: profileId, userId: userId }, (err, res) => {});
 
-      // USER SESSION
-      const sessionId = insertNewSession(userId, fields.sessionToken);
       if (!allowMultiSession) {
         Accounts.logoutOtherClients();
         purgeAllOtherSessions.call({ sessionToken: fields.sessionToken }, (err, res) => {});
       }
-
-      // CREATE AUTH
-      createAuth.call({ userId: userId }, (err, id) => {});
-
-      // CREATE PROFILE
-
-      createProfile.call(
-        {
-          fname: "",
-          initial: "",
-          lname: "",
-          userId: userId
-        },
-        (err, profileId) => {
-          if (fields.type === "register") {
-            sendVerificationEmail.call({ profileId: profileId, userId: userId }, (err, res) => {});
-          }
-        }
-      );
     }
 
     return true;

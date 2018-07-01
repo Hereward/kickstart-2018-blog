@@ -6,7 +6,7 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "../sessions/publish";
 import { userSettings } from "./publish";
 import { Auth } from "../auth/publish";
-import { insertAuth } from "../auth/methods";
+//import { insertAuth } from "../auth/methods";
 import { cancel2FASession } from "../sessions/methods";
 
 let serverAuth: any;

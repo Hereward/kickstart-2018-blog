@@ -13,7 +13,6 @@ import {
 } from "../api/sessions/methods";
 
 import * as userSettingsMethods from "../api/settings/methods";
-import { assignRolesNewUser, configureNewUser as configureNewUserMethod } from "../api/admin/methods";
 import * as ProfileMethods from "../api/profiles/methods";
 import * as AuthMethods from "../api/auth/methods";
 //import * as SessionMethods from "../api/sessions/methods";
@@ -193,15 +192,4 @@ export function can(params: { do?: string; threshold?: any }) {
   }
 
   return allowed;
-}
-
-export function configureNewUser(params: { type: string; userId?: string }) {
-  const userId = params.userId ? params.userId : id();
-  const newSessionToken = sessionToken("create");
-
-  configureNewUserMethod.call({ userId: userId, sessionToken: newSessionToken, type: params.type }, (err, res) => {
-    if (err) {
-      log.error(`configureNewUserMethod error: [${err.reason}]`, err);
-    }
-  });
 }

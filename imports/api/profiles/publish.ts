@@ -28,8 +28,7 @@ if (Meteor.isServer) {
           verificationEmailSent: 1,
           new: 1,
           createdAt: 1,
-          owner: 1,
-          admin: 1
+          owner: 1
         }
       }
     );

@@ -144,7 +144,7 @@ export default withRouter(
       connected = Meteor.status().connected;
       connectionRetryCount = Meteor.status().retryCount;
 
-      let admin = false;
+      //let admin = false;
       let profile: any;
 
       //log.info("APP userId", userId);
@@ -154,9 +154,11 @@ export default withRouter(
         let hashedToken = sessionToken ? User.hash(sessionToken) : "";
 
         profile = Profiles.findOne({ owner: userId });
+        /*
         if (profile) {
           admin = profile.admin;
         }
+        */
 
         userSettingsRec = userSettings.findOne({ owner: userId });
 
@@ -204,7 +206,6 @@ export default withRouter(
         sessionExpired: sessionExpired,
         loggingIn: loggingIn,
         profile: profile,
-        admin: admin,
         sessionToken: sessionToken,
         sessionReady: sessionReady,
         connected: connected,

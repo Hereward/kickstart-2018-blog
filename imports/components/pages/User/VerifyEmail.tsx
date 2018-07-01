@@ -37,7 +37,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
 
   createSession() {
     let sessionToken = User.sessionToken("create");
-    createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: true }, (err, res) => {
+    createUserSession.call({ sessionToken: sessionToken, keepMeLoggedIn: false }, (err, res) => {
       if (err) {
         console.log(`createSession error: [${err.reason}]`, err);
       }

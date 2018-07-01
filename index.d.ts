@@ -16,6 +16,8 @@ declare module "meteor/react-meteor-data" {
 //declare var IconButton:any;
 //declare var  IconButtonProps: any;
 
+declare var Helmet:any;
+
 declare var Bert: any;
 
 declare var process: any;

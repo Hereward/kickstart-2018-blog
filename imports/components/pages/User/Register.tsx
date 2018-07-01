@@ -14,7 +14,7 @@ import * as SessionMethods from "../../../api/sessions/methods";
 import * as PagesMethods from "../../../api/pages/methods";
 import * as User from "../../../modules/user";
 import * as userSettingsMethods from "../../../api/settings/methods";
-import { assignRolesNewUser } from "../../../api/admin/methods";
+import { configureNewUser } from "../../../api/admin/methods";
 
 import SignInForm from "../../forms/SignInForm";
 
@@ -115,7 +115,18 @@ class Register extends React.Component<IProps, IState> {
             });
             console.log(`createUser error`, err);
           } else {
-            User.configureNewUser({type: "register"});
+            //User.configureNewUser({type: "register"});
+            const userId = User.id();
+            //const newSessionToken = sessionToken("create");
+            const sessionToken = User.sessionToken("create");
+
+            configureNewUser.call({ userId: userId, sessionToken: sessionToken, type: "register" }, (err, res) => {
+              if (err) {
+                log.error(`configureNewUserMethod error: [${err.reason}]`, err);
+              } else {
+                this.props.history.push("/");
+              }
+            });
 
             /*
 
@@ -191,8 +202,6 @@ class Register extends React.Component<IProps, IState> {
             });
 
             */
-
-            this.props.history.push("/");
           }
         }
       );

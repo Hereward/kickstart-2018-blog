@@ -14,6 +14,30 @@ const authCheck = (methodName, userId) => {
   return auth;
 };
 
+export const newProfile = userId => {
+  Profiles.remove({ owner: userId });
+
+  let id = Profiles.insert({
+    fname: "",
+    initial: "",
+    lname: "",
+    dob: "",
+    street1: "",
+    street2: "",
+    city: "",
+    region: "",
+    postcode: "",
+    country: "",
+    image_id: "",
+    verificationEmailSent: 0,
+    new: true,
+    createdAt: new Date(),
+    owner: userId
+  });
+
+  return id;
+};
+
 export const createProfile = new ValidatedMethod({
   name: "profiles.create",
 
@@ -26,30 +50,8 @@ export const createProfile = new ValidatedMethod({
 
   run(fields) {
     authCheck("profiles.create", this.userId);
-
     const userId = fields.userId ? fields.userId : this.userId;
-    let admin = false;
-
-    Profiles.remove({ owner: userId });
-
-    let id = Profiles.insert({
-      fname: "",
-      initial: "",
-      lname: "",
-      dob: "",
-      street1: "",
-      street2: "",
-      city: "",
-      region: "",
-      postcode: "",
-      country: "",
-      image_id: "",
-      verificationEmailSent: 0,
-      new: true,
-      createdAt: new Date(),
-      owner: userId
-    });
-
+    const id = newProfile(userId);
     return id;
   }
 });

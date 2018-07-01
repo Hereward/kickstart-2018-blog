@@ -121,7 +121,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   verifyEmailNotificationRequired() {
-    //log.info(`verifyEmailNotificationRequired`, this.emailVerifyPrompted, this.props);
+    log.info(`verifyEmailNotificationRequired`, this.props);
     let notify = false;
     if (
       this.props.sessionReady &&
