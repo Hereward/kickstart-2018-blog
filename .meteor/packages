@@ -37,3 +37,4 @@ simply:reactive-local-storage
 react-meteor-data
 alanning:roles
 underscore@1.0.10
+server-render

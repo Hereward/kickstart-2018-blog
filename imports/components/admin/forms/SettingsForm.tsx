@@ -83,6 +83,7 @@ class SettingsForm extends React.Component<IProps, IState> {
             {this.getWidget({ name: "mainTitle", label: "Main Title" })}
             {this.getWidget({ name: "shortTitle", label: "Short Title" })}
             {this.getWidget({ name: "copyright", label: "Copyright" })}
+            {this.getWidget({ name: "description", label: "Description" })}
 
             <div className="form-group">
               <Button disabled={!this.props.allowSubmit} variant="raised" type="submit" color="primary">

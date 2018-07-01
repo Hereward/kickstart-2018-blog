@@ -2,7 +2,7 @@
   "public": {
     "mainTitle": "Meteor/React/Typescript/Bootstrap Kickstart 2018",
     "shortTitle": "Kickstart-2018",
-    "shortTitleExternalLink": "https://github.com/Hereward/meteor-react-kickstart-2018",
+    "description": "A silly, twisted app.",
     "copyright": "\u00A9 MyCompany 2018. All rights reserved.",
     "logLevel": "trace",
     "enhancedAuth": {
@@ -29,7 +29,7 @@
     },
     "admin": {
       "basePaginationUnit": 1,
-      "roles": ["user", "banned", "creator", "editor", "moderator", "admin", "super-admin"]
+      "roles": ["user", "banned", "creator", "editor", "moderator", "admin", "super-admin","god"]
     }
   },
   "private": {

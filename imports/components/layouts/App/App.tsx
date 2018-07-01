@@ -3,6 +3,7 @@ import { Session } from "meteor/session";
 import { Accounts } from "meteor/accounts-base";
 import * as RLocalStorage from "meteor/simply:reactive-local-storage";
 import * as React from "react";
+import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 //import { createStore } from "redux";
 //import { Provider } from "react-redux";
@@ -21,6 +22,7 @@ import Spinner from "../../partials/Spinner";
 import Offline from "../../partials/Offline";
 import * as Library from "../../../modules/library";
 import Snackbar from "../../partials/Snackbar";
+import Meta from "../../partials/Meta";
 //import rootReducer from "../../../redux/reducers";
 
 //declare var window: any;
@@ -63,7 +65,7 @@ class App extends React.Component<IProps, IState> {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.systemSettings !== this.props.systemSettings) {
-      Library.addMeta(this.props.systemSettings);
+      //Library.addMeta(this.props.systemSettings);
     }
   }
 
@@ -75,12 +77,14 @@ class App extends React.Component<IProps, IState> {
 
   getLayout() {
     const path = this.props.history.location.pathname;
-    if (!this.props.systemSettings || (!this.props.connected && this.props.connectionRetryCount > 1)) {
+    //log.info("APP getLayout", path);
+    if (!this.props.systemSettings || (!this.props.connected && this.props.connectionRetryCount > 2)) {
       return <Spinner caption="connecting" type="page" />;
-      
     } else {
+      const meta = this.props.systemSettings ? <Meta location={path} settings={this.props.systemSettings} /> : "";
       return (
         <div className="router-parent d-flex flex-column">
+          {meta}
           <Header {...this.props} />
           <main>
             {this.props.userId && (this.props.loggingIn || !this.props.sessionReady) ? (
@@ -115,12 +119,14 @@ export default withRouter(
       //log.info("APP PROPS", props);
       // props.store.getState()
       //log.info(`App - reduxState`, props.reduxState);
+      let isClient = Meteor.isClient;
       let userSettingsRec: any;
-      let systemSettingsRec = systemSettings.findOne();
       let profilesHandle = Meteor.subscribe("profiles");
       let userSettingsHandle = Meteor.subscribe("userSettings");
       let userSessionHandle = Meteor.subscribe("userSessions");
       let systemSettingsHandle = Meteor.subscribe("systemSettings");
+
+      let systemSettingsRec = systemSettings.findOne();
       let sessionReady = false;
       let userSession: any;
       let sessionActive: boolean = false;
@@ -205,7 +211,8 @@ export default withRouter(
         connectionRetryCount: connectionRetryCount,
         systemSettings: systemSettingsRec,
         loggingOut: loggingOut,
-        miniAlert: miniAlert
+        miniAlert: miniAlert,
+        isClient: isClient
       };
     })(App)
   )

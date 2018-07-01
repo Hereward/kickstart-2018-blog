@@ -11,7 +11,7 @@ declare var window: any;
 declare var DocHead: any;
 
 export function addMeta(systemSettings) {
-  let metaInfo = { name: "viewport", content: "width=device-width, initial-scale=1" };
+  let metaInfo = { name: "viewport", content: "width=device-width, initial-scale=1", description: systemSettings.description };
   DocHead.addMeta(metaInfo);
   DocHead.setTitle(systemSettings.mainTitle);
 }

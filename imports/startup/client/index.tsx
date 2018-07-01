@@ -1,4 +1,5 @@
 import * as React from "react";
+import { onPageLoad } from "meteor/server-render";
 import * as PropTypes from "prop-types";
 import * as ReactDOM from "react-dom";
 import { Accounts } from "meteor/accounts-base";
@@ -31,24 +32,18 @@ const muiTheme = createMuiTheme({
 declare var window: any;
 
 const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
-
 /*
-Provider.childContextTypes = {
-  store: PropTypes.object
-};
+onPageLoad(sink => {
+  sink.renderIntoElementById("ssr", `<h1>BOOJAM!<h1>`);
+  log.info(`onPageLoad - CLIENT`);
+});
 */
 
-//log.info("INDEX.TSX - REDUX STORE", store.getState());
-//App.contextTypes = { store: PropTypes.object };
-
-class Launch extends React.Component {
+/*
+class Launchz extends React.Component {
   constructor(props) {
     super(props);
   }
-
-  // <MuiThemeProvider>
-
-  // <MuiThemeProvider theme={muiTheme}>
 
   render() {
     return (
@@ -60,6 +55,17 @@ class Launch extends React.Component {
     );
   }
 }
+*/
+
+const Launch = props => {
+  return (
+    <BrowserRouter>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </BrowserRouter>
+  );
+};
 
 const keepAlive = function keepAlive(activityDetected: any) {
   if (User.id()) {
@@ -88,14 +94,23 @@ Accounts.onLogout(() => {
   store.dispatch({ type: "LOGOUT_DONE" });
 });
 
+/*
+onPageLoad(async sink => {
+  const Launch = props => {
+    return (
+      <BrowserRouter>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </BrowserRouter>
+    );
+  };
+  ReactDOM.hydrate(<Launch />, document.getElementById("react-root"));
+});
+*/
+
 Meteor.startup(() => {
-  //log.info(`Meteor.startup`, User.sessionToken("get"));
-
-  //let token = localStorage.getItem('Meteor.sessionToken');
   ReactDOM.render(<Launch />, document.getElementById("react-root"));
-  //addMeta();
-  //validateLogin();
-
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
   if (timeOutOn === true) {
     keepAlive(false);

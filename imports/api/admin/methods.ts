@@ -188,7 +188,8 @@ export const updateSettings = new ValidatedMethod({
   validate: new SimpleSchema({
     mainTitle: { type: String },
     shortTitle: { type: String },
-    copyright: { type: String }
+    copyright: { type: String },
+    description: { type: String }
   }).validator(),
 
   run(fields) {
@@ -201,7 +202,8 @@ export const updateSettings = new ValidatedMethod({
           $set: {
             mainTitle: fields.mainTitle,
             shortTitle: fields.shortTitle,
-            copyright: fields.copyright
+            copyright: fields.copyright,
+            description: fields.description
           }
         }
       );

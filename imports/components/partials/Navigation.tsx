@@ -54,6 +54,7 @@ interface IProps {
   loggingOut: boolean;
   systemSettings: any;
   reduxState: any;
+  isClient: boolean;
 }
 
 interface IState {
@@ -103,7 +104,6 @@ class Navigation extends React.Component<IProps, IState> {
           this.props.location.pathname === "/" &&
           !this.props.userData.emails[0].verified
         ) {
-          
           this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
         }
       }
@@ -224,7 +224,28 @@ class Navigation extends React.Component<IProps, IState> {
     }
   }
 
-  // className={cPath === "/" ? "active" : ""}
+  renderDashDisplay = () => {
+    log.info(`renderDashDisplay`, this.props.isClient);
+
+    return this.props.isClient ? (
+      <DashDisplay
+        userSession={this.props.userSession}
+        userSettings={this.props.userSettings}
+        enhancedAuth={this.props.enhancedAuth}
+        loggingOut={this.props.loggingOut}
+        loggingIn={this.props.loggingIn}
+        userData={this.props.userData}
+        userId={this.props.userId}
+        sessionExpired={this.props.sessionExpired}
+        sessionReady={this.props.sessionReady}
+        connected={this.props.connected}
+        connectionRetryCount={this.props.connectionRetryCount}
+      />
+    ) : (
+      ""
+    );
+  };
+
   navBar() {
     const cPath = this.props.history.location.pathname;
     let admin = User.can({ threshold: "super-admin" });
@@ -233,23 +254,9 @@ class Navigation extends React.Component<IProps, IState> {
         <Navbar color="dark" expand="md" className="main-nav fixed-top" dark>
           <div className="navbar-brand verified">
             {this.props.systemSettings ? this.props.systemSettings.shortTitle : ""}{" "}
-            {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin ? (
-              <DashDisplay
-                userSession={this.props.userSession}
-                userSettings={this.props.userSettings}
-                enhancedAuth={this.props.enhancedAuth}
-                loggingOut={this.props.loggingOut}
-                loggingIn={this.props.loggingIn}
-                userData={this.props.userData}
-                userId={this.props.userId}
-                sessionExpired={this.props.sessionExpired}
-                sessionReady={this.props.sessionReady}
-                connected={this.props.connected}
-                connectionRetryCount={this.props.connectionRetryCount}
-              />
-            ) : (
-              ""
-            )}
+            {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin
+              ? this.renderDashDisplay()
+              : ""}
           </div>
 
           <NavbarToggler onClick={this.toggleNavbar} />

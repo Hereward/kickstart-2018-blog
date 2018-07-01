@@ -36,6 +36,7 @@ interface IState {
   mainTitle: string;
   shortTitle: string;
   copyright: string;
+  description: string;
   updateDone: boolean;
 }
 
@@ -72,6 +73,7 @@ class Settings extends React.Component<IProps, IState> {
       mainTitle: this.props.systemSettings.mainTitle,
       shortTitle: this.props.systemSettings.shortTitle,
       copyright: this.props.systemSettings.copyright,
+      description: this.props.systemSettings.description,
       updateDone: false
     };
   }
@@ -99,14 +101,17 @@ class Settings extends React.Component<IProps, IState> {
     const settings = {
       mainTitle: this.state.mainTitle,
       shortTitle: this.state.shortTitle,
-      copyright: this.state.copyright
+      copyright: this.state.copyright,
+      description: this.state.description
     };
 
     updateSettings.call(settings, err => {
       this.setState({ allowSubmit: true });
-      this.miniAlert("Update Succesful.");
+      
       if (err) {
         Library.modalErrorAlert(err.reason);
+      } else {
+        this.miniAlert("Update Succesful.");
       }
     });
   }

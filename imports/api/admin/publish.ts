@@ -19,6 +19,7 @@ if (Meteor.isServer) {
           active: 1,
           mainTitle: 1,
           shortTitle: 1,
+          description: 1,
           copyright: 1
         }
       }
@@ -54,8 +55,6 @@ if (Meteor.isServer) {
   });
 
   // const MAX_USERS = 1000;
-  // sort({createdAt: -1})
-  // .limit(limit);
 
   Meteor.startup(function settingsStart() {
     let settingsRecord = systemSettings.findOne({ active: true });
@@ -67,6 +66,7 @@ if (Meteor.isServer) {
         mainTitle: Meteor.settings.public.mainTitle,
         shortTitle: Meteor.settings.public.shortTitle,
         copyright: Meteor.settings.public.copyright,
+        description: Meteor.settings.public.description,
         createdAt: new Date()
       });
     }

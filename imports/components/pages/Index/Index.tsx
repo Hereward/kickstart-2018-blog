@@ -24,7 +24,7 @@ momentDurationFormatSetup(moment);
 
 declare var Chronos: any;
 
-declare var DocHead: any;
+//declare var DocHead: any;
 
 interface IProps {
   history: any;
