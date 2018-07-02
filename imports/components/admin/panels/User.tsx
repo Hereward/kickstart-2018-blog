@@ -53,7 +53,7 @@ styles = theme => ({
     color: "#4d4d4d"
   },
   userDetail: {
-    overflowX: "scroll",
+    overflowX: "auto",
     whiteSpace: "nowrap",
     width: "14rem",
     fontSize: "0.9rem",

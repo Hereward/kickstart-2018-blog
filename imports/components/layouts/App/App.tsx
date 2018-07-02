@@ -23,16 +23,6 @@ import Offline from "../../partials/Offline";
 import * as Library from "../../../modules/library";
 import Snackbar from "../../partials/Snackbar";
 import Meta from "../../partials/Meta";
-//import rootReducer from "../../../redux/reducers";
-
-//declare var window: any;
-
-//const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
-/*
-store.subscribe(() => {
-  log.info("REDUX STORE", store.getState());
-});
-*/
 
 interface IProps {
   history: any;
@@ -75,50 +65,43 @@ class App extends React.Component<IProps, IState> {
     this.props.dispatch({ type: "MINI_ALERT_OFF" });
   };
 
-  getLayout() {
+  mainContent() {
     const path = this.props.history.location.pathname;
-    //log.info("APP getLayout", path);
-    if (!this.props.systemSettings || (!this.props.connected && this.props.connectionRetryCount > 2)) {
+    const meta = this.props.systemSettings ? <Meta location={path} settings={this.props.systemSettings} /> : "";
+    return (
+      <div className="router-parent d-flex flex-column">
+        {meta}
+        <Header {...this.props} />
+        <main>
+          <MainRouter {...this.props} />
+        </main>
+        {!path.match(/admin/) ? <Footer {...this.props} /> : ""}
+        <Snackbar message={this.props.miniAlert.message} close={this.closeMiniAlert} isOpen={this.props.miniAlert.on} />
+      </div>
+    );
+  }
+
+  getLayout() {
+    if (!this.props.systemSettings) {
       return <Spinner caption="connecting" type="page" />;
+      // || (!this.props.connected && this.props.connectionRetryCount > 2)
+      // } else if (this.props.userId && (!this.props.loggingIn && !this.props.sessionReady)) {
+      //   return <Spinner caption="logging in" type="page" />;
     } else {
-      const meta = this.props.systemSettings ? <Meta location={path} settings={this.props.systemSettings} /> : "";
-      return (
-        <div className="router-parent d-flex flex-column">
-          {meta}
-          <Header {...this.props} />
-          <main>
-            {this.props.userId && (this.props.loggingIn || !this.props.sessionReady) ? (
-              <Spinner caption="logging in" type="page" />
-            ) : (
-              <MainRouter {...this.props} />
-            )}
-          </main>
-          {!path.match(/admin/) ? <Footer {...this.props} /> : ""}
-          <Snackbar
-            message={this.props.miniAlert.message}
-            close={this.closeMiniAlert}
-            isOpen={this.props.miniAlert.on}
-          />
-        </div>
-      );
+      return this.mainContent();
     }
   }
 
   render() {
-    //log.info(`APP INTERNAL PROPS = `, this.props);
     return this.getLayout();
   }
 }
 
-// (state) => state
 export default withRouter(
   connect(state => {
     return { reduxState: state };
   })(
     withTracker(props => {
-      //log.info("APP PROPS", props);
-      // props.store.getState()
-      //log.info(`App - reduxState`, props.reduxState);
       let isClient = Meteor.isClient;
       let userSettingsRec: any;
       let profilesHandle = Meteor.subscribe("profiles");
@@ -144,21 +127,13 @@ export default withRouter(
       connected = Meteor.status().connected;
       connectionRetryCount = Meteor.status().retryCount;
 
-      //let admin = false;
       let profile: any;
-
-      //log.info("APP userId", userId);
 
       if (userId && userData) {
         sessionToken = User.sessionToken("get");
         let hashedToken = sessionToken ? User.hash(sessionToken) : "";
 
         profile = Profiles.findOne({ owner: userId });
-        /*
-        if (profile) {
-          admin = profile.admin;
-        }
-        */
 
         userSettingsRec = userSettings.findOne({ owner: userId });
 
@@ -181,20 +156,7 @@ export default withRouter(
         ) {
           sessionReady = true;
         }
-
-        //log.info(`APP - settings`, systemSettingsRec);
       }
-
-      /*
-  log.info(
-    `Meteor vars: sessionReady userId loggingIn userData`,
-    sessionToken,
-    sessionReady,
-    userId,
-    loggingIn,
-    userData,
-  );
-  */
 
       return {
         enhancedAuth: enhancedAuth,

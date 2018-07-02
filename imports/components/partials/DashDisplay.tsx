@@ -181,7 +181,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     if (
       this.props.loggingIn ||
       this.props.loggingOut ||
-      (!this.props.connected && this.props.connectionRetryCount > 1)
+      (!this.props.connected && this.props.connectionRetryCount > 2)
     ) {
       tag = this.spinner();
     } else if (this.props.userData && (!this.props.connected || !this.props.sessionReady)) {
