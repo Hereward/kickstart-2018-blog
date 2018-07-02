@@ -7,18 +7,19 @@
 
 **DEMO WEBSITE: https://kickstart2018.eyeofthetiger.asia/**
 
-This project builds on my previous project [Meteor/React Kickstart 2018](https://github.com/Hereward/meteor-react-kickstart-2018)
+This project builds on my previous project [Meteor/React Kickstart 2018](https://github.com/Hereward/meteor-react-kickstart-2018).
 
-New feaures:
+**New features:**
 
 * Permissions system (meteor-roles)
 * admin panel
 * user management  
-* setting of HTML meta data.
+* SSR (implemented for header only)
+* ability to set HTML meta data via admin panel
 * react-redux
 * improved routing
 
-Fill in settings/private/adminEmail to grant top level permissions to the user who registers with that email address.
+Fill in `settings/private/adminEmail` to grant top level permissions to the user who registers with that email address.
 
 All code is in Typescript. The front-end is React.
 
