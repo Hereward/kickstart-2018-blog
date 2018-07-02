@@ -11,7 +11,7 @@ This project builds on my previous project [Meteor/React Kickstart 2018](https:/
 
 **New features:**
 
-* Permissions system (meteor-roles)
+* permissions system (meteor-roles)
 * admin panel
 * user management  
 * SSR (implemented for header only)

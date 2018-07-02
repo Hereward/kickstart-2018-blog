@@ -120,7 +120,7 @@ class Register extends React.Component<IProps, IState> {
             //const newSessionToken = sessionToken("create");
             const sessionToken = User.sessionToken("create");
 
-            configureNewUser.call({sessionToken: sessionToken, type: "register" }, (err, res) => {
+            configureNewUser.call({ sessionToken: sessionToken, type: "register" }, (err, res) => {
               if (err) {
                 log.error(`configureNewUserMethod error: [${err.reason}]`, err);
               } else {
