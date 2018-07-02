@@ -52,35 +52,42 @@ styles = theme => ({
     fontWeight: "bold",
     color: "#4d4d4d"
   },
+  userDetail: {
+    overflowX: "scroll",
+    whiteSpace: "nowrap",
+    width: "14rem",
+    fontSize: "0.9rem",
+    [theme.breakpoints.up("md")]: {
+      fontSize: "1rem",
+      width: "25rem"
+    },
+    [theme.breakpoints.up("lg")]: {
+      width: "30rem"
+    }
+  },
   innerSection: {
-    margin: "1rem",
-    marginLeft: "0",
+    margin: "1rem 0 1rem 0",
     [theme.breakpoints.up("md")]: {
       marginLeft: "1rem"
     }
   },
   email: {
-    maxWidth: "10rem",
-    overflow: "auto",
-    display: "inline-block",
+    width: "10rem",
+    display: "block",
     verticalAlign: "top",
-    marginLeft: "0.5rem",
-    [theme.breakpoints.up("sm")]: {
-      maxWidth: "18rem"
-    },
-    [theme.breakpoints.up("md")]: {
-      maxWidth: "24rem"
+    [theme.breakpoints.up("lg")]: {
+      marginLeft: "0.5rem",
+      display: "inline-block"
     }
   },
   clickToView: {
-    display: "inline",
+    display: "block",
+    marginTop: "0.5rem",
     [theme.breakpoints.up("md")]: {
       display: "none"
     }
   },
-  clickToViewButton: {
-    marginLeft: "1rem"
-  },
+  clickToViewButton: {},
   listGroupItem: {},
   switch: {}
 });
@@ -164,23 +171,36 @@ class User extends React.Component<IProps, IState> {
     if (type === "email") {
       data = this.props.user.emails[0].address;
     }
-    Library.confirmDialog({ title: data, message: "off", icon: "off" });
+    Library.simpleAlert(data);
+    //Library.confirmDialog({ title: data, message: "off", icon: "off" });
     return true;
   };
 
   /*
-  <span className={classes.clickToView}>
-                <Button
-                  className={classes.clickToViewButton}
-                  onClick={e => this.viewData("email")}
-                  color="secondary"
-                  variant="raised"
-                  size="small"
-                >
-                  view
-                </Button>
-              </span>
-              */
+  <div className={classes.clickToView}>
+                  <Button
+                    className={classes.clickToViewButton}
+                    onClick={e => this.viewData("email")}
+                    color="secondary"
+                    variant="raised"
+                    size="small"
+                  >
+                    view
+                  </Button>
+                </div>
+                */
+
+  /*
+                 <ul className="list-group">
+              <li className={`list-group-item ${classes.listGroupItem}`}>
+                <strong>id:</strong> {this.props.user._id}
+              </li>
+              <li className={`list-group-item ${classes.listGroupItem}`}>
+                <strong>email:</strong> <span className={classes.email}>{this.props.user.emails[0].address}</span>
+              </li>
+            </ul>
+
+            */
 
   layout() {
     const { classes } = this.props;
@@ -190,18 +210,8 @@ class User extends React.Component<IProps, IState> {
       const authEnabled = this.props.settings.authEnabled;
       return (
         <BlockUi tag="div" blocking={this.state.blockUI}>
-          <h3 className={classes.heading}>Data</h3>
-          <div className={classes.innerSection}>
-            <ul className="list-group">
-              <li className={`list-group-item ${classes.listGroupItem}`}>
-                <strong>id:</strong> {this.props.user._id}
-              </li>
-              <li className={`list-group-item ${classes.listGroupItem}`}>
-                <strong>email:</strong>
-                <span className={classes.email}>{this.props.user.emails[0].address}</span>
-              </li>
-            </ul>
-          </div>
+          <h3 className={classes.heading}>User Data</h3>
+          <div className={`${classes.innerSection} ${classes.userDetail}`}>{this.props.user._id}<br />{this.props.user.emails[0].address}</div>
 
           <h3 className={classes.heading}>Properties</h3>
           <div className={classes.innerSection}>

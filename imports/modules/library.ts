@@ -42,6 +42,10 @@ export function invalidAuthCodeAlert(error) {
 
 // showConfirmButton: true,
 
+export function simpleAlert(message) {
+  return confirmDialog({ title: message, message: "off", icon: "off", buttons: [false, true] });
+}
+
 export function confirmDialog(params?: { title?: string; message?: string; icon?: string, buttons?: any }) {
   let title = "Are you sure ?";
   let message = "You cannot undo this operation.";

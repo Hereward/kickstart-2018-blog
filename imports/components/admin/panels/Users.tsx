@@ -102,22 +102,25 @@ styles = theme => ({
     color: "dimGray"
   },
   summaryDataEmail: {
-    display: "none",
     maxWidth: "10rem",
     overflow: "hidden",
+    display: "inline-block",
     textOverflow: "ellipsis",
     [theme.breakpoints.up("sm")]: {
       maxWidth: "15rem",
       verticalAlign: "top",
-      marginLeft: "0.5rem",
-      display: "inline-block"
+      marginLeft: "0.5rem"
     },
     [theme.breakpoints.up("md")]: {
       maxWidth: "20rem"
     }
   },
   summaryDataID: {
-    fontWeight: "bold"
+    display: "none",
+    fontWeight: "bold",
+    [theme.breakpoints.up("sm")]: {
+      display: "inline"
+    }
   },
   deleteAllRoot: {
     width: "100%"
@@ -256,16 +259,22 @@ class Users extends React.Component<IProps, IState> {
     return allowed;
   }
 
-  userDetail(id) {
-    //const isGod = UserModule.can({ threshold: "god" });
-    //const selfEdit = id === this.props.userId;
-    //const protectedUser = Roles.userIsInRole(id, ["god", "super-admin"]);
-    // (!selfEdit && (!protectedUser || this.isGod))
+  userDetail(userObj) {
+    //log.info(`userDetail`, userObj);
+
+    const id = userObj._id;
     const allowed = this.allowUser(id);
+    const email = userObj.emails[0].address;
     return this.state.expanded === id && allowed ? (
       <User loggedInUserId={this.props.userId} userId={id} />
     ) : (
-      <div>Protected User: [{id}]</div>
+      <div>
+        <strong>Protected User:</strong>
+        <br />
+        {id}
+        <br />
+        {email}
+      </div>
     );
   }
 
@@ -469,7 +478,7 @@ class Users extends React.Component<IProps, IState> {
             ) : (
               ""
             )}
-            {this.userDetail(userObj._id)}
+            {this.userDetail(userObj)}
           </div>
         </ExpansionPanelDetails>
       </ExpansionPanel>
