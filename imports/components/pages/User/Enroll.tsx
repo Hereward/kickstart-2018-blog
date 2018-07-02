@@ -13,6 +13,8 @@ import * as Library from "../../../modules/library";
 //import * as SessionMethods from "../../../api/sessions/methods";
 //import * as PagesMethods from "../../../api/pages/methods";
 import * as User from "../../../modules/user";
+import { configureNewUser } from "../../../api/admin/methods";
+
 //import * as userSettingsMethods from "../../../api/settings/methods";
 //import { assignRolesNewUser } from "../../../api/admin/methods";
 
@@ -35,7 +37,7 @@ interface IState {
 }
 
 class Enroll extends React.Component<IProps, IState> {
-    token: string;
+  token: string;
 
   constructor(props) {
     super(props);
@@ -60,9 +62,8 @@ class Enroll extends React.Component<IProps, IState> {
   };
 
   componentDidUpdate() {
-      log.info(`Enroll`, this.props);
+    log.info(`Enroll`, this.props);
   }
-
 
   handleChange(e) {
     let target = e.target;
@@ -108,7 +109,18 @@ class Enroll extends React.Component<IProps, IState> {
         password1,
         function reset(err) {
           if (!err) {
-            User.configureNewUser({type: "enroll"});
+            //User.configureNewUser({type: "enroll"});
+
+            const sessionToken = User.sessionToken("create");
+
+            configureNewUser.call({ sessionToken: sessionToken, type: "register" }, (err, res) => {
+              if (err) {
+                log.error(`configureNewUserMethod error: [${err.reason}]`, err);
+              } else {
+                this.props.history.push("/");
+              }
+            });
+
             Library.modalSuccessAlert({ message: "Congratulations! Your account is now active." });
             this.props.history.push("/");
           } else {
@@ -116,7 +128,6 @@ class Enroll extends React.Component<IProps, IState> {
             log.error(err);
           }
           this.setState({ allowSubmit: true });
-          
         }.bind(this)
       );
     } else {

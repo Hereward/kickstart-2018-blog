@@ -177,66 +177,70 @@ class User extends React.Component<IProps, IState> {
 
   layout() {
     const { classes } = this.props;
-    const authEnabled = this.props.settings.authEnabled;
-    const protectedUser = Roles.userIsInRole(this.props.userId, ["god", "super-admin"]);
-    //const isGod = UserModule.can({ threshold: "god" });
-    return this.props.ready ? (
-      <BlockUi tag="div" blocking={this.state.blockUI}>
-        <h3 className={classes.heading}>Data</h3>
-        <div className={classes.innerSection}>
-          <ul className="list-group">
-            <li className={`list-group-item ${classes.listGroupItem}`}>
-              <strong>id:</strong> {this.props.user._id}
-            </li>
-            <li className={`list-group-item ${classes.listGroupItem}`}>
-              <strong>email:</strong>
-              <span className={classes.email}>{this.props.user.emails[0].address}</span>
-            </li>
-          </ul>
-        </div>
 
-        <h3 className={classes.heading}>Properties</h3>
-        <div className={classes.innerSection}>
-          <FormControlLabel
-            className={classes.switch}
-            control={
-              <Switch
-                disabled={protectedUser}
-                onChange={this.toggleLocked(this.props.userId)}
-                checked={this.props.settings.locked}
-              />
-            }
-            label={this.props.settings.locked ? "Locked" : "Unlocked"}
-          />
+    if (this.props.ready) {
+      const protectedUser = Roles.userIsInRole(this.props.userId, ["god", "super-admin"]);
+      const authEnabled = this.props.settings.authEnabled;
+      return (
+        <BlockUi tag="div" blocking={this.state.blockUI}>
+          <h3 className={classes.heading}>Data</h3>
+          <div className={classes.innerSection}>
+            <ul className="list-group">
+              <li className={`list-group-item ${classes.listGroupItem}`}>
+                <strong>id:</strong> {this.props.user._id}
+              </li>
+              <li className={`list-group-item ${classes.listGroupItem}`}>
+                <strong>email:</strong>
+                <span className={classes.email}>{this.props.user.emails[0].address}</span>
+              </li>
+            </ul>
+          </div>
 
-          <FormControlLabel
-            className={classes.switch}
-            control={
-              <Switch
-                disabled={protectedUser}
-                onChange={this.toggle2FA(this.props.userId)}
-                checked={authEnabled === 1 || authEnabled === 2 || authEnabled === 3}
-              />
-            }
-            label={this.props.settings.authEnabled ? "2F Auth ON" : "2F Auth OFF"}
-          />
-        </div>
+          <h3 className={classes.heading}>Properties</h3>
+          <div className={classes.innerSection}>
+            <FormControlLabel
+              className={classes.switch}
+              control={
+                <Switch
+                  disabled={protectedUser}
+                  onChange={this.toggleLocked(this.props.userId)}
+                  checked={this.props.settings.locked}
+                />
+              }
+              label={this.props.settings.locked ? "Locked" : "Unlocked"}
+            />
 
-        <h3 className={classes.heading}>Actions</h3>
-        <div className={classes.innerSection}>
-          <Button onClick={this.confirmDelete} variant="raised" size="small" color="secondary">
-            Delete User
-          </Button>
-        </div>
+            <FormControlLabel
+              className={classes.switch}
+              control={
+                <Switch
+                  disabled={protectedUser}
+                  onChange={this.toggle2FA(this.props.userId)}
+                  checked={authEnabled === 1 || authEnabled === 2 || authEnabled === 3}
+                />
+              }
+              label={this.props.settings.authEnabled ? "2F Auth ON" : "2F Auth OFF"}
+            />
+          </div>
 
-        <div>
-          <h3 className={classes.heading}>Roles</h3>
-          <List>{this.mapRoles()}</List>
-        </div>
-      </BlockUi>
-    ) : (
-      "loading..."
-    );
+          <h3 className={classes.heading}>Actions</h3>
+          <div className={classes.innerSection}>
+            <Button onClick={this.confirmDelete} variant="raised" size="small" color="secondary">
+              Delete User
+            </Button>
+          </div>
+
+          <div>
+            <h3 className={classes.heading}>Roles</h3>
+            <List>{this.mapRoles()}</List>
+          </div>
+        </BlockUi>
+      );
+    } else if (this.props.settings) {
+      return "loading...";
+    } else {
+      return "Invitation sent, not activated...";
+    }
   }
 
   mapRoles() {
@@ -279,7 +283,7 @@ export default connect(mapStateToProps)(
     const user = Meteor.users.findOne(props.userId);
     const settings = userSettings.findOne({ owner: props.userId });
 
-    log.info(`user`, props.userId, user, settings);
+    log.info(`user`, settings);
 
     return {
       user: user,

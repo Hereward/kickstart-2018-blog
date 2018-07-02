@@ -119,7 +119,7 @@ export const configureNewUser = new ValidatedMethod({
   name: "admin.configureNewUser",
   validate: new SimpleSchema({
     type: { type: String },
-    userId: { type: String },
+    userId: { type: String, optional: true},
     sessionToken: { type: String }
   }).validator(),
 
@@ -128,8 +128,8 @@ export const configureNewUser = new ValidatedMethod({
       authCheck("configureNewUser", this.userId);
       const allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
 
-      //const userId = fields.userId ? fields.userId : this.userId;
-      const userId = fields.userId;
+      const userId = fields.userId || this.userId;
+      //const userId = fields.userId;
 
       // USER SETTINGS
       let key: any;
