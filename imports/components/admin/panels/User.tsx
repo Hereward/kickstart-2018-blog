@@ -35,6 +35,7 @@ interface IProps {
   settings: any;
   ready: boolean;
   loggedInUserId: string;
+  dispatch: any;
 }
 
 interface IState {
@@ -128,6 +129,10 @@ class User extends React.Component<IProps, IState> {
     });
   };
 
+  miniAlert = (message = "") => {
+    this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
+  };
+
   getRoleStatus(role) {
     const val = Roles.userIsInRole(this.props.userId, role);
     return val;
@@ -145,6 +150,8 @@ class User extends React.Component<IProps, IState> {
           if (err) {
             Library.modalErrorAlert(err.reason);
             log.error(`deleteUser failed`, err);
+          } else {
+            this.miniAlert("User Deleted!");
           }
           this.setState({ blockUI: false });
         });
