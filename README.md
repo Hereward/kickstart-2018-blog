@@ -14,6 +14,7 @@ This project builds on my previous project [Meteor/React Kickstart 2018](https:/
 * permissions system (meteor-roles)
 * admin panel
 * user management  
+* send invitations
 * SSR (implemented for header only)
 * ability to set HTML meta data via admin panel
 * react-redux
