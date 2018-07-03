@@ -15,7 +15,7 @@ This project builds on my previous project [Meteor/React Kickstart 2018](https:/
 * admin panel
 * user management  
 * send invitations
-* SSR (implemented for header only)
+* SSR (implemented for header and loading screen)
 * ability to set HTML meta data via admin panel
 * react-redux
 * improved routing
