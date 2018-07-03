@@ -110,7 +110,7 @@ onPageLoad(async sink => {
 */
 
 Meteor.startup(() => {
-  ReactDOM.render(<Launch />, document.getElementById("react-root"));
+  ReactDOM.hydrate(<Launch />, document.getElementById("react-root"));
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
   if (timeOutOn === true) {
     keepAlive(false);

@@ -23,6 +23,7 @@ import Offline from "../../partials/Offline";
 import * as Library from "../../../modules/library";
 import Snackbar from "../../partials/Snackbar";
 import Meta from "../../partials/Meta";
+import Splash from "../../partials/Splash";
 
 interface IProps {
   history: any;
@@ -81,9 +82,11 @@ class App extends React.Component<IProps, IState> {
     );
   }
 
+  // return <Spinner caption="connecting" type="page" />;
+
   getLayout() {
     if (!this.props.systemSettings) {
-      return <Spinner caption="connecting" type="page" />;
+      return <Splash />;
       // || (!this.props.connected && this.props.connectionRetryCount > 2)
       // } else if (this.props.userId && (!this.props.loggingIn && !this.props.sessionReady)) {
       //   return <Spinner caption="logging in" type="page" />;

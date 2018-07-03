@@ -16,6 +16,18 @@ div, p, span {
   // text-overflow: ellipsis;
 }
 
+.splash {
+  text-align: center;
+  background-color: black;
+  color: white;
+  height: 100vh;
+  max-width: 100%;
+}
+
+.splash h1 {
+  margin: auto;
+}
+
 /*
 .mobile-drawer-container {
   z-index: 3000 !important;
