@@ -15,8 +15,6 @@ import Typography from "@material-ui/core/Typography";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 import { toggleLocked, toggleRole, deleteUser, adminToggle2FA } from "../../../api/admin/methods";
-//import { toggleAuthEnabledPending } from "../../../api/settings/methods";
-//import { purgeAllSessions } from "../../../api/sessions/methods";
 import * as Library from "../../../modules/library";
 import { userSettings } from "../../../api/settings/publish";
 import * as UserModule from "../../../modules/user";
@@ -95,13 +93,11 @@ styles = theme => ({
 class User extends React.Component<IProps, IState> {
   cursorBlock: number = 1;
   currentLimitVal: number = 1;
-  //state: any;
 
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    //this.confirmDelete = this.confirmDelete.bind(this);
 
     this.state = {
       allowSubmit: true,
@@ -176,32 +172,6 @@ class User extends React.Component<IProps, IState> {
     return true;
   };
 
-  /*
-  <div className={classes.clickToView}>
-                  <Button
-                    className={classes.clickToViewButton}
-                    onClick={e => this.viewData("email")}
-                    color="secondary"
-                    variant="raised"
-                    size="small"
-                  >
-                    view
-                  </Button>
-                </div>
-                */
-
-  /*
-                 <ul className="list-group">
-              <li className={`list-group-item ${classes.listGroupItem}`}>
-                <strong>id:</strong> {this.props.user._id}
-              </li>
-              <li className={`list-group-item ${classes.listGroupItem}`}>
-                <strong>email:</strong> <span className={classes.email}>{this.props.user.emails[0].address}</span>
-              </li>
-            </ul>
-
-            */
-
   layout() {
     const { classes } = this.props;
 
@@ -211,7 +181,11 @@ class User extends React.Component<IProps, IState> {
       return (
         <BlockUi tag="div" blocking={this.state.blockUI}>
           <h3 className={classes.heading}>User Data</h3>
-          <div className={`${classes.innerSection} ${classes.userDetail}`}>{this.props.user._id}<br />{this.props.user.emails[0].address}</div>
+          <div className={`${classes.innerSection} ${classes.userDetail}`}>
+            {this.props.user._id}
+            <br />
+            {this.props.user.emails[0].address}
+          </div>
 
           <h3 className={classes.heading}>Properties</h3>
           <div className={classes.innerSection}>
@@ -299,8 +273,6 @@ export default connect(mapStateToProps)(
     const settingsHandle = Meteor.subscribe("allSettings");
     const user = Meteor.users.findOne(props.userId);
     const settings = userSettings.findOne({ owner: props.userId });
-
-    log.info(`user`, settings);
 
     return {
       user: user,

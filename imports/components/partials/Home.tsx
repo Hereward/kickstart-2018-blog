@@ -28,7 +28,7 @@ const HomeContent = props => (
         </p>
         <p>
           For full documentation please visit the{" "}
-          <a href="https://github.com/Hereward/meteor-react-kickstart-2018">Github Repository</a>.
+          <a href="https://github.com/Hereward/kickstart-2018-enhanced">Github Repository</a>.
         </p>
       </div>
     </div>

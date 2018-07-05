@@ -1,13 +1,11 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
-//import Done from "@material-ui/icons/Done";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemText from "@material-ui/core/ListItemText";
 import Checkbox from "@material-ui/core/Checkbox";
-//import RaisedButton from "material-ui/RaisedButton";
 import Button from "@material-ui/core/Button";
 import * as BlockUi from "react-block-ui";
 import * as Validation from "../../../modules/validation";
@@ -41,7 +39,6 @@ const styles = theme => ({
     color: "red",
     marginLeft: "1rem",
     verticalAlign: "middle"
-    //position: 'relative'
   },
   heading: {
     color: "#4d4d4d"
@@ -114,13 +111,8 @@ class InvitationForm extends React.Component<IProps, IState> {
           log.error(`sendInvitation failed`, err);
         } else {
           this.miniAlert(`Invitation was sent to ${this.state.inviteEmail}`);
-          //this.snackbarMessage = `Invitation sent to ${this.state.inviteEmail}.`;
-          //this.setState({ snackbarIsOpen: true });
         }
         this.setState({ block: false });
-       
-        //this.props.dispatch({ type: "MINI_ALERT_ON", message: `Invitation was sent to ${this.state.inviteEmail}` });
-        //this.props.miniAlert(`Invitation was sent to ${this.state.inviteEmail}`);
       }
     );
   };
@@ -147,8 +139,6 @@ class InvitationForm extends React.Component<IProps, IState> {
     let props = { ...this.state.inviteRoles };
     props[role] = newState;
     this.setState({ inviteRoles: props });
-    //this.setState({ [role]: newState });
-    log.info(`toggleInvitationRole`, role, newState, props);
   };
 
   getInvitationRoleStatus(role) {

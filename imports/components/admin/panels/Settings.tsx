@@ -6,19 +6,6 @@ import { toggleSystemOnline, updateSettings } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import SettingsForm from "../../admin/forms/SettingsForm";
 
-/*
-import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import PowerIcon from "@material-ui/icons/SettingsPower";
-import Typography from "@material-ui/core/Typography";
-*/
-
 const drawerWidth = 240;
 let styles: any;
 
@@ -107,7 +94,7 @@ class Settings extends React.Component<IProps, IState> {
 
     updateSettings.call(settings, err => {
       this.setState({ allowSubmit: true });
-      
+
       if (err) {
         Library.modalErrorAlert(err.reason);
       } else {
@@ -121,7 +108,6 @@ class Settings extends React.Component<IProps, IState> {
   };
 
   layout() {
-    //log.info(`Settings`, this.props, this.state);
     return (
       <div>
         <h2 className={this.props.classes.heading}>General Settings</h2>

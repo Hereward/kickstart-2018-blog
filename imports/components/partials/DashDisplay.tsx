@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import Loader from "react-loader-spinner";
 import SvgIcon from "@material-ui/core/SvgIcon";
-//import RefreshIndicator from "material-ui/RefreshIndicator";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import VerifiedUser from "@material-ui/icons/VerifiedUser";
 import HighlightOff from "@material-ui/icons/HighlightOff";
@@ -161,17 +160,6 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   spinner() {
     return <CircularProgress className="dashboard-spinner" size={20} />;
   }
-
-  /*
-     <RefreshIndicator
-        loadingColor="orange"
-        size={20}
-        left={0}
-        top={0}
-        status="loading"
-        className="dashboard-spinner"
-      />
-      */
 
   getVerifiedIndicator() {
     let layout: any;

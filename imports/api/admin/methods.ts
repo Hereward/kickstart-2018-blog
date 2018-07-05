@@ -12,7 +12,6 @@ import { Images } from "../images/methods";
 import { can as userCan } from "../../modules/user";
 import { systemSettings } from "./publish";
 import { lockAccountToggle, insertNewSession, purgeAllOtherSessions } from "../sessions/methods";
-//import { createAuth } from "../auth/methods";
 import { sendVerificationEmail, newProfile } from "../profiles/methods";
 import { insertAuth } from "../auth/methods";
 
@@ -119,7 +118,7 @@ export const configureNewUser = new ValidatedMethod({
   name: "admin.configureNewUser",
   validate: new SimpleSchema({
     type: { type: String },
-    userId: { type: String, optional: true},
+    userId: { type: String, optional: true },
     sessionToken: { type: String }
   }).validator(),
 
@@ -162,7 +161,6 @@ export const configureNewUser = new ValidatedMethod({
       // CREATE AUTH
       Auth.remove({ owner: userId });
       let authId = insertAuth(userId);
-      //createAuth.call({ userId: userId }, (err, id) => {});
 
       sendVerificationEmail.call({ profileId: profileId, userId: userId }, (err, res) => {});
 
@@ -251,8 +249,6 @@ export const sendInvitation = new ValidatedMethod({
         email: fields.email
       });
 
-      //const userRoles = [];
-
       const userRoles = Object.keys(fields.roles).reduce((filtered, option) => {
         if (fields.roles[option]) {
           filtered.push(option);
@@ -263,10 +259,6 @@ export const sendInvitation = new ValidatedMethod({
       if (userRoles.length) {
         Roles.setUserRoles(id, userRoles);
       }
-
-      //log.info(`admin.sendInvitation [${id}] [${salutation}${message}]`, fields.email, userRoles);
-
-      //log.info(`admin.sendInvitation - account created`, id);
 
       Accounts.sendEnrollmentEmail(id);
     }
@@ -280,7 +272,6 @@ export const toggleSystemOnline = new ValidatedMethod({
 
   run(fields) {
     authCheck("toggleSystemOnline", this.userId, "admin");
-    //let ownerId = this.userId;
     let settingsRecord: any;
     settingsRecord = systemSettings.findOne({ active: true });
 
@@ -309,7 +300,6 @@ export const assignRolesNewUser = new ValidatedMethod({
 
       Roles.setUserRoles(this.userId, userRoles);
       log.info(`assignRolesNewUser - DONE`, email, userRoles);
-      //Roles.addRolesToParent('USERS_VIEW', 'admin');
     }
     return true;
   }
@@ -324,18 +314,7 @@ export const deleteUserList = new ValidatedMethod({
   run(fields) {
     if (!this.isSimulation) {
       authCheck("deleteUser", this.userId, "admin");
-      /*
-      const idList = Object.keys(fields.selected).reduce((filtered, option) => {
-        if (fields.selected[option]) {
-          filtered.push(option);
-        }
-        return filtered;
-      }, []);
 
-      let funnyList = Object.keys(fields.selected).filter(id => {
-        return fields.selected[id];
-      });
-*/
       const keys = Object.keys(fields.selected);
       let deletedList = [];
       log.info(`admin.deleteUserList`, keys);
@@ -373,15 +352,7 @@ export const deleteUser = new ValidatedMethod({
       }
 
       deleteOne(fields.id);
-      /*
-      const userProfileRecord = Profiles.findOne({ owner: fields.id });
-      Images.remove(userProfileRecord._id, () => {});
-      Meteor.users.remove(fields.id);
-      Auth.remove({ owner: fields.id });
-      userSessions.remove({ owner: fields.id });
-      userSettings.remove({ owner: fields.id });
-      Profiles.remove({ owner: fields.id });
-*/
+
       log.info(`User Deleted`, fields.id);
     }
     return true;
@@ -427,7 +398,6 @@ export const deleteAllUsers = new ValidatedMethod({
       let rootAdmin: any;
       rootAdmin = Accounts.findUserByEmail(Meteor.settings.private.adminEmail);
       const excludeUsersExpression = [this.userId, rootAdmin._id];
-      //const excludeUsersExpression = [{_id: this.userId}, {_id: rootAdmin._id}];
 
       let excludeImagesExpression = [];
       let userProfileRecord: any;
@@ -451,7 +421,6 @@ export const deleteAllUsers = new ValidatedMethod({
       );
 
       Meteor.users.remove({ _id: { $nin: excludeUsersExpression } });
-      //Meteor.users.remove({ $nor: excludeUsersExpression });
       Auth.remove({ owner: { $nin: excludeUsersExpression } });
       userSessions.remove({ owner: { $nin: excludeUsersExpression } });
       userSettings.remove({ owner: { $nin: excludeUsersExpression } });

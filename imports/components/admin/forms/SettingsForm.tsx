@@ -21,19 +21,16 @@ interface IState {}
 
 const styles = theme => ({
   adminSettingsForm: {
-    marginTop: '1rem',
-    marginBottom: '1rem',
+    marginTop: "1rem",
+    marginBottom: "1rem"
   },
 
   done: {
     color: "red",
-    marginLeft: '1rem',
-    verticalAlign: 'middle'
-    //position: 'relative'
-  },
+    marginLeft: "1rem",
+    verticalAlign: "middle"
+  }
 });
-
-
 
 class SettingsForm extends React.Component<IProps, IState> {
   formID: string = "SettingsForm";
@@ -42,19 +39,12 @@ class SettingsForm extends React.Component<IProps, IState> {
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-
   }
 
   componentDidMount() {
     Validation.validate(this);
   }
 
-  /*
-  handleSetStateUpstream(sVar, sVal) {
-    this.props.handleSetState(sVar, sVal);
-  }
-
-*/
   handleSubmit() {
     this.props.handleSubmit();
   }

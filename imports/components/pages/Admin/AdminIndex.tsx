@@ -1,5 +1,4 @@
 import * as React from "react";
-//import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import { ListGroup, ListGroupItem } from "reactstrap";
@@ -86,7 +85,6 @@ styles = theme => ({
   },
   appBar: {
     position: "absolute",
-    // height: '4rem',
     marginLeft: drawerWidth,
     [theme.breakpoints.up("md")]: {
       width: `calc(100% - ${drawerWidth}px)`
@@ -120,7 +118,6 @@ class Admin extends React.Component<IProps, IState> {
     super(props);
     this.handleSetState = this.handleSetState.bind(this);
     this.activatePanel = this.activatePanel.bind(this);
-    //this.toggleOnline = this.toggleOnline.bind(this);
 
     this.state = {
       showUsers: false,
@@ -128,24 +125,7 @@ class Admin extends React.Component<IProps, IState> {
       mobileOpen: false,
       panel: "settings"
     };
-    //log.info(`Admin CONSTRUCTOR`, this.props.history);
   }
-
-  /*
-  state = {
-    mobileOpen: false
-  };
-  */
-  /*
-  toggleOnline() {
-    toggleSystemOnline.call({}, err => {
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        console.log(`toggleSystemOnline failed`, err);
-      }
-    });
-  }
-  */
 
   handleDrawerToggle = () => {
     this.setState({ mobileOpen: !this.state.mobileOpen });
@@ -178,7 +158,11 @@ class Admin extends React.Component<IProps, IState> {
   }
 
   usersPanel() {
-    return this.props.sessionReady ? <Users userId={this.props.userId} userData={this.props.userData} systemSettings={this.props.systemSettings} /> : "";
+    return this.props.sessionReady ? (
+      <Users userId={this.props.userId} userData={this.props.userData} systemSettings={this.props.systemSettings} />
+    ) : (
+      ""
+    );
   }
 
   renderPanel() {
@@ -212,7 +196,6 @@ class Admin extends React.Component<IProps, IState> {
   }
 
   render() {
-    //log.info(`ADMIN INDEX - settings`, this.props.systemSettings);
     const { classes, theme } = this.props;
 
     const drawer = (
@@ -305,16 +288,4 @@ class Admin extends React.Component<IProps, IState> {
   }
 }
 
-/*
-const bundle = withStyles(styles, { withTheme: true })(Admin);
-
-export default withTracker(props => {
- 
-  return {
-    
-  };
-})(bundle);
-*/
-
 export default withStyles(styles, { withTheme: true })(Admin);
-//systemSettings: systemSettings

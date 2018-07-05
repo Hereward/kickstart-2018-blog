@@ -12,42 +12,22 @@ import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-//import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
-
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-//import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-//import Switch from "@material-ui/core/Switch";
-//import { Alert } from "reactstrap";
 import * as BlockUi from "react-block-ui";
 import { toggleLocked, deleteAllUsers, deleteUserList, sendInvitation } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
-//import SettingsForm from "../../admin/forms/SettingsForm";
 import Snackbar from "../../partials/Snackbar";
-//import { userSettings } from "../../../api/settings/publish";
 import * as UserModule from "../../../modules/user";
 import User from "./User";
 import OptionGroup from "../components/OptionGroup";
 import InvitationForm from "../../admin/forms/InvitationForm";
-
-/*
-import TextField from "@material-ui/core/TextField";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemText from "@material-ui/core/ListItemText";
-import ListSubheader from "@material-ui/core/ListSubheader";
-import ListItemSecondaryAction from "@material-ui/core/ListItemSecondaryAction";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import PowerIcon from "@material-ui/icons/SettingsPower";
-*/
-
-//import { systemSettings } from "../../../api/admin/publish";
 
 const defaultRoles = Meteor.settings.public.admin.roles;
 
@@ -124,7 +104,6 @@ styles = theme => ({
   },
   deleteAllRoot: {
     width: "100%"
-    //backgroundColor: theme.palette.background.paper
   },
   optionsRoot: {
     margin: "1rem"
@@ -166,7 +145,6 @@ class Users extends React.Component<IProps, IState> {
   currentLimitVal: number = 1;
   selectedUsers = [];
   isGod: boolean = false;
-  //state: any;
 
   constructor(props) {
     super(props);
@@ -226,12 +204,6 @@ class Users extends React.Component<IProps, IState> {
     this.props.dispatch({ type: "LOAD_MORE" }); // cursorBlock: this.cursorBlock
   }
 
-  /*
-  updateFilters() {
-    this.props.dispatch({ type: "FILTER_USERS" }); // cursorBlock: this.cursorBlock
-  }
-  */
-
   toggleUserSelect = id => event => {
     const currentState = Object.assign({}, this.state.selectedUsers);
     //const currentState = this.state.selectedUsers;
@@ -246,8 +218,6 @@ class Users extends React.Component<IProps, IState> {
       return filtered;
     }, []);
 
-    //log.info(`toggleUserSelect`, this.selectedUsers);
-
     return "";
   };
 
@@ -260,8 +230,6 @@ class Users extends React.Component<IProps, IState> {
   }
 
   userDetail(userObj) {
-    //log.info(`userDetail`, userObj);
-
     const id = userObj._id;
     const allowed = this.allowUser(id);
     const email = userObj.emails[0].address;
@@ -295,7 +263,6 @@ class Users extends React.Component<IProps, IState> {
   };
 
   deleteSelected() {
-    //log.info(`deleteSelected`);
     this.setState({ block: true });
     deleteUserList.call({ selected: this.state.selectedUsers }, err => {
       if (err) {
@@ -339,7 +306,6 @@ class Users extends React.Component<IProps, IState> {
 
   bulkOptionsDetail() {
     const { classes } = this.props;
-    //const isGod = UserModule.can({ threshold: "god" });
     const layout = (
       <div className={classes.deleteAllRoot}>
         <List component="nav">
@@ -378,9 +344,7 @@ class Users extends React.Component<IProps, IState> {
 
   changeFilter = name => event => {
     let filters: any = {};
-    //if (event.target.value) {
     filters[name] = event.target.value;
-    //}
     this.props.dispatch({ type: "FILTER_USERS", filters: filters });
   };
 
@@ -539,16 +503,12 @@ class Users extends React.Component<IProps, IState> {
   }
 
   users(usersArray: any) {
-    //const { classes } = this.props;
-    //const { expanded } = this.state;
-
     const userList = this.mapUsers(usersArray);
     return <div>{userList}</div>;
   }
 
   layout() {
     const { classes } = this.props;
-    //log.info(`Settings`, this.props, this.state);
     return (
       <BlockUi tag="div" blocking={this.state.block}>
         {this.inviteOptions()}

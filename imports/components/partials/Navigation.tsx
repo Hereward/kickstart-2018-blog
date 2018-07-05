@@ -134,13 +134,7 @@ class Navigation extends React.Component<IProps, IState> {
     ) {
       notify = true;
     }
-    /*
-    log.info(
-      `verifyEmailNotificationRequired | notify=[${notify}]`,
-      this.props.location.pathname,
-      this.props.userSettings.authEnabled
-    );
-    */
+
     return notify;
   }
 
@@ -225,8 +219,6 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   renderDashDisplay = () => {
-    log.info(`renderDashDisplay`, this.props.isClient);
-
     return this.props.isClient ? (
       <DashDisplay
         userSession={this.props.userSession}
@@ -297,17 +289,9 @@ class Navigation extends React.Component<IProps, IState> {
     );
   }
 
-  // nav inNavbar
-
-  // <UncontrolledDropdown nav inNavbar>
-
   render() {
-    //log.info(`NAVIGATION STATE`, this.state);
-
     return this.navBar();
   }
 }
 
 export default Navigation;
-
-// state => state

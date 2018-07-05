@@ -8,13 +8,6 @@ import { userSettings } from "../settings/publish";
 import { Auth } from "../auth/publish";
 import { hash } from "../../modules/user";
 
-/*
-let serverAuth: any;
-if (Meteor.isServer) {
-  serverAuth = require("../../server/auth");
-}
-*/
-
 const authCheck = (methodName, userId) => {
   let auth = true;
   if (!userId) {
@@ -172,7 +165,6 @@ export const createUserSession = new ValidatedMethod({
 
       let persist = fields.keepMeLoggedIn === true;
       let sessionId = insertNewSession(userId, fields.sessionToken, persist);
-      //let settings: any;
     }
   }
 });
@@ -337,7 +329,6 @@ export const updateAuth = (userId, sessionToken, verified) => {
 
 export const purgeInactiveSessions = userId => {
   let inactivityTimeout = Meteor.settings.public.session.inactivityTimeout || 3600000;
-  //let expires = new Date(Date.now() - inactivityTimeout * 3);
   let query = {
     $and: [
       {

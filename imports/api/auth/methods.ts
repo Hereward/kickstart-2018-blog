@@ -6,19 +6,14 @@ import { userSessions } from "../sessions/publish";
 import { userSettings } from "../settings/publish";
 import { Auth } from "./publish";
 import { updateAuth as sessionUpdateAuth } from "../sessions/methods";
-//import { initAuth } from '../../server/auth';
 
-//let Future: any;
-//let QRCode: any;
 let speakeasy = require("speakeasy");
 let serverAuth: any;
-
-//declare var Npm: any;
 
 let crypto = require("crypto");
 
 if (Meteor.isServer) {
-  serverAuth = require('../../server/auth');
+  serverAuth = require("../../server/auth");
 }
 
 const authCheck = (methodName, userId) => {
@@ -46,66 +41,6 @@ export const insertAuth = function insert(userId) {
 
   return id;
 };
-
-/*
-export const initAuth = (authId, userId) => {
-  let key: any;
-  let secret: any;
-  let user = Meteor.users.findOne(userId);
-  let email = user.emails[0].address;
-  let toDataURLObj = { error: "", url: "" };
-
-  const buf = crypto.randomBytes(16);
-  const randomString = buf.toString("hex");
-  secret = speakeasy.generateSecret({
-    length: 20,
-    name: `Meteor KickStart: ${email}`
-  });
-  key = secret.base32;
-
-  let keyEncrypted = encrypt(key, randomString);
-  Auth.update(authId, { $set: { private_key_enc: keyEncrypted, cryptoKey: randomString } });
-  let future = new Future();
-  QRCode.toDataURL(secret.otpauth_url, (err, dataUrl) => {
-    future.return({ error: err, url: dataUrl });
-  });
-  toDataURLObj = future.wait();
-  if (toDataURLObj.error) {
-    console.log(`initAuth toDataURL FAIL: `, toDataURLObj.error);
-    throw new Meteor.Error(
-      `initAuth toDataURL FAIL [initAuth] [${toDataURLObj.error}]`,
-      "Could not retrieve QRCode URL."
-    );
-  } else {
-    let urlEnc = encrypt(toDataURLObj.url, randomString);
-    Auth.update(authId, { $set: { QRCodeURL_enc: urlEnc } });
-  }
-
-  return { key: key, url: toDataURLObj.url };
-};
-
-function encrypt(text, password) {
-  let cipher = crypto.createCipheriv(
-    Meteor.settings.private.enhancedAuth.algorithm,
-    password,
-    Meteor.settings.private.enhancedAuth.iv
-  );
-  let crypted = cipher.update(text, "utf8", "hex");
-  crypted += cipher.final("hex");
-  return crypted;
-}
-
-function decrypt(text, password) {
-  let decipher = crypto.createDecipheriv(
-    Meteor.settings.private.enhancedAuth.algorithm,
-    password,
-    Meteor.settings.private.enhancedAuth.iv
-  );
-  let dec = decipher.update(text, "hex", "utf8");
-  dec += decipher.final("utf8");
-  return dec;
-}
-*/
 
 export const createAuth = new ValidatedMethod({
   name: "auth.create",
@@ -153,7 +88,6 @@ export const currentValidToken = new ValidatedMethod({
   run() {
     let token: any;
     if (!this.isSimulation) {
-      //authCheck("auth.currentValidToken", this.userId);
       if (this.userId) {
         token = "initialising...";
         let authRecord: any;

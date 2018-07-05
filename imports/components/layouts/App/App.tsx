@@ -5,8 +5,6 @@ import * as RLocalStorage from "meteor/simply:reactive-local-storage";
 import * as React from "react";
 import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
-//import { createStore } from "redux";
-//import { Provider } from "react-redux";
 import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import Header from "../../partials/Header";
@@ -54,11 +52,7 @@ class App extends React.Component<IProps, IState> {
 
   componentWillUpdate() {}
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.systemSettings !== this.props.systemSettings) {
-      //Library.addMeta(this.props.systemSettings);
-    }
-  }
+  componentDidUpdate(prevProps, prevState, snapshot) {}
 
   componentWillMount() {}
 
@@ -82,14 +76,9 @@ class App extends React.Component<IProps, IState> {
     );
   }
 
-  // return <Spinner caption="connecting" type="page" />;
-
   getLayout() {
     if (!this.props.systemSettings) {
       return <Splash />;
-      // || (!this.props.connected && this.props.connectionRetryCount > 2)
-      // } else if (this.props.userId && (!this.props.loggingIn && !this.props.sessionReady)) {
-      //   return <Spinner caption="logging in" type="page" />;
     } else {
       return this.mainContent();
     }
@@ -121,7 +110,6 @@ export default withRouter(
       let sessionToken: string;
       let loggingOut = props.reduxState.loggingOut;
       let miniAlert = props.reduxState.miniAlert;
-      //let loggingIn: boolean;
       let userId = User.id();
       let loggingIn = User.loggingIn();
       let userData = User.data();

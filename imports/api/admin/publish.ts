@@ -1,7 +1,4 @@
-//import { Meteor } from "meteor/meteor";
 import { Roles } from "meteor/alanning:roles";
-//import { can as userCan } from "../../modules/user";
-//import { Mongo } from "meteor/mongo";
 
 declare var Meteor: any;
 
@@ -50,8 +47,6 @@ if (Meteor.isServer) {
     } else {
       return Meteor.roles.find({});
     }
-
-    //return Pages.find();
   });
 
   // const MAX_USERS = 1000;
