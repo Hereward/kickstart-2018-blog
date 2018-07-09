@@ -1,61 +1,19 @@
 import * as React from "react";
-import { onPageLoad } from "meteor/server-render";
-import * as PropTypes from "prop-types";
 import * as ReactDOM from "react-dom";
 import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
-import { Session } from "meteor/session";
 import { BrowserRouter } from "react-router-dom";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import * as RLocalStorage from "meteor/simply:reactive-local-storage";
 import * as jquery from "jquery";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import blue from "@material-ui/core/colors/blue";
 import App from "../../components/layouts/App/App";
-//import { addMeta } from "./meta";
-import * as Library from "../../modules/library";
-import * as ContentManagement from "../../modules/contentManagement";
 import { keepAliveUserSession } from "../../api/sessions/methods";
-//import { validateUserLogin } from "../../api/auth/methods";
 import * as User from "../../modules/user";
 import rootReducer from "../../redux/reducers";
-
-/*
-const muiTheme = createMuiTheme({
-  palette: {
-    primary: blue
-  }
-});
-*/
 
 declare var window: any;
 
 const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
-/*
-onPageLoad(sink => {
-  sink.renderIntoElementById("ssr", `<h1>BOOJAM!<h1>`);
-  log.info(`onPageLoad - CLIENT`);
-});
-*/
-
-/*
-class Launchz extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return (
-      <BrowserRouter>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </BrowserRouter>
-    );
-  }
-}
-*/
 
 const Launch = props => {
   return (
@@ -85,7 +43,6 @@ Accounts.onLogin(() => {
   userData = User.data();
   User.setUserDataCache(userData);
   log.info(`Client login`, User.id(), userData, User.sessionToken("get"));
-  //store.dispatch({ type: 'USER_LOGIN_DONE' });
 });
 
 Accounts.onLogout(() => {
@@ -93,21 +50,6 @@ Accounts.onLogout(() => {
   User.clearLocalStorage();
   store.dispatch({ type: "LOGOUT_DONE" });
 });
-
-/*
-onPageLoad(async sink => {
-  const Launch = props => {
-    return (
-      <BrowserRouter>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </BrowserRouter>
-    );
-  };
-  ReactDOM.hydrate(<Launch />, document.getElementById("react-root"));
-});
-*/
 
 Meteor.startup(() => {
   ReactDOM.hydrate(<Launch />, document.getElementById("react-root"));

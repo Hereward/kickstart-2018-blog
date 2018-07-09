@@ -15,30 +15,7 @@ import Splash from "../components/partials/Splash";
 
 const context = {};
 
-
-/*
-const html = renderToString(
-  <StyleSheetManager sheet={sheet.instance}>
-    <Splash />
-  </StyleSheetManager>
-);
-*/
-
-//const styleTags = sheet.getStyleTags();
-
 const store = createStore(rootReducer);
-
-/*
-const Launch = props => {
-  return (
-    <StaticRouter>
-      <Provider store={store}>
-        <MainApp />
-      </Provider>
-    </StaticRouter>
-  );
-};
-*/
 
 onPageLoad(sink => {
   const sheet = new ServerStyleSheet();
@@ -54,8 +31,3 @@ onPageLoad(sink => {
   sink.renderIntoElementById("react-root", html);
   sink.appendToHead(sheet.getStyleTags());
 });
-
-
-//log.info(`ssr`, settings);
-//   //sink.renderIntoElementById("react-root", renderToString(<Launch location={sink.request.url} />));
-

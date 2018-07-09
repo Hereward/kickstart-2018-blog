@@ -1,5 +1,3 @@
-//import swal from 'sweetalert';
-//declare var _swal: any;
 import * as _swal from "sweetalert";
 import { SweetAlert } from "sweetalert/typings/core";
 import * as User from "./user";
@@ -11,7 +9,11 @@ declare var window: any;
 declare var DocHead: any;
 
 export function addMeta(systemSettings) {
-  let metaInfo = { name: "viewport", content: "width=device-width, initial-scale=1", description: systemSettings.description };
+  let metaInfo = {
+    name: "viewport",
+    content: "width=device-width, initial-scale=1",
+    description: systemSettings.description
+  };
   DocHead.addMeta(metaInfo);
   DocHead.setTitle(systemSettings.mainTitle);
 }
@@ -29,7 +31,6 @@ export const nested = (pathArr, nestedObj) => {
 export function invalidAuthCodeAlert(error) {
   let message: string;
   let title: string;
-  //let obj = arguments[0];
   message = error.reason || "Operation completed sucessfully.";
   title = authErrors[error.error] ? authErrors[error.error] : "Something Went Wrong...";
 
@@ -40,13 +41,11 @@ export function invalidAuthCodeAlert(error) {
   });
 }
 
-// showConfirmButton: true,
-
 export function simpleAlert(message) {
   return confirmDialog({ title: message, message: "off", icon: "off", buttons: [false, true] });
 }
 
-export function confirmDialog(params?: { title?: string; message?: string; icon?: string, buttons?: any }) {
+export function confirmDialog(params?: { title?: string; message?: string; icon?: string; buttons?: any }) {
   let title = "Are you sure ?";
   let message = "You cannot undo this operation.";
   let icon = "warning";
@@ -76,11 +75,6 @@ export function confirmDialog(params?: { title?: string; message?: string; icon?
   });
 }
 
-/*
- cancel: { text: "Cancel" },
-      confirm: { text: "Confirm" }
-      */
-
 export function modalSuccessAlert(params: any) {
   let message: string;
   let title: string;
@@ -95,7 +89,6 @@ export function modalSuccessAlert(params: any) {
   }).then(value => {
     if (obj.location) {
       log.info(`changing page location [${location}]`);
-      //window.location = obj.location;
       window.location.assign(obj.location);
     }
   });
@@ -135,27 +128,16 @@ export function modalErrorAlert(params: any) {
     icon: "error"
   }).then(value => {
     if (obj.location) {
-      //log.info(`changing page location [${location}]`);
-      //window.location = obj.location;
       window.location.assign(obj.location);
     }
   });
 }
 
 export function userModelessAlert(type, props) {
-  /*
-  if (!User.data()) {
-    return;
-  }
-  */
-
-  //let emailVerified = props.userData.emails[0].verified;
-
   let msg = "";
   let alertType = "";
   let title = "";
   let hideDelay = 7000;
-  // let icon = "fa-magic";
 
   if (type === "verifyEmail") {
     if (props.profile.verificationEmailSent === 1) {
@@ -164,7 +146,6 @@ export function userModelessAlert(type, props) {
         "A verification email has been sent to your nominated email account. Please check your email and click on the verification link.";
       alertType = "info";
     } else if (props.profile.verificationEmailSent === 2) {
-      //allowFurtherAlerts = true;
       title = "Verification email could not be sent";
       msg =
         "We tried to send a verification email to your nominated email address, but there was a problem. Please check your profile for more details.";

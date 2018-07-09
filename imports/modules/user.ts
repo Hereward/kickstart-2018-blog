@@ -15,7 +15,6 @@ import {
 import * as userSettingsMethods from "../api/settings/methods";
 import * as ProfileMethods from "../api/profiles/methods";
 import * as AuthMethods from "../api/auth/methods";
-//import * as SessionMethods from "../api/sessions/methods";
 
 const sessionTokenName = Meteor.settings.public.session.sessionTokenName;
 const userDataKey = Meteor.settings.public.session.userDataKey;
@@ -132,7 +131,6 @@ export function checkSessionStatus(prevProps?, newProps?) {
         if (res) {
           Meteor.logout(() => {
             log.info(`User.checkSessionStatus logout() DONE`);
-            //window.location = "/signin";
           });
         }
       });
@@ -155,10 +153,7 @@ export function checkSessionStatus(prevProps?, newProps?) {
 }
 
 export function authRequired(props) {
-  //log.info(`authRequired`, props);
-  //let emailVerified = Library.nested(["userData", "emails", 0, "verified"], props);
   let verified = Library.nested(["userSession", "verified"], props);
-  // let locked = Library.nested(["userSettings", "locked"], props);
   let authEnabled = Library.nested(["userSettings", "authEnabled"], props);
   let loggingOut = props.loggingOut;
   let authRequired = false;
@@ -169,7 +164,6 @@ export function authRequired(props) {
     }
   }
 
-  // log.info(`authRequired`, authEnabled, authRequired, props);
   return authRequired;
 }
 

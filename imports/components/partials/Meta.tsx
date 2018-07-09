@@ -2,8 +2,6 @@ import * as React from "react";
 import { Helmet } from "react-helmet";
 import { systemSettings } from "../../api/admin/publish";
 
-//const settings = systemSettings.findOne();
-
 const Meta = props => {
   const titleString = `${props.settings.mainTitle} [${props.location}]`;
   return (
@@ -17,5 +15,3 @@ const Meta = props => {
 };
 
 export default Meta;
-
-// {titleString}

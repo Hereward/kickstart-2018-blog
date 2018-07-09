@@ -8,26 +8,8 @@ import { withTracker } from "meteor/react-meteor-data";
 import { Session } from "meteor/session";
 import { connect } from "react-redux";
 
-import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Dropdown,
-  Tooltip,
-  UncontrolledTooltip
-} from "reactstrap";
+import { Collapse, Navbar, NavbarToggler, Nav, NavItem, DropdownToggle, DropdownMenu, Dropdown } from "reactstrap";
 
-import * as ContentManagement from "../../modules/contentManagement";
-import * as AuthMethods from "../../api/auth/methods";
-import { Auth } from "../../api/auth/publish";
-import { userSettings } from "../../api/settings/publish";
 import * as SessionMethods from "../../api/sessions/methods";
 import * as Library from "../../modules/library";
 import * as User from "../../modules/user";
@@ -83,7 +65,6 @@ class Navigation extends React.Component<IProps, IState> {
     this.emailVerifyPrompted = false;
 
     const { store } = context;
-    //log.info(`NAVIGATION PROPS`, this.props);
   }
 
   componentDidMount() {

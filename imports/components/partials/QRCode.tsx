@@ -2,17 +2,11 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import { Button } from "reactstrap";
-import { withTracker } from "meteor/react-meteor-data";
 import Loader from "react-loader-spinner";
 import styled from "styled-components";
 import * as Library from "../../modules/library";
 import Transition from "./Transition";
-import {getDecrpytedAuthData } from "../../api/auth/methods";
-import { cancel2FA } from "../../api/settings/methods";
-import { Auth } from "../../api/auth/publish";
-import * as User from "../../modules/user";
-
-let QRCodeContainer: any;
+import { getDecrpytedAuthData } from "../../api/auth/methods";
 
 interface IProps {
   handleQRclick: any;
@@ -48,7 +42,6 @@ class QRCode extends React.Component<IProps, IState> {
       privateKey: "",
       cancelEnabled: false
     };
-    
   }
 
   componentWillReceiveProps(nextProps) {}
@@ -58,7 +51,6 @@ class QRCode extends React.Component<IProps, IState> {
   componentDidUpdate() {}
 
   componentWillMount() {
-    
     getDecrpytedAuthData.call({}, (err, res) => {
       if (err) {
         Library.modalErrorAlert(err.reason);
@@ -67,7 +59,6 @@ class QRCode extends React.Component<IProps, IState> {
         this.setState({ privateKey: res.key, QRCodeURL: res.url });
       }
     });
-    
   }
 
   componentDidMount() {}
@@ -75,17 +66,6 @@ class QRCode extends React.Component<IProps, IState> {
   handleQRClick() {
     this.props.handleQRclick();
   }
-/*
-  cancel2FA() {
-    this.setState({cancelEnabled: false});
-    cancel2FA.call({}, (err, res) => {
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        console.log(`cancel2FA error`, err);
-      }
-    });
-  }
-  */
 
   getLoadingPlaceHolder() {
     let tag = (
@@ -133,6 +113,4 @@ class QRCode extends React.Component<IProps, IState> {
   }
 }
 
-export default (QRCodeContainer = withTracker(() => {
-  return {};
-})(QRCode));
+export default QRCode;

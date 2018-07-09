@@ -21,8 +21,6 @@ export const filters = (state = {}, action) => {
     case "FILTER_USERS": {
       let newState: any;
       newState = Object.assign({}, state, action.filters);
-      //log.info(`filters action`, action, newState);
-
       return newState;
     }
 
