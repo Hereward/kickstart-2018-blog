@@ -1,5 +1,5 @@
 
-# Meteor/React Kickstart 2018 Enhanced
+# Meteor/React Kickstart 2018 Blog
 
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
@@ -7,7 +7,7 @@
 
 **DEMO WEBSITE: https://kickstart2018.eyeofthetiger.asia/**
 
-This project builds on my previous project [Meteor/React Kickstart 2018](https://github.com/Hereward/meteor-react-kickstart-2018).
+This project builds on my previous project [Meteor/React Kickstart 2018](https://github.com/Hereward/kickstart-2018-enhanced.git).
 
 **New features:**
 
