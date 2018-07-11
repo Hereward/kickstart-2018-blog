@@ -8,7 +8,8 @@ import { Auth } from "../auth/publish";
 import { userSessions } from "../sessions/publish";
 import { userSettings } from "../settings/publish";
 import { Profiles } from "../profiles/publish";
-import { Images } from "../images/methods";
+import { Pages } from "../pages/publish";
+import { ProfileImages } from "../images/methods";
 import { can as userCan } from "../../modules/user";
 import { systemSettings } from "./publish";
 import { lockAccountToggle, insertNewSession, purgeAllOtherSessions } from "../sessions/methods";
@@ -58,7 +59,7 @@ const protectedUser = (id, userId) => {
 function deleteOne(id) {
   const userProfileRecord = Profiles.findOne({ owner: id });
   if (userProfileRecord) {
-    Images.remove(userProfileRecord._id, () => {});
+    ProfileImages.remove(userProfileRecord._id, () => {});
   }
   Meteor.users.remove(id);
   Auth.remove({ owner: id });
@@ -66,6 +67,26 @@ function deleteOne(id) {
   userSettings.remove({ owner: id });
   Profiles.remove({ owner: id });
 }
+
+export const imageUpdatePageAdmin = new ValidatedMethod({
+  name: "image.UpdatePageAdmin",
+  validate: new SimpleSchema({
+    id: { type: String },
+    image_id: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("admin.imageUpdatePage", this.userId, "admin");
+
+    Pages.update(fields.id, {
+      $set: {
+        metaImage: fields.image_id
+      }
+    });
+
+    return true;
+  }
+});
 
 export const adminToggle2FA = new ValidatedMethod({
   name: "admin.adminToggle2FA",
@@ -127,7 +148,10 @@ export const configureNewUser = new ValidatedMethod({
       authCheck("configureNewUser", this.userId);
       const allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
 
+     
+
       const userId = fields.userId || this.userId;
+      log.info(`configureNewUser [${userId}]`);
       //const userId = fields.userId;
 
       // USER SETTINGS
@@ -426,13 +450,13 @@ export const deleteAllUsers = new ValidatedMethod({
       userSettings.remove({ owner: { $nin: excludeUsersExpression } });
       Profiles.remove({ owner: { $nin: excludeUsersExpression } });
 
-      let imagesCursor: any = Images.find({ _id: { $nin: excludeImagesExpression } });
+      let imagesCursor: any = ProfileImages.find({ _id: { $nin: excludeImagesExpression } });
       let imagesCount = imagesCursor.count();
 
       if (imagesCount) {
         const imagesArray = imagesCursor.fetch();
         log.info(`deleteAllUsers - image found! [${imagesCount}]`, imagesArray);
-        Images.remove({ _id: { $nin: excludeImagesExpression } }, function remove(error) {
+        ProfileImages.remove({ _id: { $nin: excludeImagesExpression } }, function remove(error) {
           if (error) {
             console.error("IMAGE File wasn't removed, error: " + error.reason);
           } else {

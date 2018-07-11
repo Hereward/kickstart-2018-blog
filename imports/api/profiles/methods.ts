@@ -125,17 +125,19 @@ export const sendVerificationEmail = new ValidatedMethod({
 
   run(fields) {
     authCheck("profiles.sendVerificationEmail", this.userId);
-    log.info(`sendVerificationEmail`, fields.userId, this.userId);
+    //log.info(`sendVerificationEmail`, fields.userId, this.userId);
     const userId = fields.userId ? fields.userId : this.userId;
 
     let verificationEmailSent = 1;
 
     if (!this.isSimulation) {
+      log.info(`sendVerificationEmail - SERVER`, fields.userId, this.userId);
       let emailResServer = Accounts.sendVerificationEmail(userId);
       let error = false;
       if (!emailResServer) {
         verificationEmailSent = 2;
         error = true;
+        log.info(`sendVerificationEmail - SERVER ERROR - email not sent`);
       }
 
       Profiles.update(fields.profileId, {

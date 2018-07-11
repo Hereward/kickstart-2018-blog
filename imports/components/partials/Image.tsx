@@ -11,7 +11,8 @@ interface IProps {
   fileSize: string;
   Images: any;
   allowEdit: boolean;
-  profile: any;
+  dataObj: any;
+  updateMethod: string;
 }
 
 interface IState {}
@@ -22,18 +23,17 @@ export default class Image extends React.Component<IProps, IState> {
 
     this.removeFile = this.removeFile.bind(this);
     this.state = {};
-    console.log(`Image Constructor`, this.props);
   }
 
   removeFile() {
     let conf = confirm("Are you sure you want to delete the file?") || false;
     if (conf === true) {
-      Meteor.call("RemoveFile", this.props.fileId, function removeImage(err, res) {
+      Meteor.call("RemoveFile", this.props.fileId, this.props.Images, function removeImage(err, res) {
         if (err) {
           console.log(err);
           Library.modalErrorAlert(err.reason);
         } else {
-          Meteor.call("profileImage.update", { id: this.props.profile._id, image_id: "" });
+          Meteor.call(this.props.updateMethod, { id: this.props.dataObj._id, image_id: "" });
         }
       });
     }

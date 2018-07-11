@@ -132,8 +132,8 @@ export default class PageForm extends React.Component<IProps, IState> {
       <BlockUi tag="div" blocking={!this.props.allowSubmit}>
         <form id={this.formID} onSubmit={this.handleSubmit}>
           {this.getWidget({
-            name: "heading",
-            label: "Heading",
+            name: "title",
+            label: "Title",
             required: false
           })}
 

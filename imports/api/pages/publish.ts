@@ -13,11 +13,17 @@ if (Meteor.isServer) {
     const myPages = Pages.find();
     if (!myPages.count()) {
       Pages.insert({
+        metaTitle: `About - ${Meteor.settings.public.mainTitle}`,
+        metaDescription: "This is the ABOUT page boyo",
+        metaImage: "",
         name: "about",
-        heading: Meteor.settings.public.defaultContent.about.heading,
+        slug: "about",
+        title: Meteor.settings.public.defaultContent.about.title,
         body: Meteor.settings.public.defaultContent.about.body,
-        createdAt: new Date(),
-        owner: ""
+        allowComments: false,
+        closeComments: false,
+        modified: new Date(),
+        published: new Date(),
       });
     }
   });

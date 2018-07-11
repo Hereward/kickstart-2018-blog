@@ -8,6 +8,28 @@ import Settings from "@material-ui/icons/Settings";
 import Edit from "@material-ui/icons/Edit";
 import EditorCancel from "material-ui/svg-icons/content/clear";
 
+export const ToggleEditIcon = (props: {
+  currentState: boolean;
+  toggleImageEdit: any;
+  className?: any;
+}) => {
+  const newState = !props.currentState;
+  
+  return (
+    <IconButton
+      id="boojam"
+      aria-label="toggleEdit"
+      className={props.className}
+      onClick={(e) => {
+        log.info(`ToggleEditIcon - I was CLICKED`, e, newState);
+        props.toggleImageEdit(e);
+      }}
+    >
+      {newState ? <Edit /> : <Cancel />}
+    </IconButton>
+  );
+};
+
 export const EditIcon = function EditIcon(props: { onClick: any; stateName: any; style?: any; className?: any }) {
   return (
     <IconButton
@@ -22,7 +44,7 @@ export const EditIcon = function EditIcon(props: { onClick: any; stateName: any;
   );
 };
 
-export const CancelEditIcon = function CancelEditIcon(props: {
+export const CancelEditIcon = function cEditIcon(props: {
   onClick: any;
   stateName: any;
   style?: any;

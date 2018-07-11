@@ -15,6 +15,33 @@ const authCheck = (methodName, userId) => {
   return auth;
 };
 
+
+const imagesCollection = (name="test") => {
+  const path = `${Meteor.settings.public.images.storagePath}/${name}`;
+  return new FilesCollection({
+    debug: false,
+    collectionName: name,
+    allowClientCode: false,
+    storagePath: path,
+    permissions: 0o774,
+    parentDirPermissions: 0o774,
+    onBeforeUpload: function onBeforeUpload(file) {
+      // Allow upload files under 10MB, and only in png/jpg/jpeg formats
+      if (file.size <= 1024 * 1024 * 10 && /png|jpg|jpeg/i.test(file.extension)) {
+        return true;
+      } else {
+        return "Please upload image, with size equal or less than 10MB";
+      }
+    }
+  });
+
+};
+
+export const ProfileImages = imagesCollection("profile");
+export const EditorialImages = imagesCollection("editorial");
+
+
+/*
 export const Images = new FilesCollection({
   debug: true,
   collectionName: "Images",
@@ -31,11 +58,13 @@ export const Images = new FilesCollection({
     }
   }
 });
+*/
 
 Meteor.methods({
-  RemoveFile(fileId) {
+  RemoveFile(fileId, Images) {
     authCheck("RemoveFile", this.userId);
     check(fileId, String);
+    check(Images, Object);
 
     if (!User.id()) {
       throw new Meteor.Error("not-authorized");
@@ -50,13 +79,15 @@ Meteor.methods({
     });
   },
 
-  RenameFile(fileId) {
+  RenameFile(fileId, Images) {
     authCheck("RenameFile", this.userId);
     check(fileId, String);
+    check(Images, Object);
   },
-  getImage(resourceID, myUrl) {
+  getImage(resourceID, myUrl, Images) {
     authCheck("getImage", this.userId);
     check(resourceID, String);
+    check(Images, Object);
     check(myUrl, String);
     let url = myUrl || "http://placehold.it/800x450";
     console.log("Fetching image from: " + url);

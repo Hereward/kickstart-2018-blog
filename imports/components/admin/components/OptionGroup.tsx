@@ -26,7 +26,7 @@ styles = theme => ({
     boxShadow: "none",
     backgroundColor: "transparent",
     border: "1px solid lightgray",
-    width: '12rem'
+    width: '12rem',
   },
   optionsDetail: {
     marginTop: "0.5rem",
@@ -36,7 +36,8 @@ styles = theme => ({
     marginLeft: theme.spacing.unit,
   },
   buttonLabel: {
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    width: "100%"
   },
   transparent: {
     backgroundColor: "transparent",

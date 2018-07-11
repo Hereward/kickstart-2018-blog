@@ -19,6 +19,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import * as Icon from "../../../modules/icons";
 import Settings from "../../admin/panels/Settings";
 import Users from "../../admin/panels/Users";
+import Pages from "../../admin/panels/Pages";
 
 const drawerWidth = 240;
 let styles: any;
@@ -165,6 +166,14 @@ class Admin extends React.Component<IProps, IState> {
     );
   }
 
+  pagesPanel() {
+    return this.props.sessionReady ? (
+      <Pages userId={this.props.userId} userData={this.props.userData} />
+    ) : (
+      ""
+    );
+  }
+
   renderPanel() {
     let layout: any;
 
@@ -176,6 +185,9 @@ class Admin extends React.Component<IProps, IState> {
           break;
         case "users":
           layout = this.usersPanel();
+          break;
+          case "pages":
+          layout = this.pagesPanel();
           break;
         default:
           layout = "";
@@ -205,28 +217,25 @@ class Admin extends React.Component<IProps, IState> {
         </Hidden>
         <Divider />
         <List component="nav">
-          <ListItem
-            onClick={() => {
-              this.activatePanel("settings");
-            }}
-            button
-          >
+          <ListItem onClick={() => {this.activatePanel("settings");}} button>
             <ListItemIcon classes={{ root: this.getNavStyle("settings") }}>
               <SettingsIcon />
             </ListItemIcon>
             <ListItemText classes={{ primary: this.getNavStyle("settings") }} primary="Settings" />
           </ListItem>
 
-          <ListItem
-            onClick={() => {
-              this.activatePanel("users");
-            }}
-            button
-          >
+          <ListItem onClick={() => { this.activatePanel("users");}} button>
             <ListItemIcon classes={{ root: this.getNavStyle("users") }}>
               <UsersIcon />
             </ListItemIcon>
-            <ListItemText classes={{ primary: this.getNavStyle("users") }} primary="Manage Users" />
+            <ListItemText classes={{ primary: this.getNavStyle("users") }} primary="Users" />
+          </ListItem>
+          
+          <ListItem onClick={() => { this.activatePanel("pages");}} button>
+            <ListItemIcon classes={{ root: this.getNavStyle("pages") }}>
+              <UsersIcon />
+            </ListItemIcon>
+            <ListItemText classes={{ primary: this.getNavStyle("pages") }} primary="Pages" />
           </ListItem>
         </List>
       </div>

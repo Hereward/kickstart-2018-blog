@@ -11,7 +11,7 @@ import * as ProfileMethods from "../../../api/profiles/methods";
 import * as Library from "../../../modules/library";
 import { EditIcon, CancelEditIcon } from "../../../modules/icons";
 import UploadForm from "../../forms/UploadForm";
-import { Images } from "../../../api/images/methods";
+import { ProfileImages } from "../../../api/images/methods";
 import { deleteAllUsers } from "../../../api/admin/methods";
 import Image from "../../partials/Image";
 import Notification from "../../partials/Notification";
@@ -270,17 +270,18 @@ class Profile extends React.Component<IProps, IState> {
               <CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="editImage" />
             </h2>
             <UploadForm
-              Images={Images}
+              Images={ProfileImages}
               fileLocator=""
               loading={false}
               myImages={this.props.myImages}
-              profile={this.props.profile}
+              dataObj={this.props.profile}
+              updateMethod="profileImage.update"
             />
           </div>
         );
       } else if (this.props.myImages && this.props.myImages[0]) {
         let fileCursor = this.props.myImages[0];
-        let link = Images.findOne({ _id: fileCursor._id }).link();
+        let link = ProfileImages.findOne({ _id: fileCursor._id }).link();
 
         layout = (
           <div className="profile-image-holder">
@@ -292,9 +293,10 @@ class Profile extends React.Component<IProps, IState> {
               fileUrl={link}
               fileId={fileCursor._id}
               fileSize={fileCursor.size}
-              Images={Images}
+              Images={ProfileImages}
               allowEdit={false}
-              profile={this.props.profile}
+              dataObj={this.props.profile}
+              updateMethod="profileImage.update"
             />
           </div>
         );
@@ -396,7 +398,7 @@ class Profile extends React.Component<IProps, IState> {
 
 export default withTracker(props => {
   let myImages: any;
-  let ImagesDataReady = Meteor.subscribe("allImages");
+  let ImagesDataReady = Meteor.subscribe("profileImages");
   let userEmail: string;
   let emailVerified: boolean = false;
 
@@ -407,7 +409,7 @@ export default withTracker(props => {
 
   if (ImagesDataReady) {
     if (props.profile) {
-      let cursor: any = Images.find({ _id: props.profile.image_id });
+      let cursor: any = ProfileImages.find({ _id: props.profile.image_id });
       myImages = cursor.fetch();
     }
   }

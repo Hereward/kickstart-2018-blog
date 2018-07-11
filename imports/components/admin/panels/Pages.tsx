@@ -5,9 +5,6 @@ import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-//import IconButton from "@material-ui/core/IconButton";
-//import DropUpIcon from "@material-ui/icons/ArrowDropUp";
-//import DropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
@@ -23,13 +20,16 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import * as BlockUi from "react-block-ui";
 import { toggleLocked, deleteAllUsers, deleteUserList, sendInvitation } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
-import Snackbar from "../../partials/Snackbar";
 import * as UserModule from "../../../modules/user";
 import User from "./User";
 import OptionGroup from "../components/OptionGroup";
-import InvitationForm from "../../admin/forms/InvitationForm";
-
-const defaultRoles = Meteor.settings.public.admin.roles;
+import PageForm from "../../admin/forms/PageForm";
+import { Pages as PagesObj } from "../../../api/pages/publish";
+import Image from "../../partials/Image";
+import { ToggleEditIcon } from "../../../modules/icons";
+import UploadForm from "../../forms/UploadForm";
+import { EditorialImages } from "../../../api/images/methods";
+import RenderImage from "../components/RenderImage";
 
 const drawerWidth = 240;
 let styles: any;
@@ -41,7 +41,7 @@ interface IProps {
   systemSettings: any;
   dispatch: any;
   cursorLimit: number;
-  allUsers: any;
+  allPages: any;
   userData: any;
   userId: string;
 }
@@ -49,20 +49,27 @@ interface IProps {
 interface IState {
   [x: number]: any;
   allowSubmit: boolean;
-  mainTitle: string;
-  shortTitle: string;
-  copyright: string;
   updateDone: boolean;
   queryLimit: number;
   expanded: string;
   block: boolean;
   showBulkOptions: boolean;
   showFilterOptions: boolean;
-  showInviteOptions: boolean;
   selectedUsers: any;
+  metaDescription: string;
+  metaImage: string;
+  name: string;
+  slug: string;
+  title: string;
+  body: string;
+  showNewPage: boolean;
+  editImage: boolean;
 }
 
 styles = theme => ({
+  newPageDetail: {
+    margin: "1rem"
+  },
   textField: {
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
@@ -73,7 +80,7 @@ styles = theme => ({
     marginTop: "1rem",
     textAlign: "center"
   },
-  userDetails: {
+  pageDetails: {
     backgroundColor: "#fdf9f4",
     borderTop: "1px solid LightGray",
     paddingTop: "1rem",
@@ -82,7 +89,7 @@ styles = theme => ({
   summaryData: {
     color: "dimGray"
   },
-  summaryDataEmail: {
+  summaryDataTitle: {
     maxWidth: "10rem",
     overflow: "hidden",
     display: "inline-block",
@@ -141,10 +148,10 @@ styles = theme => ({
   }
 });
 
-class Users extends React.Component<IProps, IState> {
+class Pages extends React.Component<IProps, IState> {
   cursorBlock: number = 1;
   currentLimitVal: number = 1;
-  selectedUsers = [];
+  selectedPages = [];
   isGod: boolean = false;
 
   constructor(props) {
@@ -156,22 +163,27 @@ class Users extends React.Component<IProps, IState> {
     this.loadMore = this.loadMore.bind(this);
     this.toggleBulkOptions = this.toggleBulkOptions.bind(this);
     this.toggleFilterOptions = this.toggleFilterOptions.bind(this);
+    this.toggleNewPage = this.toggleNewPage.bind(this);
     this.changeFilter = this.changeFilter.bind(this);
     this.isGod = UserModule.can({ threshold: "god" });
 
     this.state = {
       allowSubmit: true,
-      mainTitle: this.props.systemSettings.mainTitle,
-      shortTitle: this.props.systemSettings.shortTitle,
-      copyright: this.props.systemSettings.copyright,
       updateDone: false,
       queryLimit: 1,
       expanded: "",
       block: false,
       showBulkOptions: false,
       showFilterOptions: false,
-      showInviteOptions: false,
-      selectedUsers: {}
+      selectedUsers: {},
+      metaDescription: "",
+      metaImage: "",
+      name: "",
+      slug: "",
+      title: "",
+      body: "",
+      showNewPage: false,
+      editImage: false
     };
   }
 
@@ -199,20 +211,33 @@ class Users extends React.Component<IProps, IState> {
     });
   };
 
+  toggleImageEdit = e => {
+    const newState = !this.state.editImage;
+    log.info(`toggleImageEdit`, e, newState);
+    this.setState({ editImage: newState });
+  };
+
+  handleChange(e) {
+    let target = e.target;
+    let value = target.type === "checkbox" ? target.checked : target.value;
+    let id = target.id;
+    this.setState({ [id]: value, updateDone: false });
+    log.info(`Pages handleChange`, id, value, this.state);
+  }
+
   handleSubmit() {}
 
   loadMore() {
     this.props.dispatch({ type: "LOAD_MORE" }); // cursorBlock: this.cursorBlock
   }
 
-  toggleUserSelect = id => event => {
+  togglePageSelect = id => event => {
     const currentState = Object.assign({}, this.state.selectedUsers);
-    //const currentState = this.state.selectedUsers;
     const selected = currentState[id] === true;
     currentState[id] = !selected;
     this.setState({ selectedUsers: currentState });
 
-    this.selectedUsers = Object.keys(currentState).reduce((filtered, option) => {
+    this.selectedPages = Object.keys(currentState).reduce((filtered, option) => {
       if (currentState[option]) {
         filtered.push(option);
       }
@@ -222,27 +247,23 @@ class Users extends React.Component<IProps, IState> {
     return "";
   };
 
-  allowUser(id) {
-    //let prot = false;
-    const selfEdit = id === this.props.userId;
-    const protectedUser = Roles.userIsInRole(id, ["god", "super-admin"]);
-    const allowed = !selfEdit && (!protectedUser || this.isGod);
-    return allowed;
-  }
-
-  userDetail(userObj) {
-    const id = userObj._id;
-    const allowed = this.allowUser(id);
-    const email = userObj.emails[0].address;
-    return this.state.expanded === id && allowed ? (
-      <User loggedInUserId={this.props.userId} userId={id} />
-    ) : (
+  // {this.renderImage(pageObj)}
+  pageDetail(pageObj) {
+    const id = pageObj._id;
+    //const allowed = this.allowUser(id);
+    //const email = userObj.emails[0].address;
+    return (
       <div>
-        <strong>Protected User:</strong>
-        <br />
-        {id}
-        <br />
-        {email}
+        <RenderImage pageObj={pageObj} editImage={this.state.editImage} />
+
+        <PageForm
+          allowSubmit={this.state.allowSubmit}
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+          settingsObj={pageObj}
+          updateDone={this.state.updateDone}
+          edit={true}
+        />
       </div>
     );
   }
@@ -290,16 +311,6 @@ class Users extends React.Component<IProps, IState> {
     });
   }
 
-  toggleBulkOptions() {
-    const vis = !this.state.showBulkOptions;
-    this.setState({ showBulkOptions: vis });
-  }
-
-  toggleInviteOptions = () => {
-    const vis = !this.state.showInviteOptions;
-    this.setState({ showInviteOptions: vis });
-  };
-
   toggleFilterOptions() {
     const vis = !this.state.showFilterOptions;
     this.setState({ showFilterOptions: vis });
@@ -310,16 +321,13 @@ class Users extends React.Component<IProps, IState> {
     const layout = (
       <div className={classes.deleteAllRoot}>
         <List component="nav">
-          {this.isGod ? (
-            <ListItem onClick={this.confirmDeleteAll} button>
-              <ListItemIcon>
-                <DeleteIcon />
-              </ListItemIcon>
-              <ListItemText primary="Delete ALL users" />
-            </ListItem>
-          ) : (
-            ""
-          )}
+          <ListItem onClick={this.confirmDeleteAll} button>
+            <ListItemIcon>
+              <DeleteIcon />
+            </ListItemIcon>
+            <ListItemText primary="Delete ALL pages" />
+          </ListItem>
+
           <ListItem onClick={this.confirmDeleteSelected} button>
             <ListItemIcon>
               <DeleteIcon />
@@ -333,6 +341,11 @@ class Users extends React.Component<IProps, IState> {
     return layout;
   }
 
+  toggleBulkOptions() {
+    const vis = !this.state.showBulkOptions;
+    this.setState({ showBulkOptions: vis });
+  }
+
   bulkOptions() {
     const layout = (
       <OptionGroup show={this.state.showBulkOptions} label="Bulk Operations" action={this.toggleBulkOptions}>
@@ -343,10 +356,126 @@ class Users extends React.Component<IProps, IState> {
     return layout;
   }
 
+  toggleNewPage() {
+    const vis = !this.state.showNewPage;
+    this.setState({ showNewPage: vis });
+  }
+
+  newPage() {
+    const layout = (
+      <OptionGroup show={this.state.showNewPage} label="New Page" action={this.toggleNewPage}>
+        {this.newPageDetail()}
+      </OptionGroup>
+    );
+
+    return layout;
+  }
+
+  newPageDetail() {
+    const { classes } = this.props;
+    return (
+      <div className={classes.newPageDetail}>
+        <PageForm
+          allowSubmit={this.state.allowSubmit}
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+          settingsObj={null}
+          updateDone={this.state.updateDone}
+          edit={false}
+        />
+      </div>
+    );
+  }
+
+  /*
+  renderEditIcon() {
+    return (
+      <label>
+        Meta Image <EditIcon onClick={this.handleSetStateImage} stateName="editImage" />
+      </label>
+    );
+  }
+
+  renderCancelEditIcon() {
+    return (
+      <label>
+        Upload Image{" "}
+        <CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetStateImage} stateName="editImage" />
+      </label>
+    );
+  }
+  */
+
+  renderToggleEditIcon() {
+    const label = this.state.editImage ? `Upload Image ` : `Meta Image`;
+    return (
+      <label>
+        {label}
+        <ToggleEditIcon currentState={this.state.editImage} toggleImageEdit={this.toggleImageEdit} />
+      </label>
+    );
+  }
+
+  // {this.renderCancelEditIcon()}
+  //  {this.renderEditIcon()}
+
+  renderImage(pageObj) {
+    let layout: any = "";
+    let cursor: any;
+    cursor = EditorialImages.find({ _id: pageObj.metaImage });
+    const myImages = cursor.fetch();
+    let fileCursor: any;
+    let link: any;
+    if (myImages) {
+      fileCursor = myImages[0];
+      if (fileCursor) {
+        link = EditorialImages.findOne({ _id: fileCursor._id }).link();
+      }
+    }
+
+    //log.info(`renderImage`, myImages, this.state);
+    if (this.state.editImage) {
+      layout = (
+        <div className="form-group">
+          <UploadForm
+            updateMethod="image.UpdatePageAdmin"
+            Images={EditorialImages}
+            fileLocator=""
+            loading={false}
+            myImages={myImages}
+            dataObj={pageObj}
+          />
+        </div>
+      );
+    } else if (fileCursor) {
+      // this.props.myImages && this.props.myImages[0]
+      layout = (
+        <div className="form-group">
+          {myImages ? (
+            <Image
+              fileName={fileCursor.name}
+              fileUrl={link}
+              fileId={fileCursor._id}
+              fileSize={fileCursor.size}
+              Images={EditorialImages}
+              allowEdit={false}
+              dataObj={pageObj}
+              updateMethod="image.UpdatePageAdmin"
+            />
+          ) : (
+            ""
+          )}
+        </div>
+      );
+    }
+
+    return layout;
+  }
+
   changeFilter = name => event => {
     let filters: any = {};
     filters[name] = event.target.value;
-    this.props.dispatch({ type: "FILTER_USERS", filters: filters });
+    this.props.dispatch({ type: "FILTER_PAGES", filters: filters });
   };
 
   filterOptionsDetail() {
@@ -354,47 +483,16 @@ class Users extends React.Component<IProps, IState> {
     const layout = (
       <div className={classes.optionsRoot}>
         <TextField
-          id="userId"
+          id="title"
           InputLabelProps={{
             shrink: true
           }}
-          placeholder="User ID"
+          placeholder="title"
           fullWidth
           margin="normal"
-          onChange={this.changeFilter("userId")}
-        />
-        <TextField
-          id="email"
-          InputLabelProps={{
-            shrink: true
-          }}
-          placeholder="Email"
-          fullWidth
-          margin="normal"
-          onChange={this.changeFilter("email")}
+          onChange={this.changeFilter("title")}
         />
       </div>
-    );
-
-    return layout;
-  }
-
-  inviteOptionsDetail() {
-    const { classes } = this.props;
-    const layout = (
-      <div className={classes.optionsRoot}>
-        <InvitationForm />
-      </div>
-    );
-
-    return layout;
-  }
-
-  inviteOptions() {
-    const layout = (
-      <OptionGroup show={this.state.showInviteOptions} label="Send Invitation" action={this.toggleInviteOptions}>
-        {this.inviteOptionsDetail()}
-      </OptionGroup>
     );
 
     return layout;
@@ -410,14 +508,12 @@ class Users extends React.Component<IProps, IState> {
     return layout;
   }
 
-  renderUser(userObj: any) {
+  renderPage(pageObj: any) {
+    //log.info(`renderPage`, pageObj);
     const { classes } = this.props;
     const { expanded } = this.state;
-
-    const disabledC = this.disableCheckBox(userObj);
-    const checkedC = this.checkCheckBox(userObj);
-
-    const checkBox = this.checkBox("default", disabledC, userObj, checkedC);
+    const checkedC = this.checkCheckBox(pageObj);
+    const checkBox = this.checkBox("default", pageObj, checkedC);
 
     return (
       <ExpansionPanel
@@ -425,32 +521,28 @@ class Users extends React.Component<IProps, IState> {
           expanded: classes.expandedExpansionPanel
         }}
         className={classes.userListExpRoot}
-        expanded={expanded === userObj._id}
-        onChange={this.handleExPanelChange(userObj._id)}
+        expanded={expanded === pageObj._id}
+        onChange={this.handleExPanelChange(pageObj._id)}
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <div className={classes.summaryData}>
-            <span className={classes.summaryDataID}>{userObj._id}</span>{" "}
-            <span className={classes.summaryDataEmail}>{userObj.emails[0].address}</span>
+            <span className={classes.summaryDataTitle}>{pageObj.title}</span>
           </div>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.userDetails}>
+        <ExpansionPanelDetails className={classes.pageDetails}>
           <div>
-            {this.allowUser(userObj._id) ? (
-              <div className={classes.checkBoxSmallContainer}>
-                <FormControlLabel control={checkBox} label="selected" />
-              </div>
-            ) : (
-              ""
-            )}
-            {this.userDetail(userObj)}
+            <div className={classes.checkBoxSmallContainer}>
+              <FormControlLabel control={checkBox} label="selected" />
+            </div>
+
+            {this.pageDetail(pageObj)}
           </div>
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
   }
 
-  checkBox(type, disabled, user, checked) {
+  checkBox(type, page, checked) {
     const { classes } = this.props;
     let cssClass: string;
 
@@ -468,15 +560,7 @@ class Users extends React.Component<IProps, IState> {
         cssClass = "";
     }
 
-    return (
-      <Checkbox className={cssClass} disabled={disabled} onChange={this.toggleUserSelect(user._id)} checked={checked} />
-    );
-  }
-
-  disableCheckBox(user) {
-    const disabled =
-      user._id === this.props.userId || (Roles.userIsInRole(user._id, ["god", "super-admin"]) && !this.isGod);
-    return disabled;
+    return <Checkbox className={cssClass} onChange={this.togglePageSelect(page._id)} checked={checked} />;
   }
 
   checkCheckBox(user) {
@@ -484,17 +568,17 @@ class Users extends React.Component<IProps, IState> {
     return checked;
   }
 
-  mapUsers(usersArray) {
+  mapPages(pagesArray) {
     const { classes } = this.props;
     //const isGod = UserModule.can({ threshold: "god" });
 
-    const mapped = usersArray.map(user => {
-      const disabledC = this.disableCheckBox(user);
-      const checkedC = this.checkCheckBox(user);
+    const mapped = pagesArray.map(page => {
+      //const disabledC = this.disableCheckBox(page);
+      const checkedC = this.checkCheckBox(page);
       const layout = (
-        <div className={classes.userListItem} key={user._id}>
-          {this.checkBox("large", disabledC, user, checkedC)}
-          {this.renderUser(user)}
+        <div className={classes.userListItem} key={page._id}>
+          {this.checkBox("large", page, checkedC)}
+          {this.renderPage(page)}
         </div>
       );
       return layout;
@@ -503,23 +587,22 @@ class Users extends React.Component<IProps, IState> {
     return mapped;
   }
 
-  users(usersArray: any) {
-    const userList = this.mapUsers(usersArray);
-    return <div>{userList}</div>;
+  showPages(pagesArray: any) {
+    const pagesList = this.mapPages(pagesArray);
+    return <div>{pagesList}</div>;
   }
 
   layout() {
     const { classes } = this.props;
     return (
       <BlockUi tag="div" blocking={this.state.block}>
-        {this.inviteOptions()}
-
         {this.bulkOptions()}
         {this.filterOptions()}
+        {this.newPage()}
 
         <div>
-          <h2 className={classes.heading}>Users</h2>
-          {this.props.allUsers ? this.users(this.props.allUsers) : ""}
+          <h2 className={classes.heading}>Pages</h2>
+          {this.props.allPages ? this.showPages(this.props.allPages) : ""}
           <div className={classes.loadMore}>
             <Button variant="outlined" onClick={this.loadMore} size="small">
               Load More
@@ -544,56 +627,51 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
-    const usersHandle = Meteor.subscribe("allUsers");
-    const settingsHandle = Meteor.subscribe("allSettings");
-    const rolesHandle = Meteor.subscribe("roles");
+    let myImages: any;
+    const imagesHandle = Meteor.subscribe("editorialImages");
+    const pagesHandle = Meteor.subscribe("pages");
     const options = {
       sort: { createdAt: -1 },
       limit: props.cursorLimit
     };
     let filters = props.filters;
-    const idString = props.filters.userId;
-    const emailString = props.filters.email;
-    let idFilter: any;
-    let emailFilter: any;
+    const titleString = props.filters.title;
+    let titleFilter: any;
     let combinedFilters: any;
     let filterCount: number = 0;
     let defaultSearch: boolean = true;
 
-    if (idString) {
+    if (titleString) {
       filterCount += 1;
-      let regex = new RegExp(`^${idString}.*`);
-      idFilter = { _id: regex };
-      combinedFilters = idFilter;
+      let regex = new RegExp(`^${titleString}.*`);
+      titleFilter = { title: regex };
+      combinedFilters = titleFilter;
     }
 
-    if (emailString) {
-      filterCount += 1;
-      let regex = new RegExp(`^${emailString}.*`);
-      emailFilter = { "emails.0.address": regex };
-      combinedFilters = emailFilter;
+    /*
+    if (imagesHandle) {
+      let cursor: any = EditorialImages.find({});
+      myImages = cursor.fetch();
     }
+    */
 
-    let users: any;
+    let pages: any;
     switch (filterCount) {
       case 1:
         defaultSearch = false;
-        users = Meteor.users.find(combinedFilters, options).fetch();
+        pages = PagesObj.find(combinedFilters, options).fetch();
         break;
-      case 2:
-        defaultSearch = false;
-        users = Meteor.users.find({ $or: [idFilter, emailFilter] }, options).fetch();
-        break;
+
       default:
         break;
     }
 
     if (defaultSearch) {
-      users = Meteor.users.find({}, options).fetch();
+      pages = PagesObj.find({}, options).fetch();
     }
 
     return {
-      allUsers: users
+      allPages: pages
     };
-  })(withStyles(styles, { withTheme: true })(Users))
+  })(withStyles(styles, { withTheme: true })(Pages))
 );

@@ -20,7 +20,7 @@ interface IState {
 }
 
 export default class PageContent extends React.Component<IProps, IState> {
-  fieldsArray = ["body", "heading"];
+  fieldsArray = ["body", "title"];
 
   constructor(props) {
     super(props);
@@ -128,7 +128,7 @@ export default class PageContent extends React.Component<IProps, IState> {
         layout = (
           <div>
             <h1>
-              {this.props.page.heading} {this.editLink()}
+              {this.props.page.title} {this.editLink()}
             </h1>
 
             <div dangerouslySetInnerHTML={this.createMarkup(this.props.page.body)} />

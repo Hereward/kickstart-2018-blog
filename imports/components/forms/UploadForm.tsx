@@ -9,7 +9,8 @@ interface IProps {
   fileLocator: any;
   loading: boolean;
   myImages: any;
-  profile: any;
+  dataObj: any;
+  updateMethod: string;
 }
 
 interface IState {
@@ -36,7 +37,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
 
   getImageFromServer() {
     let url = this.getImageFromServerURLObj.value.trim();
-    Meteor.call("getImage", this.props.profile._id, url);
+    Meteor.call("getImage", this.props.dataObj._id, url, this.props.Images);
   }
 
   getFromServer(e) {}
@@ -80,7 +81,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
 
         uploadInstance.on("uploaded", function uploadOnUploaded(error, fileObj) {
           //console.log(`uploaded image: [${self.props.profile._id}]`, self.props.profile, fileObj._id);
-          Meteor.call("profileImage.update", { id: self.props.profile._id, image_id: fileObj._id });
+          Meteor.call(self.props.updateMethod, { id: self.props.dataObj._id, image_id: fileObj._id });
 
           self.setState({
             uploading: [],
@@ -133,7 +134,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
   }
 
   render() {
-    if (!this.props.loading) {
+    if (!this.props.loading && this.props.myImages) {
       let showit = "";
       let fileCursors = this.props.myImages;
       if (fileCursors) {
@@ -151,7 +152,8 @@ export default class UploadForm extends React.Component<IProps, IState> {
                 fileSize={aFile.size}
                 Images={this.props.Images}
                 allowEdit={true}
-                profile={this.props.profile}
+                dataObj={this.props.dataObj}
+                updateMethod={this.props.updateMethod}
               />
             </div>
           );

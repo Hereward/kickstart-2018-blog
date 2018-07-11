@@ -1,9 +1,14 @@
 import { Meteor } from "meteor/meteor";
-import { Images } from "./methods";
+import { ProfileImages, EditorialImages } from "./methods";
 
 if (Meteor.isServer) {
-  Images.denyClient();
-  Meteor.publish("allImages", function allImages() {
-    return Images.find().cursor;
+  ProfileImages.denyClient();
+  Meteor.publish("profileImages", function profileImages() {
+    return ProfileImages.find().cursor;
+  });
+
+  EditorialImages.denyClient();
+  Meteor.publish("editorialImages", function editorialImages() {
+    return EditorialImages.find().cursor;
   });
 }

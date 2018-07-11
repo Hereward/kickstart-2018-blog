@@ -23,7 +23,11 @@ export const filters = (state = {}, action) => {
       newState = Object.assign({}, state, action.filters);
       return newState;
     }
-
+    case "FILTER_POSTS": {
+      let newState: any;
+      newState = Object.assign({}, state, action.filters);
+      return newState;
+    }
     case "FILTER_INIT": {
       return {};
     }
