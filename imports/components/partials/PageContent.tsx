@@ -82,7 +82,7 @@ export default class PageContent extends React.Component<IProps, IState> {
       this.setState({ allowSubmit: true });
       if (err) {
         Library.modalErrorAlert(err.reason);
-        console.log(`ProfileMethods.updateProfile failed`, err);
+        console.log(`PageMethods.updatePage failed`, err);
       } else {
         this.setState({ edit: false });
       }

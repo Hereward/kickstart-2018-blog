@@ -6,21 +6,26 @@ import Button from "@material-ui/core/Button";
 import * as BlockUi from "react-block-ui";
 import * as Validation from "../../../modules/validation";
 import Widget from "../../forms/Widget";
+import * as PageMethods from "../../../api/pages/methods";
+import * as Library from "../../../modules/library";
 
 const ReactQuill = require("react-quill");
 
 interface IProps {
-  handleChange: any;
-  handleSubmit: any;
-  handleSetState: any;
-  allowSubmit: boolean;
   settingsObj: any;
   classes: any;
-  updateDone: boolean;
   edit: boolean;
 }
 
-interface IState {}
+interface IState {
+  metaDescription: string;
+  metaImage: string;
+  name: string;
+  slug: string;
+  title: string;
+  body: string;
+  allowSubmit: boolean;
+}
 
 const styles = theme => ({
   adminSettingsForm: {
@@ -79,6 +84,16 @@ class SettingsForm extends React.Component<IProps, IState> {
       this.formID = `PageFormEdit_${this.props.settingsObj._id}`;
       this.rteID = `rte_${this.props.settingsObj._id}`;
     }
+
+    this.state = {
+      metaDescription: "",
+      metaImage: "",
+      name: "",
+      slug: "",
+      title: "",
+      body: "",
+      allowSubmit: true
+    };
   }
 
   componentDidMount() {
@@ -86,12 +101,31 @@ class SettingsForm extends React.Component<IProps, IState> {
   }
 
   handleSubmit() {
-    this.props.handleSubmit();
+    let pageFields = {
+      body: this.state.body,
+      title: this.state.title,
+      metaDescription: this.state.metaDescription,
+      name: this.state.name,
+      slug: this.state.slug
+    };
+
+    this.setState({ allowSubmit: false });
+    PageMethods.updatePage.call(pageFields, err => {
+      this.setState({ allowSubmit: true });
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`PageMethods.updatePage failed`, err);
+      }
+    });
   }
 
-  handleChange(e) {
-    this.props.handleChange(e);
-  }
+  handleChange = e => {
+    let target = e.target;
+    let value = target.type === "checkbox" ? target.checked : target.value;
+    let id = target.id;
+    this.setState({ [id]: value});
+    log.info(`Pages handleChange`, id, value, this.state);
+  };
 
   getWidget(props: any) {
     let widgetType = props.widgetType ? props.widgetType : "simple";
@@ -120,7 +154,7 @@ class SettingsForm extends React.Component<IProps, IState> {
   render() {
     return (
       <div>
-        <BlockUi tag="div" blocking={!this.props.allowSubmit}>
+        <BlockUi tag="div" blocking={!this.state.allowSubmit}>
           <form id={this.formID} className={this.props.classes.adminSettingsForm}>
             {this.getWidget({ name: "metaDescription", label: "Meta Description" })}
             {this.getWidget({ name: "name", label: "Name" })}
@@ -141,7 +175,7 @@ class SettingsForm extends React.Component<IProps, IState> {
             </div>
 
             <div className="form-group">
-              <Button disabled={!this.props.allowSubmit} variant="raised" type="submit" color="primary">
+              <Button disabled={!this.state.allowSubmit} variant="raised" type="submit" color="primary">
                 Save
               </Button>
             </div>

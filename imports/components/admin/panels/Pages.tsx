@@ -30,6 +30,7 @@ import { ToggleEditIcon } from "../../../modules/icons";
 import UploadForm from "../../forms/UploadForm";
 import { EditorialImages } from "../../../api/images/methods";
 import RenderImage from "../components/RenderImage";
+import * as PageMethods from "../../../api/pages/methods";
 
 const drawerWidth = 240;
 let styles: any;
@@ -153,6 +154,7 @@ class Pages extends React.Component<IProps, IState> {
   currentLimitVal: number = 1;
   selectedPages = [];
   isGod: boolean = false;
+  //fieldsArray = ["body", "title", "metaDescription", "name", "slug"];
 
   constructor(props) {
     super(props);
@@ -217,15 +219,32 @@ class Pages extends React.Component<IProps, IState> {
     this.setState({ editImage: newState });
   };
 
-  handleChange(e) {
+  handleChange = e => {
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let id = target.id;
     this.setState({ [id]: value, updateDone: false });
     log.info(`Pages handleChange`, id, value, this.state);
-  }
+  };
 
-  handleSubmit() {}
+  handleSubmit() {
+    let pageFields = {
+      body: this.state.body,
+      title: this.state.title,
+      metaDescription: this.state.metaDescription,
+      name: this.state.name,
+      slug: this.state.slug
+    };
+
+    this.setState({ allowSubmit: false });
+    PageMethods.updatePage.call(pageFields, err => {
+      this.setState({ allowSubmit: true });
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        console.log(`PageMethods.updatePage failed`, err);
+      }
+    });
+  }
 
   loadMore() {
     this.props.dispatch({ type: "LOAD_MORE" }); // cursorBlock: this.cursorBlock
@@ -257,11 +276,7 @@ class Pages extends React.Component<IProps, IState> {
         <RenderImage pageObj={pageObj} editImage={this.state.editImage} />
 
         <PageForm
-          allowSubmit={this.state.allowSubmit}
-          handleChange={this.handleChange}
-          handleSubmit={this.handleSubmit}
           settingsObj={pageObj}
-          updateDone={this.state.updateDone}
           edit={true}
         />
       </div>
@@ -375,14 +390,7 @@ class Pages extends React.Component<IProps, IState> {
     const { classes } = this.props;
     return (
       <div className={classes.newPageDetail}>
-        <PageForm
-          allowSubmit={this.state.allowSubmit}
-          handleChange={this.handleChange}
-          handleSubmit={this.handleSubmit}
-          settingsObj={null}
-          updateDone={this.state.updateDone}
-          edit={false}
-        />
+        <PageForm settingsObj={null} edit={false} />
       </div>
     );
   }
@@ -419,6 +427,7 @@ class Pages extends React.Component<IProps, IState> {
   // {this.renderCancelEditIcon()}
   //  {this.renderEditIcon()}
 
+  /*
   renderImage(pageObj) {
     let layout: any = "";
     let cursor: any;
@@ -471,6 +480,7 @@ class Pages extends React.Component<IProps, IState> {
 
     return layout;
   }
+  */
 
   changeFilter = name => event => {
     let filters: any = {};
