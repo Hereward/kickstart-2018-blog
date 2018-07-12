@@ -18,19 +18,18 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import * as BlockUi from "react-block-ui";
-import { toggleLocked, deleteAllUsers, deleteUserList, sendInvitation } from "../../../api/admin/methods";
+import { toggleLocked, deleteAllUsers, deleteUserList } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import * as UserModule from "../../../modules/user";
-import User from "./User";
+//import User from "./User";
 import OptionGroup from "../components/OptionGroup";
-import PageForm from "../../admin/forms/PageForm";
+import PostForm from "../../admin/forms/PostForm";
 import { Pages as PagesObj } from "../../../api/pages/publish";
-import Image from "../../partials/Image";
-import { ToggleEditIcon } from "../../../modules/icons";
-import UploadForm from "../../forms/UploadForm";
-import { EditorialImages } from "../../../api/images/methods";
+//import Image from "../../partials/Image";
+//import { ToggleEditIcon } from "../../../modules/icons";
+//import UploadForm from "../../forms/UploadForm";
+//import { EditorialImages } from "../../../api/images/methods";
 import RenderImage from "../components/RenderImage";
-import * as PageMethods from "../../../api/pages/methods";
 
 const drawerWidth = 240;
 let styles: any;
@@ -42,7 +41,7 @@ interface IProps {
   systemSettings: any;
   dispatch: any;
   cursorLimit: number;
-  allPages: any;
+  allPosts: any;
   userData: any;
   userId: string;
 }
@@ -57,18 +56,11 @@ interface IState {
   showBulkOptions: boolean;
   showFilterOptions: boolean;
   selectedUsers: any;
-  metaDescription: string;
-  metaImage: string;
-  name: string;
-  slug: string;
-  title: string;
-  body: string;
-  showNewPage: boolean;
-  editImage: boolean;
+  showNewPost: boolean;
 }
 
 styles = theme => ({
-  newPageDetail: {
+  newPostDetail: {
     margin: "1rem"
   },
   textField: {
@@ -81,7 +73,7 @@ styles = theme => ({
     marginTop: "1rem",
     textAlign: "center"
   },
-  pageDetails: {
+  postDetails: {
     backgroundColor: "#fdf9f4",
     borderTop: "1px solid LightGray",
     paddingTop: "1rem",
@@ -152,20 +144,19 @@ styles = theme => ({
 class Pages extends React.Component<IProps, IState> {
   cursorBlock: number = 1;
   currentLimitVal: number = 1;
-  selectedPages = [];
+  selectedPosts = [];
   isGod: boolean = false;
   //fieldsArray = ["body", "title", "metaDescription", "name", "slug"];
 
   constructor(props) {
     super(props);
     this.handleExPanelChange = this.handleExPanelChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    // this.handleSubmit = this.handleSubmit.bind(this);
     this.deleteAll = this.deleteAll.bind(this);
     this.confirmDeleteAll = this.confirmDeleteAll.bind(this);
     this.loadMore = this.loadMore.bind(this);
     this.toggleBulkOptions = this.toggleBulkOptions.bind(this);
     this.toggleFilterOptions = this.toggleFilterOptions.bind(this);
-    this.toggleNewPage = this.toggleNewPage.bind(this);
     this.changeFilter = this.changeFilter.bind(this);
     this.isGod = UserModule.can({ threshold: "god" });
 
@@ -178,14 +169,7 @@ class Pages extends React.Component<IProps, IState> {
       showBulkOptions: false,
       showFilterOptions: false,
       selectedUsers: {},
-      metaDescription: "",
-      metaImage: "",
-      name: "",
-      slug: "",
-      title: "",
-      body: "",
-      showNewPage: false,
-      editImage: false
+      showNewPost: false,
     };
   }
 
@@ -213,50 +197,35 @@ class Pages extends React.Component<IProps, IState> {
     });
   };
 
+  /*
   toggleImageEdit = e => {
     const newState = !this.state.editImage;
     log.info(`toggleImageEdit`, e, newState);
     this.setState({ editImage: newState });
   };
+  */
 
   handleChange = e => {
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let id = target.id;
     this.setState({ [id]: value, updateDone: false });
-    log.info(`Pages handleChange`, id, value, this.state);
+    log.info(`Posts handleChange`, id, value, this.state);
   };
 
-  handleSubmit() {
-    let pageFields = {
-      body: this.state.body,
-      title: this.state.title,
-      metaDescription: this.state.metaDescription,
-      name: this.state.name,
-      slug: this.state.slug
-    };
-
-    this.setState({ allowSubmit: false });
-    PageMethods.updatePage.call(pageFields, err => {
-      this.setState({ allowSubmit: true });
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        console.log(`PageMethods.updatePage failed`, err);
-      }
-    });
-  }
+  
 
   loadMore() {
     this.props.dispatch({ type: "LOAD_MORE" }); // cursorBlock: this.cursorBlock
   }
 
-  togglePageSelect = id => event => {
+  togglePostSelect = id => event => {
     const currentState = Object.assign({}, this.state.selectedUsers);
     const selected = currentState[id] === true;
     currentState[id] = !selected;
     this.setState({ selectedUsers: currentState });
 
-    this.selectedPages = Object.keys(currentState).reduce((filtered, option) => {
+    this.selectedPosts = Object.keys(currentState).reduce((filtered, option) => {
       if (currentState[option]) {
         filtered.push(option);
       }
@@ -266,22 +235,7 @@ class Pages extends React.Component<IProps, IState> {
     return "";
   };
 
-  // {this.renderImage(pageObj)}
-  pageDetail(pageObj) {
-    const id = pageObj._id;
-    //const allowed = this.allowUser(id);
-    //const email = userObj.emails[0].address;
-    return (
-      <div>
-        <RenderImage pageObj={pageObj} editImage={this.state.editImage} />
 
-        <PageForm
-          settingsObj={pageObj}
-          edit={true}
-        />
-      </div>
-    );
-  }
 
   confirmDeleteAll() {
     Library.confirmDialog().then(result => {
@@ -340,7 +294,7 @@ class Pages extends React.Component<IProps, IState> {
             <ListItemIcon>
               <DeleteIcon />
             </ListItemIcon>
-            <ListItemText primary="Delete ALL pages" />
+            <ListItemText primary="Delete ALL posts" />
           </ListItem>
 
           <ListItem onClick={this.confirmDeleteSelected} button>
@@ -371,121 +325,29 @@ class Pages extends React.Component<IProps, IState> {
     return layout;
   }
 
-  toggleNewPage() {
-    const vis = !this.state.showNewPage;
-    this.setState({ showNewPage: vis });
-  }
+  toggleNewPost = () => {
+    const vis = !this.state.showNewPost;
+    this.setState({ showNewPost: vis });
+  };
 
-  newPage() {
+  newPost() {
+    const { classes } = this.props;
     const layout = (
-      <OptionGroup show={this.state.showNewPage} label="New Page" action={this.toggleNewPage}>
-        {this.newPageDetail()}
+      <OptionGroup show={this.state.showNewPost} label="New Post" action={this.toggleNewPost}>
+        <div className={classes.newPostDetail}>
+          <PostForm settingsObj={null} edit={false} />
+        </div>
       </OptionGroup>
     );
 
     return layout;
   }
 
-  newPageDetail() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.newPageDetail}>
-        <PageForm settingsObj={null} edit={false} />
-      </div>
-    );
-  }
-
-  /*
-  renderEditIcon() {
-    return (
-      <label>
-        Meta Image <EditIcon onClick={this.handleSetStateImage} stateName="editImage" />
-      </label>
-    );
-  }
-
-  renderCancelEditIcon() {
-    return (
-      <label>
-        Upload Image{" "}
-        <CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetStateImage} stateName="editImage" />
-      </label>
-    );
-  }
-  */
-
-  renderToggleEditIcon() {
-    const label = this.state.editImage ? `Upload Image ` : `Meta Image`;
-    return (
-      <label>
-        {label}
-        <ToggleEditIcon currentState={this.state.editImage} toggleImageEdit={this.toggleImageEdit} />
-      </label>
-    );
-  }
-
-  // {this.renderCancelEditIcon()}
-  //  {this.renderEditIcon()}
-
-  /*
-  renderImage(pageObj) {
-    let layout: any = "";
-    let cursor: any;
-    cursor = EditorialImages.find({ _id: pageObj.metaImage });
-    const myImages = cursor.fetch();
-    let fileCursor: any;
-    let link: any;
-    if (myImages) {
-      fileCursor = myImages[0];
-      if (fileCursor) {
-        link = EditorialImages.findOne({ _id: fileCursor._id }).link();
-      }
-    }
-
-    //log.info(`renderImage`, myImages, this.state);
-    if (this.state.editImage) {
-      layout = (
-        <div className="form-group">
-          <UploadForm
-            updateMethod="image.UpdatePageAdmin"
-            Images={EditorialImages}
-            fileLocator=""
-            loading={false}
-            myImages={myImages}
-            dataObj={pageObj}
-          />
-        </div>
-      );
-    } else if (fileCursor) {
-      // this.props.myImages && this.props.myImages[0]
-      layout = (
-        <div className="form-group">
-          {myImages ? (
-            <Image
-              fileName={fileCursor.name}
-              fileUrl={link}
-              fileId={fileCursor._id}
-              fileSize={fileCursor.size}
-              Images={EditorialImages}
-              allowEdit={false}
-              dataObj={pageObj}
-              updateMethod="image.UpdatePageAdmin"
-            />
-          ) : (
-            ""
-          )}
-        </div>
-      );
-    }
-
-    return layout;
-  }
-  */
 
   changeFilter = name => event => {
     let filters: any = {};
     filters[name] = event.target.value;
-    this.props.dispatch({ type: "FILTER_PAGES", filters: filters });
+    this.props.dispatch({ type: "FILTER_POSTS", filters: filters });
   };
 
   filterOptionsDetail() {
@@ -518,12 +380,12 @@ class Pages extends React.Component<IProps, IState> {
     return layout;
   }
 
-  renderPage(pageObj: any) {
-    //log.info(`renderPage`, pageObj);
+  renderPost(postObj: any) {
+    //log.info(`renderPost`, postObj);
     const { classes } = this.props;
     const { expanded } = this.state;
-    const checkedC = this.checkCheckBox(pageObj);
-    const checkBox = this.checkBox("default", pageObj, checkedC);
+    const checkedC = this.checkCheckBox(postObj);
+    const checkBox = this.checkBox("default", postObj, checkedC);
 
     return (
       <ExpansionPanel
@@ -531,28 +393,29 @@ class Pages extends React.Component<IProps, IState> {
           expanded: classes.expandedExpansionPanel
         }}
         className={classes.userListExpRoot}
-        expanded={expanded === pageObj._id}
-        onChange={this.handleExPanelChange(pageObj._id)}
+        expanded={expanded === postObj._id}
+        onChange={this.handleExPanelChange(postObj._id)}
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <div className={classes.summaryData}>
-            <span className={classes.summaryDataTitle}>{pageObj.title}</span>
+            <span className={classes.summaryDataTitle}>{postObj.title}</span>
           </div>
         </ExpansionPanelSummary>
-        <ExpansionPanelDetails className={classes.pageDetails}>
+        <ExpansionPanelDetails className={classes.postDetails}>
           <div>
             <div className={classes.checkBoxSmallContainer}>
               <FormControlLabel control={checkBox} label="selected" />
             </div>
 
-            {this.pageDetail(pageObj)}
+            <RenderImage settingsObj={postObj} />
+            <PostForm settingsObj={postObj} edit={true} />
           </div>
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
   }
 
-  checkBox(type, page, checked) {
+  checkBox(type, postObj, checked) {
     const { classes } = this.props;
     let cssClass: string;
 
@@ -570,7 +433,7 @@ class Pages extends React.Component<IProps, IState> {
         cssClass = "";
     }
 
-    return <Checkbox className={cssClass} onChange={this.togglePageSelect(page._id)} checked={checked} />;
+    return <Checkbox className={cssClass} onChange={this.togglePostSelect(postObj._id)} checked={checked} />;
   }
 
   checkCheckBox(user) {
@@ -578,17 +441,16 @@ class Pages extends React.Component<IProps, IState> {
     return checked;
   }
 
-  mapPages(pagesArray) {
+  mapPosts(postsArray) {
     const { classes } = this.props;
     //const isGod = UserModule.can({ threshold: "god" });
 
-    const mapped = pagesArray.map(page => {
-      //const disabledC = this.disableCheckBox(page);
-      const checkedC = this.checkCheckBox(page);
+    const mapped = postsArray.map(post => {
+      const checkedC = this.checkCheckBox(post);
       const layout = (
-        <div className={classes.userListItem} key={page._id}>
-          {this.checkBox("large", page, checkedC)}
-          {this.renderPage(page)}
+        <div className={classes.userListItem} key={post._id}>
+          {this.checkBox("large", post, checkedC)}
+          {this.renderPost(post)}
         </div>
       );
       return layout;
@@ -597,9 +459,9 @@ class Pages extends React.Component<IProps, IState> {
     return mapped;
   }
 
-  showPages(pagesArray: any) {
-    const pagesList = this.mapPages(pagesArray);
-    return <div>{pagesList}</div>;
+  showPosts(postsArray: any) {
+    const postsList = this.mapPosts(postsArray);
+    return <div>{postsList}</div>;
   }
 
   layout() {
@@ -608,11 +470,11 @@ class Pages extends React.Component<IProps, IState> {
       <BlockUi tag="div" blocking={this.state.block}>
         {this.bulkOptions()}
         {this.filterOptions()}
-        {this.newPage()}
+        {this.newPost()}
 
         <div>
-          <h2 className={classes.heading}>Pages</h2>
-          {this.props.allPages ? this.showPages(this.props.allPages) : ""}
+          <h2 className={classes.heading}>Posts</h2>
+          {this.props.allPosts ? this.showPosts(this.props.allPosts) : ""}
           <div className={classes.loadMore}>
             <Button variant="outlined" onClick={this.loadMore} size="small">
               Load More
@@ -665,11 +527,11 @@ export default connect(mapStateToProps)(
     }
     */
 
-    let pages: any;
+    let posts: any;
     switch (filterCount) {
       case 1:
         defaultSearch = false;
-        pages = PagesObj.find(combinedFilters, options).fetch();
+        posts = PagesObj.find(combinedFilters, options).fetch();
         break;
 
       default:
@@ -677,11 +539,11 @@ export default connect(mapStateToProps)(
     }
 
     if (defaultSearch) {
-      pages = PagesObj.find({}, options).fetch();
+      posts = PagesObj.find({}, options).fetch();
     }
 
     return {
-      allPages: pages
+      allPosts: posts
     };
   })(withStyles(styles, { withTheme: true })(Pages))
 );

@@ -12,8 +12,7 @@ let styles: any;
 interface IProps {
   classes: any;
   theme: any;
-  pageObj: any;
-  editImage: boolean;
+  settingsObj: any;
 }
 
 interface IState {
@@ -52,11 +51,10 @@ class RenderImage extends React.Component<IProps, IState> {
 
   layout() {
     const { classes } = this.props;
-    const { pageObj } = this.props;
-    const { editImage } = this.props;
+    const { settingsObj } = this.props;
     let layout: any = "";
     let cursor: any;
-    cursor = EditorialImages.find({ _id: pageObj.metaImage });
+    cursor = EditorialImages.find({ _id: settingsObj.metaImage });
     const myImages = cursor.fetch();
     let fileCursor: any;
     let link: any;
@@ -75,7 +73,7 @@ class RenderImage extends React.Component<IProps, IState> {
           fileSize={fileCursor.size}
           Images={EditorialImages}
           allowEdit={false}
-          dataObj={pageObj}
+          dataObj={settingsObj}
           updateMethod="image.UpdatePageAdmin"
         />
         */
@@ -89,7 +87,7 @@ class RenderImage extends React.Component<IProps, IState> {
             fileLocator=""
             loading={false}
             myImages={myImages}
-            dataObj={pageObj}
+            dataObj={settingsObj}
           />
         </div>
       );
