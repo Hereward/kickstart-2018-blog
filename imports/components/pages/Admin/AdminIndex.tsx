@@ -19,7 +19,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import * as Icon from "../../../modules/icons";
 import Settings from "../../admin/panels/Settings";
 import Users from "../../admin/panels/Users";
-import Pages from "../../admin/panels/Pages";
+import Posts from "../../admin/panels/Posts";
 
 const drawerWidth = 240;
 let styles: any;
@@ -168,7 +168,7 @@ class Admin extends React.Component<IProps, IState> {
 
   pagesPanel() {
     return this.props.sessionReady ? (
-      <Pages userId={this.props.userId} userData={this.props.userData} />
+      <Posts userId={this.props.userId} userData={this.props.userData} />
     ) : (
       ""
     );

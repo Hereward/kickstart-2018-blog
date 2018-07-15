@@ -30,6 +30,7 @@ import { Pages as PagesObj } from "../../../api/pages/publish";
 //import UploadForm from "../../forms/UploadForm";
 //import { EditorialImages } from "../../../api/images/methods";
 import RenderImage from "../components/RenderImage";
+import { EditorialImages } from "../../../api/images/methods";
 
 const drawerWidth = 240;
 let styles: any;
@@ -57,6 +58,7 @@ interface IState {
   showFilterOptions: boolean;
   selectedUsers: any;
   showNewPost: boolean;
+  image_id: string;
 }
 
 styles = theme => ({
@@ -141,7 +143,7 @@ styles = theme => ({
   }
 });
 
-class Pages extends React.Component<IProps, IState> {
+class Posts extends React.Component<IProps, IState> {
   cursorBlock: number = 1;
   currentLimitVal: number = 1;
   selectedPosts = [];
@@ -170,6 +172,7 @@ class Pages extends React.Component<IProps, IState> {
       showFilterOptions: false,
       selectedUsers: {},
       showNewPost: false,
+      image_id: ""
     };
   }
 
@@ -197,6 +200,10 @@ class Pages extends React.Component<IProps, IState> {
     });
   };
 
+  updateImageId = (id) => {
+    this.setState({ image_id: id });
+  };
+
   /*
   toggleImageEdit = e => {
     const newState = !this.state.editImage;
@@ -212,8 +219,6 @@ class Pages extends React.Component<IProps, IState> {
     this.setState({ [id]: value, updateDone: false });
     log.info(`Posts handleChange`, id, value, this.state);
   };
-
-  
 
   loadMore() {
     this.props.dispatch({ type: "LOAD_MORE" }); // cursorBlock: this.cursorBlock
@@ -234,8 +239,6 @@ class Pages extends React.Component<IProps, IState> {
 
     return "";
   };
-
-
 
   confirmDeleteAll() {
     Library.confirmDialog().then(result => {
@@ -333,16 +336,16 @@ class Pages extends React.Component<IProps, IState> {
   newPost() {
     const { classes } = this.props;
     const layout = (
-      <OptionGroup show={this.state.showNewPost} label="New Post" action={this.toggleNewPost}>
+      <OptionGroup show={this.state.showNewPost} label="Create" action={this.toggleNewPost}>
         <div className={classes.newPostDetail}>
-          <PostForm settingsObj={null} edit={false} />
+          <RenderImage updateImageId={this.updateImageId} dataObj={null} />
+          <PostForm image_id={this.state.image_id} settingsObj={null} edit={false} />
         </div>
       </OptionGroup>
     );
 
     return layout;
   }
-
 
   changeFilter = name => event => {
     let filters: any = {};
@@ -380,12 +383,21 @@ class Pages extends React.Component<IProps, IState> {
     return layout;
   }
 
-  renderPost(postObj: any) {
+  renderPost(dataObj: any) {
     //log.info(`renderPost`, postObj);
     const { classes } = this.props;
     const { expanded } = this.state;
-    const checkedC = this.checkCheckBox(postObj);
-    const checkBox = this.checkBox("default", postObj, checkedC);
+    const checkedC = this.checkCheckBox(dataObj);
+    const checkBox = this.checkBox("default", dataObj, checkedC);
+
+    /*
+    let imageCursor: any;
+    imageCursor = EditorialImages.find({ _id: dataObj.image_id });
+    
+    const imageArray = imageCursor.fetch();
+  
+  log.info(`Posts.renderPost()`,imageArray);
+  */
 
     return (
       <ExpansionPanel
@@ -393,12 +405,12 @@ class Pages extends React.Component<IProps, IState> {
           expanded: classes.expandedExpansionPanel
         }}
         className={classes.userListExpRoot}
-        expanded={expanded === postObj._id}
-        onChange={this.handleExPanelChange(postObj._id)}
+        expanded={expanded === dataObj._id}
+        onChange={this.handleExPanelChange(dataObj._id)}
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <div className={classes.summaryData}>
-            <span className={classes.summaryDataTitle}>{postObj.title}</span>
+            <span className={classes.summaryDataTitle}>{dataObj.title}</span>
           </div>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.postDetails}>
@@ -407,8 +419,8 @@ class Pages extends React.Component<IProps, IState> {
               <FormControlLabel control={checkBox} label="selected" />
             </div>
 
-            <RenderImage settingsObj={postObj} />
-            <PostForm settingsObj={postObj} edit={true} />
+            <RenderImage dataObj={dataObj} />
+            <PostForm settingsObj={dataObj} edit={true} />
           </div>
         </ExpansionPanelDetails>
       </ExpansionPanel>
@@ -459,11 +471,6 @@ class Pages extends React.Component<IProps, IState> {
     return mapped;
   }
 
-  showPosts(postsArray: any) {
-    const postsList = this.mapPosts(postsArray);
-    return <div>{postsList}</div>;
-  }
-
   layout() {
     const { classes } = this.props;
     return (
@@ -473,8 +480,9 @@ class Pages extends React.Component<IProps, IState> {
         {this.newPost()}
 
         <div>
-          <h2 className={classes.heading}>Posts</h2>
-          {this.props.allPosts ? this.showPosts(this.props.allPosts) : ""}
+          <h2 className={classes.heading}>Entries</h2>
+          {this.props.allPosts ? <div>{this.mapPosts(this.props.allPosts)}</div> : ""}
+
           <div className={classes.loadMore}>
             <Button variant="outlined" onClick={this.loadMore} size="small">
               Load More
@@ -545,5 +553,5 @@ export default connect(mapStateToProps)(
     return {
       allPosts: posts
     };
-  })(withStyles(styles, { withTheme: true })(Pages))
+  })(withStyles(styles, { withTheme: true })(Posts))
 );

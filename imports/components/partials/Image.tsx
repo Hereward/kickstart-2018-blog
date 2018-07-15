@@ -32,7 +32,7 @@ export default class Image extends React.Component<IProps, IState> {
         if (err) {
           console.log(err);
           Library.modalErrorAlert(err.reason);
-        } else {
+        } else if (this.props.dataObj) {
           Meteor.call(this.props.updateMethod, { id: this.props.dataObj._id, image_id: "" });
         }
       });

@@ -1,4 +1,6 @@
 import * as React from "react";
+import { connect } from "react-redux";
+import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import { EditorialImages } from "../../../api/images/methods";
@@ -12,7 +14,9 @@ let styles: any;
 interface IProps {
   classes: any;
   theme: any;
-  settingsObj: any;
+  dataObj: any;
+  updateImageId?: any;
+  imageArray?: any;
 }
 
 interface IState {
@@ -31,63 +35,56 @@ class RenderImage extends React.Component<IProps, IState> {
     this.state = {
       editImage: false
     };
+    //log.info(`RenderImage constructor`, this.props);
   }
+
+  updateImageId = id => {
+    this.props.updateImageId(id);
+  };
 
   toggleImageEdit = e => {
     const newState = !this.state.editImage;
-    log.info(`toggleImageEdit`, e, newState);
+    //log.info(`toggleImageEdit`, e, newState);
     this.setState({ editImage: newState });
   };
 
-  renderToggleEditIcon() {
-    const label = this.state.editImage ? `Upload Image ` : `Meta Image`;
-    return (
-      <label>
-        {label}
-        <ToggleEditIcon currentState={this.state.editImage} toggleImageEdit={this.toggleImageEdit} />
-      </label>
-    );
-  }
-
   layout() {
     const { classes } = this.props;
-    const { settingsObj } = this.props;
+    const { dataObj } = this.props;
+    const { imageArray } = this.props;
     let layout: any = "";
-    let cursor: any;
-    cursor = EditorialImages.find({ _id: settingsObj.metaImage });
-    const myImages = cursor.fetch();
-    let fileCursor: any;
-    let link: any;
-    if (myImages) {
-      fileCursor = myImages[0];
-      if (fileCursor) {
-        link = EditorialImages.findOne({ _id: fileCursor._id }).link();
-      }
-    }
+    // let cursor: any;
+    // let myImages: any;
 
+    // if (dataObj) {
+    //  cursor = EditorialImages.find({ _id: dataObj.image_id });
+    // myImages = cursor.fetch();
+
+    //log.info(`RenderImage layout()`, myImages);
     /*
-    <Image
-          fileName={fileCursor.name}
-          fileUrl={link}
-          fileId={fileCursor._id}
-          fileSize={fileCursor.size}
-          Images={EditorialImages}
-          allowEdit={false}
-          dataObj={settingsObj}
-          updateMethod="image.UpdatePageAdmin"
-        />
-        */
+      let fileCursor: any;
+      let link: any;
+      if (myImages) {
+        fileCursor = myImages[0];
+        if (fileCursor) {
+          link = EditorialImages.findOne({ _id: fileCursor._id }).link();
+        }
+      }
+      */
+    // }
+    //log.info(`RenderImage`, dataObj.image_id, imageArray); // , this.state, this.props
 
     if (this.state.editImage) {
       layout = (
         <div className={classes.imageContainer}>
           <UploadForm
+            updateImageId={this.updateImageId}
             updateMethod="image.UpdatePageAdmin"
             Images={EditorialImages}
             fileLocator=""
             loading={false}
-            myImages={myImages}
-            dataObj={settingsObj}
+            imageArray={imageArray}
+            dataObj={dataObj}
           />
         </div>
       );
@@ -109,4 +106,20 @@ class RenderImage extends React.Component<IProps, IState> {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(RenderImage);
+//export default withStyles(styles, { withTheme: true })(RenderImage);
+
+export default connect()(
+  withTracker(props => {
+    let imageCursor: any;
+    let imageArray: any;
+    if (props.dataObj) {
+      imageCursor = EditorialImages.find({ _id: props.dataObj.image_id });
+      imageArray = imageCursor.fetch();
+    }
+    log.info(`RenderImage.tracker()`, imageArray);
+
+    return {
+      imageArray: imageArray
+    };
+  })(withStyles(styles, { withTheme: true })(RenderImage))
+);

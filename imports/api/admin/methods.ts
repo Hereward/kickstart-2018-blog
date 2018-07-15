@@ -80,7 +80,7 @@ export const imageUpdatePageAdmin = new ValidatedMethod({
 
     Pages.update(fields.id, {
       $set: {
-        metaImage: fields.image_id
+        image_id: fields.image_id
       }
     });
 

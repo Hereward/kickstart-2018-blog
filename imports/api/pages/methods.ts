@@ -46,19 +46,26 @@ export const updatePage = new ValidatedMethod({
   name: "pages.update",
   validate: new SimpleSchema({
     id: { type: String },
-    heading: { type: String },
+    title:  { type: String },
+    metaDescription: { type: String },
+    name:  { type: String },
+    slug:  { type: String },
     body: { type: String }
+    
   }).validator(),
 
   run(fields) {
     authCheck("pages.update", this.userId);
-
     log.info(`updatePage`, fields);
+    const current = Pages.findOne(fields.id);
 
     Pages.update(fields.id, {
       $set: {
-        heading: fields.heading,
-        body: fields.body
+        title: fields.title,
+        body: fields.body,
+        metaDescription: fields.metaDescription  || current.metaDescription,
+        name:  fields.name  || current.name,
+        slug:  fields.slug  || current.slug
       }
     });
 

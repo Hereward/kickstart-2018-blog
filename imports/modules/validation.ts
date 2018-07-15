@@ -6,7 +6,6 @@ import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-side
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
 
 export function validate(context: any, rules: any = "") {
-  
   let validationRules = rules ? rules : {};
   jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
     trigger: "custom",
@@ -15,6 +14,7 @@ export function validate(context: any, rules: any = "") {
     zIndex: 1400
   });
   jquery(`#${context.formID}`).validate({
+    ignore:  ":hidden, .novalidate *",    
     errorPlacement: function ep(error, element) {
       let errorString = jquery(error).text();
       element.tooltipster("content", errorString);
@@ -29,3 +29,5 @@ export function validate(context: any, rules: any = "") {
     }
   });
 }
+
+//".ignore, .ql-hidden, :hidden",

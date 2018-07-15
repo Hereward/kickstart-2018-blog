@@ -32,8 +32,9 @@ export default class Widget extends React.Component<IProps, IState> {
     this.props.handleChange(e);
   }
 
-  simple(wprops: { name: string; label?: string; type?: string; required?: boolean; placeholder?: string }) {
+  simple(wprops: { name: string; label?: string; type?: string; required?: boolean; placeholder?: string; baseName?: string }) {
     let cssClass = wprops.required === false ? this.baseCSSClass : `${this.baseCSSClass} required`;
+    let resolvedname =  wprops.baseName ||  wprops.name;
     let layout = (
       <div className="form-group">
         <label htmlFor={wprops.name}>{wprops.label || "Enter Text"}:</label>
@@ -44,7 +45,7 @@ export default class Widget extends React.Component<IProps, IState> {
           id={wprops.name}
           name={wprops.name}
           placeholder={wprops.placeholder || ""}
-          defaultValue={this.props.dataObj ? this.props.dataObj[wprops.name] : ""}
+          defaultValue={this.props.dataObj ? this.props.dataObj[resolvedname] : ""}
         />
       </div>
     );

@@ -273,7 +273,7 @@ class Profile extends React.Component<IProps, IState> {
               Images={ProfileImages}
               fileLocator=""
               loading={false}
-              myImages={this.props.myImages}
+              imageArray={this.props.myImages}
               dataObj={this.props.profile}
               updateMethod="profileImage.update"
             />

@@ -15,7 +15,7 @@ if (Meteor.isServer) {
       Pages.insert({
         metaTitle: `About - ${Meteor.settings.public.mainTitle}`,
         metaDescription: "This is the ABOUT page boyo",
-        metaImage: "",
+        image_id: "",
         name: "about",
         slug: "about",
         title: Meteor.settings.public.defaultContent.about.title,

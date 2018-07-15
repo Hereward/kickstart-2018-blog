@@ -1,22 +1,12 @@
 import { Meteor } from "meteor/meteor";
 import { check } from "meteor/check";
 import { FilesCollection } from "meteor/ostrio:files";
+import { ValidatedMethod } from "meteor/mdg:validated-method";
 import axios from "axios";
 import * as ProfileMethods from "./methods";
 import * as User from "../../modules/user";
 
-const authCheck = (methodName, userId) => {
-  let auth = true;
-  if (!userId) {
-    auth = false;
-    console.log(`authCheck (${methodName}) - NO USER ID`);
-    throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
-  }
-  return auth;
-};
-
-
-const imagesCollection = (name="test") => {
+const imagesCollection = (name = "test") => {
   const path = `${Meteor.settings.public.images.storagePath}/${name}`;
   return new FilesCollection({
     debug: false,
@@ -34,11 +24,38 @@ const imagesCollection = (name="test") => {
       }
     }
   });
-
 };
 
 export const ProfileImages = imagesCollection("profile");
 export const EditorialImages = imagesCollection("editorial");
+
+const authCheck = (methodName, userId) => {
+  let auth = true;
+  if (!userId) {
+    auth = false;
+    console.log(`authCheck (${methodName}) - NO USER ID`);
+    throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
+  }
+  return auth;
+};
+
+export const findOne = new ValidatedMethod({
+  name: "images.findOne",
+
+  validate: new SimpleSchema({
+    id: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("images.findOne", this.userId);
+    const fileCursor = EditorialImages.findOne({ _id: fields._id });
+    log.info(`findOne - server`, fields, fileCursor);
+    return fileCursor;
+  }
+});
+
+
+
 
 
 /*

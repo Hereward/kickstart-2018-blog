@@ -15,16 +15,18 @@ interface IProps {
   settingsObj: any;
   classes: any;
   edit: boolean;
+  image_id?: string;
 }
 
 interface IState {
+  id: string;
   metaDescription: string;
-  metaImage: string;
+  image_id: string;
   name: string;
   slug: string;
   title: string;
   body: string;
-  allowSubmit: boolean;
+  blockUI: boolean;
 }
 
 const styles = theme => ({
@@ -78,6 +80,8 @@ class SettingsForm extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
+    const { settingsObj } = this.props;
+
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
     if (this.props.settingsObj) {
@@ -86,13 +90,14 @@ class SettingsForm extends React.Component<IProps, IState> {
     }
 
     this.state = {
-      metaDescription: "",
-      metaImage: "",
-      name: "",
-      slug: "",
-      title: "",
-      body: "",
-      allowSubmit: true
+      id: settingsObj ? settingsObj._id : "",
+      metaDescription: settingsObj ? settingsObj.metaDescription : "",
+      image_id: settingsObj ? settingsObj.image_id : "",
+      name: settingsObj ? settingsObj.name : "",
+      slug: settingsObj ? settingsObj.slug : "",
+      title: settingsObj ? settingsObj.title : "",
+      body: settingsObj ? settingsObj.body : "",
+      blockUI: false
     };
   }
 
@@ -102,29 +107,38 @@ class SettingsForm extends React.Component<IProps, IState> {
 
   handleSubmit() {
     let pageFields = {
+      id: this.state.id,
       body: this.state.body,
+      image_id: this.state.image_id || this.props.image_id,
       title: this.state.title,
       metaDescription: this.state.metaDescription,
       name: this.state.name,
       slug: this.state.slug
     };
 
-    this.setState({ allowSubmit: false });
-    PageMethods.updatePage.call(pageFields, err => {
-      this.setState({ allowSubmit: true });
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        console.log(`PageMethods.updatePage failed`, err);
-      }
-    });
+    this.setState({ blockUI: true });
+    if (this.props.edit) {
+      PageMethods.updatePage.call(pageFields, err => {
+        this.setState({ blockUI: false });
+        if (err) {
+          Library.modalErrorAlert(err.reason);
+          console.log(`PageMethods.updatePage failed`, err);
+        }
+      });
+    }
   }
 
   handleChange = e => {
+    log.info(`Pages handleChange`, e.target);
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
-    let id = target.id;
-    this.setState({ [id]: value});
-    log.info(`Pages handleChange`, id, value, this.state);
+    let name = this.renderWidgetName(target.id);
+    //let id = target.id;
+    this.setState({ [name]: value });
+  };
+
+  updateBody = body => {
+    this.setState({ body: body });
   };
 
   getWidget(props: any) {
@@ -139,35 +153,43 @@ class SettingsForm extends React.Component<IProps, IState> {
     );
   }
 
-  /*
-   metaTitle: `About - ${Meteor.settings.public.mainTitle}`,
-        metaDescription
-        metaImage
-        name
-        slug
-        title
-        body
-        modified: new Date(),
-        published: new Date(),
-        */
+  nothing() {
+    return null;
+  }
+
+  renderWidgetId(name) {
+    let id = name;
+    if (this.props.settingsObj) {
+      id = `${name}%%${this.props.settingsObj._id}`;
+    }
+
+    return id;
+  }
+
+  renderWidgetName(id) {
+    let name = id;
+    const arraySplit = id.split("%%");
+    return arraySplit[0];
+  }
 
   render() {
     return (
       <div>
-        <BlockUi tag="div" blocking={!this.state.allowSubmit}>
+        <BlockUi tag="div" blocking={this.state.blockUI}>
           <form id={this.formID} className={this.props.classes.adminSettingsForm}>
-            {this.getWidget({ name: "metaDescription", label: "Meta Description" })}
-            {this.getWidget({ name: "name", label: "Name" })}
-            {this.getWidget({ name: "slug", label: "Slug" })}
-            {this.getWidget({ name: "title", label: "Title" })}
+            {this.getWidget({ baseName: "metaDescription", name: this.renderWidgetId("metaDescription"), label: "Meta Description" })}
+            {this.getWidget({ baseName: "name", name: this.renderWidgetId("name"), label: "Name" })}
+            {this.getWidget({ baseName: "slug", name: this.renderWidgetId("slug"), label: "Slug" })}
+            {this.getWidget({ baseName: "title", name: this.renderWidgetId("title"), label: "Title" })}
 
             <div className="form-group">
               <label htmlFor="bodyText">Body Text:</label>
               <ReactQuill
-                className={this.props.classes.rte}
-                id={this.rteID}
+                className={`${this.props.classes.rte} novalidate`}
+                id={this.renderWidgetId("bodyText")}
                 defaultValue={this.props.settingsObj ? this.props.settingsObj.body : ""}
-                onChange={this.handleChange}
+                onChange={this.updateBody}
+                onFocusOut={this.nothing()}
                 modules={this.modules}
                 formats={this.formats}
                 theme="snow"
@@ -175,7 +197,7 @@ class SettingsForm extends React.Component<IProps, IState> {
             </div>
 
             <div className="form-group">
-              <Button disabled={!this.state.allowSubmit} variant="raised" type="submit" color="primary">
+              <Button variant="raised" type="submit" color="primary">
                 Save
               </Button>
             </div>
