@@ -1,4 +1,5 @@
 import * as React from "react";
+import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import Done from "@material-ui/icons/Done";
 //import RaisedButton from "material-ui/RaisedButton";
@@ -16,6 +17,7 @@ interface IProps {
   classes: any;
   edit: boolean;
   image_id?: string;
+  dispatch: any;
 }
 
 interface IState {
@@ -105,7 +107,11 @@ class SettingsForm extends React.Component<IProps, IState> {
     Validation.validate(this);
   }
 
-  handleSubmit() {
+  miniAlert = (message = "") => {
+    this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
+  };
+
+  handleSubmit = () => {
     let pageFields = {
       id: this.state.id,
       body: this.state.body,
@@ -122,11 +128,23 @@ class SettingsForm extends React.Component<IProps, IState> {
         this.setState({ blockUI: false });
         if (err) {
           Library.modalErrorAlert(err.reason);
-          console.log(`PageMethods.updatePage failed`, err);
+          log.error(`PageMethods.updatePage failed`, err);
+        } else {
+          this.miniAlert(`Your post was updated.`);
+        }
+      });
+    } else {
+      PageMethods.createPage.call(pageFields, err => {
+        this.setState({ blockUI: false });
+        if (err) {
+          Library.modalErrorAlert(err.reason);
+          log.error(`PageMethods.createPage failed`, err);
+        } else {
+          this.miniAlert(`A post was succesfully created.`);
         }
       });
     }
-  }
+  };
 
   handleChange = e => {
     log.info(`Pages handleChange`, e.target);
@@ -160,7 +178,7 @@ class SettingsForm extends React.Component<IProps, IState> {
   renderWidgetId(name) {
     let id = name;
     if (this.props.settingsObj) {
-      id = `${name}%%${this.props.settingsObj._id}`;
+      id = `${name}__${this.props.settingsObj._id}`;
     }
 
     return id;
@@ -168,7 +186,7 @@ class SettingsForm extends React.Component<IProps, IState> {
 
   renderWidgetName(id) {
     let name = id;
-    const arraySplit = id.split("%%");
+    const arraySplit = id.split("__");
     return arraySplit[0];
   }
 
@@ -177,7 +195,11 @@ class SettingsForm extends React.Component<IProps, IState> {
       <div>
         <BlockUi tag="div" blocking={this.state.blockUI}>
           <form id={this.formID} className={this.props.classes.adminSettingsForm}>
-            {this.getWidget({ baseName: "metaDescription", name: this.renderWidgetId("metaDescription"), label: "Meta Description" })}
+            {this.getWidget({
+              baseName: "metaDescription",
+              name: this.renderWidgetId("metaDescription"),
+              label: "Meta Description"
+            })}
             {this.getWidget({ baseName: "name", name: this.renderWidgetId("name"), label: "Name" })}
             {this.getWidget({ baseName: "slug", name: this.renderWidgetId("slug"), label: "Slug" })}
             {this.getWidget({ baseName: "title", name: this.renderWidgetId("title"), label: "Title" })}
@@ -208,4 +230,4 @@ class SettingsForm extends React.Component<IProps, IState> {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(SettingsForm);
+export default connect()(withStyles(styles, { withTheme: true })(SettingsForm));

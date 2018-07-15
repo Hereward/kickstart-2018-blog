@@ -23,7 +23,7 @@ export const createPages = new ValidatedMethod({
     authCheck("pages.create", this.userId);
     //let admin = false;
     let id: string;
- 
+
     //Profiles.remove({});
 
     let exists = Pages.findOne({ name: "about" });
@@ -42,16 +42,45 @@ export const createPages = new ValidatedMethod({
   }
 });
 
+export const createPage = new ValidatedMethod({
+  name: "page.create",
+  validate: new SimpleSchema({
+    id: { type: String, optional: true },
+    image_id: { type: String },
+    title: { type: String },
+    metaDescription: { type: String },
+    name: { type: String },
+    slug: { type: String },
+    body: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("pages.create", this.userId);
+    log.info(`createPage`, fields);
+
+    Pages.insert({
+      image_id: fields.image_id,
+      title: fields.title,
+      body: fields.body,
+      metaDescription: fields.metaDescription,
+      name: fields.name,
+      slug: fields.slug
+    });
+
+    return true;
+  }
+});
+
 export const updatePage = new ValidatedMethod({
   name: "pages.update",
   validate: new SimpleSchema({
     id: { type: String },
-    title:  { type: String },
+    image_id: { type: String, optional: true},
+    title: { type: String },
     metaDescription: { type: String },
-    name:  { type: String },
-    slug:  { type: String },
+    name: { type: String },
+    slug: { type: String },
     body: { type: String }
-    
   }).validator(),
 
   run(fields) {
@@ -63,9 +92,9 @@ export const updatePage = new ValidatedMethod({
       $set: {
         title: fields.title,
         body: fields.body,
-        metaDescription: fields.metaDescription  || current.metaDescription,
-        name:  fields.name  || current.name,
-        slug:  fields.slug  || current.slug
+        metaDescription: fields.metaDescription || current.metaDescription,
+        name: fields.name || current.name,
+        slug: fields.slug || current.slug
       }
     });
 
