@@ -276,6 +276,7 @@ class Profile extends React.Component<IProps, IState> {
               imageArray={this.props.myImages}
               dataObj={this.props.profile}
               updateMethod="profileImage.update"
+              updateDirect={true}
             />
           </div>
         );

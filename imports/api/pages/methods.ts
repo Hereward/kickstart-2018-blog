@@ -75,7 +75,7 @@ export const updatePage = new ValidatedMethod({
   name: "pages.update",
   validate: new SimpleSchema({
     id: { type: String },
-    image_id: { type: String, optional: true},
+    image_id: { type: String},
     title: { type: String },
     metaDescription: { type: String },
     name: { type: String },
@@ -90,6 +90,7 @@ export const updatePage = new ValidatedMethod({
 
     Pages.update(fields.id, {
       $set: {
+        image_id: fields.image_id,
         title: fields.title,
         body: fields.body,
         metaDescription: fields.metaDescription || current.metaDescription,

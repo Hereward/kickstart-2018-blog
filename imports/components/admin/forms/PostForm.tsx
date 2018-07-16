@@ -2,13 +2,13 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import Done from "@material-ui/icons/Done";
-//import RaisedButton from "material-ui/RaisedButton";
 import Button from "@material-ui/core/Button";
 import * as BlockUi from "react-block-ui";
 import * as Validation from "../../../modules/validation";
 import Widget from "../../forms/Widget";
 import * as PageMethods from "../../../api/pages/methods";
 import * as Library from "../../../modules/library";
+import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
 
 const ReactQuill = require("react-quill");
 
@@ -16,14 +16,13 @@ interface IProps {
   settingsObj: any;
   classes: any;
   edit: boolean;
-  image_id?: string;
+  image_id_edit: string;
   dispatch: any;
 }
 
 interface IState {
   id: string;
   metaDescription: string;
-  image_id: string;
   name: string;
   slug: string;
   title: string;
@@ -94,7 +93,6 @@ class SettingsForm extends React.Component<IProps, IState> {
     this.state = {
       id: settingsObj ? settingsObj._id : "",
       metaDescription: settingsObj ? settingsObj.metaDescription : "",
-      image_id: settingsObj ? settingsObj.image_id : "",
       name: settingsObj ? settingsObj.name : "",
       slug: settingsObj ? settingsObj.slug : "",
       title: settingsObj ? settingsObj.title : "",
@@ -112,10 +110,16 @@ class SettingsForm extends React.Component<IProps, IState> {
   };
 
   handleSubmit = () => {
+    const { settingsObj } = this.props;
+    const { image_id_edit } = this.props;
+    const settingsImage = settingsObj ? settingsObj.image_id : "";
+    log.info(`PostsForm.handlesubmit()`, image_id_edit, `[${settingsImage}]`);
+
+
     let pageFields = {
       id: this.state.id,
       body: this.state.body,
-      image_id: this.state.image_id || this.props.image_id,
+      image_id: image_id_edit || settingsImage,
       title: this.state.title,
       metaDescription: this.state.metaDescription,
       name: this.state.name,
@@ -147,7 +151,6 @@ class SettingsForm extends React.Component<IProps, IState> {
   };
 
   handleChange = e => {
-    log.info(`Pages handleChange`, e.target);
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let name = this.renderWidgetName(target.id);
@@ -191,6 +194,8 @@ class SettingsForm extends React.Component<IProps, IState> {
   }
 
   render() {
+    log.info(`PostsForm.render()`, this.props.settingsObj);
+
     return (
       <div>
         <BlockUi tag="div" blocking={this.state.blockUI}>

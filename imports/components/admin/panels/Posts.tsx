@@ -18,17 +18,12 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import * as BlockUi from "react-block-ui";
-import { toggleLocked, deleteAllUsers, deleteUserList } from "../../../api/admin/methods";
+import { toggleLocked, deleteAllPages, deleteUserList } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import * as UserModule from "../../../modules/user";
-//import User from "./User";
 import OptionGroup from "../components/OptionGroup";
 import PostForm from "../../admin/forms/PostForm";
 import { Pages as PagesObj } from "../../../api/pages/publish";
-//import Image from "../../partials/Image";
-//import { ToggleEditIcon } from "../../../modules/icons";
-//import UploadForm from "../../forms/UploadForm";
-//import { EditorialImages } from "../../../api/images/methods";
 import RenderImage from "../components/RenderImage";
 import { EditorialImages } from "../../../api/images/methods";
 
@@ -59,6 +54,7 @@ interface IState {
   selectedUsers: any;
   showNewPost: boolean;
   image_id: string;
+  image_id_edit: string;
 }
 
 styles = theme => ({
@@ -148,12 +144,10 @@ class Posts extends React.Component<IProps, IState> {
   currentLimitVal: number = 1;
   selectedPosts = [];
   isGod: boolean = false;
-  //fieldsArray = ["body", "title", "metaDescription", "name", "slug"];
 
   constructor(props) {
     super(props);
     this.handleExPanelChange = this.handleExPanelChange.bind(this);
-    // this.handleSubmit = this.handleSubmit.bind(this);
     this.deleteAll = this.deleteAll.bind(this);
     this.confirmDeleteAll = this.confirmDeleteAll.bind(this);
     this.loadMore = this.loadMore.bind(this);
@@ -172,7 +166,8 @@ class Posts extends React.Component<IProps, IState> {
       showFilterOptions: false,
       selectedUsers: {},
       showNewPost: false,
-      image_id: ""
+      image_id: "",
+      image_id_edit: ""
     };
   }
 
@@ -200,28 +195,12 @@ class Posts extends React.Component<IProps, IState> {
     });
   };
 
-  updateImageId = (id) => {
-    this.setState({ image_id: id });
-  };
-
-  /*
-  toggleImageEdit = e => {
-    const newState = !this.state.editImage;
-    log.info(`toggleImageEdit`, e, newState);
-    this.setState({ editImage: newState });
-  };
-  */
-
-  handleChange = e => {
-    let target = e.target;
-    let value = target.type === "checkbox" ? target.checked : target.value;
-    let id = target.id;
-    this.setState({ [id]: value, updateDone: false });
-    log.info(`Posts handleChange`, id, value, this.state);
+  updateImageId = (props: { image_id: string; dataObj?: any }) => {
+    this.setState({ image_id_edit: props.image_id });
   };
 
   loadMore() {
-    this.props.dispatch({ type: "LOAD_MORE" }); // cursorBlock: this.cursorBlock
+    this.props.dispatch({ type: "LOAD_MORE" });
   }
 
   togglePostSelect = id => event => {
@@ -270,14 +249,13 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   deleteAll() {
-    log.info(`deleteAll`);
     this.setState({ block: true });
-    deleteAllUsers.call({}, err => {
+    deleteAllPages.call({}, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
-        log.error(`deleteAllUsers failed`, err);
+        log.error(`deleteAllPages failed`, err);
       } else {
-        this.miniAlert("All users were deleted!");
+        this.miniAlert("All pages were deleted!");
         this.setState({ block: false });
       }
     });
@@ -333,14 +311,22 @@ class Posts extends React.Component<IProps, IState> {
     this.setState({ showNewPost: vis });
   };
 
+  getNewPostContent() {
+    const { classes } = this.props;
+    return (
+      <div className={classes.newPostDetail}>
+        <RenderImage updateImageId={this.updateImageId} dataObj={null} />
+        <PostForm image_id_edit={this.state.image_id_edit} settingsObj={null} edit={false} />
+      </div>
+    );
+  }
+
   newPost() {
     const { classes } = this.props;
+    const { showNewPost } = this.state;
     const layout = (
-      <OptionGroup show={this.state.showNewPost} label="Create" action={this.toggleNewPost}>
-        <div className={classes.newPostDetail}>
-          <RenderImage updateImageId={this.updateImageId} dataObj={null} />
-          <PostForm image_id={this.state.image_id} settingsObj={null} edit={false} />
-        </div>
+      <OptionGroup show={showNewPost} label="Create" action={this.toggleNewPost}>
+        {showNewPost ? this.getNewPostContent() : ""}
       </OptionGroup>
     );
 
@@ -383,21 +369,25 @@ class Posts extends React.Component<IProps, IState> {
     return layout;
   }
 
-  renderPost(dataObj: any) {
-    //log.info(`renderPost`, postObj);
+  getPostContent(dataObj) {
     const { classes } = this.props;
-    const { expanded } = this.state;
     const checkedC = this.checkCheckBox(dataObj);
     const checkBox = this.checkBox("default", dataObj, checkedC);
+    return (
+      <div>
+        <div className={classes.checkBoxSmallContainer}>
+          <FormControlLabel control={checkBox} label="selected" />
+        </div>
 
-    /*
-    let imageCursor: any;
-    imageCursor = EditorialImages.find({ _id: dataObj.image_id });
-    
-    const imageArray = imageCursor.fetch();
-  
-  log.info(`Posts.renderPost()`,imageArray);
-  */
+        <RenderImage updateImageId={this.updateImageId} dataObj={dataObj} />
+        <PostForm image_id_edit={this.state.image_id_edit} settingsObj={dataObj} edit={true} />
+      </div>
+    );
+  }
+
+  renderPost(dataObj: any) {
+    const { classes } = this.props;
+    const { expanded } = this.state;
 
     return (
       <ExpansionPanel
@@ -414,14 +404,7 @@ class Posts extends React.Component<IProps, IState> {
           </div>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.postDetails}>
-          <div>
-            <div className={classes.checkBoxSmallContainer}>
-              <FormControlLabel control={checkBox} label="selected" />
-            </div>
-
-            <RenderImage dataObj={dataObj} />
-            <PostForm settingsObj={dataObj} edit={true} />
-          </div>
+          {expanded ? this.getPostContent(dataObj) : ""}
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
@@ -455,7 +438,6 @@ class Posts extends React.Component<IProps, IState> {
 
   mapPosts(postsArray) {
     const { classes } = this.props;
-    //const isGod = UserModule.can({ threshold: "god" });
 
     const mapped = postsArray.map(post => {
       const checkedC = this.checkCheckBox(post);
@@ -527,13 +509,6 @@ export default connect(mapStateToProps)(
       titleFilter = { title: regex };
       combinedFilters = titleFilter;
     }
-
-    /*
-    if (imagesHandle) {
-      let cursor: any = EditorialImages.find({});
-      myImages = cursor.fetch();
-    }
-    */
 
     let posts: any;
     switch (filterCount) {

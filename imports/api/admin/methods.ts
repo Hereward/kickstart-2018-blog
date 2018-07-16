@@ -148,8 +148,6 @@ export const configureNewUser = new ValidatedMethod({
       authCheck("configureNewUser", this.userId);
       const allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
 
-     
-
       const userId = fields.userId || this.userId;
       log.info(`configureNewUser [${userId}]`);
       //const userId = fields.userId;
@@ -411,6 +409,22 @@ export const toggleRole = new ValidatedMethod({
   }
 });
 
+export const deleteAllPages = new ValidatedMethod({
+  name: "deleteAllPages",
+  validate: null,
+
+  run(fields) {
+    if (!this.isSimulation) {
+      authCheck("admin.deleteAllUsers", this.userId, "admin");
+      Pages.remove({});
+    }
+
+    log.info(`admin.deleteAllPages -DONE!`);
+
+    return true;
+  }
+});
+
 export const deleteAllUsers = new ValidatedMethod({
   name: "deleteAllUsers",
   validate: null,
@@ -458,15 +472,15 @@ export const deleteAllUsers = new ValidatedMethod({
         log.info(`deleteAllUsers - image found! [${imagesCount}]`, imagesArray);
         ProfileImages.remove({ _id: { $nin: excludeImagesExpression } }, function remove(error) {
           if (error) {
-            console.error("IMAGE File wasn't removed, error: " + error.reason);
+            log.error("IMAGE File wasn't removed, error: " + error.reason);
           } else {
-            console.info("IMAGE File successfully removed");
+            log.info("IMAGE File successfully removed");
           }
         });
       }
     }
 
-    console.log(`admin.deleteAllUsers -DONE!`);
+    log.info(`admin.deleteAllUsers -DONE!`);
 
     return true;
   }

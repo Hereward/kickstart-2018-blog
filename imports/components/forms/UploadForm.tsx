@@ -14,6 +14,7 @@ interface IProps {
   dataObj: any;
   updateMethod: string;
   updateImageId?: any;
+  updateDirect?: boolean;
 }
 
 interface IState {
@@ -24,14 +25,12 @@ interface IState {
 }
 
 export default class UploadForm extends React.Component<IProps, IState> {
-  //getImageFromServerURLObj: any;
   fileObj: any = null;
   compiledLayout: any = "";
 
   constructor(props) {
     super(props);
 
-    //this.getImageFromServer = this.getImageFromServer.bind(this);
     this.uploadIt = this.uploadIt.bind(this);
 
     this.state = {
@@ -42,13 +41,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
     };
   }
 
-  /*
-  getImageFromServer() {
-    let url = this.getImageFromServerURLObj.value.trim();
-    Meteor.call("getImage", this.props.dataObj._id, url, this.props.Images);
-  }
-  */
-
   componentWillUnmount() {}
 
   getFromServer(e) {}
@@ -57,6 +49,9 @@ export default class UploadForm extends React.Component<IProps, IState> {
     e.preventDefault();
 
     const { Images } = this.props;
+    const { updateMethod } = this.props;
+    const { dataObj } = this.props;
+    const { updateDirect } = this.props;
 
     //let self = this;
 
@@ -94,46 +89,21 @@ export default class UploadForm extends React.Component<IProps, IState> {
 
         uploadInstance.on("uploaded", (error, fileObj) => {
           //console.log(`uploaded image: [${self.props.profile._id}]`, self.props.profile, fileObj._id);
-          if (this.props.dataObj) {
-            Meteor.call(this.props.updateMethod, { id: this.props.dataObj._id, image_id: fileObj._id });
+
+          if (dataObj && updateDirect) {
+            Meteor.call(updateMethod, { id: this.props.dataObj._id, image_id: fileObj._id });
           } else {
-            this.props.updateImageId(fileObj._id);
+            this.props.updateImageId({image_id: fileObj._id, dataObj: dataObj});
             this.fileObj = fileObj;
 
             this.setState({ newImage: true });
-
-            /*
-            findOne.call({ id: fileObj._id }, (err, fileCursor) => {
-              //let image: any;
-              if (err) {
-                Library.modalErrorAlert(err.reason);
-                console.log(`uploadInstance - findOne.call failed`, err);
-              } else {
-                log.info(`uploadInstance.uploaded`, fileObj);
-                let link = fileCursor.link();
-                
-                let image = [fileObj].map((aFile, key) => {
-                  const myStuff = this.getStuff(aFile, key, link);
-                 
-                  return myStuff;
-                });
-
-                this.compiledLayout = this.boojam(image);
-                this.setState({ newImage: true });
-              }
-            });
-            */
           }
-
-          //this.fileObj = fileObj;
 
           this.setState({
             uploading: [],
             progress: 0,
             inProgress: false
           });
-
-          log.info(`uploadInstance`, this.state);
         });
 
         uploadInstance.on("error", function uploadError(error, fileObj) {
@@ -141,7 +111,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
         });
 
         uploadInstance.on("progress", (progress, fileObj) => {
-          //console.log("Upload Percentage: " + progress);
           // Update our progress bar
           this.setState({
             progress: progress
@@ -154,8 +123,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
   }
 
   showUploadsInProgress() {
-    //console.log("**********************************", this.state.uploading);
-
     if (!_.isEmpty(this.state.uploading)) {
       return (
         <div>
@@ -179,13 +146,10 @@ export default class UploadForm extends React.Component<IProps, IState> {
     }
   }
 
-  getStuff(aFile, key, link?: any) {
+  getImage(aFile, key, link?: any) {
     const { Images } = this.props;
     if (!link) {
       link = Images.link(aFile);
-      log.info(`getStuff - images`, link, aFile);
-      //const fileCursor = this.props.Images.findOne({ _id: aFile._id });
-      // link = fileCursor.link();
     }
 
     let elKey = `file_${key}`;
@@ -209,43 +173,29 @@ export default class UploadForm extends React.Component<IProps, IState> {
     //let image: any;
     const { Images } = this.props;
     const { imageArray } = this.props;
+    const { newImage } = this.state;
 
-    //const fileCursor = this.props.myImages;
-    let image: any = "";
-    log.info(`UploadForm.render()`, this.props);
+    let renderedImages: any = "";
 
-    if (imageArray) {
-      image = imageArray.map((aFile, key) => {
-        const myStuff = this.getStuff(aFile, key);
-        return myStuff;
+    if (imageArray && !newImage) {
+      renderedImages = imageArray.map((aFile, key) => {
+        return this.getImage(aFile, key);
       });
 
-      return this.boojam(image);
-    } else if (this.state.newImage) {
-      let link = Images.link(this.fileObj);
-      let image = [this.fileObj].map((aFile, key) => {
-        const myStuff = this.getStuff(aFile, key, link);
-        return myStuff;
+      return this.getLayout(renderedImages);
+    } else if (newImage) {
+      renderedImages = [this.fileObj].map((aFile, key) => {
+        return this.getImage(aFile, key);
       });
 
-      //  log.info(`UploadForm.render() newImage`, this.compiledLayout);
-
-      return this.boojam(image);
+      return this.getLayout(renderedImages);
     } else {
-      return this.boojam();
-      /*
-      return (
-        <div>
-          <span>Loading...</span>
-        </div>
-      );
-      */
+      return this.getLayout();
     }
   }
 
-  boojam(image: any = "") {
-    log.info(`UploadForm.boojam()`, image);
-    let compiledLayout = (
+  getLayout(image: any = "") {
+    let layout = (
       <div className="upload-controls">
         <div className="form-group">
           <div className="custom-file">
@@ -269,6 +219,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
       </div>
     );
 
-    return compiledLayout;
+    return layout;
   }
 }

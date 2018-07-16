@@ -35,16 +35,14 @@ class RenderImage extends React.Component<IProps, IState> {
     this.state = {
       editImage: false
     };
-    //log.info(`RenderImage constructor`, this.props);
   }
 
-  updateImageId = id => {
-    this.props.updateImageId(id);
+  updateImageId = props => {
+    this.props.updateImageId(props);
   };
 
   toggleImageEdit = e => {
     const newState = !this.state.editImage;
-    //log.info(`toggleImageEdit`, e, newState);
     this.setState({ editImage: newState });
   };
 
@@ -53,26 +51,6 @@ class RenderImage extends React.Component<IProps, IState> {
     const { dataObj } = this.props;
     const { imageArray } = this.props;
     let layout: any = "";
-    // let cursor: any;
-    // let myImages: any;
-
-    // if (dataObj) {
-    //  cursor = EditorialImages.find({ _id: dataObj.image_id });
-    // myImages = cursor.fetch();
-
-    //log.info(`RenderImage layout()`, myImages);
-    /*
-      let fileCursor: any;
-      let link: any;
-      if (myImages) {
-        fileCursor = myImages[0];
-        if (fileCursor) {
-          link = EditorialImages.findOne({ _id: fileCursor._id }).link();
-        }
-      }
-      */
-    // }
-    //log.info(`RenderImage`, dataObj.image_id, imageArray); // , this.state, this.props
 
     if (this.state.editImage) {
       layout = (
@@ -106,8 +84,6 @@ class RenderImage extends React.Component<IProps, IState> {
   }
 }
 
-//export default withStyles(styles, { withTheme: true })(RenderImage);
-
 export default connect()(
   withTracker(props => {
     let imageCursor: any;
@@ -116,7 +92,6 @@ export default connect()(
       imageCursor = EditorialImages.find({ _id: props.dataObj.image_id });
       imageArray = imageCursor.fetch();
     }
-    log.info(`RenderImage.tracker()`, imageArray);
 
     return {
       imageArray: imageArray
