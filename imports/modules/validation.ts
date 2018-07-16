@@ -7,7 +7,7 @@ import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-side
 
 export function validate(context: any, rules: any = "") {
   let validationRules = rules ? rules : {};
-  jquery(`.tooltipster, .tooltipsterParent input`).tooltipster({
+  jquery(`#${context.formID} .tooltipster, .tooltipsterParent input`).tooltipster({
     trigger: "custom",
     animation: "slide",
     theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],

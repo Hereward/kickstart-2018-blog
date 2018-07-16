@@ -53,8 +53,8 @@ interface IState {
   showFilterOptions: boolean;
   selectedUsers: any;
   showNewPost: boolean;
-  image_id: string;
   image_id_edit: string;
+  image_id_new: string;
 }
 
 styles = theme => ({
@@ -166,8 +166,8 @@ class Posts extends React.Component<IProps, IState> {
       showFilterOptions: false,
       selectedUsers: {},
       showNewPost: false,
-      image_id: "",
-      image_id_edit: ""
+      image_id_edit: "",
+      image_id_new: ""
     };
   }
 
@@ -191,12 +191,16 @@ class Posts extends React.Component<IProps, IState> {
 
   handleExPanelChange = panel => (event, expanded) => {
     this.setState({
-      expanded: expanded ? panel : false
+      expanded: expanded ? panel : false,
+      image_id_edit: ""
     });
   };
 
   updateImageId = (props: { image_id: string; dataObj?: any }) => {
-    this.setState({ image_id_edit: props.image_id });
+    let targetName: any;
+    targetName = props.dataObj ? "image_id_edit" : "image_id_new";
+    //log.info(`Posts.updateImageId()`, targetName, props.image_id);
+    this.setState({ [targetName]: props.image_id });
   };
 
   loadMore() {
@@ -316,7 +320,7 @@ class Posts extends React.Component<IProps, IState> {
     return (
       <div className={classes.newPostDetail}>
         <RenderImage updateImageId={this.updateImageId} dataObj={null} />
-        <PostForm image_id_edit={this.state.image_id_edit} settingsObj={null} edit={false} />
+        <PostForm image_id_new={this.state.image_id_new} settingsObj={null} edit={false} />
       </div>
     );
   }
@@ -404,7 +408,7 @@ class Posts extends React.Component<IProps, IState> {
           </div>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.postDetails}>
-          {expanded ? this.getPostContent(dataObj) : ""}
+          {expanded === dataObj._id ? this.getPostContent(dataObj) : ""}
         </ExpansionPanelDetails>
       </ExpansionPanel>
     );
@@ -476,6 +480,7 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   render() {
+    log.info(`Posts.render()`, this.state);
     return this.layout();
   }
 }

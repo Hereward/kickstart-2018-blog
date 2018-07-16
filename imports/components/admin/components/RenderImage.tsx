@@ -37,6 +37,11 @@ class RenderImage extends React.Component<IProps, IState> {
     };
   }
 
+  componentWillMount() {
+    log.info(`RenderImage.componentWillMount()`);
+    this.setState({ editImage: false });
+  }
+
   updateImageId = props => {
     this.props.updateImageId(props);
   };

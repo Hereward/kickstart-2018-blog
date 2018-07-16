@@ -16,7 +16,8 @@ interface IProps {
   settingsObj: any;
   classes: any;
   edit: boolean;
-  image_id_edit: string;
+  image_id_edit?: string;
+  image_id_new?: string;
   dispatch: any;
 }
 
@@ -31,7 +32,7 @@ interface IState {
 }
 
 const styles = theme => ({
-  adminSettingsForm: {
+  adminPostsForm: {
     marginTop: "1rem",
     marginBottom: "1rem"
   },
@@ -47,9 +48,9 @@ const styles = theme => ({
   }
 });
 
-class SettingsForm extends React.Component<IProps, IState> {
-  formID: string = "PageForm";
-  rteID: string = "rte";
+class PostForm extends React.Component<IProps, IState> {
+  formID: string = "";
+  rteID: string = "";
 
   toolbarOptions = [
     [{ header: [1, 2, 3, 4, false] }],
@@ -82,13 +83,12 @@ class SettingsForm extends React.Component<IProps, IState> {
     super(props);
 
     const { settingsObj } = this.props;
+    const { edit } = this.props;
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    if (this.props.settingsObj) {
-      this.formID = `PageFormEdit_${this.props.settingsObj._id}`;
-      this.rteID = `rte_${this.props.settingsObj._id}`;
-    }
+    this.formID = edit ? `PostFormEdit_${settingsObj._id}` : `PostForm_New`;
+    this.rteID = edit ? `rte_${settingsObj._id}` : "rte";
 
     this.state = {
       id: settingsObj ? settingsObj._id : "",
@@ -112,14 +112,18 @@ class SettingsForm extends React.Component<IProps, IState> {
   handleSubmit = () => {
     const { settingsObj } = this.props;
     const { image_id_edit } = this.props;
-    const settingsImage = settingsObj ? settingsObj.image_id : "";
-    log.info(`PostsForm.handlesubmit()`, image_id_edit, `[${settingsImage}]`);
+    const { image_id_new } = this.props;
+    const { edit } = this.props;
 
+    const image_id_current = edit ? image_id_edit : image_id_new;
+
+    const settingsImage = settingsObj ? settingsObj.image_id : "";
+    //log.info(`PostsForm.handlesubmit()`, image_id_current, `[${settingsImage}]`);
 
     let pageFields = {
       id: this.state.id,
       body: this.state.body,
-      image_id: image_id_edit || settingsImage,
+      image_id: image_id_current || settingsImage,
       title: this.state.title,
       metaDescription: this.state.metaDescription,
       name: this.state.name,
@@ -155,6 +159,7 @@ class SettingsForm extends React.Component<IProps, IState> {
     let value = target.type === "checkbox" ? target.checked : target.value;
     let name = this.renderWidgetName(target.id);
     //let id = target.id;
+    //let name = "boo";
     this.setState({ [name]: value });
   };
 
@@ -194,12 +199,12 @@ class SettingsForm extends React.Component<IProps, IState> {
   }
 
   render() {
-    log.info(`PostsForm.render()`, this.props.settingsObj);
+    log.info(`PostsForm.render() edit=[${this.props.edit}]`, this.props);
 
     return (
       <div>
         <BlockUi tag="div" blocking={this.state.blockUI}>
-          <form id={this.formID} className={this.props.classes.adminSettingsForm}>
+          <form id={this.formID} className={this.props.classes.adminPostsForm}>
             {this.getWidget({
               baseName: "metaDescription",
               name: this.renderWidgetId("metaDescription"),
@@ -235,4 +240,4 @@ class SettingsForm extends React.Component<IProps, IState> {
   }
 }
 
-export default connect()(withStyles(styles, { withTheme: true })(SettingsForm));
+export default connect()(withStyles(styles, { withTheme: true })(PostForm));
