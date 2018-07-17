@@ -168,7 +168,13 @@ class Admin extends React.Component<IProps, IState> {
 
   pagesPanel() {
     return this.props.sessionReady ? (
-      <Posts userId={this.props.userId} userData={this.props.userData} />
+      <Posts
+        imageUpdateMethod="image.UpdatePageAdmin"
+        postUpdateMethod="pages.update"
+        postCreateMethod="page.create"
+        userId={this.props.userId}
+        userData={this.props.userData}
+      />
     ) : (
       ""
     );
@@ -186,7 +192,7 @@ class Admin extends React.Component<IProps, IState> {
         case "users":
           layout = this.usersPanel();
           break;
-          case "pages":
+        case "pages":
           layout = this.pagesPanel();
           break;
         default:
@@ -217,21 +223,36 @@ class Admin extends React.Component<IProps, IState> {
         </Hidden>
         <Divider />
         <List component="nav">
-          <ListItem onClick={() => {this.activatePanel("settings");}} button>
+          <ListItem
+            onClick={() => {
+              this.activatePanel("settings");
+            }}
+            button
+          >
             <ListItemIcon classes={{ root: this.getNavStyle("settings") }}>
               <SettingsIcon />
             </ListItemIcon>
             <ListItemText classes={{ primary: this.getNavStyle("settings") }} primary="Settings" />
           </ListItem>
 
-          <ListItem onClick={() => { this.activatePanel("users");}} button>
+          <ListItem
+            onClick={() => {
+              this.activatePanel("users");
+            }}
+            button
+          >
             <ListItemIcon classes={{ root: this.getNavStyle("users") }}>
               <UsersIcon />
             </ListItemIcon>
             <ListItemText classes={{ primary: this.getNavStyle("users") }} primary="Users" />
           </ListItem>
-          
-          <ListItem onClick={() => { this.activatePanel("pages");}} button>
+
+          <ListItem
+            onClick={() => {
+              this.activatePanel("pages");
+            }}
+            button
+          >
             <ListItemIcon classes={{ root: this.getNavStyle("pages") }}>
               <UsersIcon />
             </ListItemIcon>

@@ -13,6 +13,7 @@ interface IProps {
   allowEdit: boolean;
   dataObj: any;
   updateMethod: string;
+  removeNewImageFromUploads?: any;
 }
 
 interface IState {}
@@ -26,14 +27,23 @@ export default class Image extends React.Component<IProps, IState> {
   }
 
   removeFile() {
+    const { removeNewImageFromUploads } = this.props;
+    const { dataObj } = this.props;
+
     let conf = confirm("Are you sure you want to delete the file?") || false;
     if (conf === true) {
-      Meteor.call("RemoveFile", this.props.fileId, this.props.Images, function removeImage(err, res) {
+      const recId = this.props.dataObj ? this.props.dataObj._id : "";
+      log.info(`Image.removeImage()`, recId);
+
+      Meteor.call("image.remove", { id: this.props.fileId, dataSource: "editorial" }, (err, res) => {
         if (err) {
           console.log(err);
           Library.modalErrorAlert(err.reason);
-        } else if (this.props.dataObj) {
-          Meteor.call(this.props.updateMethod, { id: this.props.dataObj._id, image_id: "" });
+        } else {
+          if (removeNewImageFromUploads) {
+            removeNewImageFromUploads();
+          }
+          Meteor.call(this.props.updateMethod, { id: recId, image_id: "" });
         }
       });
     }

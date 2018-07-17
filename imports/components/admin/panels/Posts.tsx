@@ -18,7 +18,7 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import * as BlockUi from "react-block-ui";
-import { toggleLocked, deleteAllPages, deleteUserList } from "../../../api/admin/methods";
+import { deleteAllPages, deleteUserList } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import * as UserModule from "../../../modules/user";
 import OptionGroup from "../components/OptionGroup";
@@ -40,6 +40,9 @@ interface IProps {
   allPosts: any;
   userData: any;
   userId: string;
+  imageUpdateMethod: string;
+  postUpdateMethod: string;
+  postCreateMethod: string;
 }
 
 interface IState {
@@ -144,6 +147,9 @@ class Posts extends React.Component<IProps, IState> {
   currentLimitVal: number = 1;
   selectedPosts = [];
   isGod: boolean = false;
+  //imageUpdateMethod: "image.UpdatePageAdmin";
+  //postUpdateMethod: "pages.update";
+  //postCreateMethod: "page.create";
 
   constructor(props) {
     super(props);
@@ -180,21 +186,18 @@ class Posts extends React.Component<IProps, IState> {
     this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
   };
 
-  toggleLocked = userId => event => {
-    toggleLocked.call({ id: userId }, err => {
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        log.error(`toggleLocked failed`, err);
-      }
-    });
-  };
-
   handleExPanelChange = panel => (event, expanded) => {
     this.setState({
       expanded: expanded ? panel : false,
       image_id_edit: ""
     });
   };
+
+  handleNewPostCreated = () => {
+    this.setState({
+      showNewPost: false
+    });
+  }
 
   updateImageId = (props: { image_id: string; dataObj?: any }) => {
     let targetName: any;
@@ -241,6 +244,7 @@ class Posts extends React.Component<IProps, IState> {
 
   deleteSelected() {
     this.setState({ block: true });
+    /*
     deleteUserList.call({ selected: this.state.selectedUsers }, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
@@ -250,6 +254,7 @@ class Posts extends React.Component<IProps, IState> {
         this.setState({ block: false });
       }
     });
+    */
   }
 
   deleteAll() {
@@ -319,8 +324,15 @@ class Posts extends React.Component<IProps, IState> {
     const { classes } = this.props;
     return (
       <div className={classes.newPostDetail}>
-        <RenderImage updateImageId={this.updateImageId} dataObj={null} />
-        <PostForm image_id_new={this.state.image_id_new} settingsObj={null} edit={false} />
+        <RenderImage updateMethod={this.props.imageUpdateMethod} updateImageId={this.updateImageId} dataObj={null} />
+        <PostForm
+          postCreateMethod={this.props.postCreateMethod}
+          postUpdateMethod={this.props.postUpdateMethod}
+          image_id_new={this.state.image_id_new}
+          settingsObj={null}
+          edit={false}
+          handleNewPostCreated={this.handleNewPostCreated}
+        />
       </div>
     );
   }
@@ -383,8 +395,15 @@ class Posts extends React.Component<IProps, IState> {
           <FormControlLabel control={checkBox} label="selected" />
         </div>
 
-        <RenderImage updateImageId={this.updateImageId} dataObj={dataObj} />
-        <PostForm image_id_edit={this.state.image_id_edit} settingsObj={dataObj} edit={true} />
+        <RenderImage updateMethod={this.props.imageUpdateMethod} updateImageId={this.updateImageId} dataObj={dataObj} />
+        <PostForm
+          postCreateMethod={this.props.postCreateMethod}
+          postUpdateMethod={this.props.postUpdateMethod}
+          image_id_edit={this.state.image_id_edit}
+          settingsObj={dataObj}
+          edit={true}
+          handleNewPostCreated={this.handleNewPostCreated}
+        />
       </div>
     );
   }
@@ -480,7 +499,7 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   render() {
-    log.info(`Posts.render()`, this.state);
+    //log.info(`Posts.render()`, this.state);
     return this.layout();
   }
 }

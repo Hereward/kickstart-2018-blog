@@ -45,6 +45,11 @@ export default class UploadForm extends React.Component<IProps, IState> {
 
   getFromServer(e) {}
 
+  removeNewImage = () => {
+    log.info(`UploadForm.removeNewImage()`);
+    this.setState({ newImage: false });
+  };
+
   uploadIt(e) {
     e.preventDefault();
 
@@ -93,7 +98,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
           if (dataObj && updateDirect) {
             Meteor.call(updateMethod, { id: this.props.dataObj._id, image_id: fileObj._id });
           } else {
-            this.props.updateImageId({image_id: fileObj._id, dataObj: dataObj});
+            this.props.updateImageId({ image_id: fileObj._id, dataObj: dataObj });
             this.fileObj = fileObj;
 
             this.setState({ newImage: true });
@@ -164,6 +169,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
           allowEdit={true}
           dataObj={this.props.dataObj}
           updateMethod={this.props.updateMethod}
+          removeNewImageFromUploads={this.removeNewImage}
         />
       </div>
     );

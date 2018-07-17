@@ -29,6 +29,17 @@ const imagesCollection = (name = "test") => {
 export const ProfileImages = imagesCollection("profile");
 export const EditorialImages = imagesCollection("editorial");
 
+function resolveImageSource(label) {
+  switch (label) {
+    case "editorial":
+      return EditorialImages;
+    case "profile":
+      return ProfileImages;
+    default:
+      return EditorialImages;
+  }
+}
+
 const authCheck = (methodName, userId) => {
   let auth = true;
   if (!userId) {
@@ -54,10 +65,6 @@ export const findOne = new ValidatedMethod({
   }
 });
 
-
-
-
-
 /*
 export const Images = new FilesCollection({
   debug: true,
@@ -77,9 +84,38 @@ export const Images = new FilesCollection({
 });
 */
 
-Meteor.methods({
-  RemoveFile(fileId, Images) {
-    authCheck("RemoveFile", this.userId);
+export const removeImage = new ValidatedMethod({
+  name: "image.remove",
+  validate: new SimpleSchema({
+    id: { type: String },
+    dataSource: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("image.remove", this.userId);
+    log.info(`image.remove`, fields);
+
+    if (!this.isSimulation) {
+      const ImagesObj = resolveImageSource(fields.dataSource);
+
+      ImagesObj.remove({ _id: fields.id }, function remove(error) {
+        if (error) {
+          log.error("Image wasn't removed, error: " + error.reason);
+        } else {
+          log.info("Image successfully removed");
+        }
+      });
+    }
+
+    //source = fields.dataSource ? fields.dataSource :
+
+    return true;
+  }
+});
+
+/*
+removeImage(fileId, Images) {
+    authCheck("removeImage", this.userId);
     check(fileId, String);
     check(Images, Object);
 
@@ -95,7 +131,9 @@ Meteor.methods({
       }
     });
   },
+  */
 
+Meteor.methods({
   RenameFile(fileId, Images) {
     authCheck("RenameFile", this.userId);
     check(fileId, String);

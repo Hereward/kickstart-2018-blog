@@ -17,6 +17,7 @@ interface IProps {
   dataObj: any;
   updateImageId?: any;
   imageArray?: any;
+  updateMethod: string;
 }
 
 interface IState {
@@ -38,7 +39,7 @@ class RenderImage extends React.Component<IProps, IState> {
   }
 
   componentWillMount() {
-    log.info(`RenderImage.componentWillMount()`);
+    //log.info(`RenderImage.componentWillMount()`);
     this.setState({ editImage: false });
   }
 
@@ -62,7 +63,7 @@ class RenderImage extends React.Component<IProps, IState> {
         <div className={classes.imageContainer}>
           <UploadForm
             updateImageId={this.updateImageId}
-            updateMethod="image.UpdatePageAdmin"
+            updateMethod={this.props.updateMethod}
             Images={EditorialImages}
             fileLocator=""
             loading={false}

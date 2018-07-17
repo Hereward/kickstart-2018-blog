@@ -6,7 +6,7 @@ import Button from "@material-ui/core/Button";
 import * as BlockUi from "react-block-ui";
 import * as Validation from "../../../modules/validation";
 import Widget from "../../forms/Widget";
-import * as PageMethods from "../../../api/pages/methods";
+//import * as PageMethods from "../../../api/pages/methods";
 import * as Library from "../../../modules/library";
 import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
 
@@ -19,6 +19,9 @@ interface IProps {
   image_id_edit?: string;
   image_id_new?: string;
   dispatch: any;
+  postUpdateMethod: any;
+  postCreateMethod: any;
+  handleNewPostCreated: any;
 }
 
 interface IState {
@@ -114,6 +117,9 @@ class PostForm extends React.Component<IProps, IState> {
     const { image_id_edit } = this.props;
     const { image_id_new } = this.props;
     const { edit } = this.props;
+    const { postUpdateMethod } = this.props;
+    const { postCreateMethod } = this.props;
+    const { handleNewPostCreated } = this.props;
 
     const image_id_current = edit ? image_id_edit : image_id_new;
 
@@ -132,23 +138,25 @@ class PostForm extends React.Component<IProps, IState> {
 
     this.setState({ blockUI: true });
     if (this.props.edit) {
-      PageMethods.updatePage.call(pageFields, err => {
+      Meteor.call(postUpdateMethod, pageFields, err => {
         this.setState({ blockUI: false });
         if (err) {
           Library.modalErrorAlert(err.reason);
           log.error(`PageMethods.updatePage failed`, err);
         } else {
           this.miniAlert(`Your post was updated.`);
+          handleNewPostCreated();
         }
       });
     } else {
-      PageMethods.createPage.call(pageFields, err => {
+      Meteor.call(postCreateMethod, pageFields, err => {
         this.setState({ blockUI: false });
         if (err) {
           Library.modalErrorAlert(err.reason);
           log.error(`PageMethods.createPage failed`, err);
         } else {
           this.miniAlert(`A post was succesfully created.`);
+          handleNewPostCreated();
         }
       });
     }
@@ -199,7 +207,7 @@ class PostForm extends React.Component<IProps, IState> {
   }
 
   render() {
-    log.info(`PostsForm.render() edit=[${this.props.edit}]`, this.props);
+    //log.info(`PostsForm.render() edit=[${this.props.edit}]`, this.props);
 
     return (
       <div>

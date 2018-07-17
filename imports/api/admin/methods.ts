@@ -71,7 +71,7 @@ function deleteOne(id) {
 export const imageUpdatePageAdmin = new ValidatedMethod({
   name: "image.UpdatePageAdmin",
   validate: new SimpleSchema({
-    id: { type: String },
+    id: { type: String, optional: true },
     image_id: { type: String }
   }).validator(),
 
