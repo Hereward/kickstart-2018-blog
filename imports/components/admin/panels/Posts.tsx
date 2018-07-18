@@ -147,6 +147,7 @@ class Posts extends React.Component<IProps, IState> {
   currentLimitVal: number = 1;
   selectedPosts = [];
   isGod: boolean = false;
+  editingType = { edit: false, new: false };
   //imageUpdateMethod: "image.UpdatePageAdmin";
   //postUpdateMethod: "pages.update";
   //postCreateMethod: "page.create";
@@ -187,17 +188,40 @@ class Posts extends React.Component<IProps, IState> {
   };
 
   handleExPanelChange = panel => (event, expanded) => {
-    this.setState({
-      expanded: expanded ? panel : false,
-      image_id_edit: ""
-    });
+    if (this.editingType.edit === true) {
+      Library.confirmDialog({ title: "Discard changes?", message: "off" }).then(result => {
+        if (result) {
+          this.setState({
+            expanded: expanded ? panel : false,
+            image_id_edit: ""
+          });
+          this.editingType.edit = false;
+        }
+      });
+    } else {
+      this.setState({
+        expanded: expanded ? panel : false,
+        image_id_edit: ""
+      });
+    }
   };
 
   handleNewPostCreated = () => {
     this.setState({
       showNewPost: false
     });
-  }
+  };
+
+  handleEditing = (state, edit) => {
+    const type = edit ? "edit" : "new";
+    this.editingType[type] = state;
+
+    /*
+    this.setState({
+      editing: state
+    });
+    */
+  };
 
   updateImageId = (props: { image_id: string; dataObj?: any }) => {
     let targetName: any;
@@ -317,7 +341,18 @@ class Posts extends React.Component<IProps, IState> {
 
   toggleNewPost = () => {
     const vis = !this.state.showNewPost;
-    this.setState({ showNewPost: vis });
+    if (!vis && this.editingType.new === true) {
+      Library.confirmDialog({ title: "Discard changes?", message: "off" }).then(result => {
+        if (result) {
+          this.setState({
+            showNewPost: vis
+          });
+          this.editingType.new = false;
+        }
+      });
+    } else {
+      this.setState({ showNewPost: vis });
+    }
   };
 
   getNewPostContent() {
@@ -332,6 +367,7 @@ class Posts extends React.Component<IProps, IState> {
           settingsObj={null}
           edit={false}
           handleNewPostCreated={this.handleNewPostCreated}
+          handleEditing={this.handleEditing}
         />
       </div>
     );
@@ -403,6 +439,7 @@ class Posts extends React.Component<IProps, IState> {
           settingsObj={dataObj}
           edit={true}
           handleNewPostCreated={this.handleNewPostCreated}
+          handleEditing={this.handleEditing}
         />
       </div>
     );

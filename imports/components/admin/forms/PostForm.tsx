@@ -22,6 +22,7 @@ interface IProps {
   postUpdateMethod: any;
   postCreateMethod: any;
   handleNewPostCreated: any;
+  handleEditing: any;
 }
 
 interface IState {
@@ -120,6 +121,7 @@ class PostForm extends React.Component<IProps, IState> {
     const { postUpdateMethod } = this.props;
     const { postCreateMethod } = this.props;
     const { handleNewPostCreated } = this.props;
+    const { handleEditing }  = this.props;
 
     const image_id_current = edit ? image_id_edit : image_id_new;
 
@@ -146,6 +148,7 @@ class PostForm extends React.Component<IProps, IState> {
         } else {
           this.miniAlert(`Your post was updated.`);
           handleNewPostCreated();
+          handleEditing(false, edit);
         }
       });
     } else {
@@ -157,12 +160,16 @@ class PostForm extends React.Component<IProps, IState> {
         } else {
           this.miniAlert(`A post was succesfully created.`);
           handleNewPostCreated();
+          handleEditing(false, edit);
         }
       });
     }
   };
 
   handleChange = e => {
+    const { handleEditing }  = this.props;
+    const { edit }  = this.props;
+    handleEditing(true, edit);
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let name = this.renderWidgetName(target.id);
