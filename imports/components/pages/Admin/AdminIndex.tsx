@@ -63,7 +63,7 @@ styles = theme => ({
     position: "absolute"
   },
   panelGroups: {
-    maxWidth: "40rem"
+    maxWidth: "50rem"
   },
   fuckyou: {
     color: "red"

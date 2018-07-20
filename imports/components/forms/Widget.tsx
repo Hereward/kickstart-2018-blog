@@ -6,11 +6,10 @@ interface IProps {
   wProps: any;
   dataObj?: any;
   widgetType: string;
+  stateValue?: any;
 }
 
 interface IState {}
-
-
 
 export default class Widget extends React.Component<IProps, IState> {
   baseCSSClass: string = "form-control tooltipster";
@@ -32,9 +31,21 @@ export default class Widget extends React.Component<IProps, IState> {
     this.props.handleChange(e);
   }
 
-  simple(wprops: { name: string; label?: string; type?: string; required?: boolean; placeholder?: string; baseName?: string }) {
+  simple(wprops: {
+    name: string;
+    label?: string;
+    type?: string;
+    required?: boolean;
+    placeholder?: string;
+    baseName?: string;
+  }) {
+    const { stateValue } = this.props;
+
     let cssClass = wprops.required === false ? this.baseCSSClass : `${this.baseCSSClass} required`;
-    let resolvedname =  wprops.baseName ||  wprops.name;
+    let resolvedname = wprops.baseName || wprops.name;
+
+    //const overrideVal = override && override[name] ? override[name] : "";
+
     let layout = (
       <div className="form-group">
         <label htmlFor={wprops.name}>{wprops.label || "Enter Text"}:</label>
@@ -45,13 +56,15 @@ export default class Widget extends React.Component<IProps, IState> {
           id={wprops.name}
           name={wprops.name}
           placeholder={wprops.placeholder || ""}
-          defaultValue={this.props.dataObj ? this.props.dataObj[resolvedname] : ""}
+          value={stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "")}
         />
       </div>
     );
 
     return layout;
   }
+
+  // defaultValue={this.props.dataObj ? this.props.dataObj[resolvedname] : ""}
 
   render() {
     let props = this.props.wProps;

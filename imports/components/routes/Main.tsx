@@ -1,7 +1,10 @@
 import * as React from "react";
 import { Redirect, Switch, Route } from "react-router-dom";
+import { connect } from "react-redux";
+import { withTracker } from "meteor/react-meteor-data";
+import { withStyles } from "@material-ui/core/styles";
 import Index from "../pages/Index/Index";
-import About from "../pages/About/AboutIndex";
+import Page from "../pages/Generated/Page";
 import Admin from "../pages/Admin/AdminIndex";
 import Profile from "../pages/Profile/ProfileIndex";
 import ForgotPassWord from "../pages/User/ForgotPassWord";
@@ -16,6 +19,12 @@ import ForgotPassWordReset from "../pages/User/ForgotPassWordReset";
 import ChangePassword from "../pages/User/ChangePassword";
 import * as User from "../../modules/user";
 import * as Library from "../../modules/library";
+import { Pages } from "../../api/pages/publish";
+
+interface IProps {
+  slugs: any;
+  pages: any;
+}
 
 const RedirectRoute = ({ path, ...rest }) => {
   return <Route {...rest} render={props => <Redirect to={path} />} />;
@@ -58,22 +67,72 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
   }
 };
 
-const MainRouter = props => (
-  <Switch>
-    <AuthRoute exact path="/" cProps={props} component={Index} type="any" />
-    <AuthRoute exact path="/admin" cProps={props} component={Admin} type="admin" />
-    <AuthRoute exact path="/about" cProps={props} component={About} type="any" />
-    <AuthRoute path="/members/verify-email" cProps={props} component={VerifyEmail} type="emailVerify" />
-    <AuthRoute path="/members/enroll" cProps={props} component={Enroll} type="enrollment" />
-    <AuthRoute path="/members/forgot-password-reset" cProps={props} component={ForgotPassWordReset} type="guest" />
-    <AuthRoute exact path="/members/forgot-password" cProps={props} component={ForgotPassWord} type="guest" />
-    <AuthRoute exact path="/members/register" cProps={props} component={Register} type="guest" />
-    <AuthRoute exact path="/members/signin" cProps={props} component={SignIn} type="guest" />
-    <AuthRoute exact path="/members/authenticate" cProps={props} component={Authenticator} type="user" />
-    <AuthRoute exact path="/members/profile" cProps={props} component={Profile} type="user" />
-    <AuthRoute exact path="/locked" cProps={props} component={Locked} type="user" />
-    <AuthRoute exact path="/members/change-password" cProps={props} component={ChangePassword} type="user" />
-  </Switch>
-);
+class Routes extends React.Component<IProps> {
+  constructor(props) {
+    super(props);
+  }
 
-export default MainRouter;
+  generatePages() {
+    const { slugs } = this.props;
+    let pages: any;
+    let layout = "";
+
+    if (slugs.length) {
+      layout = slugs.map(slug => {
+        return <AuthRoute key={slug} exact path={`/${slug}`} cProps={this.props} component={Page} type="any" />;
+      });
+    }
+
+    return layout;
+  }
+
+  mainRouter = () => {
+    const props = this.props;
+    return (
+      <Switch>
+        {this.generatePages()}
+        <AuthRoute exact path="/" cProps={props} component={Index} type="any" />
+        <AuthRoute exact path="/admin" cProps={props} component={Admin} type="admin" />
+        <AuthRoute path="/members/verify-email" cProps={props} component={VerifyEmail} type="emailVerify" />
+        <AuthRoute path="/members/enroll" cProps={props} component={Enroll} type="enrollment" />
+        <AuthRoute path="/members/forgot-password-reset" cProps={props} component={ForgotPassWordReset} type="guest" />
+        <AuthRoute exact path="/members/forgot-password" cProps={props} component={ForgotPassWord} type="guest" />
+        <AuthRoute exact path="/members/register" cProps={props} component={Register} type="guest" />
+        <AuthRoute exact path="/members/signin" cProps={props} component={SignIn} type="guest" />
+        <AuthRoute exact path="/members/authenticate" cProps={props} component={Authenticator} type="user" />
+        <AuthRoute exact path="/members/profile" cProps={props} component={Profile} type="user" />
+        <AuthRoute exact path="/locked" cProps={props} component={Locked} type="user" />
+        <AuthRoute exact path="/members/change-password" cProps={props} component={ChangePassword} type="user" />
+      </Switch>
+    );
+  };
+
+  // <AuthRoute exact path="/about" cProps={props} component={About} type="any" />
+
+  render() {
+    //log.info(`Routes.render()`, this.props);
+    return this.mainRouter();
+  }
+}
+
+export default connect()(
+  withTracker(props => {
+    let pages: any;
+    let slugs: any = [];
+    const PagesDataReady = Meteor.subscribe("pages");
+    if (PagesDataReady) {
+      pages = Pages.find().fetch();
+    }
+
+    if (pages) {
+      slugs = pages.map(page => {
+        return page.slug;
+      });
+    }
+
+    return {
+      pages: pages,
+      slugs: slugs
+    };
+  })(Routes)
+);

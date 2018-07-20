@@ -4,6 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Done from "@material-ui/icons/Done";
 import Button from "@material-ui/core/Button";
 import * as BlockUi from "react-block-ui";
+import * as slug from "slug";
 import * as Validation from "../../../modules/validation";
 import Widget from "../../forms/Widget";
 //import * as PageMethods from "../../../api/pages/methods";
@@ -55,6 +56,7 @@ const styles = theme => ({
 class PostForm extends React.Component<IProps, IState> {
   formID: string = "";
   rteID: string = "";
+  //override: any = {};
 
   toolbarOptions = [
     [{ header: [1, 2, 3, 4, false] }],
@@ -121,7 +123,7 @@ class PostForm extends React.Component<IProps, IState> {
     const { postUpdateMethod } = this.props;
     const { postCreateMethod } = this.props;
     const { handleNewPostCreated } = this.props;
-    const { handleEditing }  = this.props;
+    const { handleEditing } = this.props;
 
     const image_id_current = edit ? image_id_edit : image_id_new;
 
@@ -167,12 +169,20 @@ class PostForm extends React.Component<IProps, IState> {
   };
 
   handleChange = e => {
-    const { handleEditing }  = this.props;
-    const { edit }  = this.props;
+    const { handleEditing } = this.props;
+    const { edit } = this.props;
     handleEditing(true, edit);
+    //log.info(slug('bananas taste good'));
+
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let name = this.renderWidgetName(target.id);
+    if (name === "title" && !edit) {
+      const slugString = slug(value, { lower: true });
+      log.info(`PostForm.handleChange() slug=`, slugString);
+      //this.override.slug = slugString;
+      this.setState({ slug: slugString });
+    }
     //let id = target.id;
     //let name = "boo";
     this.setState({ [name]: value });
@@ -182,7 +192,7 @@ class PostForm extends React.Component<IProps, IState> {
     this.setState({ body: body });
   };
 
-  getWidget(props: any) {
+  getWidget= (props: any) => {
     let widgetType = props.widgetType ? props.widgetType : "simple";
     return (
       <Widget
@@ -190,9 +200,10 @@ class PostForm extends React.Component<IProps, IState> {
         handleChange={this.handleChange}
         dataObj={this.props.settingsObj}
         wProps={props}
+        stateValue={this.state[props.baseName]}
       />
     );
-  }
+  };
 
   nothing() {
     return null;
@@ -212,6 +223,31 @@ class PostForm extends React.Component<IProps, IState> {
     const arraySplit = id.split("__");
     return arraySplit[0];
   }
+
+  getSlug = () => {
+    log.info(`PostForm.getSlug()`, this.state);
+    let resolvedname = this.renderWidgetId("slug");
+    //const currentSlug = this.state.slug;
+
+    const layout = (
+      <div className="form-group">
+        <label htmlFor={resolvedname}>Slug:</label>
+        <input
+          onChange={this.handleChange}
+          type="text"
+          className="form-control tooltipster required"
+          id={resolvedname}
+          name={resolvedname}
+          placeholder=""
+          value={this.state.slug || (this.props.settingsObj ? this.props.settingsObj[resolvedname] : "")}
+        />
+      </div>
+    );
+    return layout;
+  };
+  //  defaultValue={this.props.settingsObj ? this.props.settingsObj[resolvedname] : ""}
+  // {this.getWidget({ baseName: "slug", name: this.renderWidgetId("slug"), label: "Slug" })}
+  // {this.getSlug()}
 
   render() {
     //log.info(`PostsForm.render() edit=[${this.props.edit}]`, this.props);

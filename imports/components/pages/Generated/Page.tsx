@@ -10,7 +10,7 @@ interface IProps {
   page: any;
 }
 
-class About extends React.Component<IProps> {
+class Page extends React.Component<IProps> {
   constructor(props) {
     super(props);
   }
@@ -35,10 +35,17 @@ class About extends React.Component<IProps> {
 }
 
 export default withTracker(props => {
+  const path = props.location.pathname;
+  const pattern = /\w+/i;
+  let match = pattern.exec(path);
+  const slug = match[0];
+  log.info(`Page.Tracker()`, slug, match);
+
+  //const slug = path.replace(/microsoft/i, "W3Schools");
   let page: any;
   let PagesDataReady = Meteor.subscribe("pages");
   if (PagesDataReady) {
-    page = Pages.findOne({ slug: "about" });
+    page = Pages.findOne({ slug: slug });
   }
   return { page: page };
-})(About);
+})(Page);

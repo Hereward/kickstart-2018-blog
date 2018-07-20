@@ -14,6 +14,32 @@ const authCheck = (methodName, userId) => {
   return auth;
 };
 
+const slugCheck = (props: { slug: string; type: string; current?: string }) => {
+  let found: any;
+  let valid = false;
+  if (props.type === "new") {
+    found = Pages.find({ slug: props.slug }).count();
+    valid = found === 0;
+  } else {
+    found = Pages.find({ slug: props.slug }).count();
+    //const current = Pages.findOne(props.id);
+    const unchanged = props.current === props.slug;
+    if (unchanged) {
+      valid = true;
+    } else {
+      valid = found === 0;
+    }
+  }
+  log.info(`slugValid()`, valid);
+  if (!valid) {
+    slugError();
+  }
+};
+
+function slugError() {
+  throw new Meteor.Error(`Invalid slug`, "Slug must be unique.");
+}
+
 export const createPages = new ValidatedMethod({
   name: "pages.create",
 
@@ -58,6 +84,8 @@ export const createPage = new ValidatedMethod({
     authCheck("pages.create", this.userId);
     log.info(`createPage`, fields);
 
+    slugCheck({ slug: fields.slug, type: "new" });
+
     Pages.insert({
       image_id: fields.image_id,
       title: fields.title,
@@ -75,7 +103,7 @@ export const updatePage = new ValidatedMethod({
   name: "pages.update",
   validate: new SimpleSchema({
     id: { type: String },
-    image_id: { type: String},
+    image_id: { type: String },
     title: { type: String },
     metaDescription: { type: String },
     name: { type: String },
@@ -86,7 +114,10 @@ export const updatePage = new ValidatedMethod({
   run(fields) {
     authCheck("pages.update", this.userId);
     log.info(`updatePage`, fields);
+
     const current = Pages.findOne(fields.id);
+
+    slugCheck({ slug: fields.slug, type: "update", current: current.slug });
 
     Pages.update(fields.id, {
       $set: {
