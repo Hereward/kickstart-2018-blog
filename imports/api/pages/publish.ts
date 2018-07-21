@@ -13,10 +13,8 @@ if (Meteor.isServer) {
     const myPages = Pages.find();
     if (!myPages.count()) {
       Pages.insert({
-        metaTitle: `About - ${Meteor.settings.public.mainTitle}`,
-        metaDescription: "This is the ABOUT page boyo",
+        summary: Meteor.settings.public.defaultContent.about.title,
         image_id: "",
-        name: "about",
         slug: "about",
         title: Meteor.settings.public.defaultContent.about.title,
         body: Meteor.settings.public.defaultContent.about.body,

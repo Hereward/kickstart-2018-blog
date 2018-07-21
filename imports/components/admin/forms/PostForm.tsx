@@ -28,8 +28,7 @@ interface IProps {
 
 interface IState {
   id: string;
-  metaDescription: string;
-  name: string;
+  summary: string;
   slug: string;
   title: string;
   body: string;
@@ -98,8 +97,7 @@ class PostForm extends React.Component<IProps, IState> {
 
     this.state = {
       id: settingsObj ? settingsObj._id : "",
-      metaDescription: settingsObj ? settingsObj.metaDescription : "",
-      name: settingsObj ? settingsObj.name : "",
+      summary: settingsObj ? settingsObj.summary : "",
       slug: settingsObj ? settingsObj.slug : "",
       title: settingsObj ? settingsObj.title : "",
       body: settingsObj ? settingsObj.body : "",
@@ -135,8 +133,7 @@ class PostForm extends React.Component<IProps, IState> {
       body: this.state.body,
       image_id: image_id_current || settingsImage,
       title: this.state.title,
-      metaDescription: this.state.metaDescription,
-      name: this.state.name,
+      summary: this.state.summary,
       slug: this.state.slug
     };
 
@@ -183,8 +180,7 @@ class PostForm extends React.Component<IProps, IState> {
       //this.override.slug = slugString;
       this.setState({ slug: slugString });
     }
-    //let id = target.id;
-    //let name = "boo";
+
     this.setState({ [name]: value });
   };
 
@@ -192,7 +188,7 @@ class PostForm extends React.Component<IProps, IState> {
     this.setState({ body: body });
   };
 
-  getWidget= (props: any) => {
+  getWidget = (props: any) => {
     let widgetType = props.widgetType ? props.widgetType : "simple";
     return (
       <Widget
@@ -245,24 +241,20 @@ class PostForm extends React.Component<IProps, IState> {
     );
     return layout;
   };
-  //  defaultValue={this.props.settingsObj ? this.props.settingsObj[resolvedname] : ""}
-  // {this.getWidget({ baseName: "slug", name: this.renderWidgetId("slug"), label: "Slug" })}
-  // {this.getSlug()}
 
   render() {
-    //log.info(`PostsForm.render() edit=[${this.props.edit}]`, this.props);
-
     return (
       <div>
         <BlockUi tag="div" blocking={this.state.blockUI}>
           <form id={this.formID} className={this.props.classes.adminPostsForm}>
-            {this.getWidget({
-              baseName: "metaDescription",
-              name: this.renderWidgetId("metaDescription"),
-              label: "Meta Description"
-            })}
-            {this.getWidget({ baseName: "name", name: this.renderWidgetId("name"), label: "Name" })}
             {this.getWidget({ baseName: "slug", name: this.renderWidgetId("slug"), label: "Slug" })}
+            {this.getWidget({
+              baseName: "summary",
+              name: this.renderWidgetId("summary"),
+              label: "Summary",
+              type: "textarea"
+            })}
+
             {this.getWidget({ baseName: "title", name: this.renderWidgetId("title"), label: "Title" })}
 
             <div className="form-group">

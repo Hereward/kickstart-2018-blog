@@ -7,7 +7,7 @@ const swal: SweetAlert = temp;
 declare var window: any;
 
 declare var DocHead: any;
-
+/*
 export function addMeta(systemSettings) {
   let metaInfo = {
     name: "viewport",
@@ -17,6 +17,7 @@ export function addMeta(systemSettings) {
   DocHead.addMeta(metaInfo);
   DocHead.setTitle(systemSettings.mainTitle);
 }
+*/
 
 const authErrors = {
   invalidCode: "Invalid Code",

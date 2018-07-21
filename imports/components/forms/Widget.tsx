@@ -45,19 +45,38 @@ export default class Widget extends React.Component<IProps, IState> {
     let resolvedname = wprops.baseName || wprops.name;
 
     //const overrideVal = override && override[name] ? override[name] : "";
-
-    let layout = (
-      <div className="form-group">
-        <label htmlFor={wprops.name}>{wprops.label || "Enter Text"}:</label>
+    let widget: any;
+    const type = wprops.type || "text";
+    if (type !== "textarea") {
+      widget = (
         <input
           onChange={this.handleChange}
-          type={wprops.type || "text"}
+          type={type}
           className={cssClass}
           id={wprops.name}
           name={wprops.name}
           placeholder={wprops.placeholder || ""}
           value={stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "")}
         />
+      );
+    } else {
+      widget = (
+        <textarea
+          onChange={this.handleChange}
+          className={cssClass}
+          id={wprops.name}
+          name={wprops.name}
+          placeholder={wprops.placeholder || ""}
+        >
+          {stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "")}
+        </textarea>
+      );
+    }
+
+    let layout = (
+      <div className="form-group">
+        <label htmlFor={wprops.name}>{wprops.label || "Enter Text"}:</label>
+        {widget}
       </div>
     );
 

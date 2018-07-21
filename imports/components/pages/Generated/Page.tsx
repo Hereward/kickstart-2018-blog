@@ -36,7 +36,7 @@ class Page extends React.Component<IProps> {
 
 export default withTracker(props => {
   const path = props.location.pathname;
-  const pattern = /\w+/i;
+  const pattern = /\w+$/i;
   let match = pattern.exec(path);
   const slug = match[0];
   log.info(`Page.Tracker()`, slug, match);

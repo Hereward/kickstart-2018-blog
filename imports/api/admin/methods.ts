@@ -88,6 +88,26 @@ export const imageUpdatePageAdmin = new ValidatedMethod({
   }
 });
 
+export const imageUpdateSettingsAdmin = new ValidatedMethod({
+  name: "image.UpdateSettingsAdmin",
+  validate: new SimpleSchema({
+    id: { type: String, optional: true },
+    image_id: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("admin.UpdateSettingsAdmin", this.userId, "admin");
+
+    systemSettings.update(fields.id, {
+      $set: {
+        image_id: fields.image_id
+      }
+    });
+
+    return true;
+  }
+});
+
 export const adminToggle2FA = new ValidatedMethod({
   name: "admin.adminToggle2FA",
 
@@ -199,10 +219,11 @@ export const configureNewUser = new ValidatedMethod({
 export const updateSettings = new ValidatedMethod({
   name: "admin.updateSettings",
   validate: new SimpleSchema({
-    mainTitle: { type: String },
+    title: { type: String },
     shortTitle: { type: String },
     copyright: { type: String },
-    description: { type: String }
+    summary: { type: String },
+    image_id: { type: String, optional: true }
   }).validator(),
 
   run(fields) {
@@ -213,10 +234,11 @@ export const updateSettings = new ValidatedMethod({
         { active: true },
         {
           $set: {
-            mainTitle: fields.mainTitle,
+            title: fields.title,
             shortTitle: fields.shortTitle,
             copyright: fields.copyright,
-            description: fields.description
+            summary: fields.summary,
+            image_id: fields.image_id || ""
           }
         }
       );

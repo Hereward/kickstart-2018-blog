@@ -63,7 +63,7 @@ styles = theme => ({
     position: "absolute"
   },
   panelGroups: {
-    maxWidth: "50rem"
+    maxWidth: "55rem"
   },
   fuckyou: {
     color: "red"
@@ -155,7 +155,7 @@ class Admin extends React.Component<IProps, IState> {
   }
 
   settingsPanel() {
-    return this.props.sessionReady ? <Settings systemSettings={this.props.systemSettings} /> : "";
+    return this.props.sessionReady ? <Settings imageUpdateMethod="image.UpdateSettingsAdmin" systemSettings={this.props.systemSettings} /> : "";
   }
 
   usersPanel() {

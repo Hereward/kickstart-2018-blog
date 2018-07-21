@@ -18,6 +18,7 @@ interface IProps {
   updateImageId?: any;
   imageArray?: any;
   updateMethod: string;
+  allowEdit: boolean;
 }
 
 interface IState {
@@ -56,6 +57,7 @@ class RenderImage extends React.Component<IProps, IState> {
     const { classes } = this.props;
     const { dataObj } = this.props;
     const { imageArray } = this.props;
+    const { allowEdit } = this.props;
     let layout: any = "";
 
     if (this.state.editImage) {
@@ -65,10 +67,12 @@ class RenderImage extends React.Component<IProps, IState> {
             updateImageId={this.updateImageId}
             updateMethod={this.props.updateMethod}
             Images={EditorialImages}
+            allowEdit={allowEdit}
             fileLocator=""
             loading={false}
             imageArray={imageArray}
             dataObj={dataObj}
+            updateDirect={false}
           />
         </div>
       );
@@ -95,9 +99,14 @@ export default connect()(
     let imageCursor: any;
     let imageArray: any;
     if (props.dataObj) {
-      imageCursor = EditorialImages.find({ _id: props.dataObj.image_id });
+      const imageId = props.dataObj.image_id;
+      log.info(`RenderImage.tracker()`, imageId);
+      imageCursor = EditorialImages.find({ _id: imageId });
       imageArray = imageCursor.fetch();
+      log.info(`RenderImage.tracker()`, imageArray);
     }
+
+    
 
     return {
       imageArray: imageArray

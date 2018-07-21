@@ -15,6 +15,7 @@ interface IProps {
   updateMethod: string;
   updateImageId?: any;
   updateDirect?: boolean;
+  allowEdit: boolean;
 }
 
 interface IState {
@@ -153,6 +154,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
 
   getImage(aFile, key, link?: any) {
     const { Images } = this.props;
+    const { allowEdit } = this.props;
     if (!link) {
       link = Images.link(aFile);
     }
@@ -166,7 +168,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
           fileId={aFile._id}
           fileSize={aFile.size}
           Images={this.props.Images}
-          allowEdit={true}
+          allowEdit={allowEdit}
           dataObj={this.props.dataObj}
           updateMethod={this.props.updateMethod}
           removeNewImageFromUploads={this.removeNewImage}

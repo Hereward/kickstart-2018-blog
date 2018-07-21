@@ -74,8 +74,7 @@ export const createPage = new ValidatedMethod({
     id: { type: String, optional: true },
     image_id: { type: String },
     title: { type: String },
-    metaDescription: { type: String },
-    name: { type: String },
+    summary: { type: String },
     slug: { type: String },
     body: { type: String }
   }).validator(),
@@ -90,8 +89,7 @@ export const createPage = new ValidatedMethod({
       image_id: fields.image_id,
       title: fields.title,
       body: fields.body,
-      metaDescription: fields.metaDescription,
-      name: fields.name,
+      summary: fields.summary,
       slug: fields.slug
     });
 
@@ -105,8 +103,7 @@ export const updatePage = new ValidatedMethod({
     id: { type: String },
     image_id: { type: String },
     title: { type: String },
-    metaDescription: { type: String },
-    name: { type: String },
+    summary: { type: String },
     slug: { type: String },
     body: { type: String }
   }).validator(),
@@ -124,8 +121,7 @@ export const updatePage = new ValidatedMethod({
         image_id: fields.image_id,
         title: fields.title,
         body: fields.body,
-        metaDescription: fields.metaDescription || current.metaDescription,
-        name: fields.name || current.name,
+        summary: fields.summary || current.summary,
         slug: fields.slug || current.slug
       }
     });

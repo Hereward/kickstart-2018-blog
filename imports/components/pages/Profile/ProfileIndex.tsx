@@ -277,6 +277,7 @@ class Profile extends React.Component<IProps, IState> {
               dataObj={this.props.profile}
               updateMethod="profileImage.update"
               updateDirect={true}
+              allowEdit={true}
             />
           </div>
         );

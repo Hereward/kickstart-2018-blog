@@ -25,7 +25,7 @@ import OptionGroup from "../components/OptionGroup";
 import PostForm from "../../admin/forms/PostForm";
 import { Pages as PagesObj } from "../../../api/pages/publish";
 import RenderImage from "../components/RenderImage";
-import { EditorialImages } from "../../../api/images/methods";
+
 
 const drawerWidth = 240;
 let styles: any;
@@ -148,9 +148,7 @@ class Posts extends React.Component<IProps, IState> {
   selectedPosts = [];
   isGod: boolean = false;
   editingType = { edit: false, new: false };
-  //imageUpdateMethod: "image.UpdatePageAdmin";
-  //postUpdateMethod: "pages.update";
-  //postCreateMethod: "page.create";
+
 
   constructor(props) {
     super(props);
@@ -359,7 +357,7 @@ class Posts extends React.Component<IProps, IState> {
     const { classes } = this.props;
     return (
       <div className={classes.newPostDetail}>
-        <RenderImage updateMethod={this.props.imageUpdateMethod} updateImageId={this.updateImageId} dataObj={null} />
+        <RenderImage allowEdit={true} updateMethod={this.props.imageUpdateMethod} updateImageId={this.updateImageId} dataObj={null} />
         <PostForm
           postCreateMethod={this.props.postCreateMethod}
           postUpdateMethod={this.props.postUpdateMethod}
@@ -431,7 +429,7 @@ class Posts extends React.Component<IProps, IState> {
           <FormControlLabel control={checkBox} label="selected" />
         </div>
 
-        <RenderImage updateMethod={this.props.imageUpdateMethod} updateImageId={this.updateImageId} dataObj={dataObj} />
+        <RenderImage allowEdit={true} updateMethod={this.props.imageUpdateMethod} updateImageId={this.updateImageId} dataObj={dataObj} />
         <PostForm
           postCreateMethod={this.props.postCreateMethod}
           postUpdateMethod={this.props.postUpdateMethod}

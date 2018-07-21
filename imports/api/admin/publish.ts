@@ -14,10 +14,11 @@ if (Meteor.isServer) {
         fields: {
           systemOnline: 1,
           active: 1,
-          mainTitle: 1,
+          title: 1,
           shortTitle: 1,
-          description: 1,
-          copyright: 1
+          summary: 1,
+          copyright: 1,
+          image_id: 1
         }
       }
     );
@@ -58,10 +59,11 @@ if (Meteor.isServer) {
       systemSettings.insert({
         active: true,
         systemOnline: true,
-        mainTitle: Meteor.settings.public.mainTitle,
+        title: Meteor.settings.public.mainTitle,
         shortTitle: Meteor.settings.public.shortTitle,
         copyright: Meteor.settings.public.copyright,
-        description: Meteor.settings.public.description,
+        summary: Meteor.settings.public.description,
+        image_id: "",
         createdAt: new Date()
       });
     }

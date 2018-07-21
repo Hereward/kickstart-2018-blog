@@ -70,10 +70,10 @@ class SettingsForm extends React.Component<IProps, IState> {
       <div>
         <BlockUi tag="div" blocking={!this.props.allowSubmit}>
           <form id={this.formID} className={this.props.classes.adminSettingsForm}>
-            {this.getWidget({ name: "mainTitle", label: "Main Title" })}
+            {this.getWidget({ name: "title", label: "Main Title" })}
             {this.getWidget({ name: "shortTitle", label: "Short Title" })}
             {this.getWidget({ name: "copyright", label: "Copyright" })}
-            {this.getWidget({ name: "description", label: "Description" })}
+            {this.getWidget({ name: "summary", label: "Summary Description" })}
 
             <div className="form-group">
               <Button disabled={!this.props.allowSubmit} variant="raised" type="submit" color="primary">

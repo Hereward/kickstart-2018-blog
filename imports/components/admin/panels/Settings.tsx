@@ -1,10 +1,12 @@
 import * as React from "react";
 import { connect } from "react-redux";
+import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Switch from "@material-ui/core/Switch";
 import { toggleSystemOnline, updateSettings } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import SettingsForm from "../../admin/forms/SettingsForm";
+import RenderImage from "../components/RenderImage";
 
 const drawerWidth = 240;
 let styles: any;
@@ -15,16 +17,18 @@ interface IProps {
   SystemOnline: boolean;
   systemSettings: any;
   dispatch: any;
+  imageUpdateMethod: string;
 }
 
 interface IState {
   [x: number]: any;
   allowSubmit: boolean;
-  mainTitle: string;
+  title: string;
   shortTitle: string;
   copyright: string;
-  description: string;
+  summary: string;
   updateDone: boolean;
+  image_id: string;
 }
 
 styles = theme => ({
@@ -57,10 +61,11 @@ class Settings extends React.Component<IProps, IState> {
 
     this.state = {
       allowSubmit: true,
-      mainTitle: this.props.systemSettings.mainTitle,
+      title: this.props.systemSettings.title,
       shortTitle: this.props.systemSettings.shortTitle,
       copyright: this.props.systemSettings.copyright,
-      description: this.props.systemSettings.description,
+      summary: this.props.systemSettings.summary,
+      image_id: this.props.systemSettings.image_id,
       updateDone: false
     };
   }
@@ -72,6 +77,13 @@ class Settings extends React.Component<IProps, IState> {
         console.log(`toggleSystemOnline failed`, err);
       }
     });
+  };
+
+  updateImageId = (props: { image_id: string; dataObj?: any }) => {
+    //let targetName: any;
+    //targetName = props.dataObj ? "image_id_edit" : "image_id_new";
+    //log.info(`Posts.updateImageId()`, targetName, props.image_id);
+    this.setState({ image_id: props.image_id });
   };
 
   handleChange(e) {
@@ -86,10 +98,11 @@ class Settings extends React.Component<IProps, IState> {
     log.info(`admin submit`, this.state);
     this.setState({ allowSubmit: false, updateDone: true });
     const settings = {
-      mainTitle: this.state.mainTitle,
+      title: this.state.title,
       shortTitle: this.state.shortTitle,
       copyright: this.state.copyright,
-      description: this.state.description
+      summary: this.state.summary,
+      image_id: this.state.image_id
     };
 
     updateSettings.call(settings, err => {
@@ -108,6 +121,8 @@ class Settings extends React.Component<IProps, IState> {
   };
 
   layout() {
+    const { systemSettings } = this.props;
+    const { imageUpdateMethod } = this.props;
     return (
       <div>
         <h2 className={this.props.classes.heading}>General Settings</h2>
@@ -117,12 +132,17 @@ class Settings extends React.Component<IProps, IState> {
             System Online: <Switch onChange={this.toggleOnline()} checked={this.props.systemSettings.systemOnline} />
           </div>
         </div>
-
+        <RenderImage
+          allowEdit={false}
+          updateMethod={imageUpdateMethod}
+          updateImageId={this.updateImageId}
+          dataObj={systemSettings}
+        />
         <SettingsForm
           allowSubmit={this.state.allowSubmit}
           handleChange={this.handleChange}
           handleSubmit={this.handleSubmit}
-          settingsObj={this.props.systemSettings}
+          settingsObj={systemSettings}
           updateDone={this.state.updateDone}
         />
       </div>
@@ -134,4 +154,11 @@ class Settings extends React.Component<IProps, IState> {
   }
 }
 
-export default connect()(withStyles(styles, { withTheme: true })(Settings));
+//export default connect()(withStyles(styles, { withTheme: true })(Settings));
+
+export default connect()(
+  withTracker(props => {
+    const imagesHandle = Meteor.subscribe("editorialImages");
+    return {};
+  })(withStyles(styles, { withTheme: true })(Settings))
+);
