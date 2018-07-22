@@ -126,19 +126,27 @@ class PostForm extends React.Component<IProps, IState> {
     const image_id_current = edit ? image_id_edit : image_id_new;
 
     const settingsImage = settingsObj ? settingsObj.image_id : "";
-    //log.info(`PostsForm.handlesubmit()`, image_id_current, `[${settingsImage}]`);
+    let pageFields: any;
 
-    let pageFields = {
+    pageFields = {
       id: this.state.id,
       body: this.state.body,
       image_id: image_id_current || settingsImage,
       title: this.state.title,
       summary: this.state.summary,
-      slug: this.state.slug
+      slug: this.state.slug,
+      modified: new Date()
     };
 
+    if (!edit) {
+      pageFields.published = new Date();
+      pageFields.allowComments = false;
+    } else {
+      pageFields.closeComments = false;
+    }
+
     this.setState({ blockUI: true });
-    if (this.props.edit) {
+    if (edit) {
       Meteor.call(postUpdateMethod, pageFields, err => {
         this.setState({ blockUI: false });
         if (err) {
@@ -169,15 +177,12 @@ class PostForm extends React.Component<IProps, IState> {
     const { handleEditing } = this.props;
     const { edit } = this.props;
     handleEditing(true, edit);
-    //log.info(slug('bananas taste good'));
 
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let name = this.renderWidgetName(target.id);
     if (name === "title" && !edit) {
       const slugString = slug(value, { lower: true });
-      log.info(`PostForm.handleChange() slug=`, slugString);
-      //this.override.slug = slugString;
       this.setState({ slug: slugString });
     }
 
@@ -221,7 +226,6 @@ class PostForm extends React.Component<IProps, IState> {
   }
 
   getSlug = () => {
-    log.info(`PostForm.getSlug()`, this.state);
     let resolvedname = this.renderWidgetId("slug");
     //const currentSlug = this.state.slug;
 

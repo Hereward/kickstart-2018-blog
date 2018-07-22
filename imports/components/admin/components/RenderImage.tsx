@@ -100,13 +100,9 @@ export default connect()(
     let imageArray: any;
     if (props.dataObj) {
       const imageId = props.dataObj.image_id;
-      log.info(`RenderImage.tracker()`, imageId);
       imageCursor = EditorialImages.find({ _id: imageId });
       imageArray = imageCursor.fetch();
-      log.info(`RenderImage.tracker()`, imageArray);
     }
-
-    
 
     return {
       imageArray: imageArray

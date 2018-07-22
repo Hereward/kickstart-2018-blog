@@ -32,7 +32,7 @@ const getImageLink = (imageId = "") => {
 const getCustomMetaData = (url, defaultImageLink) => {
   let slug = "";
   const path = url.pathname;
-  const pagePattern = /(\w+)$/i;
+  const pagePattern = /[a-z0-9]+(?:-[a-z0-9]+)*$/i;
   let data = "";
   let pageMatch = pagePattern.exec(path);
   if (pageMatch) {

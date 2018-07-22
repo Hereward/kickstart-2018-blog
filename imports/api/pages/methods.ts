@@ -76,7 +76,10 @@ export const createPage = new ValidatedMethod({
     title: { type: String },
     summary: { type: String },
     slug: { type: String },
-    body: { type: String }
+    body: { type: String },
+    allowComments: { type: Boolean },
+    modified: { type: Date },
+    published: { type: Date }
   }).validator(),
 
   run(fields) {
@@ -90,7 +93,11 @@ export const createPage = new ValidatedMethod({
       title: fields.title,
       body: fields.body,
       summary: fields.summary,
-      slug: fields.slug
+      slug: fields.slug,
+      allowComments: fields.allowComments,
+      closeComments: false,
+      modified: fields.modified,
+      published: fields.published
     });
 
     return true;
@@ -105,7 +112,9 @@ export const updatePage = new ValidatedMethod({
     title: { type: String },
     summary: { type: String },
     slug: { type: String },
-    body: { type: String }
+    body: { type: String },
+    closeComments: { type: Boolean },
+    modified: { type: Date }
   }).validator(),
 
   run(fields) {
@@ -122,7 +131,9 @@ export const updatePage = new ValidatedMethod({
         title: fields.title,
         body: fields.body,
         summary: fields.summary || current.summary,
-        slug: fields.slug || current.slug
+        closeComments: fields.closeComments,
+        slug: fields.slug || current.slug,
+        modified: fields.modified
       }
     });
 

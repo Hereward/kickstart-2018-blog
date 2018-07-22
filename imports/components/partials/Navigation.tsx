@@ -246,6 +246,11 @@ class Navigation extends React.Component<IProps, IState> {
                     About
                   </NavLink>
                 </NavItem>
+                <NavItem>
+                  <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/terms-of-service">
+                    Terms
+                  </NavLink>
+                </NavItem>
                 {User.can({ threshold: "admin" }) ? (
                   <NavItem className={cPath.match(/admin/) ? "active" : ""}>
                     <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/admin">

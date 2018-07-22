@@ -26,7 +26,6 @@ import PostForm from "../../admin/forms/PostForm";
 import { Pages as PagesObj } from "../../../api/pages/publish";
 import RenderImage from "../components/RenderImage";
 
-
 const drawerWidth = 240;
 let styles: any;
 
@@ -151,7 +150,6 @@ class Posts extends React.Component<IProps, IState> {
   isGod: boolean = false;
   editingType = { edit: false, new: false };
 
-
   constructor(props) {
     super(props);
     this.handleExPanelChange = this.handleExPanelChange.bind(this);
@@ -215,18 +213,11 @@ class Posts extends React.Component<IProps, IState> {
   handleEditing = (state, edit) => {
     const type = edit ? "edit" : "new";
     this.editingType[type] = state;
-
-    /*
-    this.setState({
-      editing: state
-    });
-    */
   };
 
   updateImageId = (props: { image_id: string; dataObj?: any }) => {
     let targetName: any;
     targetName = props.dataObj ? "image_id_edit" : "image_id_new";
-    //log.info(`Posts.updateImageId()`, targetName, props.image_id);
     this.setState({ [targetName]: props.image_id });
   };
 
@@ -269,7 +260,7 @@ class Posts extends React.Component<IProps, IState> {
   deleteSelected() {
     this.setState({ block: true });
     const { postDeleteMethod } = this.props;
-    
+
     Meteor.call(postDeleteMethod, { selected: this.state.selectedPosts }, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
@@ -279,13 +270,12 @@ class Posts extends React.Component<IProps, IState> {
         this.setState({ block: false });
       }
     });
-    
   }
-// Meteor.call
+
   deleteAll() {
     const { postDeleteAllMethod } = this.props;
     this.setState({ block: true });
-    Meteor.call(postDeleteAllMethod,{}, err => {
+    Meteor.call(postDeleteAllMethod, {}, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
         log.error(`Method [${postDeleteAllMethod}] failed`, err);
@@ -361,7 +351,12 @@ class Posts extends React.Component<IProps, IState> {
     const { classes } = this.props;
     return (
       <div className={classes.newPostDetail}>
-        <RenderImage allowEdit={true} updateMethod={this.props.imageUpdateMethod} updateImageId={this.updateImageId} dataObj={null} />
+        <RenderImage
+          allowEdit={true}
+          updateMethod={this.props.imageUpdateMethod}
+          updateImageId={this.updateImageId}
+          dataObj={null}
+        />
         <PostForm
           postCreateMethod={this.props.postCreateMethod}
           postUpdateMethod={this.props.postUpdateMethod}
@@ -433,7 +428,12 @@ class Posts extends React.Component<IProps, IState> {
           <FormControlLabel control={checkBox} label="selected" />
         </div>
 
-        <RenderImage allowEdit={true} updateMethod={this.props.imageUpdateMethod} updateImageId={this.updateImageId} dataObj={dataObj} />
+        <RenderImage
+          allowEdit={true}
+          updateMethod={this.props.imageUpdateMethod}
+          updateImageId={this.updateImageId}
+          dataObj={dataObj}
+        />
         <PostForm
           postCreateMethod={this.props.postCreateMethod}
           postUpdateMethod={this.props.postUpdateMethod}
@@ -495,13 +495,12 @@ class Posts extends React.Component<IProps, IState> {
 
   checkCheckBox(post) {
     const checked = this.state.selectedPosts[post._id] === true;
-    return checked; 
+    return checked;
   }
 
-  mapPosts(postsArray) {
+  mapPosts(posts) {
     const { classes } = this.props;
-
-    const mapped = postsArray.map(post => {
+    const mapped = posts.map(post => {
       const checkedC = this.checkCheckBox(post);
       const layout = (
         <div className={classes.postListItem} key={post._id}>
@@ -517,6 +516,7 @@ class Posts extends React.Component<IProps, IState> {
 
   layout() {
     const { classes } = this.props;
+    const { allPosts } = this.props;
     return (
       <BlockUi tag="div" blocking={this.state.block}>
         {this.bulkOptions()}
@@ -525,8 +525,7 @@ class Posts extends React.Component<IProps, IState> {
 
         <div>
           <h2 className={classes.heading}>Entries</h2>
-          {this.props.allPosts ? <div>{this.mapPosts(this.props.allPosts)}</div> : ""}
-
+          {allPosts ? <div>{this.mapPosts(allPosts)}</div> : ""}
           <div className={classes.loadMore}>
             <Button variant="outlined" onClick={this.loadMore} size="small">
               Load More
@@ -538,7 +537,6 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   render() {
-    //log.info(`Posts.render()`, this.state);
     return this.layout();
   }
 }
@@ -556,7 +554,7 @@ export default connect(mapStateToProps)(
     const imagesHandle = Meteor.subscribe("editorialImages");
     const pagesHandle = Meteor.subscribe("pages");
     const options = {
-      sort: { createdAt: -1 },
+      sort: { published: -1 },
       limit: props.cursorLimit
     };
     let filters = props.filters;
@@ -587,6 +585,7 @@ export default connect(mapStateToProps)(
     if (defaultSearch) {
       posts = PagesObj.find({}, options).fetch();
     }
+    log.info(`Posts.tracker()`, posts);
 
     return {
       allPosts: posts
