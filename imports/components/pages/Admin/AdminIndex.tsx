@@ -172,6 +172,8 @@ class Admin extends React.Component<IProps, IState> {
         imageUpdateMethod="image.UpdatePageAdmin"
         postUpdateMethod="pages.update"
         postCreateMethod="page.create"
+        postDeleteMethod="admin.deletePageList"
+        postDeleteAllMethod="admin.deleteAllPages"
         userId={this.props.userId}
         userData={this.props.userData}
       />

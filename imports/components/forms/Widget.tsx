@@ -67,9 +67,8 @@ export default class Widget extends React.Component<IProps, IState> {
           id={wprops.name}
           name={wprops.name}
           placeholder={wprops.placeholder || ""}
-        >
-          {stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "")}
-        </textarea>
+          value={stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "")}
+        />
       );
     }
 

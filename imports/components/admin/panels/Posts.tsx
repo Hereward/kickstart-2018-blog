@@ -43,6 +43,8 @@ interface IProps {
   imageUpdateMethod: string;
   postUpdateMethod: string;
   postCreateMethod: string;
+  postDeleteMethod: string;
+  postDeleteAllMethod: string;
 }
 
 interface IState {
@@ -54,7 +56,7 @@ interface IState {
   block: boolean;
   showBulkOptions: boolean;
   showFilterOptions: boolean;
-  selectedUsers: any;
+  selectedPosts: any;
   showNewPost: boolean;
   image_id_edit: string;
   image_id_new: string;
@@ -110,10 +112,10 @@ styles = theme => ({
   optionsRoot: {
     margin: "1rem"
   },
-  userListItem: {
+  postListItem: {
     display: "flex"
   },
-  userListExpRoot: {
+  postListExpRoot: {
     width: "100%"
   },
   expandedExpansionPanel: {
@@ -169,7 +171,7 @@ class Posts extends React.Component<IProps, IState> {
       block: false,
       showBulkOptions: false,
       showFilterOptions: false,
-      selectedUsers: {},
+      selectedPosts: {},
       showNewPost: false,
       image_id_edit: "",
       image_id_new: ""
@@ -233,10 +235,10 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   togglePostSelect = id => event => {
-    const currentState = Object.assign({}, this.state.selectedUsers);
+    const currentState = Object.assign({}, this.state.selectedPosts);
     const selected = currentState[id] === true;
     currentState[id] = !selected;
-    this.setState({ selectedUsers: currentState });
+    this.setState({ selectedPosts: currentState });
 
     this.selectedPosts = Object.keys(currentState).reduce((filtered, option) => {
       if (currentState[option]) {
@@ -266,27 +268,29 @@ class Posts extends React.Component<IProps, IState> {
 
   deleteSelected() {
     this.setState({ block: true });
-    /*
-    deleteUserList.call({ selected: this.state.selectedUsers }, err => {
+    const { postDeleteMethod } = this.props;
+    
+    Meteor.call(postDeleteMethod, { selected: this.state.selectedPosts }, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
-        log.error(`deleteUserList failed`, err);
+        log.error(`Method [${postDeleteMethod}] failed`, err);
       } else {
-        this.miniAlert("Selected users were deleted!");
+        this.miniAlert("Selected posts were deleted!");
         this.setState({ block: false });
       }
     });
-    */
+    
   }
-
+// Meteor.call
   deleteAll() {
+    const { postDeleteAllMethod } = this.props;
     this.setState({ block: true });
-    deleteAllPages.call({}, err => {
+    Meteor.call(postDeleteAllMethod,{}, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
-        log.error(`deleteAllPages failed`, err);
+        log.error(`Method [${postDeleteAllMethod}] failed`, err);
       } else {
-        this.miniAlert("All pages were deleted!");
+        this.miniAlert("All posts were deleted!");
         this.setState({ block: false });
       }
     });
@@ -452,7 +456,7 @@ class Posts extends React.Component<IProps, IState> {
         classes={{
           expanded: classes.expandedExpansionPanel
         }}
-        className={classes.userListExpRoot}
+        className={classes.postListExpRoot}
         expanded={expanded === dataObj._id}
         onChange={this.handleExPanelChange(dataObj._id)}
       >
@@ -489,9 +493,9 @@ class Posts extends React.Component<IProps, IState> {
     return <Checkbox className={cssClass} onChange={this.togglePostSelect(postObj._id)} checked={checked} />;
   }
 
-  checkCheckBox(user) {
-    const checked = this.state.selectedUsers[user._id] === true;
-    return checked;
+  checkCheckBox(post) {
+    const checked = this.state.selectedPosts[post._id] === true;
+    return checked; 
   }
 
   mapPosts(postsArray) {
@@ -500,7 +504,7 @@ class Posts extends React.Component<IProps, IState> {
     const mapped = postsArray.map(post => {
       const checkedC = this.checkCheckBox(post);
       const layout = (
-        <div className={classes.userListItem} key={post._id}>
+        <div className={classes.postListItem} key={post._id}>
           {this.checkBox("large", post, checkedC)}
           {this.renderPost(post)}
         </div>
