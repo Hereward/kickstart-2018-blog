@@ -42,24 +42,18 @@ export default class Widget extends React.Component<IProps, IState> {
   }) {
     const { stateValue } = this.props;
     const { uncontrolled } = this.props;
-
     let cssClass = wprops.required === false ? this.baseCSSClass : `${this.baseCSSClass} required`;
     let resolvedname = wprops.baseName || wprops.name;
-
-    //const overrideVal = override && override[name] ? override[name] : "";
     let widget: any;
     const type = wprops.type || "text";
-
-    // defaultValue={this.props.dataObj ? this.props.dataObj[wprops.name] : ""}
-    // value={stateValue || (this.props.dataObj ? this.props.dataObj[wprops.name] : "")}
-    // value={stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "")}
-    const tagType = { text: "input", textarea: "textarea" };
-
-    const CustomTag = tagType[type];
-    const typeAttribute = type === "text" ? { type: "text" } : "";
+    const tagTypes = { text: "input", email: "input", textarea: "textarea" };
+    const attributeTypes = { text: "text", email: "email" };
+    const CustomTag = tagTypes[type];
+    const typeAttribute = type === "textarea" ? "" : { type: attributeTypes[type] };
     const valueAttribute = uncontrolled
       ? { defaultValue: this.props.dataObj ? this.props.dataObj[wprops.name] : "" }
       : { value: stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "") };
+
     widget = (
       <CustomTag
         onChange={this.handleChange}
@@ -71,32 +65,6 @@ export default class Widget extends React.Component<IProps, IState> {
         {...valueAttribute}
       />
     );
-    /*
-    if (type !== "textarea") {
-      widget = (
-        <CustomTag
-          onChange={this.handleChange}
-          type={type}
-          className={cssClass}
-          id={wprops.name}
-          name={wprops.name}
-          placeholder={wprops.placeholder || ""}
-          value={stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "")}
-        />
-      );
-    } else {
-      widget = (
-        <CustomTag
-          onChange={this.handleChange}
-          className={cssClass}
-          id={wprops.name}
-          name={wprops.name}
-          placeholder={wprops.placeholder || ""}
-          value={stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "")}
-        />
-      );
-    }
-    */
 
     let layout = (
       <div className="form-group">
@@ -107,8 +75,6 @@ export default class Widget extends React.Component<IProps, IState> {
 
     return layout;
   }
-
-  // defaultValue={this.props.dataObj ? this.props.dataObj[resolvedname] : ""}
 
   render() {
     let props = this.props.wProps;

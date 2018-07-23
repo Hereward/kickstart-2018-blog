@@ -76,7 +76,7 @@ class InvitationForm extends React.Component<IProps, IState> {
 
   getWidget(props: any) {
     let widgetType = props.widgetType ? props.widgetType : "simple";
-    return <Widget widgetType={widgetType} handleChange={this.handleChange} wProps={props} />;
+    return <Widget uncontrolled={true} widgetType={widgetType} handleChange={this.handleChange} wProps={props} />;
   }
 
   handleChange = e => {
