@@ -62,7 +62,7 @@ export default class ProfileForm extends React.Component<IProps, IState> {
   getWidget(props: any) {
     let widgetType = props.widgetType ? props.widgetType : "simple";
     return (
-      <Widget widgetType={widgetType} handleChange={this.handleChange} dataObj={this.props.profileObj} wProps={props} />
+      <Widget uncontrolled={true} widgetType={widgetType} handleChange={this.handleChange} dataObj={this.props.profileObj} wProps={props} />
     );
   }
 
@@ -71,7 +71,7 @@ export default class ProfileForm extends React.Component<IProps, IState> {
       <div>
         <BlockUi tag="div" blocking={!this.props.allowSubmit}>
           <form id={this.formID}>
-            {this.getWidget({ name: "fname", label: "First Name" })}
+            {this.getWidget({ name: "fname", label: "First Name"})}
             {this.getWidget({
               name: "initial",
               required: false,

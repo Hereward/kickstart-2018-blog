@@ -61,6 +61,7 @@ class SettingsForm extends React.Component<IProps, IState> {
         handleChange={this.handleChange}
         dataObj={this.props.settingsObj}
         wProps={props}
+        uncontrolled={true}
       />
     );
   }
