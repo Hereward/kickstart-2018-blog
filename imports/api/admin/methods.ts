@@ -9,6 +9,7 @@ import { userSessions } from "../sessions/publish";
 import { userSettings } from "../settings/publish";
 import { Profiles } from "../profiles/publish";
 import { Pages } from "../pages/publish";
+import { Posts } from "../posts/publish";
 import { ProfileImages } from "../images/methods";
 import { can as userCan } from "../../modules/user";
 import { systemSettings } from "./publish";
@@ -39,6 +40,17 @@ const authCheck = (methodName, userId, threshold = "") => {
   return auth;
 };
 
+const postsDataSrc = subscription => {
+  switch (subscription) {
+    case "posts":
+      return Posts;
+    case "pages":
+      return Pages;
+    default:
+      return "";
+  }
+};
+
 const protectedUser = (id, userId) => {
   let status = false;
   const rootAdmin = Accounts.findUserByEmail(Meteor.settings.private.adminEmail);
@@ -67,6 +79,26 @@ function deleteOneUser(id) {
   userSettings.remove({ owner: id });
   Profiles.remove({ owner: id });
 }
+
+export const imageUpdatePostAdmin = new ValidatedMethod({
+  name: "image.UpdatePostAdmin",
+  validate: new SimpleSchema({
+    id: { type: String, optional: true },
+    image_id: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("admin.imageUpdatePost", this.userId, "admin");
+
+    Posts.update(fields.id, {
+      $set: {
+        image_id: fields.image_id
+      }
+    });
+
+    return true;
+  }
+});
 
 export const imageUpdatePageAdmin = new ValidatedMethod({
   name: "image.UpdatePageAdmin",
@@ -431,15 +463,45 @@ export const toggleRole = new ValidatedMethod({
   }
 });
 
-export const deletePageList = new ValidatedMethod({
-  name: "admin.deletePageList",
+export const deletePostList = new ValidatedMethod({
+  name: "admin.deletePostList",
   validate: new SimpleSchema({
-    selected: { type: Object, blackbox: true }
+    selected: { type: Object, blackbox: true },
+    subscription: { type: String }
   }).validator(),
 
   run(fields) {
     if (!this.isSimulation) {
-      authCheck("deleteUser", this.userId, "admin");
+      authCheck("deletePostList", this.userId, "admin");
+      const dataSrc = postsDataSrc(fields.subscription);
+      const keys = Object.keys(fields.selected);
+      let deletedList = [];
+      log.info(`admin.deletePostList`, keys);
+      for (var i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+        const val = fields.selected[key];
+        if (val === true) {
+          dataSrc.remove(key);
+        }
+      }
+
+      log.info(`Selected Posts Deleted`, deletedList);
+    }
+    return true;
+  }
+});
+
+/*
+export const deletePageList = new ValidatedMethod({
+  name: "admin.deletePageList",
+  validate: new SimpleSchema({
+    selected: { type: Object, blackbox: true },
+    postsDataSrc: { type: Object, blackbox: true }
+  }).validator(),
+
+  run(fields) {
+    if (!this.isSimulation) {
+      authCheck("deletePageList", this.userId, "admin");
 
       const keys = Object.keys(fields.selected);
       let deletedList = [];
@@ -458,14 +520,35 @@ export const deletePageList = new ValidatedMethod({
     return true;
   }
 });
+*/
 
+export const deleteAllPosts = new ValidatedMethod({
+  name: "admin.deleteAllPosts",
+  validate: new SimpleSchema({
+    subscription: { type: String }
+  }).validator(),
+
+  run(fields) {
+    if (!this.isSimulation) {
+      authCheck("admin.deleteAllPosts", this.userId, "admin");
+      const dataSrc = postsDataSrc(fields.subscription);
+      dataSrc.remove({});
+    }
+
+    log.info(`admin.deleteAllPosts -DONE!`);
+
+    return true;
+  }
+});
+
+/*
 export const deleteAllPages = new ValidatedMethod({
   name: "admin.deleteAllPages",
   validate: null,
 
   run(fields) {
     if (!this.isSimulation) {
-      authCheck("admin.deleteAllUsers", this.userId, "admin");
+      authCheck("admin.deleteAllPages", this.userId, "admin");
       Pages.remove({});
     }
 
@@ -474,6 +557,7 @@ export const deleteAllPages = new ValidatedMethod({
     return true;
   }
 });
+*/
 
 export const deleteAllUsers = new ValidatedMethod({
   name: "deleteAllUsers",

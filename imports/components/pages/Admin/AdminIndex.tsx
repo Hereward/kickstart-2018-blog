@@ -208,10 +208,10 @@ class Admin extends React.Component<IProps, IState> {
         imageUpdateMethod="image.UpdatePageAdmin"
         postUpdateMethod="pages.update"
         postCreateMethod="page.create"
-        postDeleteMethod="admin.deletePageList"
-        postDeleteAllMethod="admin.deleteAllPages"
+        postDeleteMethod="admin.deletePostList"
+        postDeleteAllMethod="admin.deleteAllPosts"
         subscription="pages"
-        PostsObj={PageData}
+        PostsDataSrc={PageData}
         location={this.props.location}
         userId={this.props.userId}
         userData={this.props.userData}
@@ -230,7 +230,7 @@ class Admin extends React.Component<IProps, IState> {
         postDeleteMethod="admin.deletePostList"
         postDeleteAllMethod="admin.deleteAllPosts"
         subscription="posts"
-        PostsObj={PostData}
+        PostsDataSrc={PostData}
         location={this.props.location}
         userId={this.props.userId}
         userData={this.props.userData}

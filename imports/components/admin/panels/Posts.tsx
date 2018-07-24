@@ -43,6 +43,8 @@ interface IProps {
   postCreateMethod: string;
   postDeleteMethod: string;
   postDeleteAllMethod: string;
+  PostsDataSrc: any;
+  subscription: string;
 }
 
 interface IState {
@@ -284,8 +286,9 @@ class Posts extends React.Component<IProps, IState> {
   deleteSelected() {
     this.setState({ block: true });
     const { postDeleteMethod } = this.props;
+    const { subscription } = this.props;
 
-    Meteor.call(postDeleteMethod, { selected: this.state.selectedPosts }, err => {
+    Meteor.call(postDeleteMethod, { subscription: subscription, selected: this.state.selectedPosts }, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
         log.error(`Method [${postDeleteMethod}] failed`, err);
@@ -298,8 +301,9 @@ class Posts extends React.Component<IProps, IState> {
 
   deleteAll() {
     const { postDeleteAllMethod } = this.props;
+    const { subscription } = this.props;
     this.setState({ block: true });
-    Meteor.call(postDeleteAllMethod, {}, err => {
+    Meteor.call(postDeleteAllMethod, { subscription: subscription }, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
         log.error(`Method [${postDeleteAllMethod}] failed`, err);
@@ -599,7 +603,7 @@ export default connect(mapStateToProps)(
     switch (filterCount) {
       case 1:
         defaultSearch = false;
-        posts = props.PostsObj.find(combinedFilters, options).fetch();
+        posts = props.PostsDataSrc.find(combinedFilters, options).fetch();
         break;
 
       default:
@@ -607,12 +611,13 @@ export default connect(mapStateToProps)(
     }
 
     if (defaultSearch) {
-      posts = props.PostsObj.find({}, options).fetch();
+      posts = props.PostsDataSrc.find({}, options).fetch();
     }
     log.info(`Posts.tracker()`, posts);
 
     return {
-      allPosts: posts
+      allPosts: posts,
+      PostsDataSrc: props.PostsDataSrc
     };
   })(withStyles(styles, { withTheme: true })(Posts))
 );
