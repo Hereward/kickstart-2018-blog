@@ -181,12 +181,12 @@ class PostForm extends React.Component<IProps, IState> {
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let name = this.renderWidgetName(target.id);
-    if (name === "title" && !edit) {
+    if (name === "title" && !edit) { // set the slug value if the target field = 'title'
       const slugString = slug(value, { lower: true });
       this.setState({ slug: slugString });
     }
 
-    this.setState({ [name]: value });
+    this.setState({ [name]: value }); // set the value of the target field
   };
 
   updateBody = body => {

@@ -15,6 +15,7 @@ interface IState {}
 export default class Widget extends React.Component<IProps, IState> {
   baseCSSClass: string = "form-control tooltipster";
   simpleInputTypes: Array<string> = ["simple", "email", "text", "url"];
+  defaultState: boolean = true;
 
   constructor(props) {
     super(props);
@@ -26,10 +27,24 @@ export default class Widget extends React.Component<IProps, IState> {
     default: PropTypes.string
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.defaultState = false;
+  }
+
+  componentDidUpdate() {}
 
   handleChange(e) {
     this.props.handleChange(e);
+  }
+
+  resolveControlledInputValue(resolvedname) {
+    const { dataObj } = this.props;
+    const { stateValue } = this.props;
+    let val = stateValue;
+    if (dataObj && this.defaultState && !stateValue) {
+      val = this.props.dataObj ? this.props.dataObj[resolvedname] : "";
+    }
+    return val;
   }
 
   simple(wprops: {
@@ -52,7 +67,8 @@ export default class Widget extends React.Component<IProps, IState> {
     const typeAttribute = type === "textarea" ? "" : { type: attributeTypes[type] };
     const valueAttribute = uncontrolled
       ? { defaultValue: this.props.dataObj ? this.props.dataObj[wprops.name] : "" }
-      : { value: stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "") };
+      : { value: this.resolveControlledInputValue(resolvedname) }; 
+      // stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "")
 
     widget = (
       <CustomTag
