@@ -28,7 +28,7 @@ const HomeContent = props => (
         </p>
         <p>
           For full documentation please visit the{" "}
-          <a href="https://github.com/Hereward/kickstart-2018-enhanced">Github Repository</a>.
+          <a href="https://github.com/Hereward/kickstart-2018-blog">Github Repository</a>.
         </p>
       </div>
     </div>

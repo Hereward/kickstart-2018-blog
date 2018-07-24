@@ -18,12 +18,10 @@ import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import * as BlockUi from "react-block-ui";
-import { deleteAllPages, deleteUserList } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import * as UserModule from "../../../modules/user";
 import OptionGroup from "../components/OptionGroup";
 import PostForm from "../../admin/forms/PostForm";
-import { Pages as PagesObj } from "../../../api/pages/publish";
 import RenderImage from "../components/RenderImage";
 
 const drawerWidth = 240;
@@ -39,6 +37,7 @@ interface IProps {
   allPosts: any;
   userData: any;
   userId: string;
+  location: any;
   imageUpdateMethod: string;
   postUpdateMethod: string;
   postCreateMethod: string;
@@ -174,6 +173,31 @@ class Posts extends React.Component<IProps, IState> {
       image_id_edit: "",
       image_id_new: ""
     };
+  }
+
+  initState = () => {
+    this.setState({
+      allowSubmit: true,
+      updateDone: false,
+      queryLimit: 1,
+      expanded: "",
+      block: false,
+      showBulkOptions: false,
+      showFilterOptions: false,
+      selectedPosts: {},
+      showNewPost: false,
+      image_id_edit: "",
+      image_id_new: ""
+    });
+    this.props.dispatch({ type: "LOAD_INIT" });
+    this.props.dispatch({ type: "FILTER_INIT" });
+  };
+
+  componentDidUpdate(prevProps) {
+    const { location } = this.props;
+    if (prevProps.location.pathname !== location.pathname) {
+      this.initState();
+    }
   }
 
   UNSAFE_componentWillMount() {
@@ -552,7 +576,7 @@ export default connect(mapStateToProps)(
   withTracker(props => {
     let myImages: any;
     const imagesHandle = Meteor.subscribe("editorialImages");
-    const pagesHandle = Meteor.subscribe("pages");
+    const postsHandle = Meteor.subscribe(props.subscription);
     const options = {
       sort: { published: -1 },
       limit: props.cursorLimit
@@ -575,7 +599,7 @@ export default connect(mapStateToProps)(
     switch (filterCount) {
       case 1:
         defaultSearch = false;
-        posts = PagesObj.find(combinedFilters, options).fetch();
+        posts = props.PostsObj.find(combinedFilters, options).fetch();
         break;
 
       default:
@@ -583,7 +607,7 @@ export default connect(mapStateToProps)(
     }
 
     if (defaultSearch) {
-      posts = PagesObj.find({}, options).fetch();
+      posts = props.PostsObj.find({}, options).fetch();
     }
     log.info(`Posts.tracker()`, posts);
 

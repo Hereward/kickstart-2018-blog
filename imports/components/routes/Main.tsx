@@ -92,7 +92,7 @@ class Routes extends React.Component<IProps> {
       <Switch>
         {this.generatePages()}
         <AuthRoute exact path="/" cProps={props} component={Index} type="any" />
-        <AuthRoute exact path="/admin" cProps={props} component={Admin} type="admin" />
+        <AuthRoute path="/admin" cProps={props} component={Admin} type="admin" />
         <AuthRoute path="/members/verify-email" cProps={props} component={VerifyEmail} type="emailVerify" />
         <AuthRoute path="/members/enroll" cProps={props} component={Enroll} type="enrollment" />
         <AuthRoute path="/members/forgot-password-reset" cProps={props} component={ForgotPassWordReset} type="guest" />
@@ -107,10 +107,8 @@ class Routes extends React.Component<IProps> {
     );
   };
 
-  // <AuthRoute exact path="/about" cProps={props} component={About} type="any" />
 
   render() {
-    //log.info(`Routes.render()`, this.props);
     return this.mainRouter();
   }
 }

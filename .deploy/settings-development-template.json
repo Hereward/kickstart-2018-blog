@@ -19,7 +19,7 @@
       "userDataKey": "Meteor.Kickstart2018.User"
     },
     "images": {
-      "storagePath": "../../../../../.storage/images"
+      "storagePath": "../../../../../.storage/uploads"
     },
     "defaultContent": {
       "about": {

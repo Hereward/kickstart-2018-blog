@@ -20,6 +20,8 @@ import * as Icon from "../../../modules/icons";
 import Settings from "../../admin/panels/Settings";
 import Users from "../../admin/panels/Users";
 import Posts from "../../admin/panels/Posts";
+import { Pages as PageData } from "../../../api/pages/publish";
+import { Posts as PostData } from "../../../api/posts/publish";
 
 const drawerWidth = 240;
 let styles: any;
@@ -32,6 +34,7 @@ interface IProps {
   sessionReady: boolean;
   userData: any;
   userId: string;
+  location: any;
 }
 
 interface IState {
@@ -39,7 +42,7 @@ interface IState {
   showUsers: boolean;
   mobileOpen: boolean;
   ShowSettings: boolean;
-  panel: any;
+  currentPanel: string;
 }
 
 styles = theme => ({
@@ -115,17 +118,44 @@ styles = theme => ({
 });
 
 class Admin extends React.Component<IProps, IState> {
+  //currentPanel: string;
   constructor(props) {
     super(props);
     this.handleSetState = this.handleSetState.bind(this);
     this.activatePanel = this.activatePanel.bind(this);
+    //this.currentPanel = "";
 
+    const panel = this.initPanel();
     this.state = {
       showUsers: false,
       ShowSettings: false,
       mobileOpen: false,
-      panel: "settings"
+      currentPanel: panel
     };
+  }
+
+  initPanel() {
+    const { location } = this.props;
+    const patternA = /\/admin$/i;
+    const patternB = /\/admin\/([a-z]+)$/i;
+    let matchA = patternA.exec(location.pathname);
+    let matchB = patternB.exec(location.pathname);
+    let panel: any;
+    if (matchA) {
+      panel = "settings";
+    } else {
+      panel = matchB[1];
+    }
+    log.info(`Admin.initPanel()`, `[${panel}]`, location);
+    return panel;
+  }
+
+  componentDidUpdate(prevProps) {
+    const { location } = this.props;
+    if (prevProps.location.pathname !== location.pathname) {
+      const panel = this.initPanel();
+      this.setState({ currentPanel: panel });
+    }
   }
 
   handleDrawerToggle = () => {
@@ -137,8 +167,8 @@ class Admin extends React.Component<IProps, IState> {
   }
 
   activatePanel(panel = "") {
-    this.setState({ panel: panel, mobileOpen: false });
-
+    this.props.history.push(`/admin/${panel}`);
+    //this.setState({ panel: panel, mobileOpen: false });
     return true;
   }
 
@@ -150,12 +180,18 @@ class Admin extends React.Component<IProps, IState> {
     return <Icon.SettingsIcon onClick={this.handleSetState} stateName="ShowSettings" />;
   }
 
+  /*
   panel() {
     return this.state.panel;
   }
+  */
 
   settingsPanel() {
-    return this.props.sessionReady ? <Settings imageUpdateMethod="image.UpdateSettingsAdmin" systemSettings={this.props.systemSettings} /> : "";
+    return this.props.sessionReady ? (
+      <Settings imageUpdateMethod="image.UpdateSettingsAdmin" systemSettings={this.props.systemSettings} />
+    ) : (
+      ""
+    );
   }
 
   usersPanel() {
@@ -174,6 +210,28 @@ class Admin extends React.Component<IProps, IState> {
         postCreateMethod="page.create"
         postDeleteMethod="admin.deletePageList"
         postDeleteAllMethod="admin.deleteAllPages"
+        subscription="pages"
+        PostsObj={PageData}
+        location={this.props.location}
+        userId={this.props.userId}
+        userData={this.props.userData}
+      />
+    ) : (
+      ""
+    );
+  }
+
+  postsPanel() {
+    return this.props.sessionReady ? (
+      <Posts
+        imageUpdateMethod="image.UpdatePostAdmin"
+        postUpdateMethod="posts.update"
+        postCreateMethod="post.create"
+        postDeleteMethod="admin.deletePostList"
+        postDeleteAllMethod="admin.deleteAllPosts"
+        subscription="posts"
+        PostsObj={PostData}
+        location={this.props.location}
         userId={this.props.userId}
         userData={this.props.userData}
       />
@@ -186,8 +244,11 @@ class Admin extends React.Component<IProps, IState> {
     let layout: any;
 
     if (this.props.systemSettings) {
-      let name = this.state.panel;
-      switch (name) {
+      //let name = this.state.panel;
+      switch (this.state.currentPanel) {
+        case "home":
+          layout = this.settingsPanel();
+          break;
         case "settings":
           layout = this.settingsPanel();
           break;
@@ -196,6 +257,9 @@ class Admin extends React.Component<IProps, IState> {
           break;
         case "pages":
           layout = this.pagesPanel();
+          break;
+        case "posts":
+          layout = this.postsPanel();
           break;
         default:
           layout = "";
@@ -206,19 +270,21 @@ class Admin extends React.Component<IProps, IState> {
   }
 
   getNavStyle(panel = "") {
-    let out: any;
+    let selected: any;
     const { classes, theme } = this.props;
-    if (panel === this.state.panel) {
-      out = classes.selected;
+    if (panel === this.state.currentPanel) {
+      selected = classes.selected;
     }
 
-    return out;
+    //log.info(`Admin.getNavStyle()`, this.currentPanel, panel, selected);
+
+    return selected;
   }
 
-  render() {
+  drawerContents() {
     const { classes, theme } = this.props;
 
-    const drawer = (
+    const layout = (
       <div>
         <Hidden smDown implementation="css">
           <div className={classes.adminDrawer}>Admin Dashboard</div>
@@ -260,9 +326,29 @@ class Admin extends React.Component<IProps, IState> {
             </ListItemIcon>
             <ListItemText classes={{ primary: this.getNavStyle("pages") }} primary="Pages" />
           </ListItem>
+
+          <ListItem
+            onClick={() => {
+              this.activatePanel("posts");
+            }}
+            button
+          >
+            <ListItemIcon classes={{ root: this.getNavStyle("posts") }}>
+              <UsersIcon />
+            </ListItemIcon>
+            <ListItemText classes={{ primary: this.getNavStyle("posts") }} primary="Posts" />
+          </ListItem>
         </List>
       </div>
     );
+
+    return layout;
+  }
+
+  render() {
+    const { classes, theme } = this.props;
+    const panel = this.renderPanel();
+    const drawerContents = this.drawerContents();
 
     return (
       <div className={classes.root}>
@@ -298,7 +384,7 @@ class Admin extends React.Component<IProps, IState> {
               keepMounted: true // Better open performance on mobile.
             }}
           >
-            {drawer}
+            {drawerContents}
           </Drawer>
         </Hidden>
         <Hidden smDown implementation="css">
@@ -309,11 +395,11 @@ class Admin extends React.Component<IProps, IState> {
               paper: classes.drawerPaper
             }}
           >
-            {drawer}
+            {drawerContents}
           </Drawer>
         </Hidden>
         <main className={classes.content}>
-          <div className={classes.panelGroups}>{this.renderPanel()}</div>
+          <div className={classes.panelGroups}>{panel}</div>
         </main>
       </div>
     );

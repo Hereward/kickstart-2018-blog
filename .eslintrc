@@ -108,6 +108,7 @@
     "yoda": "warn",
     "react/jsx-first-prop-new-line": "off",
     "react/jsx-curly-brace-presence": "warn",
+    "react/no-did-update-set-state": "off",
     "prefer-arrow-callback": ["off",
       {
         "allowNamedFunctions": true
