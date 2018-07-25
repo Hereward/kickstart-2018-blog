@@ -171,8 +171,8 @@ class Admin extends React.Component<IProps, IState> {
 
   activatePanel(panel = "") {
     const dest = panel === "home" ? "/admin" : `/admin/${panel}`;
+    this.setState({ mobileOpen: false });
     this.props.history.push(dest);
-    //this.setState({ panel: panel, mobileOpen: false });
     return true;
   }
 

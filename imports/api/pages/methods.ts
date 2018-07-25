@@ -77,9 +77,7 @@ export const createPage = new ValidatedMethod({
     summary: { type: String },
     slug: { type: String },
     body: { type: String },
-    allowComments: { type: Boolean },
-    modified: { type: Date },
-    published: { type: Date }
+    allowComments: { type: Boolean }
   }).validator(),
 
   run(fields) {
@@ -96,8 +94,8 @@ export const createPage = new ValidatedMethod({
       slug: fields.slug,
       allowComments: fields.allowComments,
       closeComments: false,
-      modified: fields.modified,
-      published: fields.published
+      modified: new Date(),
+      published: new Date()
     });
 
     return true;
@@ -112,9 +110,8 @@ export const updatePage = new ValidatedMethod({
     title: { type: String },
     summary: { type: String },
     slug: { type: String },
-    body: { type: String },
+    body: { type: String, optional: true },
     closeComments: { type: Boolean },
-    modified: { type: Date }
   }).validator(),
 
   run(fields) {
@@ -133,7 +130,31 @@ export const updatePage = new ValidatedMethod({
         summary: fields.summary || current.summary,
         closeComments: fields.closeComments,
         slug: fields.slug || current.slug,
-        modified: fields.modified
+        modified: new Date()
+      }
+    });
+
+    return true;
+  }
+});
+
+export const updatePageInline = new ValidatedMethod({
+  name: "pages.updateInline",
+  validate: new SimpleSchema({
+    id: { type: String },
+    title: { type: String },
+    body: { type: String, optional: true },
+  }).validator(),
+
+  run(fields) {
+    authCheck("pages.updatePageInline", this.userId);
+    log.info(`updatePageInline`, fields);
+
+    Pages.update(fields.id, {
+      $set: {
+        title: fields.title,
+        body: fields.body,
+        modified: new Date()
       }
     });
 

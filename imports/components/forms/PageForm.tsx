@@ -123,7 +123,7 @@ export default class PageForm extends React.Component<IProps, IState> {
   getWidget(props: any) {
     let widgetType = props.widgetType ? props.widgetType : "simple";
     return (
-      <Widget widgetType={widgetType} handleChange={this.handleChange} dataObj={this.props.pageObj} wProps={props} />
+      <Widget uncontrolled={true} widgetType={widgetType} handleChange={this.handleChange} dataObj={this.props.pageObj} wProps={props} />
     );
   }
 

@@ -78,7 +78,7 @@ export default class PageContent extends React.Component<IProps, IState> {
   handleSubmit() {
     let pageFields = this.fieldMapper("method");
     this.setState({ allowSubmit: false });
-    PageMethods.updatePage.call(pageFields, err => {
+    PageMethods.updatePageInline.call(pageFields, err => {
       this.setState({ allowSubmit: true });
       if (err) {
         Library.modalErrorAlert(err.reason);

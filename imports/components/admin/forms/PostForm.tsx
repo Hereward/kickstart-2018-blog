@@ -134,12 +134,10 @@ class PostForm extends React.Component<IProps, IState> {
       image_id: image_id_current || settingsImage,
       title: this.state.title,
       summary: this.state.summary,
-      slug: this.state.slug,
-      modified: new Date()
+      slug: this.state.slug
     };
 
     if (!edit) {
-      pageFields.published = new Date();
       pageFields.allowComments = false;
     } else {
       pageFields.closeComments = false;
