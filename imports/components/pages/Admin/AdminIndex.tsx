@@ -3,6 +3,8 @@ import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import { ListGroup, ListGroupItem } from "reactstrap";
 import UsersIcon from "@material-ui/icons/Contacts";
+import HomeIcon from "@material-ui/icons/Home";
+import PagesIcon from "@material-ui/icons/Pages";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -20,6 +22,7 @@ import * as Icon from "../../../modules/icons";
 import Settings from "../../admin/panels/Settings";
 import Users from "../../admin/panels/Users";
 import Posts from "../../admin/panels/Posts";
+import Home from "../../admin/panels/Home";
 import { Pages as PageData } from "../../../api/pages/publish";
 import { Posts as PostData } from "../../../api/posts/publish";
 
@@ -142,7 +145,7 @@ class Admin extends React.Component<IProps, IState> {
     let matchB = patternB.exec(location.pathname);
     let panel: any;
     if (matchA) {
-      panel = "settings";
+      panel = "home";
     } else {
       panel = matchB[1];
     }
@@ -167,7 +170,8 @@ class Admin extends React.Component<IProps, IState> {
   }
 
   activatePanel(panel = "") {
-    this.props.history.push(`/admin/${panel}`);
+    const dest = panel === "home" ? "/admin" : `/admin/${panel}`;
+    this.props.history.push(dest);
     //this.setState({ panel: panel, mobileOpen: false });
     return true;
   }
@@ -185,6 +189,10 @@ class Admin extends React.Component<IProps, IState> {
     return this.state.panel;
   }
   */
+
+  homePanel() {
+    return this.props.sessionReady ? <Home systemSettings={this.props.systemSettings} /> : "";
+  }
 
   settingsPanel() {
     return this.props.sessionReady ? (
@@ -247,7 +255,7 @@ class Admin extends React.Component<IProps, IState> {
       //let name = this.state.panel;
       switch (this.state.currentPanel) {
         case "home":
-          layout = this.settingsPanel();
+          layout = this.homePanel();
           break;
         case "settings":
           layout = this.settingsPanel();
@@ -293,6 +301,17 @@ class Admin extends React.Component<IProps, IState> {
         <List component="nav">
           <ListItem
             onClick={() => {
+              this.activatePanel("home");
+            }}
+            button
+          >
+            <ListItemIcon classes={{ root: this.getNavStyle("home") }}>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText classes={{ primary: this.getNavStyle("home") }} primary="Home" />
+          </ListItem>
+          <ListItem
+            onClick={() => {
               this.activatePanel("settings");
             }}
             button
@@ -322,7 +341,7 @@ class Admin extends React.Component<IProps, IState> {
             button
           >
             <ListItemIcon classes={{ root: this.getNavStyle("pages") }}>
-              <UsersIcon />
+              <PagesIcon />
             </ListItemIcon>
             <ListItemText classes={{ primary: this.getNavStyle("pages") }} primary="Pages" />
           </ListItem>
@@ -334,7 +353,7 @@ class Admin extends React.Component<IProps, IState> {
             button
           >
             <ListItemIcon classes={{ root: this.getNavStyle("posts") }}>
-              <UsersIcon />
+              <PagesIcon />
             </ListItemIcon>
             <ListItemText classes={{ primary: this.getNavStyle("posts") }} primary="Posts" />
           </ListItem>
