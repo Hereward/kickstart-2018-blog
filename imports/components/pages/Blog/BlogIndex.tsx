@@ -46,7 +46,11 @@ class Blog extends React.Component<IProps, IState> {
     this.state = {};
   }
 
-  loadMore() {
+  UNSAFE_componentWillMount() {
+    this.props.dispatch({ type: "LOAD_INIT" });
+  }
+
+  loadMore = () => {
     this.props.dispatch({ type: "LOAD_MORE" });
   }
 
@@ -60,7 +64,7 @@ class Blog extends React.Component<IProps, IState> {
       layout = (
         <div>
           <h2>{post.title}</h2>
-          <div dangerouslySetInnerHTML={this.createMarkup(post.body)} />
+          <div dangerouslySetInnerHTML={this.createMarkup(post.truncatedBody)} />
         </div>
       );
     }
@@ -90,7 +94,7 @@ class Blog extends React.Component<IProps, IState> {
         {posts ? <div>{this.mapPosts(posts)}</div> : ""}
         <div className={classes.loadMore}>
           <Button variant="outlined" onClick={this.loadMore} size="small">
-            Load More
+            More Results
           </Button>
         </div>
       </div>
@@ -115,6 +119,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
+    log.info(`BlogIndex.tracker()`, props);
     let PostsDataReady = Meteor.subscribe("posts");
     let posts: any;
     const options = {

@@ -1,5 +1,6 @@
 ///<reference path="../../../index.d.ts"/>
 import { Meteor } from "meteor/meteor";
+import * as truncate from "truncate-html";
 import { Accounts } from "meteor/accounts-base";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
@@ -40,6 +41,11 @@ function slugError() {
   throw new Meteor.Error(`Invalid slug`, "Slug must be unique.");
 }
 
+function truncateHTML(html) {
+  const trunc = truncate(html, 50, { byWords: true });
+  return trunc;
+}
+
 export const createPost = new ValidatedMethod({
   name: "post.create",
   validate: new SimpleSchema({
@@ -49,12 +55,12 @@ export const createPost = new ValidatedMethod({
     summary: { type: String },
     slug: { type: String },
     body: { type: String },
-    allowComments: { type: Boolean },
+    allowComments: { type: Boolean }
   }).validator(),
 
   run(fields) {
     authCheck("post.create", this.userId);
-    log.info(`createPost`, fields);
+    const truncatedBody = truncateHTML(fields.body);
 
     slugCheck({ slug: fields.slug, type: "new" });
 
@@ -62,6 +68,7 @@ export const createPost = new ValidatedMethod({
       image_id: fields.image_id,
       title: fields.title,
       body: fields.body,
+      truncatedBody: truncatedBody,
       summary: fields.summary,
       slug: fields.slug,
       allowComments: fields.allowComments,
@@ -83,12 +90,13 @@ export const updatePost = new ValidatedMethod({
     summary: { type: String },
     slug: { type: String },
     body: { type: String },
-    closeComments: { type: Boolean },
+    closeComments: { type: Boolean }
   }).validator(),
 
   run(fields) {
     authCheck("posts.update", this.userId);
-    log.info(`updatePost`, fields);
+    const truncatedBody = truncateHTML(fields.body);
+    log.info(`updatePost`, truncatedBody);
     const current = Posts.findOne(fields.id);
     slugCheck({ slug: fields.slug, type: "update", current: current.slug });
 
@@ -97,6 +105,7 @@ export const updatePost = new ValidatedMethod({
         image_id: fields.image_id,
         title: fields.title,
         body: fields.body,
+        truncatedBody: truncatedBody,
         summary: fields.summary || current.summary,
         closeComments: fields.closeComments,
         slug: fields.slug || current.slug,
