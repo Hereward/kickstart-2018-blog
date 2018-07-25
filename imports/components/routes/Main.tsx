@@ -7,6 +7,7 @@ import Index from "../pages/Index/Index";
 import Page from "../pages/Generated/Page";
 import Admin from "../pages/Admin/AdminIndex";
 import Profile from "../pages/Profile/ProfileIndex";
+import Blog from "../pages/Blog/BlogIndex";
 import ForgotPassWord from "../pages/User/ForgotPassWord";
 import Authenticator from "../pages/User/Authenticator";
 import Register from "../pages/User/Register";
@@ -101,6 +102,7 @@ class Routes extends React.Component<IProps> {
         <AuthRoute exact path="/members/signin" cProps={props} component={SignIn} type="guest" />
         <AuthRoute exact path="/members/authenticate" cProps={props} component={Authenticator} type="user" />
         <AuthRoute exact path="/members/profile" cProps={props} component={Profile} type="user" />
+        <AuthRoute exact path="/blog" cProps={props} component={Blog} type="any" />
         <AuthRoute exact path="/locked" cProps={props} component={Locked} type="user" />
         <AuthRoute exact path="/members/change-password" cProps={props} component={ChangePassword} type="user" />
       </Switch>

@@ -224,7 +224,7 @@ class Navigation extends React.Component<IProps, IState> {
     let admin = User.can({ threshold: "super-admin" });
     return (
       <div>
-        <Navbar color="dark" expand="md" className="main-nav fixed-top" dark>
+        <Navbar color="dark" expand="lg" className="main-nav fixed-top" dark>
           <div className="navbar-brand verified">
             {this.props.systemSettings ? this.props.systemSettings.shortTitle : ""}{" "}
             {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin
@@ -244,6 +244,11 @@ class Navigation extends React.Component<IProps, IState> {
                 <NavItem>
                   <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/about">
                     About
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/blog">
+                    Blog
                   </NavLink>
                 </NavItem>
                 <NavItem>

@@ -33,7 +33,6 @@ interface IProps {
   SystemOnline: boolean;
   systemSettings: any;
   dispatch: any;
-  cursorLimit: number;
   allPosts: any;
   userData: any;
   userId: string;

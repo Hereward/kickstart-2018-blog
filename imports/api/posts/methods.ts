@@ -50,8 +50,6 @@ export const createPost = new ValidatedMethod({
     slug: { type: String },
     body: { type: String },
     allowComments: { type: Boolean },
-    modified: { type: Date },
-    published: { type: Date }
   }).validator(),
 
   run(fields) {
@@ -68,8 +66,8 @@ export const createPost = new ValidatedMethod({
       slug: fields.slug,
       allowComments: fields.allowComments,
       closeComments: false,
-      modified: fields.modified,
-      published: fields.published
+      modified: new Date(),
+      published: new Date()
     });
 
     return true;
@@ -86,7 +84,6 @@ export const updatePost = new ValidatedMethod({
     slug: { type: String },
     body: { type: String },
     closeComments: { type: Boolean },
-    modified: { type: Date }
   }).validator(),
 
   run(fields) {
@@ -103,7 +100,7 @@ export const updatePost = new ValidatedMethod({
         summary: fields.summary || current.summary,
         closeComments: fields.closeComments,
         slug: fields.slug || current.slug,
-        modified: fields.modified
+        modified: new Date()
       }
     });
 
