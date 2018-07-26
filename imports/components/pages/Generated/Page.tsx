@@ -39,7 +39,7 @@ export default withTracker(props => {
   const pattern = /[a-z0-9]+(?:-[a-z0-9]+)*$/i;
   let match = pattern.exec(path);
   const slug = match[0];
-  log.info(`Page.Tracker()`, slug, match);
+  log.info(`Page.Tracker()`, path, slug, match);
 
   //const slug = path.replace(/microsoft/i, "W3Schools");
   let page: any;

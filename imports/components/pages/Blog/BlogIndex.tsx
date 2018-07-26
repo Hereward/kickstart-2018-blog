@@ -1,7 +1,9 @@
 ///<reference path="../../../../index.d.ts"/>
 
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import * as dateFormat from "dateformat";
 import Button from "@material-ui/core/Button";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
@@ -11,25 +13,18 @@ import { Posts } from "../../../api/posts/publish";
 let styles: any;
 
 styles = theme => ({
-  heading: { color: "dimGray" },
   loadMore: {
     marginTop: "1rem",
     textAlign: "center"
-  }
-});
-
-
-/*
-styles = theme => ({
-  heading: {
-    color: "dimGray"
   },
-  loadMore: {
-    marginTop: "1rem",
-    textAlign: "center"
+  readMore: {
+    marginLeft: "auto",
+    marginTop: "-0.5rem",
+    display: "block",
+    textAlign: "right"
   }
+
 });
-*/
 
 interface IProps {
   classes: any;
@@ -52,19 +47,29 @@ class Blog extends React.Component<IProps, IState> {
 
   loadMore = () => {
     this.props.dispatch({ type: "LOAD_MORE" });
+  };
+
+  readMoreLink(post) {
+    const { classes } = this.props;
+    return <Link className={classes.readMore} to={`blog/${post.slug}`}>Read More &rarr;</Link>; 
   }
 
-  createMarkup(html) {
-    return { __html: html };
+  renderBody(post) {
+    return { __html: post.truncatedBody }; 
   }
 
   renderPost(post: any) {
+    const { classes } = this.props;
     let layout: any = "";
     if (post) {
       layout = (
         <div>
-          <h2>{post.title}</h2>
-          <div dangerouslySetInnerHTML={this.createMarkup(post.truncatedBody)} />
+          <h2 className="blogTitle">
+            <Link to={`blog/${post.slug}`}>{post.title}</Link>
+          </h2>
+          <div>{dateFormat(post.published, "dd mmmm yyyy")} | 0 Comments</div>
+          <div dangerouslySetInnerHTML={this.renderBody(post)} />
+          {this.readMoreLink(post)}
         </div>
       );
     }
@@ -93,6 +98,7 @@ class Blog extends React.Component<IProps, IState> {
       <div>
         {posts ? <div>{this.mapPosts(posts)}</div> : ""}
         <div className={classes.loadMore}>
+          <hr />
           <Button variant="outlined" onClick={this.loadMore} size="small">
             More Results
           </Button>
