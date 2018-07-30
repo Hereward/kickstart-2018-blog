@@ -4,7 +4,9 @@ import { withStyles } from "@material-ui/core/styles";
 import { ListGroup, ListGroupItem } from "reactstrap";
 import UsersIcon from "@material-ui/icons/Contacts";
 import HomeIcon from "@material-ui/icons/Home";
-import PagesIcon from "@material-ui/icons/Pages";
+import PagesIcon from "@material-ui/icons/Description";
+import CommentsIcon from "@material-ui/icons/Comment";
+import PostsIcon from "@material-ui/icons/Pages";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
@@ -25,6 +27,7 @@ import Posts from "../../admin/panels/Posts";
 import Home from "../../admin/panels/Home";
 import { Pages as PageData } from "../../../api/pages/publish";
 import { Posts as PostData } from "../../../api/posts/publish";
+import { Comments as CommentData } from "../../../api/comments/publish";
 
 const drawerWidth = 240;
 let styles: any;
@@ -149,7 +152,7 @@ class Admin extends React.Component<IProps, IState> {
     } else {
       panel = matchB[1];
     }
-    log.info(`Admin.initPanel()`, `[${panel}]`, location);
+    //log.info(`Admin.initPanel()`, `[${panel}]`, location);
     return panel;
   }
 
@@ -213,6 +216,7 @@ class Admin extends React.Component<IProps, IState> {
   pagesPanel() {
     return this.props.sessionReady ? (
       <Posts
+        contentType="pages"
         imageUpdateMethod="image.UpdatePageAdmin"
         postUpdateMethod="pages.update"
         postCreateMethod="page.create"
@@ -232,6 +236,7 @@ class Admin extends React.Component<IProps, IState> {
   postsPanel() {
     return this.props.sessionReady ? (
       <Posts
+        contentType="posts"
         imageUpdateMethod="image.UpdatePostAdmin"
         postUpdateMethod="posts.update"
         postCreateMethod="post.create"
@@ -239,6 +244,26 @@ class Admin extends React.Component<IProps, IState> {
         postDeleteAllMethod="admin.deleteAllPosts"
         subscription="posts"
         PostsDataSrc={PostData}
+        location={this.props.location}
+        userId={this.props.userId}
+        userData={this.props.userData}
+      />
+    ) : (
+      ""
+    );
+  }
+
+  commentsPanel() {
+    return this.props.sessionReady ? (
+      <Posts
+        contentType="comments"
+        imageUpdateMethod="image.UpdatePostAdmin"
+        postUpdateMethod="posts.update"
+        postCreateMethod="post.create"
+        postDeleteMethod="admin.deletePostList"
+        postDeleteAllMethod="admin.deleteAllPosts"
+        subscription="comments"
+        PostsDataSrc={CommentData}
         location={this.props.location}
         userId={this.props.userId}
         userData={this.props.userData}
@@ -268,6 +293,9 @@ class Admin extends React.Component<IProps, IState> {
           break;
         case "posts":
           layout = this.postsPanel();
+          break;
+          case "comments":
+          layout = this.commentsPanel();
           break;
         default:
           layout = "";
@@ -353,9 +381,21 @@ class Admin extends React.Component<IProps, IState> {
             button
           >
             <ListItemIcon classes={{ root: this.getNavStyle("posts") }}>
-              <PagesIcon />
+              <PostsIcon />
             </ListItemIcon>
             <ListItemText classes={{ primary: this.getNavStyle("posts") }} primary="Posts" />
+          </ListItem>
+
+          <ListItem
+            onClick={() => {
+              this.activatePanel("comments");
+            }}
+            button
+          >
+            <ListItemIcon classes={{ root: this.getNavStyle("comments") }}>
+              <CommentsIcon />
+            </ListItemIcon>
+            <ListItemText classes={{ primary: this.getNavStyle("comments") }} primary="Comments" />
           </ListItem>
         </List>
       </div>

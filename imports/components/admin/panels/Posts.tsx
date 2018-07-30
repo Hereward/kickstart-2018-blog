@@ -30,6 +30,7 @@ let styles: any;
 interface IProps {
   classes: any;
   theme: any;
+  contentType: string;
   SystemOnline: boolean;
   systemSettings: any;
   dispatch: any;
@@ -37,7 +38,7 @@ interface IProps {
   userData: any;
   userId: string;
   location: any;
-  imageUpdateMethod: string;
+  imageUpdateMethod?: string;
   postUpdateMethod: string;
   postCreateMethod: string;
   postDeleteMethod: string;
@@ -59,6 +60,7 @@ interface IState {
   showNewPost: boolean;
   image_id_edit: string;
   image_id_new: string;
+  allowCreate: boolean;
 }
 
 styles = theme => ({
@@ -172,11 +174,15 @@ class Posts extends React.Component<IProps, IState> {
       selectedPosts: {},
       showNewPost: false,
       image_id_edit: "",
-      image_id_new: ""
+      image_id_new: "",
+      allowCreate: !(props.contentType === "comments")
     };
   }
 
   initState = () => {
+    const allowCreate = !(this.props.contentType === "comments");
+    log.info(`Posts.initState - allowCreate = `, allowCreate);
+
     this.setState({
       allowSubmit: true,
       updateDone: false,
@@ -188,15 +194,18 @@ class Posts extends React.Component<IProps, IState> {
       selectedPosts: {},
       showNewPost: false,
       image_id_edit: "",
-      image_id_new: ""
+      image_id_new: "",
+      allowCreate: allowCreate
     });
     this.props.dispatch({ type: "LOAD_INIT" });
     this.props.dispatch({ type: "FILTER_INIT" });
   };
 
   componentDidUpdate(prevProps) {
+    
     const { location } = this.props;
-    if (prevProps.location.pathname !== location.pathname) {
+    if (prevProps.contentType !== this.props.contentType) {
+      //log.info(`Posts.componentDidUpdate`, prevProps, this.props);
       this.initState();
     }
   }
@@ -548,7 +557,7 @@ class Posts extends React.Component<IProps, IState> {
       <BlockUi tag="div" blocking={this.state.block}>
         {this.bulkOptions()}
         {this.filterOptions()}
-        {this.newPost()}
+        {this.state.allowCreate ? this.newPost() : ""}
 
         <div>
           <h2 className={classes.heading}>Entries</h2>
@@ -612,7 +621,7 @@ export default connect(mapStateToProps)(
     if (defaultSearch) {
       posts = props.PostsDataSrc.find({}, options).fetch();
     }
-    log.info(`Posts.tracker()`, posts);
+    //log.info(`Posts.tracker()`, posts);
 
     return {
       allPosts: posts,

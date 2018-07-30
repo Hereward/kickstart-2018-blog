@@ -5,6 +5,7 @@ import { Accounts } from "meteor/accounts-base";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Posts } from "./publish";
+import { can as userCan } from "../../modules/user";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -93,6 +94,15 @@ export const updatePostInline = new ValidatedMethod({
   run(fields) {
     authCheck("posts.updateInline", this.userId);
     log.info(`posts.updateInline`, fields);
+
+    const current = Posts.findOne(fields.id);
+
+    const allow = userCan({ threshold: "creator", owner: current.author });
+
+    if (!allow) {
+      console.log(`posts.updateInline - PERMISSION DENIED`);
+      throw new Meteor.Error(`not-authorized [posts.updateInline]`, "PERMISSION DENIED");
+    }
 
     Posts.update(fields.id, {
       $set: {

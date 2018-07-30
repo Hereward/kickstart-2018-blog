@@ -30,7 +30,7 @@ class Page extends React.Component<IProps> {
   }
 
   render() {
-    return <Transition>{User.id() ? <PageContent contentType="page" updateMethod="pages.updateInline" post={this.props.page} /> : this.defaultLayout()}</Transition>;
+    return <Transition>{User.id() ? <PageContent permissionThreshold="editor" contentType="page" updateMethod="pages.updateInline" post={this.props.page} /> : this.defaultLayout()}</Transition>;
   }
 }
 
@@ -39,7 +39,7 @@ export default withTracker(props => {
   const pattern = /[a-z0-9]+(?:-[a-z0-9]+)*$/i;
   let match = pattern.exec(path);
   const slug = match[0];
-  log.info(`Page.Tracker()`, path, slug, match);
+  //log.info(`Page.Tracker()`, path, slug, match);
 
   //const slug = path.replace(/microsoft/i, "W3Schools");
   let page: any;

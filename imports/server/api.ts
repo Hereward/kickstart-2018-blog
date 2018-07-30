@@ -10,6 +10,8 @@ import '../api/pages/publish';
 import '../api/pages/methods';
 import '../api/posts/publish'; 
 import '../api/posts/methods';
+import '../api/comments/publish'; 
+import '../api/comments/methods';
 import '../api/sessions/publish'; 
 import '../api/sessions/methods';
 import '../api/settings/publish'; 

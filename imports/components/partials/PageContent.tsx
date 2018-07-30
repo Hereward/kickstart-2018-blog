@@ -116,7 +116,7 @@ export default class PageContent extends React.Component<IProps, IState> {
     log.info(`PageContent.editLink()`, permissionThreshold);
     if (permissionThreshold === "creator") {
       allow = User.can({ threshold: "creator", owner: this.props.post.author });
-    } else if (User.id()) {
+    } else if (User.can({ threshold: "admin" })) {
       allow = true;
     }
     return allow ? <Icon.EditIcon onClick={this.handleSetState} stateName="edit" /> : "";

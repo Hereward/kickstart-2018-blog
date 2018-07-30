@@ -3,6 +3,7 @@ import { Accounts } from "meteor/accounts-base";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Pages } from "./publish";
+import { can as userCan } from "../../modules/user";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -111,7 +112,7 @@ export const updatePage = new ValidatedMethod({
     summary: { type: String },
     slug: { type: String },
     body: { type: String, optional: true },
-    closeComments: { type: Boolean },
+    closeComments: { type: Boolean }
   }).validator(),
 
   run(fields) {
@@ -143,13 +144,17 @@ export const updatePageInline = new ValidatedMethod({
   validate: new SimpleSchema({
     id: { type: String },
     title: { type: String },
-    body: { type: String, optional: true },
+    body: { type: String, optional: true }
   }).validator(),
 
   run(fields) {
     authCheck("pages.updatePageInline", this.userId);
     log.info(`updatePageInline`, fields);
-
+    const allow = userCan({ threshold: "admin" });
+    if (!allow) {
+      console.log(`pages.updatePageInline - PERMISSION DENIED`);
+      throw new Meteor.Error(`not-authorized [pages.updatePageInline]`, "PERMISSION DENIED");
+    }
     Pages.update(fields.id, {
       $set: {
         title: fields.title,

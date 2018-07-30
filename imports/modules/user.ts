@@ -170,15 +170,19 @@ export function authRequired(props) {
 export function can(params: { do?: string; threshold?: any; owner?: any }) {
   let allowed: boolean = false;
   const userId = id();
-  log.info(`User.can()`, params.threshold, params.owner, userId);
+  //log.info(`User.can()`, params.threshold, params.owner, userId);
 
   if (userId) {
     if (Roles.userIsInRole(userId, "god")) {
       allowed = true;
-    } else if (params.threshold && params.threshold === "super-admin") {
+    } else if (params.threshold === "super-admin") {
       allowed = Roles.userIsInRole(userId, ["super-admin"]);
-    } else if (params.threshold && params.threshold === "admin") {
+    } else if (params.threshold === "admin") {
       allowed = Roles.userIsInRole(userId, ["super-admin", "admin"]);
+    } else if (params.threshold === "editor") {
+      allowed = Roles.userIsInRole(userId, ["super-admin", "admin", "editor"]);
+    } else if (params.threshold === "moderator") {
+      allowed = Roles.userIsInRole(userId, ["super-admin", "admin", "editor", "moderator"]);
     } else if (params.threshold === "creator") {
       if (
         (params.owner === userId && Roles.userIsInRole(userId, ["creator"])) ||
