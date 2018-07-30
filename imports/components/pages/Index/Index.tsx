@@ -11,7 +11,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 //import Checkbox from "material-ui/Checkbox";
 import { Tasks } from "../../../api/tasks/publish";
 import Task from "../../partials/Task";
-import PageContent from "../../partials/PageContent";
 import Transition from "../../partials/Transition";
 import * as Methods from "../../../api/tasks/methods";
 import * as Library from "../../../modules/library";

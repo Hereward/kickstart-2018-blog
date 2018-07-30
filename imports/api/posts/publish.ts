@@ -10,19 +10,6 @@ if (Meteor.isServer) {
   });
 
   Meteor.startup(() => {
-    const myPosts = Posts.find();
-    if (!myPosts.count()) {
-      Posts.insert({
-        summary: Meteor.settings.public.defaultContent.about.title,
-        image_id: "",
-        slug: "about",
-        title: Meteor.settings.public.defaultContent.about.title,
-        body: Meteor.settings.public.defaultContent.about.body,
-        allowComments: false,
-        closeComments: false,
-        modified: new Date(),
-        published: new Date(),
-      });
-    }
+    
   });
 }

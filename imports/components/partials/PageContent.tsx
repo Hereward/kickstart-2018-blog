@@ -1,9 +1,10 @@
 ////<reference path="index.d.ts"/>
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
+import * as dateFormat from "dateformat";
 import { Pages } from "../../api/pages/publish";
 import Transition from "../partials/Transition";
-import PageForm from "../forms/PageForm";
+import PostForm from "../forms/PostForm";
 import * as PageMethods from "../../api/pages/methods";
 import * as Library from "../../modules/library";
 import * as Icon from "../../modules/icons";
@@ -11,7 +12,10 @@ import * as User from "../../modules/user";
 import Spinner from "./Spinner";
 
 interface IProps {
-  page: any;
+  post: any;
+  updateMethod: string;
+  contentType: string;
+  permissionThreshold?: string;
 }
 
 interface IState {
@@ -42,7 +46,7 @@ export default class PageContent extends React.Component<IProps, IState> {
       this.fieldsArray.forEach(element => (obj[element] = props[element]));
     } else if (type === "method") {
       this.fieldsArray.forEach(element => (obj[element] = this.state[element]));
-      obj["id"] = this.props.page._id;
+      obj["id"] = this.props.post._id;
     }
     return obj;
   }
@@ -53,14 +57,14 @@ export default class PageContent extends React.Component<IProps, IState> {
   }
 
   componentDidMount() {
-    if (this.props.page) {
-      this.initState(this.props.page);
+    if (this.props.post) {
+      this.initState(this.props.post);
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.page !== this.props.page) {
-      this.initState(nextProps.page);
+    if (nextProps.post !== this.props.post) {
+      this.initState(nextProps.post);
     }
   }
 
@@ -76,13 +80,14 @@ export default class PageContent extends React.Component<IProps, IState> {
   }
 
   handleSubmit() {
+    const { updateMethod } = this.props;
     let pageFields = this.fieldMapper("method");
     this.setState({ allowSubmit: false });
-    PageMethods.updatePageInline.call(pageFields, err => {
+    Meteor.call(updateMethod, pageFields, err => {
       this.setState({ allowSubmit: true });
       if (err) {
         Library.modalErrorAlert(err.reason);
-        console.log(`PageMethods.updatePage failed`, err);
+        console.log(`[${updateMethod}] failed`, err);
       } else {
         this.setState({ edit: false });
       }
@@ -91,9 +96,9 @@ export default class PageContent extends React.Component<IProps, IState> {
 
   editLayout() {
     return (
-      <PageForm
+      <PostForm
         allowSubmit={this.state.allowSubmit}
-        pageObj={this.props.page}
+        postObj={this.props.post}
         handleChange={this.handleChange}
         handleSubmit={this.handleSubmit}
         handleSetState={this.handleSetState}
@@ -106,19 +111,27 @@ export default class PageContent extends React.Component<IProps, IState> {
   }
 
   editLink() {
-    return User.id() ? <Icon.EditIcon onClick={this.handleSetState} stateName="edit" /> : "";
+    let allow: boolean = false;
+    const { permissionThreshold } = this.props;
+    log.info(`PageContent.editLink()`, permissionThreshold);
+    if (permissionThreshold === "creator") {
+      allow = User.can({ threshold: "creator", owner: this.props.post.author });
+    } else if (User.id()) {
+      allow = true;
+    }
+    return allow ? <Icon.EditIcon onClick={this.handleSetState} stateName="edit" /> : "";
   }
 
   getLayout() {
+    const { post } = this.props;
     let layout: any;
-    if (this.props.page) {
+    if (this.props.post) {
       if (this.state.edit) {
-        // EDIT PAGE
+        // EDIT
         layout = (
           <div>
             <h2>
-              Edit Page{" "}
-              <Icon.CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="edit" />
+              Edit <Icon.CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="edit" />
             </h2>
             <div>{this.editLayout()}</div>
           </div>
@@ -128,16 +141,20 @@ export default class PageContent extends React.Component<IProps, IState> {
         layout = (
           <div>
             <h1>
-              {this.props.page.title} {this.editLink()}
+              {this.props.post.title} {this.editLink()}
             </h1>
-
-            <div dangerouslySetInnerHTML={this.createMarkup(this.props.page.body)} />
+            {this.props.contentType === "post" ? (
+              <div>{dateFormat(post.published, "dd mmmm yyyy")} | 0 Comments</div>
+            ) : (
+              ""
+            )}
+            <div dangerouslySetInnerHTML={this.createMarkup(post.body)} />
           </div>
         );
       }
     } else {
       // LOADING
-      layout = <Spinner caption="loading" type='component' />;
+      layout = <Spinner caption="loading" type="component" />;
     }
 
     return layout;

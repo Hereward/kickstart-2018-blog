@@ -247,7 +247,7 @@ class Navigation extends React.Component<IProps, IState> {
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/blog">
+                  <NavLink className="nav-link" onClick={this.closeNavbar} to="/blog">
                     Blog
                   </NavLink>
                 </NavItem>

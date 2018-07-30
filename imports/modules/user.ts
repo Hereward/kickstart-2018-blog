@@ -167,9 +167,10 @@ export function authRequired(props) {
   return authRequired;
 }
 
-export function can(params: { do?: string; threshold?: any }) {
+export function can(params: { do?: string; threshold?: any; owner?: any }) {
   let allowed: boolean = false;
   const userId = id();
+  log.info(`User.can()`, params.threshold, params.owner, userId);
 
   if (userId) {
     if (Roles.userIsInRole(userId, "god")) {
@@ -178,6 +179,13 @@ export function can(params: { do?: string; threshold?: any }) {
       allowed = Roles.userIsInRole(userId, ["super-admin"]);
     } else if (params.threshold && params.threshold === "admin") {
       allowed = Roles.userIsInRole(userId, ["super-admin", "admin"]);
+    } else if (params.threshold === "creator") {
+      if (
+        (params.owner === userId && Roles.userIsInRole(userId, ["creator"])) ||
+        Roles.userIsInRole(userId, ["super-admin", "admin", "editor"])
+      ) {
+        allowed = true;
+      }
     } else if (params.threshold) {
       allowed = Roles.userIsInRole(userId, params.threshold);
     } else if (params.do === "configureNewUser") {

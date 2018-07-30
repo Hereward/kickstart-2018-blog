@@ -73,8 +73,33 @@ export const createPost = new ValidatedMethod({
       slug: fields.slug,
       allowComments: fields.allowComments,
       closeComments: false,
+      author: this.userId,
       modified: new Date(),
       published: new Date()
+    });
+
+    return true;
+  }
+});
+
+export const updatePostInline = new ValidatedMethod({
+  name: "posts.updateInline",
+  validate: new SimpleSchema({
+    id: { type: String },
+    title: { type: String },
+    body: { type: String, optional: true },
+  }).validator(),
+
+  run(fields) {
+    authCheck("posts.updateInline", this.userId);
+    log.info(`posts.updateInline`, fields);
+
+    Posts.update(fields.id, {
+      $set: {
+        title: fields.title,
+        body: fields.body,
+        modified: new Date()
+      }
     });
 
     return true;

@@ -30,7 +30,7 @@ class About extends React.Component<IProps> {
   }
 
   render() {
-    return <Transition>{User.id() ? <PageContent page={this.props.page} /> : this.defaultLayout()}</Transition>;
+    return <Transition>{User.id() ? <PageContent contentType="post" updateMethod="pages.updateInline" post={this.props.page} /> : this.defaultLayout()}</Transition>;
   }
 }
 
