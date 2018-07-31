@@ -1,14 +1,9 @@
 import * as React from "react";
-import { withTracker } from "meteor/react-meteor-data";
-import * as PropTypes from "prop-types";
 import * as jquery from "jquery";
-import Loader from "react-loader-spinner";
 import * as BlockUi from "react-block-ui";
 import "react-block-ui/style.css";
-//import RaisedButton from "material-ui/RaisedButton";
 import Button from '@material-ui/core/Button';
 import "react-quill/dist/quill.snow.css";
-import * as Icon from "../../modules/icons";
 import Widget from "./Widget";
 
 const ReactQuill = require("react-quill");
@@ -27,7 +22,7 @@ interface IState {
 }
 
 export default class PostForm extends React.Component<IProps, IState> {
-  formID: string = "ProfileForm";
+  formID: string = "PostForm";
   toolbarOptions = [
     [{ header: [1, 2, 3, 4, false] }],
     ["bold", "italic", "underline", "strike", "blockquote"],
@@ -97,7 +92,6 @@ export default class PostForm extends React.Component<IProps, IState> {
   }
 
   handleSubmit(e) {
-    console.log(`PAGE SUBMIT`);
     e.preventDefault();
     this.setState({
       disableSubmit: true

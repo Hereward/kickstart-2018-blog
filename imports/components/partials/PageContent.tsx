@@ -113,7 +113,7 @@ export default class PageContent extends React.Component<IProps, IState> {
   editLink() {
     let allow: boolean = false;
     const { permissionThreshold } = this.props;
-    log.info(`PageContent.editLink()`, permissionThreshold);
+    //log.info(`PageContent.editLink()`, permissionThreshold);
     if (permissionThreshold === "creator") {
       allow = User.can({ threshold: "creator", owner: this.props.post.author });
     } else if (User.can({ threshold: "admin" })) {

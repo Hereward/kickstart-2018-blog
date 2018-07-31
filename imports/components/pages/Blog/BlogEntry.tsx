@@ -8,6 +8,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Posts } from "../../../api/posts/publish";
 import Transition from "../../partials/Transition";
 import PageContent from "../../partials/PageContent";
+import CommentBlogSection from "../../comments/CommentBlogSection";
 
 let styles: any;
 styles = theme => ({});
@@ -46,19 +47,30 @@ class BlogEntry extends React.Component<IProps, IState> {
   }
 
   template() {
-
-    return <PageContent contentType="post" permissionThreshold="creator" updateMethod="posts.updateInline" post={this.props.post} />;
+    return (
+      <PageContent
+        contentType="post"
+        permissionThreshold="creator"
+        updateMethod="posts.updateInline"
+        post={this.props.post}
+      />
+    );
   }
 
-  allowEdit() {
-    
+  allowEdit() {}
+
+  comments() {
+    return <CommentBlogSection />;
   }
 
   render() {
     const { post } = this.props;
     return (
       <Transition>
-        <div className="container page-content">{this.renderPost()}</div>
+        <div className="container page-content">
+          {this.renderPost()}
+          {this.comments()}
+        </div>
       </Transition>
     );
   }

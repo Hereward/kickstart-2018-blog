@@ -1,3 +1,4 @@
+/*
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
@@ -5,7 +6,6 @@ import * as jquery from "jquery";
 import Loader from "react-loader-spinner";
 import * as BlockUi from "react-block-ui";
 import "react-block-ui/style.css";
-//import RaisedButton from "material-ui/RaisedButton";
 import Button from '@material-ui/core/Button';
 import "react-quill/dist/quill.snow.css";
 import * as Icon from "../../modules/icons";
@@ -69,14 +69,7 @@ export default class PageForm extends React.Component<IProps, IState> {
     };
   }
 
-  /*
-  static propTypes = {
-    handleSubmit: PropTypes.func,
-    handleChange: PropTypes.func,
-    handleSetState: PropTypes.func,
-    pageObj: PropTypes.object
-  };
-  */
+
 
   preventDefault(e) {
     e.preventDefault();
@@ -158,5 +151,5 @@ export default class PageForm extends React.Component<IProps, IState> {
     );
   }
 }
+*/
 
-// <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />

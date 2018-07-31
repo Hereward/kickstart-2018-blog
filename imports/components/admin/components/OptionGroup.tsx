@@ -1,8 +1,11 @@
 import * as React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import DropUpIcon from "@material-ui/icons/ArrowDropUp";
+import ArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
+import ArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import DropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Button from "@material-ui/core/Button";
+import IconButton from "@material-ui/core/IconButton";
 
 let styles: any;
 
@@ -13,6 +16,8 @@ interface IProps {
   action: any;
   label: string;
   transparent?: boolean;
+  tiny?: boolean;
+  minimal?: boolean;
 }
 
 interface IState {}
@@ -26,14 +31,14 @@ styles = theme => ({
     boxShadow: "none",
     backgroundColor: "transparent",
     border: "1px solid lightgray",
-    width: '12rem',
+    width: "12rem"
   },
   optionsDetail: {
     marginTop: "0.5rem",
     padding: 0
   },
   rightIcon: {
-    marginLeft: theme.spacing.unit,
+    marginLeft: theme.spacing.unit
   },
   buttonLabel: {
     justifyContent: "space-between",
@@ -42,6 +47,22 @@ styles = theme => ({
   transparent: {
     backgroundColor: "transparent",
     border: "none"
+  },
+  minimalButt: {
+    borderColor: "rgba(0, 0, 0, 0.08)",
+    width: "auto",
+    paddingTop: "0.25rem",
+    paddingBottom: "0.25rem",
+    paddingRight: 0,
+    color: "rgba(0, 0, 0, 0.8)",
+    textTransform: "none"
+  },
+  minimalRoot: {
+    marginTop: "0.3rem",
+    marginBottom: "0.3rem"
+  },
+  minimalCard: {
+    border: 0
   }
 });
 
@@ -56,14 +77,12 @@ class OptionGroup extends React.Component<IProps, IState> {
   handleClick() {}
 
   layout() {
-    const { classes } = this.props;
+    const { classes, minimal } = this.props;
 
     const layout = (
-      <div className={classes.root}>
+      <div className={minimal ? classes.minimalRoot : classes.root}>
         <div>
-          <Button classes={{ label: classes.buttonLabel }} onClick={this.props.action} variant="contained" size="small" className={classes.toggleButton}>
-            {this.props.label} {this.props.show ? <DropUpIcon className={classes.rightIcon} /> : <DropDownIcon className={classes.rightIcon} />}
-          </Button>
+          {this.button()}
           {this.props.show ? this.detail() : ""}
         </div>
       </div>
@@ -72,11 +91,34 @@ class OptionGroup extends React.Component<IProps, IState> {
     return layout;
   }
 
-  detail() {
-    const { classes } = this.props;
-    const transparent = this.props.transparent ? classes.transparent : '';
+  button() {
+    const { classes, minimal } = this.props;
+    const customStyle = minimal ? ` ${classes.minimalButt}` : "";
+    return (
+      <Button
+        classes={{ label: classes.buttonLabel }}
+        onClick={this.props.action}
+        variant="contained"
+        size="small"
+        className={`${classes.toggleButton}${customStyle}`}
+      >
+        {this.props.label}{" "}
+        {this.props.show ? (
+          <ArrowDownIcon className={classes.rightIcon} />
+        ) : (
+          <ArrowRightIcon className={classes.rightIcon} />
+        )}
+      </Button>
+    );
+  }
 
-    const layout = <div className={`card card-body ${classes.optionsDetail} ${transparent}`}>{this.props.children}</div>;
+  detail() {
+    const { classes, minimal } = this.props;
+    const transparent = this.props.transparent ? ` ${classes.transparent}` : "";
+    const borderStyle = minimal ? ` ${classes.minimalCard}` : "";
+    const layout = (
+      <div className={`card card-body ${classes.optionsDetail}${transparent}${borderStyle}`}>{this.props.children}</div>
+    );
     return layout;
   }
 
