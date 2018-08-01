@@ -20,14 +20,15 @@ const authCheck = (methodName, userId) => {
 export const createComment = new ValidatedMethod({
   name: "comment.create",
   validate: new SimpleSchema({
-    id: { type: String, optional: true },
     postId: { type: String },
+    parentId: { type: String, optional: true},
     body: { type: String }
   }).validator(),
 
   run(fields) {
     authCheck("comment.create", this.userId);
 
+    log.info(`comment.create`, fields.postId, fields.body);
     Comments.insert({
       body: fields.body,
       author: this.userId,
@@ -40,6 +41,8 @@ export const createComment = new ValidatedMethod({
     return true;
   }
 });
+
+
 
 export const updateCommentInline = new ValidatedMethod({
   name: "comment.updateInline",
@@ -72,24 +75,4 @@ export const updateCommentInline = new ValidatedMethod({
   }
 });
 
-export const updateComment = new ValidatedMethod({
-  name: "comment.update",
-  validate: new SimpleSchema({
-    id: { type: String },
-    body: { type: String }
-  }).validator(),
 
-  run(fields) {
-    authCheck("comment.update", this.userId);
-    const current = Comments.findOne(fields.id);
-
-    Comments.update(fields.id, {
-      $set: {
-        body: fields.body,
-        modified: new Date()
-      }
-    });
-
-    return true;
-  }
-});

@@ -258,8 +258,7 @@ class Admin extends React.Component<IProps, IState> {
       <Posts
         contentType="comments"
         imageUpdateMethod="image.UpdatePostAdmin"
-        postUpdateMethod="posts.update"
-        postCreateMethod="post.create"
+        postUpdateMethod="comment.updateAdmin"
         postDeleteMethod="admin.deletePostList"
         postDeleteAllMethod="admin.deleteAllPosts"
         subscription="comments"

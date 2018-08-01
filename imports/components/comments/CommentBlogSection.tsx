@@ -18,6 +18,7 @@ styles = theme => ({
 
 interface IProps {
   classes: any;
+  postId: string;
 }
 
 interface IState {
@@ -38,6 +39,12 @@ class CommentBlogSection extends React.Component<IProps, IState> {
     this.setState({ showCommentForm: vis });
   };
 
+  commentSubmitted = () => {
+    this.setState({ showCommentForm: false });
+  }
+
+   
+
   render() {
     const { classes } = this.props;
     return (
@@ -50,7 +57,7 @@ class CommentBlogSection extends React.Component<IProps, IState> {
           label="Add a Comment"
           action={this.toggleCommentForm}
         >
-          <CommentForm />
+          <CommentForm commentSubmitted={this.commentSubmitted} postId={this.props.postId} />
         </OptionGroup>
       </div>
     );

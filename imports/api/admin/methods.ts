@@ -13,6 +13,7 @@ import { Posts } from "../posts/publish";
 import { ProfileImages } from "../images/methods";
 import { can as userCan } from "../../modules/user";
 import { systemSettings } from "./publish";
+import { Comments } from "../comments/publish";
 import { lockAccountToggle, insertNewSession, purgeAllOtherSessions } from "../sessions/methods";
 import { sendVerificationEmail, newProfile } from "../profiles/methods";
 import { insertAuth } from "../auth/methods";
@@ -93,6 +94,33 @@ export const imageUpdatePostAdmin = new ValidatedMethod({
     Posts.update(fields.id, {
       $set: {
         image_id: fields.image_id
+      }
+    });
+
+    return true;
+  }
+});
+
+export const updateCommentAdmin = new ValidatedMethod({
+  name: "comment.updateAdmin",
+  validate: new SimpleSchema({
+    id: { type: String },
+    postId: { type: String },
+    parentId: { type: String },
+    body: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("comment.updateAdmin", this.userId, "admin");
+    //const current = Comments.findOne(fields.id);
+    log.info(`comment.updateAdmin`, fields);
+
+    Comments.update(fields.id, {
+      $set: {
+        postId: fields.postId,
+        parentId: fields.parentId,
+        body: fields.body,
+        modified: new Date()
       }
     });
 

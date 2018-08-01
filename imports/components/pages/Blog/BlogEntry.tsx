@@ -60,7 +60,11 @@ class BlogEntry extends React.Component<IProps, IState> {
   allowEdit() {}
 
   comments() {
-    return <CommentBlogSection />;
+    let layout: any = "";
+    if (this.props.post) {
+      layout = <CommentBlogSection postId={this.props.post._id} />;
+    }
+    return layout;
   }
 
   render() {

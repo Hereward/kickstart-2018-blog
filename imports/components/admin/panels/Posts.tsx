@@ -22,6 +22,7 @@ import * as Library from "../../../modules/library";
 import * as UserModule from "../../../modules/user";
 import OptionGroup from "../components/OptionGroup";
 import PostForm from "../../admin/forms/PostForm";
+import CommentForm from "../../admin/forms/CommentForm";
 import RenderImage from "../components/RenderImage";
 
 const drawerWidth = 240;
@@ -40,7 +41,7 @@ interface IProps {
   location: any;
   imageUpdateMethod?: string;
   postUpdateMethod: string;
-  postCreateMethod: string;
+  postCreateMethod?: string;
   postDeleteMethod: string;
   postDeleteAllMethod: string;
   PostsDataSrc: any;
@@ -202,7 +203,6 @@ class Posts extends React.Component<IProps, IState> {
   };
 
   componentDidUpdate(prevProps) {
-    
     const { location } = this.props;
     if (prevProps.contentType !== this.props.contentType) {
       //log.info(`Posts.componentDidUpdate`, prevProps, this.props);
@@ -387,21 +387,8 @@ class Posts extends React.Component<IProps, IState> {
     const { classes } = this.props;
     return (
       <div className={classes.newPostDetail}>
-        <RenderImage
-          allowEdit={true}
-          updateMethod={this.props.imageUpdateMethod}
-          updateImageId={this.updateImageId}
-          dataObj={null}
-        />
-        <PostForm
-          postCreateMethod={this.props.postCreateMethod}
-          postUpdateMethod={this.props.postUpdateMethod}
-          image_id_new={this.state.image_id_new}
-          settingsObj={null}
-          edit={false}
-          handleNewPostCreated={this.handleNewPostCreated}
-          handleEditing={this.handleEditing}
-        />
+        {this.renderImage()}
+        {this.postForm()}
       </div>
     );
   }
@@ -455,7 +442,7 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   getPostContent(dataObj) {
-    const { classes } = this.props;
+    const { classes, contentType } = this.props;
     const checkedC = this.checkCheckBox(dataObj);
     const checkBox = this.checkBox("default", dataObj, checkedC);
     return (
@@ -464,27 +451,43 @@ class Posts extends React.Component<IProps, IState> {
           <FormControlLabel control={checkBox} label="selected" />
         </div>
 
-        <RenderImage
-          allowEdit={true}
-          updateMethod={this.props.imageUpdateMethod}
-          updateImageId={this.updateImageId}
-          dataObj={dataObj}
-        />
-        <PostForm
-          postCreateMethod={this.props.postCreateMethod}
-          postUpdateMethod={this.props.postUpdateMethod}
-          image_id_edit={this.state.image_id_edit}
-          settingsObj={dataObj}
-          edit={true}
-          handleNewPostCreated={this.handleNewPostCreated}
-          handleEditing={this.handleEditing}
-        />
+        {contentType === "comments" ? "" : this.renderImage(dataObj)}
+        {contentType === "comments" ? this.commentForm(dataObj) : this.postForm(dataObj)}
       </div>
     );
   }
 
+  renderImage(dataObj = null) {
+    return (
+      <RenderImage
+        allowEdit={true}
+        updateMethod={this.props.imageUpdateMethod}
+        updateImageId={this.updateImageId}
+        dataObj={dataObj}
+      />
+    );
+  }
+
+  commentForm(dataObj) {
+    return <CommentForm postUpdateMethod={this.props.postUpdateMethod} settingsObj={dataObj} />;
+  }
+
+  postForm(dataObj = null) {
+    return (
+      <PostForm
+        postCreateMethod={this.props.postCreateMethod}
+        postUpdateMethod={this.props.postUpdateMethod}
+        image_id_edit={this.state.image_id_edit}
+        settingsObj={dataObj}
+        edit={true}
+        handleNewPostCreated={this.handleNewPostCreated}
+        handleEditing={this.handleEditing}
+      />
+    );
+  }
+
   renderPost(dataObj: any) {
-    const { classes } = this.props;
+    const { classes, contentType } = this.props;
     const { expanded } = this.state;
 
     return (
@@ -498,7 +501,7 @@ class Posts extends React.Component<IProps, IState> {
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <div className={classes.summaryData}>
-            <span className={classes.summaryDataTitle}>{dataObj.title}</span>
+            <span className={classes.summaryDataTitle}>{contentType === "comments" ? dataObj._id : dataObj.title}</span>
           </div>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.postDetails}>
