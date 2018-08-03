@@ -6,13 +6,18 @@ import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import CommentForm from "../forms/CommentForm";
 import OptionGroup from "../admin/components/OptionGroup";
+import CommentList from "./CommentList";
 
 let styles: any;
 styles = theme => ({
   heading: {
-    color: "rgba(0, 0, 0, 0.5)",
-    marginBottom: "1rem",
+    color: "rgba(0, 0, 0, 0.6)",
+    marginBottom: "0.3rem",
     marginTop: "-0.5rem"
+  },
+  review: {
+    fontStyle: "italic",
+    color: "rgba(0, 0, 0, 0.5)",
   }
 });
 
@@ -41,24 +46,25 @@ class CommentBlogSection extends React.Component<IProps, IState> {
 
   commentSubmitted = () => {
     this.setState({ showCommentForm: false });
-  }
-
-   
+  };
 
   render() {
-    const { classes } = this.props;
+    const { classes, postId } = this.props;
     return (
       <div className="container">
         <hr />
-        <h3 className={classes.heading}>Join the discussion</h3>
+        <h3 className={classes.heading}>Join The Discussion</h3>
+        <p className={classes.review}>Please review the Terms of Service before reading or responding to comments.</p>
         <OptionGroup
-          minimal={true}
           show={this.state.showCommentForm}
           label="Add a Comment"
           action={this.toggleCommentForm}
+          buttonSize="small"
+          minimal={true}
         >
           <CommentForm commentSubmitted={this.commentSubmitted} postId={this.props.postId} />
         </OptionGroup>
+        <CommentList postId={postId} />
       </div>
     );
   }

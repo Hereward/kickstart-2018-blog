@@ -112,13 +112,13 @@ export const updateCommentAdmin = new ValidatedMethod({
 
   run(fields) {
     authCheck("comment.updateAdmin", this.userId, "admin");
-    //const current = Comments.findOne(fields.id);
+    const current = Comments.findOne(fields.id);
     log.info(`comment.updateAdmin`, fields);
 
     Comments.update(fields.id, {
       $set: {
         postId: fields.postId,
-        parentId: fields.parentId,
+        parentId: fields.parentId || current._id,
         body: fields.body,
         modified: new Date()
       }

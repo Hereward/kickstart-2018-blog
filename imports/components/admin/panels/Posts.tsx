@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import { Roles } from "meteor/alanning:roles";
+import * as striptags from "striptags";
+import * as truncate from "truncate-html";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
@@ -99,6 +101,9 @@ styles = theme => ({
     },
     [theme.breakpoints.up("md")]: {
       maxWidth: "20rem"
+    },
+    [theme.breakpoints.up("lg")]: {
+      maxWidth: "42rem"
     }
   },
   summaryDataID: {
@@ -468,6 +473,12 @@ class Posts extends React.Component<IProps, IState> {
     );
   }
 
+  truncateHTML(html) {
+    const trunc = truncate(html, 15, { byWords: true });
+    const stripped = striptags(trunc);
+    return stripped;
+  }
+
   commentForm(dataObj) {
     return <CommentForm postUpdateMethod={this.props.postUpdateMethod} settingsObj={dataObj} />;
   }
@@ -501,7 +512,9 @@ class Posts extends React.Component<IProps, IState> {
       >
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <div className={classes.summaryData}>
-            <span className={classes.summaryDataTitle}>{contentType === "comments" ? dataObj._id : dataObj.title}</span>
+            <span className={classes.summaryDataTitle}>
+              {contentType === "comments" ? this.truncateHTML(dataObj.body) : dataObj.title}
+            </span>
           </div>
         </ExpansionPanelSummary>
         <ExpansionPanelDetails className={classes.postDetails}>

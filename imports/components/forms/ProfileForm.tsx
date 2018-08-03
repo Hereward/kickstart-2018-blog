@@ -71,6 +71,7 @@ export default class ProfileForm extends React.Component<IProps, IState> {
       <div>
         <BlockUi tag="div" blocking={!this.props.allowSubmit}>
           <form id={this.formID}>
+            {this.getWidget({ name: "screenName", label: "Screen Name"})}
             {this.getWidget({ name: "fname", label: "First Name"})}
             {this.getWidget({
               name: "initial",

@@ -14,6 +14,7 @@ if (Meteor.isServer) {
       { owner: this.userId },
       {
         fields: {
+          screenName: 1,
           fname: 1,
           initial: 1,
           lname: 1,

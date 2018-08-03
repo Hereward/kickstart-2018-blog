@@ -184,7 +184,7 @@ class CommentForm extends React.Component<IProps, IState> {
     const { classes, settingsObj } = this.props;
     return (
       <BlockUi tag="div" blocking={this.state.blockUI}>
-        {this.getWidget({ name: "parentid", label: "Parent ID" })}
+        {settingsObj.parentId ? this.getWidget({ name: "parentId", label: "Parent ID" }) : ""}
 
         <form className={classes.form} id={this.formID} onSubmit={this.handleSubmit}>
           <div className="form-group">

@@ -16,8 +16,13 @@ const authCheck = (methodName, userId) => {
 
 export const newProfile = userId => {
   Profiles.remove({ owner: userId });
+  const user = Meteor.users.findOne(userId);
+  const email = user.emails[0].address;
+  const nameArray = email.split("@");
+  //log.info("newProfile()", name);
 
   let id = Profiles.insert({
+    screenName: nameArray[0],
     fname: "",
     initial: "",
     lname: "",
@@ -80,6 +85,7 @@ export const updateProfile = new ValidatedMethod({
   name: "profiles.update",
   validate: new SimpleSchema({
     id: { type: String },
+    screenName: { type: String },
     fname: { type: String },
     initial: { type: String },
     lname: { type: String },
@@ -97,6 +103,7 @@ export const updateProfile = new ValidatedMethod({
 
     Profiles.update(fields.id, {
       $set: {
+        screenName: fields.screenName,
         fname: fields.fname,
         initial: fields.initial,
         lname: fields.lname,

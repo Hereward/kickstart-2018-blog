@@ -1,6 +1,8 @@
 ///<reference path="../../../../index.d.ts"/>
 
 import { Meteor } from "meteor/meteor";
+import { withStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 import { Accounts } from "meteor/accounts-base";
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
@@ -20,8 +22,16 @@ import { purgeAllOtherSessions } from "../../../api/sessions/methods";
 import * as User from "../../../modules/user";
 import Spinner from "../../partials/Spinner";
 
+let styles: any;
+styles = theme => ({
+  cardHeader: {
+    fontWeight: "bold"
+  },
+});
+
 interface IProps {
   history: any;
+  classes: PropTypes.object.isRequired;
   enhancedAuth: boolean;
   signedIn: boolean;
   profile: any;
@@ -45,7 +55,19 @@ interface IState {
 }
 
 class Profile extends React.Component<IProps, IState> {
-  fieldsArray = ["fname", "initial", "lname", "dob", "street1", "street2", "city", "region", "postcode", "country"];
+  fieldsArray = [
+    "fname",
+    "initial",
+    "lname",
+    "screenName",
+    "dob",
+    "street1",
+    "street2",
+    "city",
+    "region",
+    "postcode",
+    "country"
+  ];
 
   state: any;
 
@@ -197,6 +219,7 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   getItems(iProps: { items: any[]; label?: string; method?: string; eClass?: string; format?: string }) {
+    const { classes } = this.props;
     if (!iProps.method) {
       iProps.method = "push";
     }
@@ -205,17 +228,26 @@ class Profile extends React.Component<IProps, IState> {
     }
     let layout = [];
     let content = "";
-    let el = iProps.eClass === "card-header" ? "div" : "li";
+    let CustomTag: string;
+    let customClass = "";
+    if (iProps.eClass === "card-header") {
+      CustomTag = "div";
+      customClass="cardHeader";
+    } else {
+      CustomTag = "li";
+    }
+    //let CustomTag = iProps.eClass === "card-header" ? "div" : "li";
+    
     let key: number = 0;
-    let label = iProps.label ? <span>{iProps.label}: </span> : "";
+    let label = iProps.label ? <strong>{iProps.label}: </strong> : "";
 
     iProps.items.forEach(
       function iterateItem(item) {
         if (this.props.profile[item]) {
           if (iProps.method === "push") {
-            const CustomTag = el;
+           // const CustomTag = el;
             layout.push(
-              <CustomTag key={key} className={iProps.eClass}>
+              <CustomTag key={key} className={`${iProps.eClass} ${classes[customClass]}`}>
                 {label}
                 {this.format(this.props.profile[item].trim(), iProps.format)}
               </CustomTag>
@@ -228,9 +260,9 @@ class Profile extends React.Component<IProps, IState> {
       }.bind(this)
     );
     if (iProps.method === "concat") {
-      const CustomTag = el;
+     // const CustomTag = el;
       layout.push(
-        <CustomTag key={key} className={iProps.eClass}>
+        <CustomTag key={key} className={`${iProps.eClass} ${classes[customClass]}`}>
           {label}
           {content.trim()}
         </CustomTag>
@@ -338,6 +370,7 @@ class Profile extends React.Component<IProps, IState> {
               method: "concat"
             })}
             <ul className="list-group list-group-flush">
+              {this.getItems({ label: "Screen Name", items: ["screenName"] })}
               {this.getItems({ label: "DOB", items: ["dob"], format: "date" })}
               {this.getItems({ items: ["street1", "street2"] })}
               {this.getItems({ items: ["city"] })}
@@ -420,4 +453,4 @@ export default withTracker(props => {
     userEmail: userEmail,
     emailVerified: emailVerified
   };
-})(Profile);
+})(withStyles(styles, { withTheme: true })(Profile));
