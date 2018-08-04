@@ -69,7 +69,8 @@ export const updateProfileImage = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    authCheck("profiles.update", this.userId);
+    log.info(`profileImage.update`, fields.id, fields.image_id);
+    authCheck("profileImage.update", this.userId);
 
     Profiles.update(fields.id, {
       $set: {

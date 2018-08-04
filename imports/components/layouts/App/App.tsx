@@ -96,7 +96,7 @@ export default withRouter(
     withTracker(props => {
       let isClient = Meteor.isClient;
       let userSettingsRec: any;
-      let profilesHandle = Meteor.subscribe("profiles");
+      let profilesHandle = Meteor.subscribe("profiles-public");
       let userSettingsHandle = Meteor.subscribe("userSettings");
       let userSessionHandle = Meteor.subscribe("userSessions");
       let systemSettingsHandle = Meteor.subscribe("systemSettings");
@@ -118,13 +118,13 @@ export default withRouter(
       connected = Meteor.status().connected;
       connectionRetryCount = Meteor.status().retryCount;
 
-      let profile: any;
+      let profilePublic: any;
 
       if (userId && userData) {
         sessionToken = User.sessionToken("get");
         let hashedToken = sessionToken ? User.hash(sessionToken) : "";
 
-        profile = Profiles.findOne({ owner: userId });
+        profilePublic = Profiles.findOne({ owner: userId });
 
         userSettingsRec = userSettings.findOne({ owner: userId });
 
@@ -158,7 +158,7 @@ export default withRouter(
         sessionActive: sessionActive,
         sessionExpired: sessionExpired,
         loggingIn: loggingIn,
-        profile: profile,
+        profilePublic: profilePublic,
         sessionToken: sessionToken,
         sessionReady: sessionReady,
         connected: connected,

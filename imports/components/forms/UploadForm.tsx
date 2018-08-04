@@ -54,10 +54,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
   uploadIt(e) {
     e.preventDefault();
 
-    const { Images } = this.props;
-    const { updateMethod } = this.props;
-    const { dataObj } = this.props;
-    const { updateDirect } = this.props;
+    const { Images, updateMethod, dataObj, updateDirect } = this.props;
 
     //let self = this;
 

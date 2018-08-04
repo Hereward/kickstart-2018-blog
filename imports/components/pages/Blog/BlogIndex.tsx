@@ -125,7 +125,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
-    log.info(`BlogIndex.tracker()`, props);
+    //log.info(`BlogIndex.tracker()`, props);
     let PostsDataReady = Meteor.subscribe("posts");
     let posts: any;
     const options = {

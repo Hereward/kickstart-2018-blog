@@ -31,7 +31,7 @@ export const createComment = new ValidatedMethod({
     log.info(`comment.create`, fields.postId, fields.body);
     Comments.insert({
       body: fields.body,
-      author: this.userId,
+      authorId: this.userId,
       postId: fields.postId,
       parentId: fields.parentId || "",
       modified: new Date(),
@@ -57,7 +57,7 @@ export const updateCommentInline = new ValidatedMethod({
 
     const current = Comments.findOne(fields.id);
 
-    const allow = userCan({ threshold: "creator", owner: current.author });
+    const allow = userCan({ threshold: "creator", owner: current.authorId });
 
     if (!allow) {
       console.log(`comment.updateInline - PERMISSION DENIED`);

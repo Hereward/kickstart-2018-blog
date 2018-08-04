@@ -8,7 +8,6 @@ export const Profiles = new Mongo.Collection("profiles");
 if (Meteor.isServer) {
   Meteor.publish("profiles", function profilesPublication() {
     if (!this.userId) return this.ready();
-    //return Profiles.find({ owner: this.userId });
 
     return Profiles.find(
       { owner: this.userId },
@@ -29,6 +28,23 @@ if (Meteor.isServer) {
           verificationEmailSent: 1,
           new: 1,
           createdAt: 1,
+          owner: 1
+        }
+      }
+    );
+  });
+
+  Meteor.publish("profiles-public", function profilesPublication() {
+    if (!this.userId) return this.ready();
+
+    return Profiles.find(
+      { owner: this.userId },
+      {
+        fields: {
+          screenName: 1,
+          fname: 1,
+          initial: 1,
+          lname: 1,
           owner: 1
         }
       }

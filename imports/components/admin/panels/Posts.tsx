@@ -298,10 +298,9 @@ class Posts extends React.Component<IProps, IState> {
 
   deleteSelected() {
     this.setState({ block: true });
-    const { postDeleteMethod } = this.props;
-    const { subscription } = this.props;
+    const { postDeleteMethod, contentType } = this.props;
 
-    Meteor.call(postDeleteMethod, { subscription: subscription, selected: this.state.selectedPosts }, err => {
+    Meteor.call(postDeleteMethod, { contentType: contentType, selected: this.state.selectedPosts }, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
         log.error(`Method [${postDeleteMethod}] failed`, err);
@@ -313,10 +312,9 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   deleteAll() {
-    const { postDeleteAllMethod } = this.props;
-    const { subscription } = this.props;
+    const { postDeleteAllMethod, contentType } = this.props;
     this.setState({ block: true });
-    Meteor.call(postDeleteAllMethod, { subscription: subscription }, err => {
+    Meteor.call(postDeleteAllMethod, { contentType: contentType }, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
         log.error(`Method [${postDeleteAllMethod}] failed`, err);

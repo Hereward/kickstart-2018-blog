@@ -41,12 +41,14 @@ const authCheck = (methodName, userId, threshold = "") => {
   return auth;
 };
 
-const postsDataSrc = subscription => {
-  switch (subscription) {
+const postsDataSrc = contentType => {
+  switch (contentType) {
     case "posts":
       return Posts;
     case "pages":
       return Pages;
+    case "comments":
+      return Comments;
     default:
       return "";
   }
@@ -495,13 +497,13 @@ export const deletePostList = new ValidatedMethod({
   name: "admin.deletePostList",
   validate: new SimpleSchema({
     selected: { type: Object, blackbox: true },
-    subscription: { type: String }
+    contentType: { type: String }
   }).validator(),
 
   run(fields) {
     if (!this.isSimulation) {
       authCheck("deletePostList", this.userId, "admin");
-      const dataSrc = postsDataSrc(fields.subscription);
+      const dataSrc = postsDataSrc(fields.contentType);
       const keys = Object.keys(fields.selected);
       let deletedList = [];
       log.info(`admin.deletePostList`, keys);
@@ -553,13 +555,13 @@ export const deletePageList = new ValidatedMethod({
 export const deleteAllPosts = new ValidatedMethod({
   name: "admin.deleteAllPosts",
   validate: new SimpleSchema({
-    subscription: { type: String }
+    contentType: { type: String }
   }).validator(),
 
   run(fields) {
     if (!this.isSimulation) {
       authCheck("admin.deleteAllPosts", this.userId, "admin");
-      const dataSrc = postsDataSrc(fields.subscription);
+      const dataSrc = postsDataSrc(fields.contentType);
       dataSrc.remove({});
     }
 

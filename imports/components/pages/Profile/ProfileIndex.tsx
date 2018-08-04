@@ -13,6 +13,7 @@ import * as ProfileMethods from "../../../api/profiles/methods";
 import * as Library from "../../../modules/library";
 import { EditIcon, CancelEditIcon } from "../../../modules/icons";
 import UploadForm from "../../forms/UploadForm";
+import { Profiles } from "../../../api/profiles/publish";
 import { ProfileImages } from "../../../api/images/methods";
 import { deleteAllUsers } from "../../../api/admin/methods";
 import Image from "../../partials/Image";
@@ -26,7 +27,7 @@ let styles: any;
 styles = theme => ({
   cardHeader: {
     fontWeight: "bold"
-  },
+  }
 });
 
 interface IProps {
@@ -186,6 +187,8 @@ class Profile extends React.Component<IProps, IState> {
     }
   }
 
+  componentWillUnmount() {}
+
   setEditor(state) {
     this.setState({ editProfile: state });
   }
@@ -232,12 +235,12 @@ class Profile extends React.Component<IProps, IState> {
     let customClass = "";
     if (iProps.eClass === "card-header") {
       CustomTag = "div";
-      customClass="cardHeader";
+      customClass = "cardHeader";
     } else {
       CustomTag = "li";
     }
     //let CustomTag = iProps.eClass === "card-header" ? "div" : "li";
-    
+
     let key: number = 0;
     let label = iProps.label ? <strong>{iProps.label}: </strong> : "";
 
@@ -245,7 +248,7 @@ class Profile extends React.Component<IProps, IState> {
       function iterateItem(item) {
         if (this.props.profile[item]) {
           if (iProps.method === "push") {
-           // const CustomTag = el;
+            // const CustomTag = el;
             layout.push(
               <CustomTag key={key} className={`${iProps.eClass} ${classes[customClass]}`}>
                 {label}
@@ -260,7 +263,7 @@ class Profile extends React.Component<IProps, IState> {
       }.bind(this)
     );
     if (iProps.method === "concat") {
-     // const CustomTag = el;
+      // const CustomTag = el;
       layout.push(
         <CustomTag key={key} className={`${iProps.eClass} ${classes[customClass]}`}>
           {label}
@@ -292,8 +295,9 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   renderImage() {
+    const { profile, myImages } = this.props;
     let layout: any;
-    if (this.props.profile) {
+    if (profile) {
       if (this.state.editImage) {
         layout = (
           <div>
@@ -305,8 +309,8 @@ class Profile extends React.Component<IProps, IState> {
               Images={ProfileImages}
               fileLocator=""
               loading={false}
-              imageArray={this.props.myImages}
-              dataObj={this.props.profile}
+              imageArray={myImages}
+              dataObj={profile}
               updateMethod="profileImage.update"
               updateDirect={true}
               allowEdit={true}
@@ -390,7 +394,6 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   getNotifications() {
-    log.info(`getNotifications`, this.props.emailVerified, this.props.enhancedAuth);
     let layout = (
       <div className="notifications">
         {this.props.emailVerified === false ? (
@@ -434,6 +437,8 @@ class Profile extends React.Component<IProps, IState> {
 export default withTracker(props => {
   let myImages: any;
   let ImagesDataReady = Meteor.subscribe("profileImages");
+  const profilesHandle = Meteor.subscribe("profiles");
+  const profile = Profiles.findOne({ owner: props.userId });
   let userEmail: string;
   let emailVerified: boolean = false;
 
@@ -443,12 +448,13 @@ export default withTracker(props => {
   }
 
   if (ImagesDataReady) {
-    if (props.profile) {
-      let cursor: any = ProfileImages.find({ _id: props.profile.image_id });
+    if (profile) {
+      let cursor: any = ProfileImages.find({ _id: profile.image_id });
       myImages = cursor.fetch();
     }
   }
   return {
+    profile: profile,
     myImages: myImages,
     userEmail: userEmail,
     emailVerified: emailVerified
