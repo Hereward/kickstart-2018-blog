@@ -9,6 +9,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Transition from "../../partials/Transition";
 import { Posts } from "../../../api/posts/publish";
+import { Comments } from "../../../api/comments/publish";
 
 let styles: any;
 
@@ -23,13 +24,13 @@ styles = theme => ({
     display: "block",
     textAlign: "right"
   }
-
 });
 
 interface IProps {
   classes: any;
   posts: any;
   dispatch: any;
+  totalComments: number;
 }
 
 interface IState {}
@@ -51,11 +52,15 @@ class Blog extends React.Component<IProps, IState> {
 
   readMoreLink(post) {
     const { classes } = this.props;
-    return <Link className={classes.readMore} to={`blog/${post.slug}`}>Read More &rarr;</Link>; 
+    return (
+      <Link className={classes.readMore} to={`blog/${post.slug}`}>
+        Read More &rarr;
+      </Link>
+    );
   }
 
   renderBody(post) {
-    return { __html: post.truncatedBody }; 
+    return { __html: post.truncatedBody };
   }
 
   renderPost(post: any) {
@@ -67,7 +72,9 @@ class Blog extends React.Component<IProps, IState> {
           <h2 className="blogTitle">
             <Link to={`blog/${post.slug}`}>{post.title}</Link>
           </h2>
-          <div>{dateFormat(post.published, "dd mmmm yyyy")} | 0 Comments</div>
+          <div>
+            {dateFormat(post.published, "dd mmmm yyyy")} | {Comments.find({ postId: post._id }).count()} Comments
+          </div>
           <div dangerouslySetInnerHTML={this.renderBody(post)} />
           {this.readMoreLink(post)}
         </div>
@@ -126,6 +133,7 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps)(
   withTracker(props => {
     //log.info(`BlogIndex.tracker()`, props);
+    const commentsHandle = Meteor.subscribe("comments");
     let PostsDataReady = Meteor.subscribe("posts");
     let posts: any;
     const options = {

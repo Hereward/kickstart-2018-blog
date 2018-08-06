@@ -24,6 +24,7 @@ styles = theme => ({
 interface IProps {
   classes: any;
   postId: string;
+  userId: string;
 }
 
 interface IState {
@@ -60,11 +61,10 @@ class CommentBlogSection extends React.Component<IProps, IState> {
           label="Add a Comment"
           action={this.toggleCommentForm}
           buttonSize="small"
-          minimal={true}
         >
           <CommentForm commentSubmitted={this.commentSubmitted} postId={this.props.postId} />
         </OptionGroup>
-        <CommentList postId={postId} />
+        <CommentList userId={this.props.userId} postId={postId} />
       </div>
     );
   }

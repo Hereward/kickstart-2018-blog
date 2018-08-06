@@ -8,14 +8,18 @@ import { Card, CardImg, CardText, CardBody, CardTitle, CardSubtitle } from "reac
 import Button from "@material-ui/core/Button";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
-import OptionGroup from "../admin/components/OptionGroup";
 import { Profiles } from "../../api/profiles/publish";
+import OptionGroup from "../admin/components/OptionGroup";
+import CommentForm from "../forms/CommentForm";
 
 let styles: any;
 styles = theme => ({
   card: {
     marginTop: "1rem",
     backgroundColor: "#fdf9f4"
+  },
+  cardBody: {
+    paddingBottom: "0.75rem"
   }
 });
 
@@ -25,21 +29,35 @@ interface IProps {
   commenterProfile: PropTypes.object.isRequired;
   profilePublic: PropTypes.object.isRequired;
   dispatch: any;
+  userId: string;
 }
 
-interface IState {}
+interface IState {
+  showReplyForm: boolean;
+}
 
 class CommentList extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      showReplyForm: false
+    };
   }
+
+  toggleReply = () => {
+    const vis = !this.state.showReplyForm;
+    this.setState({ showReplyForm: vis });
+  };
 
   renderComment(comment) {
     //layout: any = "";
     return <div dangerouslySetInnerHTML={this.createMarkup(comment.body)} />;
   }
+
+  commentSubmitted = () => {
+    this.setState({ showReplyForm: false });
+  };
 
   createMarkup(html) {
     return { __html: html };
@@ -48,15 +66,31 @@ class CommentList extends React.Component<IProps, IState> {
   // <CardTitle>Card title</CardTitle>
   // <Button>Button</Button>
 
+  reply() {
+    const { comment } = this.props;
+    return (
+      <OptionGroup
+        show={this.state.showReplyForm}
+        transparent={true}
+        minimal={true}
+        label="Reply"
+        action={this.toggleReply}
+      >
+        <CommentForm commentSubmitted={this.commentSubmitted} parentId={comment._id} postId={comment.postId} />
+      </OptionGroup>
+    );
+  }
+
   layout() {
     const { classes, comment, commenterProfile } = this.props;
     const layout = (
       <Card className={classes.card}>
-        <CardBody>
+        <CardBody className={classes.cardBody}>
           <CardSubtitle>
             {commenterProfile.screenName} | {dateFormat(comment.published, "dd mmmm yyyy, h:MM:ss")}
           </CardSubtitle>
           <div className="card-text">{this.renderComment(comment)}</div>
+          {this.props.userId ? this.reply() : ""}
         </CardBody>
       </Card>
     );
@@ -72,7 +106,7 @@ export default connect()(
   withTracker(props => {
     //const profilesHandle = Meteor.subscribe("profiles-public");
     const profile = Profiles.findOne({ owner: props.comment.authorId });
-    log.info(`Comment Tracker`, props.comment.authorId, profile);
+    // log.info(`Comment Tracker`, props.comment.authorId, profile);
     return {
       commenterProfile: profile
     };

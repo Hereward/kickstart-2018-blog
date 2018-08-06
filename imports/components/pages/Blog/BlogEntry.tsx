@@ -9,12 +9,15 @@ import { Posts } from "../../../api/posts/publish";
 import Transition from "../../partials/Transition";
 import PageContent from "../../partials/PageContent";
 import CommentBlogSection from "../../comments/CommentBlogSection";
+import { Comments } from "../../../api/comments/publish";
 
 let styles: any;
 styles = theme => ({});
 
 interface IProps {
   post: any;
+  totalComments: number;
+  userId: string;
 }
 
 interface IState {}
@@ -53,6 +56,7 @@ class BlogEntry extends React.Component<IProps, IState> {
         permissionThreshold="creator"
         updateMethod="posts.updateInline"
         post={this.props.post}
+        totalComments={this.props.totalComments}
       />
     );
   }
@@ -62,7 +66,7 @@ class BlogEntry extends React.Component<IProps, IState> {
   comments() {
     let layout: any = "";
     if (this.props.post) {
-      layout = <CommentBlogSection postId={this.props.post._id} />;
+      layout = <CommentBlogSection userId={this.props.userId} postId={this.props.post._id} />;
     }
     return layout;
   }
@@ -83,7 +87,10 @@ class BlogEntry extends React.Component<IProps, IState> {
 export default connect()(
   withTracker(props => {
     let PostsDataReady = Meteor.subscribe("posts");
+    const commentsHandle = Meteor.subscribe("comments");
     let post: any;
+    let totalComments = 0;
+
     //const path = props.location.pathname;
     //const pattern = /[a-z0-9]+(?:-[a-z0-9]+)*$/i;
     //let match = pattern.exec(path);
@@ -93,9 +100,13 @@ export default connect()(
     //log.info(`BlogEntry.Tracker()`, path, slug, props.location, match, match2);
     if (PostsDataReady) {
       post = Posts.findOne({ slug: slug });
+      if (post) {
+        totalComments = Comments.find({ postId: post._id }).count();
+      }
     }
     return {
-      post: post
+      post: post,
+      totalComments: totalComments
     };
   })(withStyles(styles, { withTheme: true })(BlogEntry))
 );

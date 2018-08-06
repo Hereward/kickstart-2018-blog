@@ -151,7 +151,7 @@ class CommentForm extends React.Component<IProps, IState> {
 
     const fields = {
       postId: postId,
-      parentId: parentId,
+      parentId: parentId || "",
       body: this.state.body
     };
 
@@ -178,10 +178,11 @@ class CommentForm extends React.Component<IProps, IState> {
   }
 
   render() {
-    const { classes, settingsObj } = this.props;
+    const { classes, settingsObj, postId, parentId } = this.props;
+    const formId = parentId ? `${this.formID}_${parentId}` : `${this.formID}_${postId}`;
     return (
       <BlockUi tag="div" blocking={this.state.blockUI}>
-        <form className={classes.form} id={this.formID} onSubmit={this.handleSubmit}>
+        <form className={classes.form} id={formId} onSubmit={this.handleSubmit}>
           <div className="form-group">
             <ReactQuill
               className={`${classes.rte} novalidate`}

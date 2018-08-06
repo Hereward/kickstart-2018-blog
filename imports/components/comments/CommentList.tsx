@@ -36,6 +36,7 @@ interface IProps {
   dispatch: any;
   totalComments: number;
   cursorLimit: number;
+  userId: string;
 }
 
 interface IState {}
@@ -65,7 +66,7 @@ class CommentList extends React.Component<IProps, IState> {
     const { classes, comments } = this.props;
     const mapped = comments.map(comment => {
       //const checkedC = this.checkCheckBox(post);
-      const layout = <Comment key={comment._id} comment={comment} />;
+      const layout = <Comment userId={this.props.userId} key={comment._id} comment={comment} />;
       return layout;
     });
 
@@ -88,7 +89,7 @@ class CommentList extends React.Component<IProps, IState> {
   render() {
     const { classes, comments, totalComments, cursorLimit } = this.props;
     if (comments) {
-      log.info(`CommentList.render()`, comments, totalComments);
+      //log.info(`CommentList.render()`, comments, totalComments);
     }
 
     return (
@@ -114,7 +115,7 @@ export default connect(mapStateToProps)(
       limit: props.cursorLimit
     };
     const totalComments = Comments.find({ postId: props.postId }).count();
-    const commentsList = Comments.find({ postId: props.postId }, options).fetch();
+    const commentsList = Comments.find({ parentId: "", postId: props.postId }, options).fetch();
     return {
       comments: commentsList,
       totalComments: totalComments

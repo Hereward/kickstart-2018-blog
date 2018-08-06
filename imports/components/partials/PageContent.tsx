@@ -16,6 +16,7 @@ interface IProps {
   updateMethod: string;
   contentType: string;
   permissionThreshold?: string;
+  totalComments?: number;
 }
 
 interface IState {
@@ -123,7 +124,7 @@ export default class PageContent extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    const { post } = this.props;
+    const { post, totalComments } = this.props;
     let layout: any;
     if (this.props.post) {
       if (this.state.edit) {
@@ -144,7 +145,7 @@ export default class PageContent extends React.Component<IProps, IState> {
               {this.props.post.title} {this.editLink()}
             </h1>
             {this.props.contentType === "post" ? (
-              <div>{dateFormat(post.published, "dd mmmm yyyy")} | 0 Comments</div>
+              <div>{dateFormat(post.published, "dd mmmm yyyy")} | {totalComments} Comments</div>
             ) : (
               ""
             )}

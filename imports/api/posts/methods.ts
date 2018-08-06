@@ -62,6 +62,7 @@ export const createPost = new ValidatedMethod({
   run(fields) {
     authCheck("post.create", this.userId);
     const truncatedBody = truncateHTML(fields.body);
+    log.info(`post.create`, fields);
 
     slugCheck({ slug: fields.slug, type: "new" });
 
@@ -74,7 +75,7 @@ export const createPost = new ValidatedMethod({
       slug: fields.slug,
       allowComments: fields.allowComments,
       closeComments: false,
-      author: this.userId,
+      authorId: this.userId,
       modified: new Date(),
       published: new Date()
     });

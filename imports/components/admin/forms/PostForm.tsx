@@ -17,8 +17,8 @@ interface IProps {
   settingsObj: any;
   classes: any;
   edit: boolean;
-  image_id_edit?: string;
-  image_id_new?: string;
+  imageIDedit?: string;
+  imageIDnew?: string;
   dispatch: any;
   postUpdateMethod: any;
   postCreateMethod: any;
@@ -103,6 +103,7 @@ class PostForm extends React.Component<IProps, IState> {
       body: settingsObj ? settingsObj.body : "",
       blockUI: false
     };
+    //log.info(`PostForm.constructor()`, this.props);
   }
 
   componentDidMount() {
@@ -114,16 +115,11 @@ class PostForm extends React.Component<IProps, IState> {
   };
 
   handleSubmit = () => {
-    const { settingsObj } = this.props;
-    const { image_id_edit } = this.props;
-    const { image_id_new } = this.props;
-    const { edit } = this.props;
-    const { postUpdateMethod } = this.props;
-    const { postCreateMethod } = this.props;
-    const { handleNewPostCreated } = this.props;
-    const { handleEditing } = this.props;
+    log.info(`PostForm.handleSubmit()`, this.props);
+    const { settingsObj, imageIDedit, imageIDnew, edit, postUpdateMethod, postCreateMethod, handleNewPostCreated, handleEditing} = this.props;
 
-    const image_id_current = edit ? image_id_edit : image_id_new;
+
+    const image_id_current = edit ? imageIDedit : imageIDnew;
 
     const settingsImage = settingsObj ? settingsObj.image_id : "";
     let pageFields: any;

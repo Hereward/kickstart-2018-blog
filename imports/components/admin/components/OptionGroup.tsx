@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import Icon from "@material-ui/core/Icon";
 import { withStyles } from "@material-ui/core/styles";
 import DropUpIcon from "@material-ui/icons/ArrowDropUp";
 import ArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
@@ -17,7 +18,6 @@ interface IProps {
   action: any;
   label: string;
   transparent?: boolean;
-  tiny?: boolean;
   minimal?: boolean;
   buttonType?: string;
   buttonSize: string;
@@ -32,8 +32,11 @@ styles = theme => ({
   },
   link: {
     color: "black",
-    '&:hover': {
+    fontSize: "0.9rem",
+    fontweight: "bold",
+    "&:hover": {
       textDecoration: "none",
+      color: "red"
     }
   },
   linkLabel: {
@@ -52,6 +55,10 @@ styles = theme => ({
     marginTop: "0.5rem",
     padding: 0
   },
+  smallIcon: {
+    height: "1rem",
+    marginLeft: theme.spacing.unit
+  },
   rightIcon: {
     marginLeft: theme.spacing.unit
   },
@@ -67,11 +74,14 @@ styles = theme => ({
   minimalButt: {
     borderColor: "rgba(0, 0, 0, 0.08)",
     width: "auto",
-    paddingTop: "0.25rem",
-    paddingBottom: "0.25rem",
+    paddingTop: "0.2rem",
+    paddingBottom: "0.2rem",
     //paddingRight: 0,
     color: "rgba(0, 0, 0, 0.8)",
-    //textTransform: "none"
+    textTransform: "none",
+    height: "30px !important",
+    minHeight: "30px !important",
+    maxHeight: "30px !important"
   },
   minimalRoot: {
     marginTop: "0.3rem",
@@ -107,13 +117,9 @@ class OptionGroup extends React.Component<IProps, IState> {
     return layout;
   }
 
-  icon(style="") {
+  icon(style = "") {
     const { classes } = this.props;
-    return this.props.show ? (
-      <ArrowDownIcon className={style} />
-    ) : (
-      <ArrowRightIcon className={style} />
-    );
+    return this.props.show ? <ArrowDownIcon className={style} /> : <ArrowRightIcon className={style} />;
   }
 
   link() {
@@ -121,26 +127,33 @@ class OptionGroup extends React.Component<IProps, IState> {
     const label = `${this.props.label} `;
     return (
       <Link className={classes.link} to="#" onClick={this.props.action}>
-        <span className={classes.linkLabel}>{label}</span>{this.icon()}
+        <span className={classes.linkLabel}>{label}</span>
+        {this.icon(classes.smallIcon)}
       </Link>
     );
   }
 
   button() {
     const { classes, minimal, buttonSize } = this.props;
-    const customStyle = minimal ? ` ${classes.minimalButt}` : "";
+    let customButtonStyle: any = "";
+    let iconStyle: any = classes.rightIcon;
+    if (minimal) {
+      iconStyle = classes.smallIcon;
+      customButtonStyle = ` ${classes.minimalButt}`;
+    }
+    //const customStyle = minimal ? ` ${classes.minimalButt}` : "";
     //const buttSize = buttonSize ? buttonSize : "small";
-   //buttSize = "small";
-   const buttSize: any = this.props.buttonSize || "small";
+    //buttSize = "small";
+    const buttSize: any = this.props.buttonSize || "small";
     return (
       <Button
         classes={{ label: classes.buttonLabel }}
         onClick={this.props.action}
         variant="contained"
         size={buttSize}
-        className={`${classes.toggleButton}${customStyle}`}
+        className={`${classes.toggleButton}${customButtonStyle}`}
       >
-        {this.props.label} {this.icon(classes.rightIcon)}
+        {this.props.label} {this.icon(iconStyle)}
       </Button>
     );
   }

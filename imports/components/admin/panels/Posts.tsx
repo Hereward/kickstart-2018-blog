@@ -26,6 +26,7 @@ import OptionGroup from "../components/OptionGroup";
 import PostForm from "../../admin/forms/PostForm";
 import CommentForm from "../../admin/forms/CommentForm";
 import RenderImage from "../components/RenderImage";
+import Author from "../components/Author";
 
 const drawerWidth = 240;
 let styles: any;
@@ -61,8 +62,8 @@ interface IState {
   showFilterOptions: boolean;
   selectedPosts: any;
   showNewPost: boolean;
-  image_id_edit: string;
-  image_id_new: string;
+  imageIDedit: string;
+  imageIDnew: string;
   allowCreate: boolean;
 }
 
@@ -179,8 +180,8 @@ class Posts extends React.Component<IProps, IState> {
       showFilterOptions: false,
       selectedPosts: {},
       showNewPost: false,
-      image_id_edit: "",
-      image_id_new: "",
+      imageIDedit: "",
+      imageIDnew: "",
       allowCreate: !(props.contentType === "comments")
     };
   }
@@ -199,8 +200,8 @@ class Posts extends React.Component<IProps, IState> {
       showFilterOptions: false,
       selectedPosts: {},
       showNewPost: false,
-      image_id_edit: "",
-      image_id_new: "",
+      imageIDedit: "",
+      imageIDnew: "",
       allowCreate: allowCreate
     });
     this.props.dispatch({ type: "LOAD_INIT" });
@@ -230,7 +231,7 @@ class Posts extends React.Component<IProps, IState> {
         if (result) {
           this.setState({
             expanded: expanded ? panel : false,
-            image_id_edit: ""
+            imageIDedit: ""
           });
           this.editingType.edit = false;
         }
@@ -238,7 +239,7 @@ class Posts extends React.Component<IProps, IState> {
     } else {
       this.setState({
         expanded: expanded ? panel : false,
-        image_id_edit: ""
+        imageIDedit: ""
       });
     }
   };
@@ -255,9 +256,11 @@ class Posts extends React.Component<IProps, IState> {
   };
 
   updateImageId = (props: { image_id: string; dataObj?: any }) => {
+    
     let targetName: any;
-    targetName = props.dataObj ? "image_id_edit" : "image_id_new";
+    targetName = props.dataObj ? "imageIDedit" : "imageIDnew";
     this.setState({ [targetName]: props.image_id });
+    log.info(`updateImageId`, props, this.state);
   };
 
   loadMore() {
@@ -448,11 +451,14 @@ class Posts extends React.Component<IProps, IState> {
     const { classes, contentType } = this.props;
     const checkedC = this.checkCheckBox(dataObj);
     const checkBox = this.checkBox("default", dataObj, checkedC);
+    log.info(`getPostContent`, dataObj);
     return (
       <div>
         <div className={classes.checkBoxSmallContainer}>
           <FormControlLabel control={checkBox} label="selected" />
         </div>
+
+        {dataObj.authorId ? <Author userId={dataObj.authorId} /> : ""}
 
         {contentType === "comments" ? "" : this.renderImage(dataObj)}
         {contentType === "comments" ? this.commentForm(dataObj) : this.postForm(dataObj)}
@@ -486,9 +492,10 @@ class Posts extends React.Component<IProps, IState> {
       <PostForm
         postCreateMethod={this.props.postCreateMethod}
         postUpdateMethod={this.props.postUpdateMethod}
-        image_id_edit={this.state.image_id_edit}
         settingsObj={dataObj}
-        edit={true}
+        imageIDedit={this.state.imageIDedit}
+        imageIDnew={this.state.imageIDnew}
+        edit={dataObj ? true : false}
         handleNewPostCreated={this.handleNewPostCreated}
         handleEditing={this.handleEditing}
       />
