@@ -11,6 +11,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Profiles } from "../../api/profiles/publish";
 import OptionGroup from "../admin/components/OptionGroup";
 import CommentForm from "../forms/CommentForm";
+import CommentReplies from "./CommentReplies";
 
 let styles: any;
 styles = theme => ({
@@ -20,6 +21,11 @@ styles = theme => ({
   },
   cardBody: {
     paddingBottom: "0.75rem"
+  },
+  child: {
+    border: "0",
+    backgroundColor: "transparent",
+    marginLeft: "1rem"
   }
 });
 
@@ -30,6 +36,7 @@ interface IProps {
   profilePublic: PropTypes.object.isRequired;
   dispatch: any;
   userId: string;
+  parentId?: string;
 }
 
 interface IState {
@@ -82,15 +89,19 @@ class CommentList extends React.Component<IProps, IState> {
   }
 
   layout() {
-    const { classes, comment, commenterProfile } = this.props;
+    const { classes, comment, commenterProfile, userId } = this.props;
+    log.info(`Comment.layout()`, this.props);
+    let commentType: string;
+
     const layout = (
       <Card className={classes.card}>
         <CardBody className={classes.cardBody}>
-          <CardSubtitle>
+          <h6>
             {commenterProfile.screenName} | {dateFormat(comment.published, "dd mmmm yyyy, h:MM:ss")}
-          </CardSubtitle>
+          </h6>
           <div className="card-text">{this.renderComment(comment)}</div>
           {this.props.userId ? this.reply() : ""}
+          <CommentReplies userId={userId} parentId={comment._id} postId={comment.postId} />
         </CardBody>
       </Card>
     );
@@ -104,8 +115,13 @@ class CommentList extends React.Component<IProps, IState> {
 
 export default connect()(
   withTracker(props => {
+    //log.info(`Comment tracker`, props.comment);
     //const profilesHandle = Meteor.subscribe("profiles-public");
-    const profile = Profiles.findOne({ owner: props.comment.authorId });
+    let profile: any = "";
+    if (props.comment) {
+      profile = Profiles.findOne({ owner: props.comment.authorId });
+    }
+
     // log.info(`Comment Tracker`, props.comment.authorId, profile);
     return {
       commenterProfile: profile
