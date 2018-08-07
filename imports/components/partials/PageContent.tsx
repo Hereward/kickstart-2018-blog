@@ -17,6 +17,7 @@ interface IProps {
   contentType: string;
   permissionThreshold?: string;
   totalComments?: number;
+  author?: string;
 }
 
 interface IState {
@@ -116,7 +117,7 @@ export default class PageContent extends React.Component<IProps, IState> {
     const { permissionThreshold } = this.props;
     //log.info(`PageContent.editLink()`, permissionThreshold);
     if (permissionThreshold === "creator") {
-      allow = User.can({ threshold: "creator", owner: this.props.post.author });
+      allow = User.can({ threshold: "creator", owner: this.props.post.authorId });
     } else if (User.can({ threshold: "admin" })) {
       allow = true;
     }
@@ -124,7 +125,7 @@ export default class PageContent extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    const { post, totalComments } = this.props;
+    const { post, totalComments, author } = this.props;
     let layout: any;
     if (this.props.post) {
       if (this.state.edit) {
@@ -142,10 +143,15 @@ export default class PageContent extends React.Component<IProps, IState> {
         layout = (
           <div>
             <h1>
-              {this.props.post.title} {this.editLink()}
+              {post.title} {this.editLink()}
             </h1>
             {this.props.contentType === "post" ? (
-              <div>{dateFormat(post.published, "dd mmmm yyyy")} | {totalComments} Comments</div>
+              <div>
+                <h6>{author}</h6>
+                <h6>
+                  {dateFormat(post.published, "dd mmmm yyyy")} | {totalComments} Comments
+                </h6>
+              </div>
             ) : (
               ""
             )}

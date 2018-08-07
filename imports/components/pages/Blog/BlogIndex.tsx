@@ -10,6 +10,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Transition from "../../partials/Transition";
 import { Posts } from "../../../api/posts/publish";
 import { Comments } from "../../../api/comments/publish";
+import { Profiles } from "../../../api/profiles/publish";
 
 let styles: any;
 
@@ -30,7 +31,8 @@ interface IProps {
   classes: any;
   posts: any;
   dispatch: any;
-  totalComments: number;
+  totalPosts: number;
+  cursorLimit: number;
 }
 
 interface IState {}
@@ -72,9 +74,10 @@ class Blog extends React.Component<IProps, IState> {
           <h2 className="blogTitle">
             <Link to={`blog/${post.slug}`}>{post.title}</Link>
           </h2>
-          <div>
+          <h6>{Profiles.findOne({ owner: post.authorId }).screenName}</h6>
+          <h6>
             {dateFormat(post.published, "dd mmmm yyyy")} | {Comments.find({ postId: post._id }).count()} Comments
-          </div>
+          </h6>
           <div dangerouslySetInnerHTML={this.renderBody(post)} />
           {this.readMoreLink(post)}
         </div>
@@ -98,18 +101,24 @@ class Blog extends React.Component<IProps, IState> {
     return mapped;
   }
 
-  layout() {
+  loadMoreButton() {
     const { classes } = this.props;
-    const { posts } = this.props;
+    return (
+      <div className={classes.loadMore}>
+        <hr />
+        <Button variant="outlined" onClick={this.loadMore} size="small">
+          Load More
+        </Button>
+      </div>
+    );
+  }
+
+  layout() {
+    const { classes, posts, totalPosts, cursorLimit } = this.props;
     return (
       <div>
         {posts ? <div>{this.mapPosts(posts)}</div> : ""}
-        <div className={classes.loadMore}>
-          <hr />
-          <Button variant="outlined" onClick={this.loadMore} size="small">
-            More Results
-          </Button>
-        </div>
+        {totalPosts > cursorLimit ? this.loadMoreButton() : ""}
       </div>
     );
   }
@@ -132,9 +141,10 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
-    //log.info(`BlogIndex.tracker()`, props);
+    //log.info(`BlogIndex tracker`, props);
     const commentsHandle = Meteor.subscribe("comments");
     let PostsDataReady = Meteor.subscribe("posts");
+    let totalPosts: number = 0;
     let posts: any;
     const options = {
       sort: { published: -1 },
@@ -142,8 +152,9 @@ export default connect(mapStateToProps)(
     };
 
     if (PostsDataReady) {
+      totalPosts = Posts.find().count();
       posts = Posts.find({}, options).fetch();
     }
-    return { posts: posts };
+    return { posts: posts, totalPosts: totalPosts };
   })(withStyles(styles, { withTheme: true })(Blog))
 );

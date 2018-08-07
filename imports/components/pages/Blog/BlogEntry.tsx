@@ -10,6 +10,7 @@ import Transition from "../../partials/Transition";
 import PageContent from "../../partials/PageContent";
 import CommentBlogSection from "../../comments/CommentBlogSection";
 import { Comments } from "../../../api/comments/publish";
+import { Profiles } from "../../../api/profiles/publish";
 
 let styles: any;
 styles = theme => ({});
@@ -18,6 +19,7 @@ interface IProps {
   post: any;
   totalComments: number;
   userId: string;
+  author: string;
 }
 
 interface IState {}
@@ -57,6 +59,7 @@ class BlogEntry extends React.Component<IProps, IState> {
         updateMethod="posts.updateInline"
         post={this.props.post}
         totalComments={this.props.totalComments}
+        author={this.props.author}
       />
     );
   }
@@ -90,6 +93,7 @@ export default connect()(
     const commentsHandle = Meteor.subscribe("comments");
     let post: any;
     let totalComments = 0;
+    let author: string = "";
 
     //const path = props.location.pathname;
     //const pattern = /[a-z0-9]+(?:-[a-z0-9]+)*$/i;
@@ -98,15 +102,18 @@ export default connect()(
     //log.info(`BlogEntry.Tracker() SLUG = `, slug);
     //const match2 = path.match(pattern);
     //log.info(`BlogEntry.Tracker()`, path, slug, props.location, match, match2);
+
     if (PostsDataReady) {
       post = Posts.findOne({ slug: slug });
       if (post) {
         totalComments = Comments.find({ postId: post._id }).count();
+        author = Profiles.findOne({ owner: post.authorId }).screenName;
       }
     }
     return {
       post: post,
-      totalComments: totalComments
+      totalComments: totalComments,
+      author: author
     };
   })(withStyles(styles, { withTheme: true })(BlogEntry))
 );

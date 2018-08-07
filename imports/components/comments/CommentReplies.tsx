@@ -49,20 +49,22 @@ class CommentReplies extends React.Component<IProps, IState> {
   }
 
   UNSAFE_componentWillMount() {
-    this.props.dispatch({ type: "LOAD_INIT" });
+    //this.props.dispatch({ type: "LOAD_INIT" });
   }
 
   loadMore = () => {
-    this.props.dispatch({ type: "LOAD_MORE" });
+    //this.props.dispatch({ type: "LOAD_MORE" });
   };
 
   mapComments() {
     const { classes, comments, parentId } = this.props;
-    log.info(`CommentReplies.mapComments()`, this.props);
+    //log.info(`CommentReplies.mapComments()`, this.props);
     const mapped = comments.map(comment => {
       //const checkedC = this.checkCheckBox(post);
       //const layout = <div>boooo</div>;
-      const layout = <CommentReply parentId={parentId} userId={this.props.userId} key={comment._id} comment={comment} />;
+      const layout = (
+        <CommentReply parentId={parentId} userId={this.props.userId} key={comment._id} comment={comment} />
+      );
       //const layout = <CommentReply key={comment._id} />;
       return layout;
     });
@@ -81,13 +83,13 @@ class CommentReplies extends React.Component<IProps, IState> {
       //log.info(`CommentList.render()`, comments, totalComments);
     }
 
-    return comments ? (
+    return totalComments ? (
       <div>
         <h5 className={classes.heading}>Replies</h5>
         {this.mapComments()}
       </div>
     ) : (
-      <div>Loading...</div>
+      ""
     );
   }
 }
@@ -102,7 +104,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
-    log.info(`CommentReplies.tracker()`, props);
+    //log.info(`CommentReplies.tracker()`, props);
     const commentsHandle = Meteor.subscribe("comments");
     let totalComments = 0;
     const options = {

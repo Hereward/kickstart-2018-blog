@@ -90,7 +90,7 @@ class CommentList extends React.Component<IProps, IState> {
 
   layout() {
     const { classes, comment, commenterProfile, userId } = this.props;
-    log.info(`Comment.layout()`, this.props);
+    //log.info(`Comment.layout()`, this.props);
     let commentType: string;
 
     const layout = (

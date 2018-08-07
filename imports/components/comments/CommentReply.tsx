@@ -60,7 +60,7 @@ class CommentReply extends React.Component<IProps, IState> {
 
   layout() {
     const { classes, comment, commenterProfile } = this.props;
-    log.info(`CommentReply.layout()`, comment);
+    //log.info(`CommentReply.layout()`, comment);
     const layout = (
       <div className={classes.commentReplyStyle}>
         <h6 className={classes.publishDetails}>
@@ -83,7 +83,7 @@ export default connect()(
     if (props.comment) {
       profile = Profiles.findOne({ owner: props.comment.authorId });
     }
-    log.info(`CommentReply.tracker()`, profile, props);
+    //log.info(`CommentReply.tracker()`, profile, props);
     return {
       commenterProfile: profile
     };

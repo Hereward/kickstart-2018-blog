@@ -1,5 +1,5 @@
 ///<reference path="../../../index.d.ts"/>
-
+import { Meteor } from "meteor/meteor";
 import * as React from "react";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
@@ -32,6 +32,8 @@ interface IState {
 }
 
 class CommentBlogSection extends React.Component<IProps, IState> {
+  basePaginationUnit = Meteor.settings.public.admin.basePaginationUnit;
+
   constructor(props) {
     super(props);
 
@@ -60,11 +62,12 @@ class CommentBlogSection extends React.Component<IProps, IState> {
           show={this.state.showCommentForm}
           label="Add a Comment"
           action={this.toggleCommentForm}
+          transparent={true}
           buttonSize="small"
         >
           <CommentForm commentSubmitted={this.commentSubmitted} postId={this.props.postId} />
         </OptionGroup>
-        <CommentList userId={this.props.userId} postId={postId} />
+        <CommentList cursorLimit={this.basePaginationUnit} userId={this.props.userId} postId={postId} />
       </div>
     );
   }

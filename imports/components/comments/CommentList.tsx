@@ -49,18 +49,14 @@ class CommentList extends React.Component<IProps, IState> {
   }
 
   UNSAFE_componentWillMount() {
+    //log.info(`CommentList componentWillMount()`);
     this.props.dispatch({ type: "LOAD_INIT" });
   }
 
   loadMore = () => {
+    //log.info(`CommentList loadMore()`);
     this.props.dispatch({ type: "LOAD_MORE" });
   };
-
-  /*
-      <Paper key={comment._id} className={classes.comment} elevation={1}>
-          {this.renderComment(comment)}
-        </Paper>
-        */
 
   mapComments() {
     const { classes, comments } = this.props;
@@ -74,28 +70,23 @@ class CommentList extends React.Component<IProps, IState> {
   }
 
   loadMoreButton() {
-    const { classes, comments } = this.props;
+    const { classes, comments, totalComments } = this.props;
     return (
       <div className={classes.loadMore}>
         <Button variant="outlined" onClick={this.loadMore} size="small">
-          Load More
+          More Comments
         </Button>
       </div>
     );
   }
 
-  //<h3 className={classes.heading}>Responses</h3>
-
   render() {
     const { classes, comments, totalComments, cursorLimit } = this.props;
-    if (comments) {
-      //log.info(`CommentList.render()`, comments, totalComments);
-    }
 
     return (
       <div>
         {comments ? this.mapComments() : ""}
-        {comments && totalComments > cursorLimit ? this.loadMoreButton() : ""}
+        {totalComments > cursorLimit ? this.loadMoreButton() : ""}
       </div>
     );
   }
@@ -109,6 +100,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
+    //log.info(`CommentList tracker`, props);
     const commentsHandle = Meteor.subscribe("comments");
     const options = {
       sort: { published: -1 },
