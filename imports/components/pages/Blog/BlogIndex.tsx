@@ -115,6 +115,7 @@ class Blog extends React.Component<IProps, IState> {
 
   layout() {
     const { classes, posts, totalPosts, cursorLimit } = this.props;
+    
     return (
       <div>
         {posts ? <div>{this.mapPosts(posts)}</div> : ""}

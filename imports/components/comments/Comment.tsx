@@ -1,6 +1,7 @@
 ///<reference path="../../../index.d.ts"/>
 
 import * as React from "react";
+import { Meteor } from "meteor/meteor";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import * as dateFormat from "dateformat";
@@ -41,14 +42,18 @@ interface IProps {
 
 interface IState {
   showReplyForm: boolean;
+  cursorLimitReplies: number;
 }
 
 class CommentList extends React.Component<IProps, IState> {
+  basePaginationUnit = Meteor.settings.public.admin.basePaginationUnit;
+
   constructor(props) {
     super(props);
 
     this.state = {
-      showReplyForm: false
+      showReplyForm: false,
+      cursorLimitReplies: Meteor.settings.public.admin.basePaginationUnit
     };
   }
 
@@ -68,6 +73,12 @@ class CommentList extends React.Component<IProps, IState> {
 
   createMarkup(html) {
     return { __html: html };
+  }
+
+  loadMoreReplies = () => {
+    const currentTotal = this.state.cursorLimitReplies;
+    const newTotal = currentTotal + this.basePaginationUnit;
+    this.setState({ cursorLimitReplies: newTotal });
   }
 
   // <CardTitle>Card title</CardTitle>
@@ -101,7 +112,13 @@ class CommentList extends React.Component<IProps, IState> {
           </h6>
           <div className="card-text">{this.renderComment(comment)}</div>
           {this.props.userId ? this.reply() : ""}
-          <CommentReplies userId={userId} parentId={comment._id} postId={comment.postId} />
+          <CommentReplies
+            loadMoreReplies={this.loadMoreReplies}
+            cursorLimitReplies={this.state.cursorLimitReplies}
+            userId={userId}
+            parentId={comment._id}
+            postId={comment.postId}
+          />
         </CardBody>
       </Card>
     );

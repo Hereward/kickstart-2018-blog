@@ -11,8 +11,7 @@ import { Profiles } from "../../api/profiles/publish";
 let styles: any;
 styles = theme => ({
   commentReplyStyle: {
-    backgroundColor: "transparent",
-    marginLeft: "1rem"
+    backgroundColor: "transparent"
   },
   publishDetails: {
     

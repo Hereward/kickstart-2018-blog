@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
@@ -10,6 +12,9 @@ import CommentReply from "./CommentReply";
 
 let styles: any;
 styles = theme => ({
+  body: {
+    marginLeft: "1rem"
+  },
   comment: {
     ...theme.mixins.gutters(),
     paddingTop: theme.spacing.unit * 2,
@@ -19,23 +24,26 @@ styles = theme => ({
   },
   heading: {
     color: "rgba(0, 0, 0, 0.6)",
-    marginTop: "1rem",
+    marginTop: "0.5rem",
     marginBottom: "1rem"
   },
   loadMore: {
-    marginTop: "1rem",
-    textAlign: "center"
+    marginTop: "1rem"
+  },
+  hr: {
+    marginBottom: 0
   }
 });
 
 interface IProps {
   classes: PropTypes.object.isRequired;
+  loadMoreReplies: PropTypes.object.isRequired;
   postId: string;
   parentId: string;
   comments: any;
   dispatch: any;
   totalComments: number;
-  cursorLimit: number;
+  cursorLimitReplies: number;
   userId: string;
 }
 
@@ -56,6 +64,17 @@ class CommentReplies extends React.Component<IProps, IState> {
     //this.props.dispatch({ type: "LOAD_MORE" });
   };
 
+  loadMoreButton() {
+    const { classes, loadMoreReplies } = this.props;
+    return (
+      <div className={classes.loadMore}>
+        <Link to="#" onClick={loadMoreReplies}>
+          Show more replies...
+        </Link>
+      </div>
+    );
+  }
+
   mapComments() {
     const { classes, comments, parentId } = this.props;
     //log.info(`CommentReplies.mapComments()`, this.props);
@@ -72,21 +91,19 @@ class CommentReplies extends React.Component<IProps, IState> {
     return mapped;
   }
 
-  //<h3 className={classes.heading}>Responses</h3>
-  renderk() {
-    return <div>boo</div>;
-  }
-
   render() {
-    const { classes, comments, totalComments, cursorLimit } = this.props;
-    if (comments) {
-      //log.info(`CommentList.render()`, comments, totalComments);
-    }
+    const { classes, comments, totalComments, cursorLimitReplies } = this.props;
+
+    //log.info(`CommentReplies.render()`, totalComments, cursorLimitReplies);
 
     return totalComments ? (
       <div>
-        <h5 className={classes.heading}>Replies</h5>
-        {this.mapComments()}
+        <hr className={classes.hr} />
+        <h6 className={classes.heading}>Replies</h6>
+        <div className={classes.body}>
+          {this.mapComments()}
+          {totalComments > cursorLimitReplies ? this.loadMoreButton() : ""}
+        </div>
       </div>
     ) : (
       ""
@@ -94,25 +111,18 @@ class CommentReplies extends React.Component<IProps, IState> {
   }
 }
 
-// {comments && totalComments > cursorLimit ? this.loadMoreButton() : ""}
-
-const mapStateToProps = state => {
-  return {
-    cursorLimit: state.cursorLimit
-  };
-};
-
-export default connect(mapStateToProps)(
+export default connect()(
   withTracker(props => {
     //log.info(`CommentReplies.tracker()`, props);
     const commentsHandle = Meteor.subscribe("comments");
     let totalComments = 0;
     const options = {
-      sort: { published: -1 }
+      sort: { published: -1 },
+      limit: props.cursorLimitReplies
     };
-    const cursor = Comments.find({ parentId: props.parentId }, options);
-    totalComments = cursor.count();
-    const commentsList = cursor.fetch();
+    //const cursor = Comments.find({ parentId: props.parentId }, options);
+    totalComments = Comments.find({ parentId: props.parentId }).count();
+    const commentsList = Comments.find({ parentId: props.parentId }, options).fetch();
     return {
       comments: commentsList,
       totalComments: totalComments

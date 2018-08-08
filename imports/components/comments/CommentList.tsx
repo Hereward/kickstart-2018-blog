@@ -82,7 +82,7 @@ class CommentList extends React.Component<IProps, IState> {
 
   render() {
     const { classes, comments, totalComments, cursorLimit } = this.props;
-
+    //log.info(`commentlist.render()`, totalComments, cursorLimit);
     return (
       <div>
         {comments ? this.mapComments() : ""}
@@ -106,7 +106,7 @@ export default connect(mapStateToProps)(
       sort: { published: -1 },
       limit: props.cursorLimit
     };
-    const totalComments = Comments.find({ postId: props.postId }).count();
+    const totalComments = Comments.find({ parentId: "", postId: props.postId }).count();
     const commentsList = Comments.find({ parentId: "", postId: props.postId }, options).fetch();
     return {
       comments: commentsList,
