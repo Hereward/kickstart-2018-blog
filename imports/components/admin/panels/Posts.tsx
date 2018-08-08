@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import { Roles } from "meteor/alanning:roles";
+import { Accounts } from "meteor/accounts-base";
 import * as striptags from "striptags";
 import * as truncate from "truncate-html";
 import { connect } from "react-redux";
@@ -256,7 +257,6 @@ class Posts extends React.Component<IProps, IState> {
   };
 
   updateImageId = (props: { image_id: string; dataObj?: any }) => {
-    
     let targetName: any;
     targetName = props.dataObj ? "imageIDedit" : "imageIDnew";
     this.setState({ [targetName]: props.image_id });
@@ -418,18 +418,52 @@ class Posts extends React.Component<IProps, IState> {
   };
 
   filterOptionsDetail() {
-    const { classes } = this.props;
+    const { classes, contentType } = this.props;
     const layout = (
       <div className={classes.optionsRoot}>
+        {contentType === "comments" ? (
+          <TextField
+            id="body"
+            InputLabelProps={{
+              shrink: true
+            }}
+            placeholder="Comment Text"
+            fullWidth
+            margin="normal"
+            onChange={this.changeFilter("body")}
+          />
+        ) : (
+          <TextField
+            id="title"
+            InputLabelProps={{
+              shrink: true
+            }}
+            placeholder="Title"
+            fullWidth
+            margin="normal"
+            onChange={this.changeFilter("title")}
+          />
+        )}
+
         <TextField
-          id="title"
+          id="userId"
           InputLabelProps={{
             shrink: true
           }}
-          placeholder="title"
+          placeholder="User ID"
           fullWidth
           margin="normal"
-          onChange={this.changeFilter("title")}
+          onChange={this.changeFilter("userId")}
+        />
+        <TextField
+          id="email"
+          InputLabelProps={{
+            shrink: true
+          }}
+          placeholder="Email"
+          fullWidth
+          margin="normal"
+          onChange={this.changeFilter("email")}
         />
       </div>
     );
@@ -451,7 +485,7 @@ class Posts extends React.Component<IProps, IState> {
     const { classes, contentType } = this.props;
     const checkedC = this.checkCheckBox(dataObj);
     const checkBox = this.checkBox("default", dataObj, checkedC);
-    log.info(`getPostContent`, dataObj);
+    //log.info(`getPostContent`, dataObj);
     return (
       <div>
         <div className={classes.checkBoxSmallContainer}>
@@ -607,6 +641,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
+    //log.info(`Posts.tracker()`, props);
     let myImages: any;
     const imagesHandle = Meteor.subscribe("editorialImages");
     const postsHandle = Meteor.subscribe(props.subscription);
@@ -616,10 +651,18 @@ export default connect(mapStateToProps)(
     };
     let filters = props.filters;
     const titleString = props.filters.title;
+    const bodyString = props.filters.body;
+    const idString = props.filters.userId;
+    const emailString = props.filters.email;
+    let filter: boolean = false;
     let titleFilter: any;
-    let combinedFilters: any;
+    let bodyFilter: any;
+    let idFilter: any;
+    let emailFilter: any;
+    let combinedFilters = [];
     let filterCount: number = 0;
     let defaultSearch: boolean = true;
+    let user: any;
 
     if (titleString) {
       filterCount += 1;
@@ -628,21 +671,56 @@ export default connect(mapStateToProps)(
       combinedFilters = titleFilter;
     }
 
-    let posts: any;
-    switch (filterCount) {
-      case 1:
-        defaultSearch = false;
-        posts = props.PostsDataSrc.find(combinedFilters, options).fetch();
-        break;
-
-      default:
-        break;
+    if (bodyString) {
+      filterCount += 1;
+      let regex = new RegExp(`${bodyString}.*`);
+      bodyFilter = { body: regex };
+      combinedFilters.push(bodyFilter);
     }
 
-    if (defaultSearch) {
+    if (idString) {
+      filterCount += 1;
+      let regex = new RegExp(`^${idString}.*`);
+      //idFilter = { _id: regex };
+      idFilter = { authorId: regex };
+      combinedFilters.push(idFilter);
+    }
+
+    if (emailString) {
+      //user = Accounts.findUserByEmail(emailString);
+      //let count: number = -1;
+      let regex = new RegExp(`^${emailString}.*`);
+      user = Meteor.users.findOne({ "emails.0.address": regex });
+      //count= Meteor.users.find({ "emails.0.address" : regex }).count();
+
+      //emailString = user ? user.emails[0].address : ""
+
+      //emailFilter = { "emails.0.address": regex };
+      if (user) {
+        log.info(`Posts.tracker() emailString`, user);
+        filterCount += 1;
+        emailFilter = { authorId: user._id };
+        combinedFilters.push(emailFilter);
+      }
+    }
+
+    //log.info(`Posts.tracker() user`, user);
+
+    let posts: any;
+    let users: any;
+    if (filterCount > 0 || emailString) {
+      filter = true;
+    }
+
+    if (filter) {
+      log.info(`Posts.tracker() combinedFilters`, filterCount, combinedFilters);
+      defaultSearch = false;
+      if (combinedFilters.length) {
+        posts = props.PostsDataSrc.find({ $or: combinedFilters }, options).fetch();
+      }
+    } else {
       posts = props.PostsDataSrc.find({}, options).fetch();
     }
-    //log.info(`Posts.tracker()`, posts);
 
     return {
       allPosts: posts,
