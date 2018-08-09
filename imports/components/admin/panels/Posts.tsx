@@ -50,6 +50,8 @@ interface IProps {
   postDeleteAllMethod: string;
   PostsDataSrc: any;
   subscription: string;
+  totalPosts: number;
+  cursorLimit: number;
 }
 
 interface IState {
@@ -331,6 +333,8 @@ class Posts extends React.Component<IProps, IState> {
   toggleFilterOptions() {
     const vis = !this.state.showFilterOptions;
     this.setState({ showFilterOptions: vis });
+    this.props.dispatch({ type: "FILTER_INIT" });
+    this.props.dispatch({ type: "LOAD_INIT" });
   }
 
   bulkOptionsDetail() {
@@ -605,9 +609,20 @@ class Posts extends React.Component<IProps, IState> {
     return mapped;
   }
 
-  layout() {
+  loadMoreButton() {
     const { classes } = this.props;
-    const { allPosts } = this.props;
+    return (
+      <div className={classes.loadMore}>
+        <Button variant="outlined" onClick={this.loadMore} size="small">
+          Load More
+        </Button>
+      </div>
+    );
+  }
+
+  layout() {
+    const { classes, allPosts, totalPosts, cursorLimit } = this.props;
+    //log.info(`Posts.layout()`, allPosts, totalPosts, cursorLimit);
     return (
       <BlockUi tag="div" blocking={this.state.block}>
         {this.bulkOptions()}
@@ -617,11 +632,7 @@ class Posts extends React.Component<IProps, IState> {
         <div>
           <h2 className={classes.heading}>Entries</h2>
           {allPosts ? <div>{this.mapPosts(allPosts)}</div> : ""}
-          <div className={classes.loadMore}>
-            <Button variant="outlined" onClick={this.loadMore} size="small">
-              Load More
-            </Button>
-          </div>
+          {allPosts.length && totalPosts > cursorLimit ? this.loadMoreButton() : ""}
         </div>
       </BlockUi>
     );
@@ -661,19 +672,23 @@ export default connect(mapStateToProps)(
     let emailFilter: any;
     let combinedFilters = [];
     let filterCount: number = 0;
-    let defaultSearch: boolean = true;
+    //let defaultSearch: boolean = true;
     let user: any;
+    let posts: any = [];
+    //let users: any;
+
+    const totalPosts = props.PostsDataSrc.find().count();
 
     if (titleString) {
       filterCount += 1;
-      let regex = new RegExp(`^${titleString}.*`);
+      let regex = new RegExp(`^${titleString}.*`, "i");
       titleFilter = { title: regex };
-      combinedFilters = titleFilter;
+      combinedFilters.push(titleFilter);
     }
 
     if (bodyString) {
       filterCount += 1;
-      let regex = new RegExp(`${bodyString}.*`);
+      let regex = new RegExp(`${bodyString}.*`, "i");
       bodyFilter = { body: regex };
       combinedFilters.push(bodyFilter);
     }
@@ -689,7 +704,7 @@ export default connect(mapStateToProps)(
     if (emailString) {
       //user = Accounts.findUserByEmail(emailString);
       //let count: number = -1;
-      let regex = new RegExp(`^${emailString}.*`);
+      let regex = new RegExp(`^${emailString}.*`, "i");
       user = Meteor.users.findOne({ "emails.0.address": regex });
       //count= Meteor.users.find({ "emails.0.address" : regex }).count();
 
@@ -697,7 +712,7 @@ export default connect(mapStateToProps)(
 
       //emailFilter = { "emails.0.address": regex };
       if (user) {
-        log.info(`Posts.tracker() emailString`, user);
+        //log.info(`Posts.tracker() emailString`, user);
         filterCount += 1;
         emailFilter = { authorId: user._id };
         combinedFilters.push(emailFilter);
@@ -706,15 +721,14 @@ export default connect(mapStateToProps)(
 
     //log.info(`Posts.tracker() user`, user);
 
-    let posts: any;
-    let users: any;
     if (filterCount > 0 || emailString) {
       filter = true;
     }
 
     if (filter) {
-      log.info(`Posts.tracker() combinedFilters`, filterCount, combinedFilters);
-      defaultSearch = false;
+      //log.info(`Posts.tracker() combinedFilters`, combinedFilters);
+      //log.info(`Posts.tracker() combinedFilters LENGTH`, combinedFilters.length);
+      //defaultSearch = false;
       if (combinedFilters.length) {
         posts = props.PostsDataSrc.find({ $or: combinedFilters }, options).fetch();
       }
@@ -724,7 +738,8 @@ export default connect(mapStateToProps)(
 
     return {
       allPosts: posts,
-      PostsDataSrc: props.PostsDataSrc
+      PostsDataSrc: props.PostsDataSrc,
+      totalPosts: totalPosts
     };
   })(withStyles(styles, { withTheme: true })(Posts))
 );

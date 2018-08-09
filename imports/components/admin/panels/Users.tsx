@@ -44,6 +44,7 @@ interface IProps {
   allUsers: any;
   userData: any;
   userId: string;
+  totalUsers: number;
 }
 
 interface IState {
@@ -303,6 +304,8 @@ class Users extends React.Component<IProps, IState> {
   toggleFilterOptions() {
     const vis = !this.state.showFilterOptions;
     this.setState({ showFilterOptions: vis });
+    this.props.dispatch({ type: "FILTER_INIT" });
+    this.props.dispatch({ type: "LOAD_INIT" });
   }
 
   bulkOptionsDetail() {
@@ -508,8 +511,20 @@ class Users extends React.Component<IProps, IState> {
     return <div>{userList}</div>;
   }
 
-  layout() {
+  loadMoreButton() {
     const { classes } = this.props;
+    return (
+      <div className={classes.loadMore}>
+        <Button variant="outlined" onClick={this.loadMore} size="small">
+          Load More
+        </Button>
+      </div>
+    );
+  }
+
+  layout() {
+    const { classes, totalUsers, cursorLimit, allUsers } = this.props;
+    //log.info(`Users.layout()`, allUsers, totalUsers, cursorLimit);
     return (
       <BlockUi tag="div" blocking={this.state.block}>
         {this.inviteOptions()}
@@ -519,12 +534,8 @@ class Users extends React.Component<IProps, IState> {
 
         <div>
           <h2 className={classes.heading}>Users</h2>
-          {this.props.allUsers ? this.users(this.props.allUsers) : ""}
-          <div className={classes.loadMore}>
-            <Button variant="outlined" onClick={this.loadMore} size="small">
-              Load More
-            </Button>
-          </div>
+          {allUsers ? this.users(this.props.allUsers) : ""}
+          {allUsers.length && totalUsers > cursorLimit ? this.loadMoreButton() : ""}
         </div>
       </BlockUi>
     );
@@ -547,6 +558,7 @@ export default connect(mapStateToProps)(
     const usersHandle = Meteor.subscribe("allUsers");
     const settingsHandle = Meteor.subscribe("allSettings");
     const rolesHandle = Meteor.subscribe("roles");
+    const totalUsers = Meteor.users.find().count();
     const options = {
       sort: { createdAt: -1 },
       limit: props.cursorLimit
@@ -556,25 +568,41 @@ export default connect(mapStateToProps)(
     const emailString = props.filters.email;
     let idFilter: any;
     let emailFilter: any;
-    let combinedFilters: any;
+    let combinedFilters = [];
     let filterCount: number = 0;
-    let defaultSearch: boolean = true;
+    //let defaultSearch: boolean = true;
+    let users: any = [];
+    let filter: boolean = false;
 
     if (idString) {
       filterCount += 1;
-      let regex = new RegExp(`^${idString}.*`);
+      const regex = new RegExp(`^${idString}.*`, "i");
       idFilter = { _id: regex };
-      combinedFilters = idFilter;
+      combinedFilters.push(idFilter);
     }
 
     if (emailString) {
       filterCount += 1;
-      let regex = new RegExp(`^${emailString}.*`);
+      let regex = new RegExp(`^${emailString}.*`, "i");
       emailFilter = { "emails.0.address": regex };
-      combinedFilters = emailFilter;
+      combinedFilters.push(emailFilter);
     }
 
-    let users: any;
+    if (filterCount > 0) {
+      filter = true;
+    }
+
+    if (filter) {
+      //log.info(`Posts.tracker() combinedFilters`, emailString, filterCount, combinedFilters);
+      //defaultSearch = false;
+      if (combinedFilters.length) {
+        users = Meteor.users.find({ $or: combinedFilters }, options).fetch();
+      }
+    } else {
+      users = Meteor.users.find({}, options).fetch();
+    }
+
+    /*
     switch (filterCount) {
       case 1:
         defaultSearch = false;
@@ -591,9 +619,11 @@ export default connect(mapStateToProps)(
     if (defaultSearch) {
       users = Meteor.users.find({}, options).fetch();
     }
+    */
 
     return {
-      allUsers: users
+      allUsers: users,
+      totalUsers: totalUsers
     };
   })(withStyles(styles, { withTheme: true })(Users))
 );
