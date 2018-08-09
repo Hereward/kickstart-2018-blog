@@ -6,8 +6,10 @@ declare var Mongo: any;
 export const Profiles = new Mongo.Collection("profiles");
 
 if (Meteor.isServer) {
-  Meteor.publish("profiles", function profilesPublication() {
-    if (!this.userId) return this.ready();
+  Meteor.publish("profiles", function profilesSubscription() {
+    if (!this.userId) {
+      return this.ready();
+    }
 
     return Profiles.find(
       { owner: this.userId },
@@ -25,17 +27,18 @@ if (Meteor.isServer) {
           postcode: 1,
           country: 1,
           image_id: 1,
-          verificationEmailSent: 1,
           new: 1,
-          createdAt: 1,
+          created: 1,
           owner: 1
         }
       }
     );
   });
 
-  Meteor.publish("profiles-public", function profilesPublication() {
-    if (!this.userId) return this.ready();
+  Meteor.publish("profiles-public", function profilesPublicSubscription() {
+    if (!this.userId) {
+      return this.ready();
+    }
 
     return Profiles.find(
       { owner: this.userId },

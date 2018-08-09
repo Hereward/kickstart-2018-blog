@@ -141,12 +141,12 @@ export function userModelessAlert(type, props) {
   let hideDelay = 7000;
 
   if (type === "verifyEmail") {
-    if (props.profile.verificationEmailSent === 1) {
+    if (props.userSettings.verificationEmailSent === 1) {
       title = "Check Your Email";
       msg =
         "A verification email has been sent to your nominated email account. Please check your email and click on the verification link.";
       alertType = "info";
-    } else if (props.profile.verificationEmailSent === 2) {
+    } else if (props.userSettings.verificationEmailSent === 2) {
       title = "Verification email could not be sent";
       msg =
         "We tried to send a verification email to your nominated email address, but there was a problem. Please check your profile for more details.";

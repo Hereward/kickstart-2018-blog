@@ -136,9 +136,9 @@ export default withRouter(
         }
 
         if (
+          profilesHandle.ready() &&
           connected &&
           userId &&
-          profilesHandle.ready() &&
           userSettingsHandle.ready() &&
           userSessionHandle.ready() &&
           systemSettingsHandle.ready() &&

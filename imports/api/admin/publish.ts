@@ -37,7 +37,7 @@ if (Meteor.isServer) {
     }
   });
 
-  Meteor.publish("roles", function pagesPublication() {
+  Meteor.publish("roles", function rolesPublication() {
     let admin = false;
     if (this.userId) {
       admin = Roles.userIsInRole(this.userId, ["super-admin", "admin"]);
@@ -64,7 +64,7 @@ if (Meteor.isServer) {
         copyright: Meteor.settings.public.copyright,
         summary: Meteor.settings.public.description,
         image_id: "",
-        createdAt: new Date()
+        created: new Date()
       });
     }
   });

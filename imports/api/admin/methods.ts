@@ -107,6 +107,7 @@ export const updateCommentAdmin = new ValidatedMethod({
   name: "comment.updateAdmin",
   validate: new SimpleSchema({
     id: { type: String },
+    publish: { type: Boolean },
     postId: { type: String },
     parentId: { type: String },
     body: { type: String }
@@ -120,6 +121,7 @@ export const updateCommentAdmin = new ValidatedMethod({
     Comments.update(fields.id, {
       $set: {
         postId: fields.postId,
+        publish: fields.publish,
         parentId: fields.parentId || current._id,
         body: fields.body,
         modified: new Date()

@@ -76,7 +76,7 @@ class Blog extends React.Component<IProps, IState> {
           </h2>
           <h6>{Profiles.findOne({ owner: post.authorId }).screenName}</h6>
           <h6>
-            {dateFormat(post.published, "dd mmmm yyyy")} | {Comments.find({ postId: post._id }).count()} Comments
+            {dateFormat(post.created, "dd mmmm yyyy")} | {Comments.find({ postId: post._id }).count()} Comments
           </h6>
           <div dangerouslySetInnerHTML={this.renderBody(post)} />
           {this.readMoreLink(post)}
@@ -148,7 +148,7 @@ export default connect(mapStateToProps)(
     let totalPosts: number = 0;
     let posts: any;
     const options = {
-      sort: { published: -1 },
+      sort: { created: -1 },
       limit: props.cursorLimit
     };
 

@@ -3,6 +3,7 @@ import { Accounts } from "meteor/accounts-base";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Profiles } from "./publish";
+import { userSettings } from "../settings/publish";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -34,9 +35,8 @@ export const newProfile = userId => {
     postcode: "",
     country: "",
     image_id: "",
-    verificationEmailSent: 0,
     new: true,
-    createdAt: new Date(),
+    created: new Date(),
     owner: userId
   });
 
@@ -148,11 +148,11 @@ export const sendVerificationEmail = new ValidatedMethod({
         log.info(`sendVerificationEmail - SERVER ERROR - email not sent`);
       }
 
-      Profiles.update(fields.profileId, {
+      userSettings.update({owner: fields.userId}, {
         $set: { verificationEmailSent: verificationEmailSent }
       });
 
-      log.info(`sendVerificationEmail - UPDATED PROFILE`, userId, verificationEmailSent);
+      log.info(`sendVerificationEmail - UPDATED PROFILE`, userId);
 
       if (error) {
         throw new Meteor.Error("Could not send verification email");

@@ -63,7 +63,7 @@ class CommentReply extends React.Component<IProps, IState> {
     const layout = (
       <div className={classes.commentReplyStyle}>
         <h6 className={classes.publishDetails}>
-          {commenterProfile.screenName} | {dateFormat(comment.published, "dd mmmm yyyy, h:MM:ss")}
+          {commenterProfile.screenName} | {dateFormat(comment.created, "dd mmmm yyyy, h:MM:ss")}
         </h6>
         <div>{this.renderComment(comment)}</div>
       </div>

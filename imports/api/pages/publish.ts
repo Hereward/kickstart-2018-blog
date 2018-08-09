@@ -21,7 +21,7 @@ if (Meteor.isServer) {
         allowComments: false,
         closeComments: false,
         modified: new Date(),
-        published: new Date(),
+        created: new Date(),
       });
     }
   });

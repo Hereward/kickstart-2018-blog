@@ -3,6 +3,8 @@ import * as jquery from "jquery";
 import { Form, FormGroup, FormText } from "reactstrap";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
+import Switch from "@material-ui/core/Switch";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import { withStyles } from "@material-ui/core/styles";
 import * as BlockUi from "react-block-ui";
 import "react-block-ui/style.css";
@@ -23,6 +25,7 @@ interface IProps {
 }
 
 interface IState {
+  publish: boolean;
   body: string;
   blockUI: boolean;
   parentId: string;
@@ -81,6 +84,7 @@ class CommentForm extends React.Component<IProps, IState> {
     const { settingsObj } = this.props;
     this.handleSubmit = this.handleSubmit.bind(this);
     this.state = {
+      publish: settingsObj ? settingsObj.publish : false,
       body: settingsObj ? settingsObj.body : "",
       parentId: settingsObj ? settingsObj.parentId : "",
       postId: settingsObj ? settingsObj.postId : "",
@@ -155,6 +159,7 @@ class CommentForm extends React.Component<IProps, IState> {
     log.info(`Admin.CommentForm.handleSubmit()`, this.state);
     const fields = {
       id: settingsObj._id,
+      publish: this.state.publish,
       postId: this.state.postId,
       parentId: this.state.parentId,
       body: this.state.body
@@ -169,7 +174,6 @@ class CommentForm extends React.Component<IProps, IState> {
         this.miniAlert(`Comment was updated.`);
       }
     });
-    
   }
 
   handleSetState(sVar, sVal) {
@@ -180,10 +184,23 @@ class CommentForm extends React.Component<IProps, IState> {
     return null;
   }
 
+  togglePublish = () => {
+    const currentState = this.state.publish;
+    const newState = !currentState;
+    this.setState({ publish: newState });
+    return true;
+  };
+
   render() {
     const { classes, settingsObj } = this.props;
     return (
       <BlockUi tag="div" blocking={this.state.blockUI}>
+        <div className="form-group">
+          <FormControlLabel
+            control={<Switch disabled={false} onChange={this.togglePublish} checked={this.state.publish} />}
+            label="Publish"
+          />
+        </div>
         {settingsObj.parentId ? this.getWidget({ name: "parentId", label: "Parent ID" }) : ""}
 
         <form className={classes.form} id={this.formID} onSubmit={this.handleSubmit}>

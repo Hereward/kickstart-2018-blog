@@ -60,7 +60,7 @@ export const createPages = new ValidatedMethod({
         name: "about",
         heading: Meteor.settings.public.defaultContent.about.heading,
         body: Meteor.settings.public.defaultContent.about.body,
-        createdAt: new Date(),
+        created: new Date(),
         owner: ""
       });
     }
@@ -73,6 +73,7 @@ export const createPage = new ValidatedMethod({
   name: "page.create",
   validate: new SimpleSchema({
     id: { type: String, optional: true },
+    publish: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
     summary: { type: String },
@@ -88,6 +89,7 @@ export const createPage = new ValidatedMethod({
     slugCheck({ slug: fields.slug, type: "new" });
 
     Pages.insert({
+      publish: fields.publish,
       image_id: fields.image_id,
       title: fields.title,
       body: fields.body,
@@ -96,7 +98,7 @@ export const createPage = new ValidatedMethod({
       allowComments: fields.allowComments,
       closeComments: false,
       modified: new Date(),
-      published: new Date()
+      created: new Date()
     });
 
     return true;
@@ -107,6 +109,7 @@ export const updatePage = new ValidatedMethod({
   name: "pages.update",
   validate: new SimpleSchema({
     id: { type: String },
+    publish: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
     summary: { type: String },
@@ -125,6 +128,7 @@ export const updatePage = new ValidatedMethod({
 
     Pages.update(fields.id, {
       $set: {
+        publish: fields.publish,
         image_id: fields.image_id,
         title: fields.title,
         body: fields.body,

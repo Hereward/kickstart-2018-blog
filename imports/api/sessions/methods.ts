@@ -116,7 +116,7 @@ export const insertNewSession = function insert(userId, sessionToken = "", persi
     active: true,
     expiresOn: expires,
     persist: persist,
-    createdAt: now,
+    created: now,
     owner: userId
   });
 

@@ -31,15 +31,7 @@ class BlogEntry extends React.Component<IProps, IState> {
     this.state = {};
   }
 
-  /*
-  layout = (
-        <div>
-          <h2>{post.title}</h2>
-          <div>{dateFormat(post.published, "dd mmmm yyyy")} | 0 Comments</div>
-          <div dangerouslySetInnerHTML={{ __html: post.body }} />
-        </div>
-      );
-      */
+
 
   renderPost() {
     const { post } = this.props;

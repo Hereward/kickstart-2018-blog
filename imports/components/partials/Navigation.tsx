@@ -107,7 +107,7 @@ class Navigation extends React.Component<IProps, IState> {
     if (
       this.props.sessionReady &&
       this.props.location.pathname === "/" &&
-      this.props.profile.verificationEmailSent &&
+      this.props.userSettings.verificationEmailSent &&
       !this.emailVerifyPrompted &&
       !this.props.loggingOut &&
       !this.props.userData.emails[0].verified &&

@@ -30,12 +30,13 @@ export const createComment = new ValidatedMethod({
 
     log.info(`comment.create`, fields.postId, fields.body);
     Comments.insert({
+      publish: true,
       body: fields.body,
       authorId: this.userId,
       postId: fields.postId,
       parentId: fields.parentId || "",
       modified: new Date(),
-      published: new Date()
+      created: new Date()
     });
 
     return true;

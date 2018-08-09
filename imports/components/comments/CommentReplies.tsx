@@ -117,7 +117,7 @@ export default connect()(
     const commentsHandle = Meteor.subscribe("comments");
     let totalComments = 0;
     const options = {
-      sort: { published: -1 },
+      sort: { created: -1 },
       limit: props.cursorLimitReplies
     };
     //const cursor = Comments.find({ parentId: props.parentId }, options);

@@ -103,7 +103,7 @@ export default connect(mapStateToProps)(
     //log.info(`CommentList tracker`, props);
     const commentsHandle = Meteor.subscribe("comments");
     const options = {
-      sort: { published: -1 },
+      sort: { created: -1 },
       limit: props.cursorLimit
     };
     const totalComments = Comments.find({ parentId: "", postId: props.postId }).count();

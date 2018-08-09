@@ -254,7 +254,7 @@ export default withTracker(props => {
   let remainingTimeFormatted: any;
   let timeNow = Chronos.date();
   let count = 0;
-  let query = Tasks.find({}, { sort: { createdAt: -1 } });
+  let query = Tasks.find({}, { sort: { created: -1 } });
   count = query.count();
 
   let page: any;

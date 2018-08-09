@@ -1,8 +1,10 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
-import Done from "@material-ui/icons/Done";
+//import Done from "@material-ui/icons/Done";
 import Button from "@material-ui/core/Button";
+import Switch from "@material-ui/core/Switch";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 import * as BlockUi from "react-block-ui";
 import * as slug from "slug";
 import * as Validation from "../../../modules/validation";
@@ -27,6 +29,7 @@ interface IProps {
 }
 
 interface IState {
+  publish: boolean;
   id: string;
   summary: string;
   slug: string;
@@ -96,6 +99,7 @@ class PostForm extends React.Component<IProps, IState> {
     this.rteID = edit ? `rte_${settingsObj._id}` : "rte";
 
     this.state = {
+      publish: settingsObj ? settingsObj.publish : false,
       id: settingsObj ? settingsObj._id : "",
       summary: settingsObj ? settingsObj.summary : "",
       slug: settingsObj ? settingsObj.slug : "",
@@ -116,8 +120,16 @@ class PostForm extends React.Component<IProps, IState> {
 
   handleSubmit = () => {
     log.info(`PostForm.handleSubmit()`, this.props);
-    const { settingsObj, imageIDedit, imageIDnew, edit, postUpdateMethod, postCreateMethod, handleNewPostCreated, handleEditing} = this.props;
-
+    const {
+      settingsObj,
+      imageIDedit,
+      imageIDnew,
+      edit,
+      postUpdateMethod,
+      postCreateMethod,
+      handleNewPostCreated,
+      handleEditing
+    } = this.props;
 
     const image_id_current = edit ? imageIDedit : imageIDnew;
 
@@ -126,6 +138,7 @@ class PostForm extends React.Component<IProps, IState> {
 
     pageFields = {
       id: this.state.id,
+      publish: this.state.publish,
       body: this.state.body,
       image_id: image_id_current || settingsImage,
       title: this.state.title,
@@ -175,7 +188,8 @@ class PostForm extends React.Component<IProps, IState> {
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let name = this.renderWidgetName(target.id);
-    if (name === "title" && !edit) { // set the slug value if the target field = 'title'
+    if (name === "title" && !edit) {
+      // set the slug value if the target field = 'title'
       const slugString = slug(value, { lower: true });
       this.setState({ slug: slugString });
     }
@@ -240,11 +254,25 @@ class PostForm extends React.Component<IProps, IState> {
     return layout;
   };
 
+  togglePublish = () => {
+    const currentState = this.state.publish;
+    const newState = !currentState;
+    this.setState({ publish: newState });
+    return true;
+  };
+
   render() {
     return (
       <div>
         <BlockUi tag="div" blocking={this.state.blockUI}>
           <form id={this.formID} className={this.props.classes.adminPostsForm}>
+            <div className="form-group">
+              <FormControlLabel
+                control={<Switch disabled={false} onChange={this.togglePublish} checked={this.state.publish} />}
+                label="Publish"
+              />
+            </div>
+
             {this.getWidget({ baseName: "slug", name: this.renderWidgetId("slug"), label: "Slug" })}
             {this.getWidget({
               baseName: "summary",

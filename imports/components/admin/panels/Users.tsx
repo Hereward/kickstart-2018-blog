@@ -560,7 +560,7 @@ export default connect(mapStateToProps)(
     const rolesHandle = Meteor.subscribe("roles");
     const totalUsers = Meteor.users.find().count();
     const options = {
-      sort: { createdAt: -1 },
+      sort: { created: -1 },
       limit: props.cursorLimit
     };
     let filters = props.filters;

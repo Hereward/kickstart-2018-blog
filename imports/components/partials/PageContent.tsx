@@ -149,7 +149,7 @@ export default class PageContent extends React.Component<IProps, IState> {
               <div>
                 <h6>{author}</h6>
                 <h6>
-                  {dateFormat(post.published, "dd mmmm yyyy")} | {totalComments} Comments
+                  {dateFormat(post.created, "dd mmmm yyyy")} | {totalComments} Comments
                 </h6>
               </div>
             ) : (

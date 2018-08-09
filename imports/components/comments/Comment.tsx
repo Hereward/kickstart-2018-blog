@@ -108,7 +108,7 @@ class CommentList extends React.Component<IProps, IState> {
       <Card className={classes.card}>
         <CardBody className={classes.cardBody}>
           <h6>
-            {commenterProfile.screenName} | {dateFormat(comment.published, "dd mmmm yyyy, h:MM:ss")}
+            {commenterProfile.screenName} | {dateFormat(comment.created, "dd mmmm yyyy, h:MM:ss")}
           </h6>
           <div className="card-text">{this.renderComment(comment)}</div>
           {this.props.userId ? this.reply() : ""}

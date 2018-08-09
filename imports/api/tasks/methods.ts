@@ -47,7 +47,7 @@ export const create = new ValidatedMethod({
     }
     Tasks.insert({
       text: text,
-      createdAt: new Date(),
+      created: new Date(),
       owner: this.userId,
       private: true,
       checked: false,

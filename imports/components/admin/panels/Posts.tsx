@@ -15,6 +15,8 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
+import PublishIcon from "@material-ui/icons/Add";
+import UnpublishIcon from "@material-ui/icons/Clear";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -301,6 +303,22 @@ class Posts extends React.Component<IProps, IState> {
     });
   };
 
+  confirmPublishSelected = () => {
+    Library.confirmDialog().then(result => {
+      if (result) {
+        this.deleteSelected();
+      }
+    });
+  };
+
+  confirmUnpublishSelected = () => {
+    Library.confirmDialog().then(result => {
+      if (result) {
+        this.deleteSelected();
+      }
+    });
+  };
+
   deleteSelected() {
     this.setState({ block: true });
     const { postDeleteMethod, contentType } = this.props;
@@ -354,6 +372,20 @@ class Posts extends React.Component<IProps, IState> {
               <DeleteIcon />
             </ListItemIcon>
             <ListItemText primary="Delete SELECTED" />
+          </ListItem>
+
+          <ListItem onClick={this.confirmPublishSelected} button>
+            <ListItemIcon>
+              <PublishIcon />
+            </ListItemIcon>
+            <ListItemText primary="Publish SELECTED" />
+          </ListItem>
+
+          <ListItem onClick={this.confirmUnpublishSelected} button>
+            <ListItemIcon>
+              <UnpublishIcon />
+            </ListItemIcon>
+            <ListItemText primary="Unpublish SELECTED" />
           </ListItem>
         </List>
       </div>
@@ -657,7 +689,7 @@ export default connect(mapStateToProps)(
     const imagesHandle = Meteor.subscribe("editorialImages");
     const postsHandle = Meteor.subscribe(props.subscription);
     const options = {
-      sort: { published: -1 },
+      sort: { created: -1 },
       limit: props.cursorLimit
     };
     let filters = props.filters;

@@ -51,6 +51,7 @@ export const createPost = new ValidatedMethod({
   name: "post.create",
   validate: new SimpleSchema({
     id: { type: String, optional: true },
+    publish: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
     summary: { type: String },
@@ -67,6 +68,7 @@ export const createPost = new ValidatedMethod({
     slugCheck({ slug: fields.slug, type: "new" });
 
     Posts.insert({
+      publish: fields.publish,
       image_id: fields.image_id,
       title: fields.title,
       body: fields.body,
@@ -77,7 +79,7 @@ export const createPost = new ValidatedMethod({
       closeComments: false,
       authorId: this.userId,
       modified: new Date(),
-      published: new Date()
+      created: new Date()
     });
 
     return true;
@@ -121,6 +123,7 @@ export const updatePost = new ValidatedMethod({
   name: "posts.update",
   validate: new SimpleSchema({
     id: { type: String },
+    publish: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
     summary: { type: String },
@@ -138,6 +141,7 @@ export const updatePost = new ValidatedMethod({
 
     Posts.update(fields.id, {
       $set: {
+        publish: fields.publish,
         image_id: fields.image_id,
         title: fields.title,
         body: fields.body,

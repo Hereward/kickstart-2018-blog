@@ -19,7 +19,7 @@ if (Meteor.isServer) {
           currentAttempts: 1,
           expiresOn: 1,
           persist: 1,
-          createdAt: 1,
+          created: 1,
           owner: 1
         }
       }
