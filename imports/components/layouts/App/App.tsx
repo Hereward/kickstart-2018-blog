@@ -3,8 +3,9 @@ import { Session } from "meteor/session";
 import { Accounts } from "meteor/accounts-base";
 import * as RLocalStorage from "meteor/simply:reactive-local-storage";
 import * as React from "react";
-import { Helmet } from "react-helmet";
+//import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
+import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import Header from "../../partials/Header";
@@ -24,7 +25,7 @@ import Meta from "../../partials/Meta";
 import Splash from "../../partials/Splash";
 
 interface IProps {
-  history: any;
+  history: PropTypes.object.isRequired;
   signedIn: boolean;
   enhancedAuth: boolean;
   Email: string;

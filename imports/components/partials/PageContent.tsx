@@ -1,5 +1,6 @@
 ////<reference path="index.d.ts"/>
 import * as React from "react";
+import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import * as dateFormat from "dateformat";
 import { Pages } from "../../api/pages/publish";
@@ -10,8 +11,11 @@ import * as Library from "../../modules/library";
 import * as Icon from "../../modules/icons";
 import * as User from "../../modules/user";
 import Spinner from "./Spinner";
+import MetaWrapper from "./MetaWrapper";
 
 interface IProps {
+  history: PropTypes.object.isRequired;
+  systemSettings: PropTypes.object.isRequired;
   post: any;
   updateMethod: string;
   contentType: string;
@@ -167,8 +171,33 @@ export default class PageContent extends React.Component<IProps, IState> {
     return layout;
   }
 
+  getMeta() {
+    const { post } = this.props;
+    return (
+      <MetaWrapper
+        path={this.props.history.location.pathname}
+        settings={this.props.systemSettings}
+        customSettings={post}
+      />
+    );
+  }
+
+  /*
+  getMetaz() {
+    const { post } = this.props;
+    const path = this.props.history.location.pathname;
+    const meta = post ? <Meta location={path} settings={post} /> : "";
+    return meta;
+  }
+  */
+
   render() {
     let layout = this.getLayout();
-    return <div className="container page-content">{layout}</div>;
+    return (
+      <div className="container page-content">
+        {this.getMeta()}
+        {layout}
+      </div>
+    );
   }
 }

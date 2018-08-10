@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as dateFormat from "dateformat";
 import Button from "@material-ui/core/Button";
@@ -11,6 +12,7 @@ import Transition from "../../partials/Transition";
 import { Posts } from "../../../api/posts/publish";
 import { Comments } from "../../../api/comments/publish";
 import { Profiles } from "../../../api/profiles/publish";
+import MetaWrapper from "../../partials/MetaWrapper";
 
 let styles: any;
 
@@ -28,6 +30,8 @@ styles = theme => ({
 });
 
 interface IProps {
+  history: PropTypes.object.isRequired;
+  systemSettings: PropTypes.object.isRequired;
   classes: any;
   posts: any;
   dispatch: any;
@@ -115,7 +119,7 @@ class Blog extends React.Component<IProps, IState> {
 
   layout() {
     const { classes, posts, totalPosts, cursorLimit } = this.props;
-    
+
     return (
       <div>
         {posts ? <div>{this.mapPosts(posts)}</div> : ""}
@@ -124,10 +128,28 @@ class Blog extends React.Component<IProps, IState> {
     );
   }
 
+  /*
+  getMetaZ() {
+    const { systemSettings } = this.props;
+    systemSettings.title = "Blog Page";
+    //const path = this.props.history.location.pathname;
+    return <Meta location={path} settings={systemSettings} />;
+  }
+  */
+
+  getMeta() {
+    return (
+      <MetaWrapper path={this.props.history.location.pathname} settings={this.props.systemSettings} title="Blog Page" />
+    );
+  }
+
   render() {
     return (
       <Transition>
-        <div className="container page-content">{this.layout()}</div>
+        <div className="container page-content">
+          {this.getMeta()}
+          {this.layout()}
+        </div>
       </Transition>
     );
   }
@@ -153,8 +175,8 @@ export default connect(mapStateToProps)(
     };
 
     if (PostsDataReady) {
-      totalPosts = Posts.find({publish: true}).count();
-      posts = Posts.find({publish: true}, options).fetch();
+      totalPosts = Posts.find({ publish: true }).count();
+      posts = Posts.find({ publish: true }, options).fetch();
     }
     return { posts: posts, totalPosts: totalPosts };
   })(withStyles(styles, { withTheme: true })(Blog))

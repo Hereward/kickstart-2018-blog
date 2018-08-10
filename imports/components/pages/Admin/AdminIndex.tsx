@@ -1,4 +1,5 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import { ListGroup, ListGroupItem } from "reactstrap";
@@ -28,15 +29,16 @@ import Home from "../../admin/panels/Home";
 import { Pages as PageData } from "../../../api/pages/publish";
 import { Posts as PostData } from "../../../api/posts/publish";
 import { Comments as CommentData } from "../../../api/comments/publish";
+import MetaWrapper from "../../partials/MetaWrapper";
 
 const drawerWidth = 240;
 let styles: any;
 
 interface IProps {
-  history: any;
-  classes: any;
+  history: PropTypes.object.isRequired;
+  classes: PropTypes.object.isRequired;
+  systemSettings: PropTypes.object.isRequired;
   theme: any;
-  systemSettings: any;
   sessionReady: boolean;
   userData: any;
   userId: string;
@@ -293,7 +295,7 @@ class Admin extends React.Component<IProps, IState> {
         case "posts":
           layout = this.postsPanel();
           break;
-          case "comments":
+        case "comments":
           layout = this.commentsPanel();
           break;
         default:
@@ -403,6 +405,16 @@ class Admin extends React.Component<IProps, IState> {
     return layout;
   }
 
+  getMeta() {
+    return (
+      <MetaWrapper
+        path={this.props.history.location.pathname}
+        settings={this.props.systemSettings}
+        title="Admin Page"
+      />
+    );
+  }
+
   render() {
     const { classes, theme } = this.props;
     const panel = this.renderPanel();
@@ -410,6 +422,7 @@ class Admin extends React.Component<IProps, IState> {
 
     return (
       <div className={classes.root}>
+        {this.getMeta()}
         <Hidden mdUp>
           <AppBar className={classes.appBar}>
             <Toolbar>

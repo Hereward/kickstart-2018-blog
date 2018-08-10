@@ -22,6 +22,7 @@ import { toggleAuthEnabledPending as toggle2FA } from "../../../api/settings/met
 import { purgeAllOtherSessions } from "../../../api/sessions/methods";
 import * as User from "../../../modules/user";
 import Spinner from "../../partials/Spinner";
+import MetaWrapper from "../../partials/MetaWrapper";
 
 let styles: any;
 styles = theme => ({
@@ -31,8 +32,9 @@ styles = theme => ({
 });
 
 interface IProps {
-  history: any;
+  history: PropTypes.object.isRequired;
   classes: PropTypes.object.isRequired;
+  systemSettings: PropTypes.object.isRequired;
   enhancedAuth: boolean;
   signedIn: boolean;
   profile: any;
@@ -421,11 +423,22 @@ class Profile extends React.Component<IProps, IState> {
     return layout;
   }
 
+  getMeta() {
+    return (
+      <MetaWrapper
+        path={this.props.history.location.pathname}
+        settings={this.props.systemSettings}
+        title="Profile Page"
+      />
+    );
+  }
+
   render() {
     let layout = this.getLayout();
     return (
       <Transition>
         <div className="container page-content">
+          {this.getMeta()}
           {this.getNotifications()}
           {layout}
         </div>

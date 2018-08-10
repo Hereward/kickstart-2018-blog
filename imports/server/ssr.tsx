@@ -10,14 +10,31 @@ import MainRouter from "../components/routes/Main";
 import MainApp from "../components/layouts/App/App";
 import { systemSettings } from "../api/admin/publish";
 import Meta from "../components/partials/Meta";
+//import MetaWrapper from "../components/partials/MetaWrapper";
 import rootReducer from "../redux/reducers";
 import Splash from "../components/partials/Splash";
 import { Pages } from "../api/pages/publish";
+import { Posts } from "../api/posts/publish";
 import { EditorialImages } from "../api/images/methods";
 
 const context = {};
 
 const store = createStore(rootReducer);
+
+/*
+const extractDataZ = (post, defaultImageLink) => {
+  let image: any;
+  let data: any;
+  const imageId = post.image_id;
+  if (imageId) {
+    post.imageLink = getImageLink(imageId);
+  } else if (defaultImageLink) {
+    post.imageLink = defaultImageLink;
+  }
+  data = post;
+  return data;
+};
+*/
 
 const getImageLink = (imageId = "") => {
   let link = "";
@@ -29,25 +46,55 @@ const getImageLink = (imageId = "") => {
   return link;
 };
 
-const getCustomMetaData = (url, defaultImageLink) => {
+const extractData = (match, DataSrc, defaultImageLink) => {
+  let data: any;
+  const slug = match[1];
+  const post = DataSrc.findOne({ slug: slug });
+  log.info(`getCustomMetaData - extractData`, slug);
+  if (post) {
+    const imageId = post.image_id;
+    if (imageId) {
+      post.imageLink = getImageLink(imageId);
+    } else if (defaultImageLink) {
+      post.imageLink = defaultImageLink;
+    }
+    data = post;
+  }
+  return data;
+};
+
+const getCustomMetaData = (url, defaultImageLink, systemSettings) => {
   let slug = "";
   const path = url.pathname;
-  const pagePattern = /[a-z0-9]+(?:-[a-z0-9]+)*$/i;
-  let data = "";
-  let pageMatch = pagePattern.exec(path);
-  if (pageMatch) {
-    slug = pageMatch[0];
-    const page = Pages.findOne({ slug: slug });
-    if (page) {
-      let image: any;
-      const imageId = page.image_id;
-      if (imageId) {
-        page.imageLink = getImageLink(imageId);
-      } else if (defaultImageLink) {
-        page.imageLink = defaultImageLink;
-      }
-      data = page;
-    }
+  const pagePattern = /([a-z0-9]+(?:-[a-z0-9]+)*$)/i;
+  const blogPattern = /blog\/([a-z0-9]+(?:-[a-z0-9]+)*$)/i;
+  let data: any;
+  let clone = false;
+  let customTitle: any;
+  const pageMatch = pagePattern.exec(path);
+  const blogMatch = blogPattern.exec(path);
+  if (path === "/blog") {
+    clone = true;
+    customTitle = "Blog Page";
+  } else if (path === "/profile") {
+    clone = true;
+    customTitle = "Profile Page";
+  } else if (path === "/admin") {
+    clone = true;
+    customTitle = "Admin Page";
+  } else if (blogMatch) {
+    data = extractData(blogMatch, Posts, defaultImageLink);
+  } else if (pageMatch) {
+    data = extractData(pageMatch, Pages, defaultImageLink);
+  }
+
+  if (clone) {
+    data = Object.assign({}, systemSettings);
+    data.title = customTitle;
+  }
+
+  if (data) {
+    data.title += ` - ${systemSettings.shortTitle}`;
   }
   return data;
 };
@@ -57,11 +104,11 @@ onPageLoad(sink => {
   let url: any;
   url = sink.request.url;
   let path = url.path;
-  const settings = systemSettings.findOne();
-  const defaultImageLink = getImageLink(settings.image_id);
-  settings.imageLink = defaultImageLink;
-  const customSettings = getCustomMetaData(url, defaultImageLink);
-  const resolvedSettings = customSettings || settings;
+  const systemSettingsObj = systemSettings.findOne();
+  const defaultImageLink = getImageLink(systemSettingsObj.image_id);
+  systemSettingsObj.imageLink = defaultImageLink;
+  const customSettings = getCustomMetaData(url, defaultImageLink, systemSettingsObj);
+  const resolvedSettings = customSettings || systemSettingsObj;
   sink.renderIntoElementById("react-root", renderToStaticMarkup(<Meta settings={resolvedSettings} location={path} />));
   const helmet = Helmet.renderStatic();
   sink.appendToHead(helmet.meta.toString());

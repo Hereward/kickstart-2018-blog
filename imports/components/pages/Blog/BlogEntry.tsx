@@ -1,6 +1,7 @@
 ///<reference path="../../../../index.d.ts"/>
 
 import * as React from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as dateFormat from "dateformat";
 import { withTracker } from "meteor/react-meteor-data";
@@ -16,6 +17,8 @@ let styles: any;
 styles = theme => ({});
 
 interface IProps {
+  history: PropTypes.object.isRequired;
+  systemSettings: PropTypes.object.isRequired;
   post: any;
   totalComments: number;
   userId: string;
@@ -31,8 +34,6 @@ class BlogEntry extends React.Component<IProps, IState> {
     this.state = {};
   }
 
-
-
   renderPost() {
     const { post } = this.props;
     let layout: any = "";
@@ -46,6 +47,8 @@ class BlogEntry extends React.Component<IProps, IState> {
   template() {
     return (
       <PageContent
+        systemSettings={this.props.systemSettings}
+        history={this.props.history}
         contentType="post"
         permissionThreshold="creator"
         updateMethod="posts.updateInline"

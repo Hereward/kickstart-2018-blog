@@ -1,5 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import * as React from "react";
+import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import Transition from "../../partials/Transition";
 import { Pages } from "../../../api/pages/publish";
@@ -8,6 +9,8 @@ import * as User from "../../../modules/user";
 
 interface IProps {
   page: any;
+  history: PropTypes.object.isRequired;
+  systemSettings: PropTypes.object.isRequired;
 }
 
 class Page extends React.Component<IProps> {
@@ -30,7 +33,22 @@ class Page extends React.Component<IProps> {
   }
 
   render() {
-    return <Transition>{User.id() ? <PageContent permissionThreshold="editor" contentType="page" updateMethod="pages.updateInline" post={this.props.page} /> : this.defaultLayout()}</Transition>;
+    return (
+      <Transition>
+        {User.id() ? (
+          <PageContent
+            systemSettings={this.props.systemSettings}
+            history={this.props.history}
+            permissionThreshold="editor"
+            contentType="page"
+            updateMethod="pages.updateInline"
+            post={this.props.page}
+          />
+        ) : (
+          this.defaultLayout()
+        )}
+      </Transition>
+    );
   }
 }
 
