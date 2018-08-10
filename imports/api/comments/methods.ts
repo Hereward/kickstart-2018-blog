@@ -34,7 +34,7 @@ export const createComment = new ValidatedMethod({
       body: fields.body,
       authorId: this.userId,
       postId: fields.postId,
-      parentId: fields.parentId || "",
+      parentId: fields.parentId || null,
       modified: new Date(),
       created: new Date()
     });

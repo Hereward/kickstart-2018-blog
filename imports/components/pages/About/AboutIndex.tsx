@@ -38,7 +38,7 @@ export default withTracker(props => {
   let page: any;
   let PagesDataReady = Meteor.subscribe("pages");
   if (PagesDataReady) {
-    page = Pages.findOne({ slug: "about" });
+    page = Pages.findOne({ publish: true, slug: "about" });
   }
   return { page: page };
 })(About);

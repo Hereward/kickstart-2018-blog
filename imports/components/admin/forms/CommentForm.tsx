@@ -86,7 +86,7 @@ class CommentForm extends React.Component<IProps, IState> {
     this.state = {
       publish: settingsObj ? settingsObj.publish : false,
       body: settingsObj ? settingsObj.body : "",
-      parentId: settingsObj ? settingsObj.parentId : "",
+      parentId: settingsObj ? settingsObj.parentId : null,
       postId: settingsObj ? settingsObj.postId : "",
       blockUI: false
     };
@@ -161,7 +161,7 @@ class CommentForm extends React.Component<IProps, IState> {
       id: settingsObj._id,
       publish: this.state.publish,
       postId: this.state.postId,
-      parentId: this.state.parentId,
+      parentId: this.state.parentId || null,
       body: this.state.body
     };
 

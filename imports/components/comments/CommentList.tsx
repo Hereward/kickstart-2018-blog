@@ -100,14 +100,15 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
-    //log.info(`CommentList tracker`, props);
+   
     const commentsHandle = Meteor.subscribe("comments");
     const options = {
       sort: { created: -1 },
       limit: props.cursorLimit
     };
-    const totalComments = Comments.find({ parentId: "", postId: props.postId }).count();
-    const commentsList = Comments.find({ parentId: "", postId: props.postId }, options).fetch();
+    const totalComments = Comments.find({ publish: true, parentId: null, postId: props.postId }).count();
+    const commentsList = Comments.find({ publish: true, parentId: null, postId: props.postId }, options).fetch();
+    log.info(`CommentList tracker`, props, totalComments, commentsList);
     return {
       comments: commentsList,
       totalComments: totalComments

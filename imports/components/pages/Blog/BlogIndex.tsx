@@ -153,8 +153,8 @@ export default connect(mapStateToProps)(
     };
 
     if (PostsDataReady) {
-      totalPosts = Posts.find().count();
-      posts = Posts.find({}, options).fetch();
+      totalPosts = Posts.find({publish: true}).count();
+      posts = Posts.find({publish: true}, options).fetch();
     }
     return { posts: posts, totalPosts: totalPosts };
   })(withStyles(styles, { withTheme: true })(Blog))

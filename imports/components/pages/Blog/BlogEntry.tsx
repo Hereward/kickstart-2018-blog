@@ -96,9 +96,9 @@ export default connect()(
     //log.info(`BlogEntry.Tracker()`, path, slug, props.location, match, match2);
 
     if (PostsDataReady) {
-      post = Posts.findOne({ slug: slug });
+      post = Posts.findOne({ publish: true, slug: slug });
       if (post) {
-        totalComments = Comments.find({ postId: post._id }).count();
+        totalComments = Comments.find({ publish: true, postId: post._id }).count();
         author = Profiles.findOne({ owner: post.authorId }).screenName;
       }
     }

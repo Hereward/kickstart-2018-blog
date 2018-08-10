@@ -151,7 +151,7 @@ class CommentForm extends React.Component<IProps, IState> {
 
     const fields = {
       postId: postId,
-      parentId: parentId || "",
+      parentId: parentId || null,
       body: this.state.body
     };
 

@@ -12,11 +12,13 @@ import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
+import Icon from "@material-ui/core/Icon";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
 import PublishIcon from "@material-ui/icons/Add";
-import UnpublishIcon from "@material-ui/icons/Clear";
+//import UnpublishIcon from "@material-ui/icons/Clear";
+//import BlockIcon from "@material-ui/icons/Block";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -30,6 +32,7 @@ import PostForm from "../../admin/forms/PostForm";
 import CommentForm from "../../admin/forms/CommentForm";
 import RenderImage from "../components/RenderImage";
 import Author from "../components/Author";
+import { publishPostList } from "../../../api/admin/methods";
 
 const drawerWidth = 240;
 let styles: any;
@@ -73,6 +76,9 @@ interface IState {
 }
 
 styles = theme => ({
+  fontIcon: {
+    verticalAlign: "bottom"
+  },
   newPostDetail: {
     margin: "1rem"
   },
@@ -306,7 +312,7 @@ class Posts extends React.Component<IProps, IState> {
   confirmPublishSelected = () => {
     Library.confirmDialog().then(result => {
       if (result) {
-        this.deleteSelected();
+        this.publishSelected(true);
       }
     });
   };
@@ -314,7 +320,22 @@ class Posts extends React.Component<IProps, IState> {
   confirmUnpublishSelected = () => {
     Library.confirmDialog().then(result => {
       if (result) {
-        this.deleteSelected();
+        this.publishSelected(false);
+      }
+    });
+  };
+
+  publishSelected = publish => {
+    const { contentType } = this.props;
+    this.setState({ block: true });
+    //publishPostList.call()
+    publishPostList.call({ publish: publish, contentType: contentType, selected: this.state.selectedPosts }, err => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        log.error(`Method [publishPostList] failed`, err);
+      } else {
+        this.miniAlert("Publish status of selected posts changed!");
+        this.setState({ block: false });
       }
     });
   };
@@ -376,14 +397,14 @@ class Posts extends React.Component<IProps, IState> {
 
           <ListItem onClick={this.confirmPublishSelected} button>
             <ListItemIcon>
-              <PublishIcon />
+              <Icon className={classes.fontIcon}>add</Icon>
             </ListItemIcon>
             <ListItemText primary="Publish SELECTED" />
           </ListItem>
 
           <ListItem onClick={this.confirmUnpublishSelected} button>
             <ListItemIcon>
-              <UnpublishIcon />
+              <Icon className={classes.fontIcon}>block</Icon>
             </ListItemIcon>
             <ListItemText primary="Unpublish SELECTED" />
           </ListItem>
@@ -575,6 +596,14 @@ class Posts extends React.Component<IProps, IState> {
   renderPost(dataObj: any) {
     const { classes, contentType } = this.props;
     const { expanded } = this.state;
+    //log.info(`Posts.renderPost`, dataObj);
+    const unpub = dataObj.publish ? (
+      ""
+    ) : (
+      <span>
+        <Icon className={classes.fontIcon}>block</Icon>{" "}
+      </span>
+    );
 
     return (
       <ExpansionPanel
@@ -588,6 +617,7 @@ class Posts extends React.Component<IProps, IState> {
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
           <div className={classes.summaryData}>
             <span className={classes.summaryDataTitle}>
+              {unpub}
               {contentType === "comments" ? this.truncateHTML(dataObj.body) : dataObj.title}
             </span>
           </div>

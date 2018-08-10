@@ -121,8 +121,8 @@ export default connect()(
       limit: props.cursorLimitReplies
     };
     //const cursor = Comments.find({ parentId: props.parentId }, options);
-    totalComments = Comments.find({ parentId: props.parentId }).count();
-    const commentsList = Comments.find({ parentId: props.parentId }, options).fetch();
+    totalComments = Comments.find({ publish: true, parentId: props.parentId }).count();
+    const commentsList = Comments.find({ publish: true, parentId: props.parentId }, options).fetch();
     return {
       comments: commentsList,
       totalComments: totalComments

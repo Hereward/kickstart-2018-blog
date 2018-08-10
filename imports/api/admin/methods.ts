@@ -109,7 +109,7 @@ export const updateCommentAdmin = new ValidatedMethod({
     id: { type: String },
     publish: { type: Boolean },
     postId: { type: String },
-    parentId: { type: String },
+    parentId: { type: String, optional: true },
     body: { type: String }
   }).validator(),
 
@@ -122,7 +122,7 @@ export const updateCommentAdmin = new ValidatedMethod({
       $set: {
         postId: fields.postId,
         publish: fields.publish,
-        parentId: fields.parentId || current._id,
+        parentId: fields.parentId || current.parentId,
         body: fields.body,
         modified: new Date()
       }
@@ -491,6 +491,40 @@ export const toggleRole = new ValidatedMethod({
       }
     }
 
+    return true;
+  }
+});
+
+export const publishPostList = new ValidatedMethod({
+  name: "admin.publishPostList",
+  validate: new SimpleSchema({
+    selected: { type: Object, blackbox: true },
+    contentType: { type: String },
+    publish: { type: Boolean }
+  }).validator(),
+
+  run(fields) {
+    if (!this.isSimulation) {
+      authCheck("deletePostList", this.userId, "admin");
+      const dataSrc = postsDataSrc(fields.contentType);
+      const keys = Object.keys(fields.selected);
+      let publishList = [];
+      log.info(`admin.publishPostList`, keys);
+      for (var i = 0, len = keys.length; i < len; i++) {
+        const key = keys[i];
+        const val = fields.selected[key];
+        if (val === true) {
+          //dataSrc.update();
+          dataSrc.update(key, {
+            $set: {
+              publish: fields.publish
+            }
+          });
+        }
+      }
+
+      log.info(`Selected posts publish status affected`, publishList);
+    }
     return true;
   }
 });
