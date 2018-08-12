@@ -19,6 +19,7 @@ interface IProps {
   parentId: string;
   dispatch: any;
   commentSubmitted: any;
+  replyTo?: string;
 }
 
 interface IState {
@@ -178,8 +179,9 @@ class CommentForm extends React.Component<IProps, IState> {
   }
 
   render() {
-    const { classes, settingsObj, postId, parentId } = this.props;
+    const { classes, settingsObj, postId, parentId, replyTo } = this.props;
     const formId = parentId ? `${this.formID}_${parentId}` : `${this.formID}_${postId}`;
+    const prefix = replyTo ? `${replyTo}: ` : "";
     return (
       <BlockUi tag="div" blocking={this.state.blockUI}>
         <form className={classes.form} id={formId} onSubmit={this.handleSubmit}>
@@ -188,7 +190,7 @@ class CommentForm extends React.Component<IProps, IState> {
               className={`${classes.rte} novalidate`}
               id="commentText"
               placeholder="Write a comment..."
-              defaultValue={settingsObj ? settingsObj.body : ""}
+              defaultValue={settingsObj ? settingsObj.body : prefix}
               onFocusOut={this.nothing()}
               onChange={this.updateBody}
               modules={this.modules}

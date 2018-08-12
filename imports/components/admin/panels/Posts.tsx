@@ -32,6 +32,7 @@ import PostForm from "../../admin/forms/PostForm";
 import CommentForm from "../../admin/forms/CommentForm";
 import RenderImage from "../components/RenderImage";
 import Author from "../components/Author";
+import MetaInfo from "../components/MetaInfo";
 import { publishPostList } from "../../../api/admin/methods";
 
 const drawerWidth = 240;
@@ -102,17 +103,17 @@ styles = theme => ({
     color: "dimGray"
   },
   summaryDataTitle: {
-    maxWidth: "10rem",
+    maxWidth: "13rem",
     overflow: "hidden",
     display: "inline-block",
     textOverflow: "ellipsis",
     [theme.breakpoints.up("sm")]: {
-      maxWidth: "15rem",
+      maxWidth: "17rem",
       verticalAlign: "top",
       marginLeft: "0.5rem"
     },
     [theme.breakpoints.up("md")]: {
-      maxWidth: "20rem"
+      maxWidth: "22rem"
     },
     [theme.breakpoints.up("lg")]: {
       maxWidth: "42rem"
@@ -550,6 +551,7 @@ class Posts extends React.Component<IProps, IState> {
         </div>
 
         {dataObj.authorId ? <Author userId={dataObj.authorId} /> : ""}
+        <MetaInfo data={dataObj} />
 
         {contentType === "comments" ? "" : this.renderImage(dataObj)}
         {contentType === "comments" ? this.commentForm(dataObj) : this.postForm(dataObj)}

@@ -1,7 +1,8 @@
 ///<reference path="../../../../index.d.ts"/>
 
 import * as React from "react";
-import { Divider } from "@material-ui/core";
+//import { Divider } from "@material-ui/core";
+import * as dateFormat from "dateformat";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
@@ -11,7 +12,7 @@ import OptionGroup from "./OptionGroup";
 
 let styles: any;
 styles = theme => ({
-  authorInfo: {
+  info: {
     marginLeft: "1rem",
     fontStyle: "italic",
     maxWidth: "13rem",
@@ -26,43 +27,42 @@ styles = theme => ({
 
 interface IProps {
   classes: PropTypes.object.isRequired;
-  dispatch: any;
-  userId: string;
-  user: PropTypes.object.isRequired;
+  data: PropTypes.object.isRequired;
 }
 
 interface IState {
-  showAuthorInfo: boolean;
+  open: boolean;
 }
 
-class Author extends React.Component<IProps, IState> {
+class MetaInfo extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
     this.state = {
-      showAuthorInfo: false
+      open: false
     };
   }
 
-  toggleAuthor = () => {
-    const vis = !this.state.showAuthorInfo;
-    this.setState({ showAuthorInfo: vis });
+  toggle = () => {
+    const vis = !this.state.open;
+    this.setState({ open: vis });
   };
 
-  authorDetails() {
-    const { user, classes } = this.props;
+  info() {
+    const { classes, data } = this.props;
     return (
-      <div className={classes.authorInfo}>
-        <strong>id:</strong> {user._id} <br />
-        {user.emails[0].address}
+      <div className={classes.info}>
+        <strong>id:</strong> {data._id} <br />
+        <strong>c:</strong> {dateFormat(data.created, "dd mmmm yyyy")} <br />
+        <strong>m:</strong> {dateFormat(data.modified, "dd mmmm yyyy")}
       </div>
     );
   }
 
   layout() {
     const layout = (
-      <OptionGroup show={this.state.showAuthorInfo} transparent={true} label="Author Info" action={this.toggleAuthor}>
-        {this.authorDetails()}
+      <OptionGroup show={this.state.open} transparent={true} label="Meta Info" action={this.toggle}>
+        {this.info()}
       </OptionGroup>
     );
 
@@ -70,15 +70,15 @@ class Author extends React.Component<IProps, IState> {
   }
 
   render() {
-    return this.props.user ? this.layout() : "";
+    return this.layout();
   }
 }
 
 export default connect()(
   withTracker(props => {
-    const usersHandle = Meteor.subscribe("allUsers");
-    const user = Meteor.users.findOne(props.userId);
+    //const usersHandle = Meteor.subscribe("allUsers");
+    //const user = Meteor.users.findOne(props.userId);
     //log.info(`Author tracker`, props);
-    return { user: user };
-  })(withStyles(styles, { withTheme: true })(Author))
+    return {};
+  })(withStyles(styles, { withTheme: true })(MetaInfo))
 );

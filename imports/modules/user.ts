@@ -184,10 +184,11 @@ export function can(params: { do?: string; threshold?: any; owner?: any }) {
     } else if (params.threshold === "moderator") {
       allowed = Roles.userIsInRole(userId, ["super-admin", "admin", "editor", "moderator"]);
     } else if (params.threshold === "creator") {
-      if (
-        (params.owner === userId && Roles.userIsInRole(userId, ["creator"])) ||
-        Roles.userIsInRole(userId, ["super-admin", "admin", "editor"])
-      ) {
+      if (params.owner === userId && Roles.userIsInRole(userId, ["creator"])) {
+        allowed = true;
+      } else if (params.do === "moderateComment" && Roles.userIsInRole(userId, ["super-admin", "admin", "moderator"])) {
+        allowed = true;
+      } else if (Roles.userIsInRole(userId, ["super-admin", "admin", "editor"])) {
         allowed = true;
       }
     } else if (params.threshold) {

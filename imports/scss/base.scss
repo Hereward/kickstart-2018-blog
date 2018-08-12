@@ -10,6 +10,15 @@ body {
   /* background-color: #343a40; */
 }
 
+p:last-child {
+  margin-bottom: 0;
+}
+
+
+.replyPrefix {
+  font-weight: bold;
+}
+
 a, a:link, a:hover, a:visited {
   text-decoration: none;
 }

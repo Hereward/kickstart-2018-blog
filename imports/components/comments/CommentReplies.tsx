@@ -8,7 +8,8 @@ import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import { Comments } from "../../api/comments/publish";
-import CommentReply from "./CommentReply";
+//import CommentReply from "./CommentReply";
+import Comment from "./Comment";
 
 let styles: any;
 styles = theme => ({
@@ -82,7 +83,7 @@ class CommentReplies extends React.Component<IProps, IState> {
       //const checkedC = this.checkCheckBox(post);
       //const layout = <div>boooo</div>;
       const layout = (
-        <CommentReply parentId={parentId} userId={this.props.userId} key={comment._id} comment={comment} />
+        <Comment parentId={parentId} userId={this.props.userId} key={comment._id} comment={comment} />
       );
       //const layout = <CommentReply key={comment._id} />;
       return layout;
