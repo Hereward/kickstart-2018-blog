@@ -31,7 +31,7 @@ const slugCheck = (props: { slug: string; type: string; current?: string }) => {
       valid = found === 0;
     }
   }
-  log.info(`slugValid()`, valid);
+  //log.info(`slugValid()`, valid);
   if (!valid) {
     slugError();
   }
@@ -84,7 +84,7 @@ export const createPage = new ValidatedMethod({
 
   run(fields) {
     authCheck("pages.create", this.userId);
-    log.info(`createPage`, fields);
+    //log.info(`createPage`, fields);
 
     slugCheck({ slug: fields.slug, type: "new" });
 
@@ -120,7 +120,7 @@ export const updatePage = new ValidatedMethod({
 
   run(fields) {
     authCheck("pages.update", this.userId);
-    log.info(`updatePage`, fields);
+    //log.info(`updatePage`, fields);
 
     const current = Pages.findOne(fields.id);
 
@@ -153,7 +153,7 @@ export const updatePageInline = new ValidatedMethod({
 
   run(fields) {
     authCheck("pages.updatePageInline", this.userId);
-    log.info(`updatePageInline`, fields);
+    //log.info(`updatePageInline`, fields);
     const allow = userCan({ threshold: "admin" });
     if (!allow) {
       console.log(`pages.updatePageInline - PERMISSION DENIED`);

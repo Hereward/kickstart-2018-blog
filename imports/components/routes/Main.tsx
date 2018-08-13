@@ -124,7 +124,7 @@ export default connect()(
     let slugs: any = [];
     const PagesDataReady = Meteor.subscribe("pages");
     if (PagesDataReady) {
-      pages = Pages.find().fetch();
+      pages = Pages.find({publish: true}).fetch();
     }
 
     if (pages) {

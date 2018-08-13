@@ -10,9 +10,10 @@ import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Transition from "../../partials/Transition";
 import { Posts } from "../../../api/posts/publish";
-import { Comments } from "../../../api/comments/publish";
-import { Profiles } from "../../../api/profiles/publish";
 import MetaWrapper from "../../partials/MetaWrapper";
+import Author from "./Author";
+import CommentCount from "./CommentCount";
+import Spinner from "../../partials/Spinner";
 
 let styles: any;
 
@@ -74,17 +75,19 @@ class Blog extends React.Component<IProps, IState> {
     let layout: any = "";
     if (post) {
       layout = (
-        <div>
+        <Transition>
           <h2 className="blogTitle">
             <Link to={`blog/${post.slug}`}>{post.title}</Link>
           </h2>
-          <h6>{Profiles.findOne({ owner: post.authorId }).screenName}</h6>
           <h6>
-            {dateFormat(post.created, "dd mmmm yyyy")} | {Comments.find({ postId: post._id }).count()} Comments
+            <Author authorId={post.authorId} />
+          </h6>
+          <h6>
+            <CommentCount postId={post._id} /> Comments
           </h6>
           <div dangerouslySetInnerHTML={this.renderBody(post)} />
           {this.readMoreLink(post)}
-        </div>
+        </Transition>
       );
     }
 
@@ -128,15 +131,6 @@ class Blog extends React.Component<IProps, IState> {
     );
   }
 
-  /*
-  getMetaZ() {
-    const { systemSettings } = this.props;
-    systemSettings.title = "Blog Page";
-    //const path = this.props.history.location.pathname;
-    return <Meta location={path} settings={systemSettings} />;
-  }
-  */
-
   getMeta() {
     return (
       <MetaWrapper path={this.props.history.location.pathname} settings={this.props.systemSettings} title="Blog Page" />
@@ -144,13 +138,17 @@ class Blog extends React.Component<IProps, IState> {
   }
 
   render() {
-    return (
+    const { posts } = this.props;
+    let layout = this.layout();
+    return posts ? (
       <Transition>
         <div className="container page-content">
           {this.getMeta()}
-          {this.layout()}
+          {layout}
         </div>
       </Transition>
+    ) : (
+      <Spinner caption="loading" type="component" />
     );
   }
 }

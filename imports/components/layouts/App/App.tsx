@@ -97,7 +97,7 @@ export default withRouter(
     withTracker(props => {
       let isClient = Meteor.isClient;
       let userSettingsRec: any;
-      let profilesHandle = Meteor.subscribe("profiles-public");
+      let profilesHandle = Meteor.subscribe("profiles.public");
       let userSettingsHandle = Meteor.subscribe("userSettings");
       let userSessionHandle = Meteor.subscribe("userSessions");
       let systemSettingsHandle = Meteor.subscribe("systemSettings");
@@ -121,11 +121,16 @@ export default withRouter(
 
       let profilePublic: any;
 
+      let profileCursor = Profiles.find();
+      let pcount = profileCursor.count();
+      //log.info(`APP tracker`, pcount, profileCursor.fetch());
+
       if (userId && userData) {
         sessionToken = User.sessionToken("get");
         let hashedToken = sessionToken ? User.hash(sessionToken) : "";
 
         profilePublic = Profiles.findOne({ owner: userId });
+       
 
         userSettingsRec = userSettings.findOne({ owner: userId });
 

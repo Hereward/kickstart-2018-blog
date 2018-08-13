@@ -42,7 +42,7 @@ Accounts.onLogin(() => {
   let userData: any;
   userData = User.data();
   User.setUserDataCache(userData);
-  log.info(`Client login`, User.id(), userData, User.sessionToken("get"));
+  //log.info(`Client login`, User.id(), userData, User.sessionToken("get"));
 });
 
 Accounts.onLogout(() => {

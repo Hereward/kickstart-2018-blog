@@ -557,37 +557,6 @@ export const deletePostList = new ValidatedMethod({
   }
 });
 
-/*
-export const deletePageList = new ValidatedMethod({
-  name: "admin.deletePageList",
-  validate: new SimpleSchema({
-    selected: { type: Object, blackbox: true },
-    postsDataSrc: { type: Object, blackbox: true }
-  }).validator(),
-
-  run(fields) {
-    if (!this.isSimulation) {
-      authCheck("deletePageList", this.userId, "admin");
-
-      const keys = Object.keys(fields.selected);
-      let deletedList = [];
-      log.info(`admin.deletePageList`, keys);
-      for (var i = 0, len = keys.length; i < len; i++) {
-        const key = keys[i];
-        const val = fields.selected[key];
-
-        if (val === true) {
-          Pages.remove(key);
-        }
-      }
-
-      log.info(`Selected Pages Deleted`, deletedList);
-    }
-    return true;
-  }
-});
-*/
-
 export const deleteAllPosts = new ValidatedMethod({
   name: "admin.deleteAllPosts",
   validate: new SimpleSchema({
@@ -606,24 +575,6 @@ export const deleteAllPosts = new ValidatedMethod({
     return true;
   }
 });
-
-/*
-export const deleteAllPages = new ValidatedMethod({
-  name: "admin.deleteAllPages",
-  validate: null,
-
-  run(fields) {
-    if (!this.isSimulation) {
-      authCheck("admin.deleteAllPages", this.userId, "admin");
-      Pages.remove({});
-    }
-
-    log.info(`admin.deleteAllPages -DONE!`);
-
-    return true;
-  }
-});
-*/
 
 export const deleteAllUsers = new ValidatedMethod({
   name: "deleteAllUsers",

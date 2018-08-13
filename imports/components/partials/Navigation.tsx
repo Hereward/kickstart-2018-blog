@@ -85,7 +85,7 @@ class Navigation extends React.Component<IProps, IState> {
           this.props.location.pathname === "/" &&
           !this.props.userData.emails[0].verified
         ) {
-          this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 2000);
+          this.timerID = Meteor.setTimeout(() => this.verifyEmailReminder(), 500);
         }
       }
     }

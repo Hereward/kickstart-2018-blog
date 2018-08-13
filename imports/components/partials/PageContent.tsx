@@ -12,6 +12,8 @@ import * as Icon from "../../modules/icons";
 import * as User from "../../modules/user";
 import Spinner from "./Spinner";
 import MetaWrapper from "./MetaWrapper";
+import Author from "../pages/Blog/Author";
+import CommentCount from "../pages/Blog/CommentCount";
 
 interface IProps {
   history: PropTypes.object.isRequired;
@@ -119,7 +121,6 @@ export default class PageContent extends React.Component<IProps, IState> {
   editLink() {
     let allow: boolean = false;
     const { permissionThreshold } = this.props;
-    //log.info(`PageContent.editLink()`, permissionThreshold);
     if (permissionThreshold === "creator") {
       allow = User.can({ threshold: "creator", owner: this.props.post.authorId });
     } else if (User.can({ threshold: "admin" })) {
@@ -151,9 +152,11 @@ export default class PageContent extends React.Component<IProps, IState> {
             </h1>
             {this.props.contentType === "post" ? (
               <div>
-                <h6>{author}</h6>
                 <h6>
-                  {dateFormat(post.created, "dd mmmm yyyy")} | {totalComments} Comments
+                  <Author authorId={post.authorId} />
+                </h6>
+                <h6>
+                  {dateFormat(post.created, "dd mmmm yyyy")} | <CommentCount postId={post._id} /> Comments
                 </h6>
               </div>
             ) : (
@@ -192,12 +195,15 @@ export default class PageContent extends React.Component<IProps, IState> {
   */
 
   render() {
+    const { post } = this.props;
     let layout = this.getLayout();
     return (
-      <div className="container page-content">
-        {this.getMeta()}
-        {layout}
-      </div>
+      <Transition>
+        <div className="container page-content">
+          {this.getMeta()}
+          {layout}
+        </div>
+      </Transition>
     );
   }
 }

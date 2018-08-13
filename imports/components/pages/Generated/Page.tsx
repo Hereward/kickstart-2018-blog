@@ -2,10 +2,11 @@ import { Meteor } from "meteor/meteor";
 import * as React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
-import Transition from "../../partials/Transition";
+//import Transition from "../../partials/Transition";
 import { Pages } from "../../../api/pages/publish";
 import PageContent from "../../partials/PageContent";
-import * as User from "../../../modules/user";
+//import * as User from "../../../modules/user";
+import Spinner from "../../partials/Spinner";
 
 interface IProps {
   page: any;
@@ -33,21 +34,18 @@ class Page extends React.Component<IProps> {
   }
 
   render() {
-    return (
-      <Transition>
-        {User.id() ? (
-          <PageContent
-            systemSettings={this.props.systemSettings}
-            history={this.props.history}
-            permissionThreshold="editor"
-            contentType="page"
-            updateMethod="pages.updateInline"
-            post={this.props.page}
-          />
-        ) : (
-          this.defaultLayout()
-        )}
-      </Transition>
+    const { page } = this.props;
+    return page ? (
+      <PageContent
+        systemSettings={this.props.systemSettings}
+        history={this.props.history}
+        permissionThreshold="editor"
+        contentType="page"
+        updateMethod="pages.updateInline"
+        post={this.props.page}
+      />
+    ) : (
+      <Spinner caption="loading" type="component" />
     );
   }
 }
