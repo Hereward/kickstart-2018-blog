@@ -355,7 +355,7 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    let layout: any;
+    let layout: any = "";
     if (this.props.profile && this.state.editProfile) {
       layout = this.getForm("Edit Profile");
     } else if (this.props.profile && this.props.profile.new) {
@@ -389,8 +389,6 @@ class Profile extends React.Component<IProps, IState> {
           </div>
         </div>
       );
-    } else {
-      layout = <Spinner caption="loading" type="component" />;
     }
     return <div className="profile-details">{layout}</div>;
   }
@@ -435,7 +433,7 @@ class Profile extends React.Component<IProps, IState> {
 
   render() {
     let layout = this.getLayout();
-    return (
+    return this.props.profile ? (
       <Transition>
         <div className="container page-content">
           {this.getMeta()}
@@ -443,6 +441,8 @@ class Profile extends React.Component<IProps, IState> {
           {layout}
         </div>
       </Transition>
+    ) : (
+      <Spinner type="page" />
     );
   }
 }

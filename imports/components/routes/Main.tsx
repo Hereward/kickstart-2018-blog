@@ -1,15 +1,16 @@
 import * as React from "react";
 import { Redirect, Switch, Route } from "react-router-dom";
 import { connect } from "react-redux";
+import * as Loadable from "react-loadable";
 import { withTracker } from "meteor/react-meteor-data";
-import { withStyles } from "@material-ui/core/styles";
+//import { withStyles } from "@material-ui/core/styles";
 import Index from "../pages/Index/Index";
 import Page from "../pages/Generated/Page";
 import Admin from "../pages/Admin/AdminIndex";
 import Profile from "../pages/Profile/ProfileIndex";
 import Error404 from "../pages/Error/Error404";
-import Blog from "../pages/Blog/BlogIndex";
-import BlogEntry from "../pages/Blog/BlogEntry";
+//import BlogIndex from "../pages/Blog/BlogIndex";
+//import BlogEntry from "../pages/Blog/BlogEntry";
 import ForgotPassWord from "../pages/User/ForgotPassWord";
 import Authenticator from "../pages/User/Authenticator";
 import Register from "../pages/User/Register";
@@ -23,6 +24,24 @@ import ChangePassword from "../pages/User/ChangePassword";
 import * as User from "../../modules/user";
 import * as Library from "../../modules/library";
 import { Pages } from "../../api/pages/publish";
+import Splash from "../partials/Splash";
+import Spinner from "../partials/Spinner";
+
+function Loading(props) {
+  return <Spinner error={props.error} type="page" />;
+}
+
+const BlogIndex = Loadable({
+  loader: () => import("../pages/Blog/BlogIndex"),
+  loading: Loading,
+  delay: 300
+});
+
+const BlogEntry = Loadable({
+  loader: () => import("../pages/Blog/BlogEntry"),
+  loading: Loading,
+  delay: 300
+});
 
 interface IProps {
   slugs: any;
@@ -89,11 +108,11 @@ class Routes extends React.Component<IProps> {
     return layout;
   }
 
-  mainRouter = () => {
+  switches(pages = "") {
     const props = this.props;
     return (
       <Switch>
-        {this.generatePages()}
+        {pages}
         <AuthRoute exact path="/" cProps={props} component={Index} type="any" />
         <AuthRoute path="/admin" cProps={props} component={Admin} type="admin" />
         <AuthRoute path="/members/verify-email" cProps={props} component={VerifyEmail} type="emailVerify" />
@@ -104,13 +123,21 @@ class Routes extends React.Component<IProps> {
         <AuthRoute exact path="/members/signin" cProps={props} component={SignIn} type="guest" />
         <AuthRoute exact path="/members/authenticate" cProps={props} component={Authenticator} type="user" />
         <AuthRoute exact path="/members/profile" cProps={props} component={Profile} type="user" />
-        <AuthRoute exact path="/blog" cProps={props} component={Blog} type="any" />
+        <AuthRoute exact path="/blog" cProps={props} component={BlogIndex} type="any" />
         <AuthRoute exact path="/blog/:entry" cProps={props} component={BlogEntry} type="any" />
         <AuthRoute exact path="/locked" cProps={props} component={Locked} type="user" />
         <AuthRoute exact path="/members/change-password" cProps={props} component={ChangePassword} type="user" />
-        <Route component={Error404} />
+        {pages ? <Route component={Error404} /> : <Route component={Splash} />}
       </Switch>
     );
+  }
+
+  mainRouter = () => {
+    const props = this.props;
+    const pages = this.generatePages();
+    let layout: any = "";
+    layout = this.switches(pages);
+    return layout;
   };
 
   render() {
@@ -124,7 +151,7 @@ export default connect()(
     let slugs: any = [];
     const PagesDataReady = Meteor.subscribe("pages");
     if (PagesDataReady) {
-      pages = Pages.find({publish: true}).fetch();
+      pages = Pages.find({ publish: true }).fetch();
     }
 
     if (pages) {

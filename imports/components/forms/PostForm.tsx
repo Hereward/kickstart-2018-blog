@@ -65,10 +65,11 @@ export default class PostForm extends React.Component<IProps, IState> {
   }
 
 
-
+/*
   preventDefault(e) {
     e.preventDefault();
   }
+  */
 
   componentDidMount() {
     jquery(`#${this.formID}`).bind("keypress", function kp(e) {
@@ -78,6 +79,7 @@ export default class PostForm extends React.Component<IProps, IState> {
     });
   }
 
+  /*
   disableReturnKey(state) {
     jquery(window).keydown(function drk(event) {
       if (event.keyCode === 13) {
@@ -86,6 +88,7 @@ export default class PostForm extends React.Component<IProps, IState> {
       }
     });
   }
+  */
 
   handleSetStateUpstream(content) {
     this.props.handleSetState("body", content);

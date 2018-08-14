@@ -63,7 +63,7 @@ export const createPost = new ValidatedMethod({
   run(fields) {
     authCheck("post.create", this.userId);
     const truncatedBody = truncateHTML(fields.body);
-    log.info(`post.create`, fields);
+    //log.info(`post.create`, fields);
 
     slugCheck({ slug: fields.slug, type: "new" });
 

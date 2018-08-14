@@ -14,6 +14,7 @@ import MetaWrapper from "../../partials/MetaWrapper";
 import Author from "./Author";
 import CommentCount from "./CommentCount";
 import Spinner from "../../partials/Spinner";
+//import Splash from "../../partials/Splash";
 
 let styles: any;
 
@@ -42,7 +43,7 @@ interface IProps {
 
 interface IState {}
 
-class Blog extends React.Component<IProps, IState> {
+class BlogIndex extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
@@ -83,7 +84,7 @@ class Blog extends React.Component<IProps, IState> {
             <Author authorId={post.authorId} />
           </h6>
           <h6>
-            <CommentCount postId={post._id} /> Comments
+            {dateFormat(post.created, "dd mmmm yyyy")} | <CommentCount postId={post._id} /> Comments
           </h6>
           <div dangerouslySetInnerHTML={this.renderBody(post)} />
           {this.readMoreLink(post)}
@@ -125,7 +126,7 @@ class Blog extends React.Component<IProps, IState> {
 
     return (
       <div>
-        {posts ? <div>{this.mapPosts(posts)}</div> : ""}
+        {this.mapPosts(posts)}
         {totalPosts > cursorLimit ? this.loadMoreButton() : ""}
       </div>
     );
@@ -138,17 +139,15 @@ class Blog extends React.Component<IProps, IState> {
   }
 
   render() {
-    const { posts } = this.props;
-    let layout = this.layout();
-    return posts ? (
-      <Transition>
-        <div className="container page-content">
-          {this.getMeta()}
-          {layout}
-        </div>
-      </Transition>
+    const { totalPosts } = this.props;
+    const layout = this.layout();
+    return totalPosts ? (
+      <div className="container page-content">
+        {layout}
+        {this.getMeta()}
+      </div>
     ) : (
-      <Spinner caption="loading" type="component" />
+      ""
     );
   }
 }
@@ -177,5 +176,5 @@ export default connect(mapStateToProps)(
       posts = Posts.find({ publish: true }, options).fetch();
     }
     return { posts: posts, totalPosts: totalPosts };
-  })(withStyles(styles, { withTheme: true })(Blog))
+  })(withStyles(styles, { withTheme: true })(BlogIndex))
 );

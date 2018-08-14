@@ -41,6 +41,7 @@ div, p, span {
   color: white;
   height: 100vh;
   max-width: 100%;
+  position: absolute;
 }
 
 .splash h1 {
@@ -106,10 +107,12 @@ button:focus {
 
 .spinner-component {
   margin-top: 20%;
+  opacity: 0.5;
 }
 
 .spinner-page {
   margin-top: 10%;
+  opacity: 0.5;
 }
 
 .spinner-caption {

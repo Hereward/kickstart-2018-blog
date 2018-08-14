@@ -17,11 +17,33 @@ const authCheck = (methodName, userId) => {
   return auth;
 };
 
+export const editComment = new ValidatedMethod({
+  name: "comment.edit",
+  validate: new SimpleSchema({
+    id: { type: String },
+    body: { type: String }
+  }).validator(),
+
+  run(fields) {
+    authCheck("comment.edit", this.userId);
+    //log.info(`comment.edit`, fields.postId, fields.body);
+    Comments.update(fields.id, {
+      $set: {
+        publish: true,
+        body: fields.body,
+        modified: new Date()
+      }
+    });
+
+    return true;
+  }
+});
+
 export const createComment = new ValidatedMethod({
   name: "comment.create",
   validate: new SimpleSchema({
     postId: { type: String },
-    parentId: { type: String, optional: true},
+    parentId: { type: String, optional: true },
     body: { type: String }
   }).validator(),
 
@@ -42,8 +64,6 @@ export const createComment = new ValidatedMethod({
     return true;
   }
 });
-
-
 
 export const updateCommentInline = new ValidatedMethod({
   name: "comment.updateInline",
@@ -75,5 +95,3 @@ export const updateCommentInline = new ValidatedMethod({
     return true;
   }
 });
-
-

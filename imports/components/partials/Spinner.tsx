@@ -3,8 +3,9 @@ import * as React from "react";
 import Loader from "react-loader-spinner";
 
 interface IProps {
-  caption: string;
+  caption?: string;
   type: string;
+  error?: any;
 }
 
 export default class Spinner extends React.Component<IProps> {
@@ -14,12 +15,14 @@ export default class Spinner extends React.Component<IProps> {
   }
 
   getLayout() {
+    const { caption, error } = this.props;
     let spinnerClass = `d-flex align-items-center spinner-${this.props.type}`;
     let layout = (
       <div className={spinnerClass}>
         <div className="m-auto spinner-holder">
-          <Loader type="Oval" color="red" height="140" width="140" />
-          <div className="mx-2 mt-2 spinner-caption">{this.props.caption}</div>
+          <Loader type="Oval" color="red" height="100" width="100" />
+          {caption && <div className="mx-2 mt-2 spinner-caption">{this.props.caption}</div>}
+          {error && <div className="mx-2 mt-2 spinner-caption">Error! Something bad happened :(</div>}
         </div>
       </div>
     );

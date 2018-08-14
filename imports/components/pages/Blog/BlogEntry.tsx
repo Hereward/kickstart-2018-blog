@@ -12,6 +12,7 @@ import PageContent from "../../partials/PageContent";
 import CommentBlogSection from "../../comments/CommentBlogSection";
 import { Comments } from "../../../api/comments/publish";
 import { Profiles } from "../../../api/profiles/publish";
+import Spinner from "../../partials/Spinner";
 
 let styles: any;
 styles = theme => ({});
@@ -69,13 +70,15 @@ class BlogEntry extends React.Component<IProps, IState> {
 
   render() {
     const { post } = this.props;
-    return (
+    return post ? (
       <Transition>
         <div className="container page-content">
           {this.renderPost()}
           {this.comments()}
         </div>
       </Transition>
+    ) : (
+      ""
     );
   }
 }
@@ -89,28 +92,12 @@ export default connect()(
     let author: string = "";
     let profile: any;
 
-    //const path = props.location.pathname;
-    //const pattern = /[a-z0-9]+(?:-[a-z0-9]+)*$/i;
-    //let match = pattern.exec(path);
     const slug = props.match.params.entry;
-    //log.info(`BlogEntry.Tracker() SLUG = `, slug);
-    //const match2 = path.match(pattern);
-    //log.info(`BlogEntry.Tracker()`, path, slug, props.location, match, match2);
-
     if (postsDataHandle.ready()) {
       post = Posts.findOne({ publish: true, slug: slug });
-      /*
-      if (post) {
-        totalComments = Comments.find({ publish: true, postId: post._id }).count();
-        profile = Profiles.findOne({ owner: post.authorId });
-        if (profile) {
-          author = profile.screenName;
-        }
-      }
-      */
     }
     return {
-      post: post,
+      post: post
     };
   })(withStyles(styles, { withTheme: true })(BlogEntry))
 );

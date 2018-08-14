@@ -72,6 +72,7 @@ interface IProps {
 
 interface IState {
   showReplyForm: boolean;
+  showEditForm: boolean;
   cursorLimitReplies: number;
 }
 
@@ -90,7 +91,8 @@ class CommentList extends React.Component<IProps, IState> {
 
     this.state = {
       showReplyForm: false,
-      cursorLimitReplies: Meteor.settings.public.admin.basePaginationUnit
+      cursorLimitReplies: Meteor.settings.public.admin.basePaginationUnit,
+      showEditForm: false
     };
   }
 
@@ -105,8 +107,17 @@ class CommentList extends React.Component<IProps, IState> {
     return <div className={classes.commentBody} dangerouslySetInnerHTML={this.createMarkup(comment.body)} />;
   }
 
+  togglEditComment = () => {
+    const vis = !this.state.showEditForm;
+    this.setState({ showEditForm: vis });
+  };
+
   commentSubmitted = () => {
     this.setState({ showReplyForm: false });
+  };
+
+  commentEdited = () => {
+    this.setState({ showEditForm: false });
   };
 
   createMarkup(html) {
@@ -146,16 +157,30 @@ class CommentList extends React.Component<IProps, IState> {
     );
   }
 
-  editComment = () => {};
+  editForm() {
+    const { comment } = this.props;
+    const parentId = comment.parentId || comment._id;
+    return (
+      <CommentForm
+        commentObj={comment}
+        edit={true}
+        commentId={comment._id}
+        commentEdited={this.commentEdited}
+        postId={comment.postId}
+      />
+    );
+  }
 
   deleteComment = () => {};
 
   edit() {
     const { classes, comment } = this.props;
+    const { showEditForm } = this.state;
+    const editLabel = showEditForm ? "cancel" : "edit";
     return userCan({ do: "moderateComment", threshold: "creator", owner: comment.authorId }) ? (
       <div className={classes.editComment}>
-        <Link to="#" onClick={this.editComment}>
-          edit
+        <Link to="#" onClick={this.togglEditComment}>
+          {editLabel}
         </Link>{" "}
         |{" "}
         <Link to="#" onClick={this.deleteComment}>
@@ -169,6 +194,7 @@ class CommentList extends React.Component<IProps, IState> {
 
   layout() {
     const { classes, comment, commenterProfile, userId } = this.props;
+    const { showEditForm } = this.state;
     //log.info(`Comment.layout()`, this.props);
     let commentType: string;
     //let CommentReplies: any;
@@ -183,8 +209,8 @@ class CommentList extends React.Component<IProps, IState> {
             {commenterProfile.screenName} | {dateFormat(comment.created, "dd mmmm yyyy, h:MM:ss")}
           </h6>
           {this.edit()}
-          <div className="card-text">{this.renderComment(comment)}</div>
-          {this.props.userId ? this.reply() : ""}
+          <div className="card-text">{showEditForm ? this.editForm() : this.renderComment(comment)}</div>
+          {this.props.userId && !showEditForm ? this.reply() : ""}
           {comment.parentId === null ? (
             <CommentReplies
               loadMoreReplies={this.loadMoreReplies}

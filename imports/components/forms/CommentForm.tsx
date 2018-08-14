@@ -1,25 +1,30 @@
 import * as React from "react";
 import * as jquery from "jquery";
 import { Form, FormGroup, FormText } from "reactstrap";
+import { Link } from "react-router-dom";
+import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import * as BlockUi from "react-block-ui";
 import "react-block-ui/style.css";
 import "react-quill/dist/quill.snow.css";
 import * as Validation from "../../modules/validation";
-import { createComment } from "../../api/comments/methods";
+import { createComment, editComment } from "../../api/comments/methods";
 import * as Library from "../../modules/library";
 
 const ReactQuill = require("react-quill");
 
 interface IProps {
   classes: any;
-  settingsObj?: any;
+  commentObj?: any;
   postId: string;
   parentId: string;
   dispatch: any;
-  commentSubmitted: any;
+  commentSubmitted?: any;
+  commentEdited?: any;
   replyTo?: string;
+  edit?: boolean;
+  commentId?: string;
 }
 
 interface IState {
@@ -32,16 +37,23 @@ const styles = theme => ({
     marginTop: 0,
     marginBottom: 0
   },
-
+  submit: {
+    [theme.breakpoints.up("lg")]: {
+      display: "none"
+    }
+  },
   done: {
     color: "red",
     marginLeft: "1rem",
     verticalAlign: "middle"
   },
-
   rte: {
     backgroundColor: "white"
-  }
+  },
+  save: {
+    "text-align": "right"
+  },
+
 });
 
 class CommentForm extends React.Component<IProps, IState> {
@@ -89,12 +101,12 @@ class CommentForm extends React.Component<IProps, IState> {
 
   constructor(props) {
     super(props);
-    const { settingsObj } = this.props;
+    const { commentObj } = this.props;
 
     this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = {
-      body: settingsObj ? settingsObj.body : "",
+      body: commentObj ? commentObj.body : "",
       blockUI: false
     };
   }
@@ -104,7 +116,7 @@ class CommentForm extends React.Component<IProps, IState> {
     e.preventDefault();
   }
   */
-/*
+  /*
   keyUp = event => {
     log.info(`CommentForm.keyUp()`, event.key);
     if (event.key === "Enter") {
@@ -124,6 +136,7 @@ class CommentForm extends React.Component<IProps, IState> {
     Validation.validate(this);
   }
 
+  /*
   disableReturnKey(state) {
     jquery(window).keydown(event => {
       if (event.keyCode === 13) {
@@ -132,6 +145,7 @@ class CommentForm extends React.Component<IProps, IState> {
       }
     });
   }
+  */
 
   updateBody = body => {
     this.setState({ body: body });
@@ -141,15 +155,46 @@ class CommentForm extends React.Component<IProps, IState> {
     this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
   };
 
-  handleSubmit() {
-    const { postId, parentId } = this.props;
+  handleSubmit(event?: any) {
+    if (event) {
+      event.preventDefault();
+    }
+    const { postId, parentId, edit } = this.props;
     this.setState({ blockUI: true });
     //e.preventDefault();
 
-    //log.info(`CommentForm.handleSubmit()`, this.state.body);
+    //log.info(`CommentForm.handleSubmit()`, this.props);
 
     //this.props.handleSubmit();
 
+    if (edit) {
+      this.doEditComment();
+    } else {
+      this.doCreateComment();
+    }
+  }
+
+  doEditComment() {
+    const { commentId, edit } = this.props;
+    const fields = {
+      id: commentId,
+      body: this.state.body
+    };
+
+    editComment.call(fields, err => {
+      this.setState({ blockUI: false });
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        log.error(`editComment failed`, err);
+      } else {
+        this.props.commentEdited();
+        this.miniAlert(`Your comment has been edited.`);
+      }
+    });
+  }
+
+  doCreateComment() {
+    const { postId, parentId, edit } = this.props;
     const fields = {
       postId: postId,
       parentId: parentId || null,
@@ -164,8 +209,6 @@ class CommentForm extends React.Component<IProps, IState> {
       } else {
         this.props.commentSubmitted();
         this.miniAlert(`Your comment has been posted.`);
-        //handleNewPostCreated();
-        //handleEditing(false, edit);
       }
     });
   }
@@ -179,8 +222,14 @@ class CommentForm extends React.Component<IProps, IState> {
   }
 
   render() {
-    const { classes, settingsObj, postId, parentId, replyTo } = this.props;
-    const formId = parentId ? `${this.formID}_${parentId}` : `${this.formID}_${postId}`;
+    const { classes, commentObj, postId, parentId, replyTo, edit, commentId } = this.props;
+    let formId: string = "";
+    if (edit) {
+      formId = `edit_comment_${commentId}`;
+    } else {
+      formId = parentId ? `${this.formID}_${parentId}` : `${this.formID}_${postId}`;
+    }
+
     const prefix = replyTo ? `${replyTo}: ` : "";
     return (
       <BlockUi tag="div" blocking={this.state.blockUI}>
@@ -190,13 +239,18 @@ class CommentForm extends React.Component<IProps, IState> {
               className={`${classes.rte} novalidate`}
               id="commentText"
               placeholder="Write a comment..."
-              defaultValue={settingsObj ? settingsObj.body : prefix}
+              defaultValue={commentObj ? commentObj.body : prefix}
               onFocusOut={this.nothing()}
               onChange={this.updateBody}
               modules={this.modules}
               formats={this.formats}
               theme="snow"
             />
+            <div className={classes.save}>
+              <Link to="#" onClick={this.handleSubmit}>
+                save &raquo;
+              </Link>
+            </div>
           </div>
         </form>
       </BlockUi>

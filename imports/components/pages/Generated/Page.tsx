@@ -45,7 +45,7 @@ class Page extends React.Component<IProps> {
         post={this.props.page}
       />
     ) : (
-      <Spinner caption="loading" type="component" />
+      <Spinner type="component" />
     );
   }
 }

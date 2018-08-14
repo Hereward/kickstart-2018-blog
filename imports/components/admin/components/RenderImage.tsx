@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
+//import Button from "@material-ui/core/Button";
 import { EditorialImages } from "../../../api/images/methods";
 import UploadForm from "../../forms/UploadForm";
 import Image from "../../partials/Image";

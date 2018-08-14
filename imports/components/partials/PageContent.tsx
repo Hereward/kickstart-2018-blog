@@ -10,7 +10,6 @@ import * as PageMethods from "../../api/pages/methods";
 import * as Library from "../../modules/library";
 import * as Icon from "../../modules/icons";
 import * as User from "../../modules/user";
-import Spinner from "./Spinner";
 import MetaWrapper from "./MetaWrapper";
 import Author from "../pages/Blog/Author";
 import CommentCount from "../pages/Blog/CommentCount";
@@ -166,9 +165,6 @@ export default class PageContent extends React.Component<IProps, IState> {
           </div>
         );
       }
-    } else {
-      // LOADING
-      layout = <Spinner caption="loading" type="component" />;
     }
 
     return layout;
