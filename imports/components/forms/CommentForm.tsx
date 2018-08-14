@@ -1,5 +1,7 @@
 import * as React from "react";
 import * as jquery from "jquery";
+import * as isTouchDevice from "is-touch-device";
+//import * as assert from "assert";
 import { Form, FormGroup, FormText } from "reactstrap";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
@@ -37,11 +39,6 @@ const styles = theme => ({
     marginTop: 0,
     marginBottom: 0
   },
-  submit: {
-    [theme.breakpoints.up("lg")]: {
-      display: "none"
-    }
-  },
   done: {
     color: "red",
     marginLeft: "1rem",
@@ -51,12 +48,21 @@ const styles = theme => ({
     backgroundColor: "white"
   },
   save: {
-    "text-align": "right"
-  },
-
+    "text-align": "right",
+    [theme.breakpoints.up("lg")]: {
+      display: "none"
+    }
+  }
 });
 
+/*  
+    [theme.breakpoints.up("lg")]: {
+      display: "none"
+    }
+      */
+
 class CommentForm extends React.Component<IProps, IState> {
+  touchDevice: boolean;
   formID: string = "CommentForm";
   toolbarOptions = [
     [{ header: [1, 2, 3, 4, false] }],
@@ -67,7 +73,7 @@ class CommentForm extends React.Component<IProps, IState> {
     ["clean"]
   ];
 
-  modules = {
+  modulesDesktop = {
     toolbar: this.toolbarOptions,
     keyboard: {
       bindings: {
@@ -80,6 +86,15 @@ class CommentForm extends React.Component<IProps, IState> {
             // Do nothing
           }
         }
+      }
+    }
+  };
+
+  modulesMobile = {
+    toolbar: this.toolbarOptions,
+    keyboard: {
+      bindings: {
+        tab: false
       }
     }
   };
@@ -104,6 +119,7 @@ class CommentForm extends React.Component<IProps, IState> {
     const { commentObj } = this.props;
 
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.touchDevice = isTouchDevice();
 
     this.state = {
       body: commentObj ? commentObj.body : "",
@@ -223,6 +239,8 @@ class CommentForm extends React.Component<IProps, IState> {
 
   render() {
     const { classes, commentObj, postId, parentId, replyTo, edit, commentId } = this.props;
+
+    //log.info(`CommentForm.render()`, this.touchDevice);
     let formId: string = "";
     if (edit) {
       formId = `edit_comment_${commentId}`;
@@ -242,7 +260,7 @@ class CommentForm extends React.Component<IProps, IState> {
               defaultValue={commentObj ? commentObj.body : prefix}
               onFocusOut={this.nothing()}
               onChange={this.updateBody}
-              modules={this.modules}
+              modules={this.touchDevice ? this.modulesMobile : this.modulesDesktop}
               formats={this.formats}
               theme="snow"
             />

@@ -108,7 +108,7 @@ export default connect(mapStateToProps)(
     };
     const totalComments = Comments.find({ publish: true, parentId: null, postId: props.postId }).count();
     const commentsList = Comments.find({ publish: true, parentId: null, postId: props.postId }, options).fetch();
-    log.info(`CommentList tracker`, props, totalComments, commentsList);
+    //log.info(`CommentList tracker`, props, totalComments, commentsList);
     return {
       comments: commentsList,
       totalComments: totalComments

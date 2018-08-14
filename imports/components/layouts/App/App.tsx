@@ -1,9 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { Session } from "meteor/session";
-import { Accounts } from "meteor/accounts-base";
-import * as RLocalStorage from "meteor/simply:reactive-local-storage";
 import * as React from "react";
-//import { Helmet } from "react-helmet";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { withRouter } from "react-router-dom";
@@ -16,10 +12,6 @@ import * as User from "../../../modules/user";
 import { userSessions } from "../../../api/sessions/publish";
 import { userSettings } from "../../../api/settings/publish";
 import { systemSettings } from "../../../api/admin/publish";
-import { Auth } from "../../../api/auth/publish";
-import Spinner from "../../partials/Spinner";
-import Offline from "../../partials/Offline";
-import * as Library from "../../../modules/library";
 import Snackbar from "../../partials/Snackbar";
 import Meta from "../../partials/Meta";
 import Splash from "../../partials/Splash";
@@ -101,7 +93,6 @@ export default withRouter(
       let userSettingsHandle = Meteor.subscribe("userSettings");
       let userSessionHandle = Meteor.subscribe("userSessions");
       let systemSettingsHandle = Meteor.subscribe("systemSettings");
-
       let systemSettingsRec = systemSettings.findOne();
       let sessionReady = false;
       let userSession: any;
@@ -172,7 +163,7 @@ export default withRouter(
         systemSettings: systemSettingsRec,
         loggingOut: loggingOut,
         miniAlert: miniAlert,
-        isClient: isClient
+        isClient: isClient,
       };
     })(App)
   )

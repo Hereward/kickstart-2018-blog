@@ -68,6 +68,7 @@ interface IProps {
   dispatch: any;
   userId: string;
   parentId?: string;
+  touchDevice: boolean;
 }
 
 interface IState {
