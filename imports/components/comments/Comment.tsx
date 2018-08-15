@@ -17,6 +17,8 @@ import OptionGroup from "../admin/components/OptionGroup";
 import CommentForm from "../forms/CommentForm";
 //import CommentReplies from "./CommentReplies";
 import { can as userCan } from "../../modules/user";
+import { deleteComment } from "../../api/comments/methods";
+import * as Library from "../../modules/library";
 
 let styles: any;
 styles = theme => ({
@@ -172,7 +174,30 @@ class CommentList extends React.Component<IProps, IState> {
     );
   }
 
-  deleteComment = () => {};
+  confirmDelete = () => {
+    Library.confirmDialog().then(result => {
+      if (result) {
+        this.doDeleteComment();
+      }
+    });
+  };
+
+  miniAlert = (message = "") => {
+    this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
+  };
+
+  doDeleteComment = () => {
+    const { comment } = this.props;
+    deleteComment.call({ id: comment._id }, err => {
+      if (err) {
+        Library.modalErrorAlert(err.reason);
+        log.error(`deleteComment failed`, err);
+      } else {
+        //this.props.commentEdited();
+        this.miniAlert(`Your comment has been deleted.`);
+      }
+    });
+  };
 
   edit() {
     const { classes, comment } = this.props;
@@ -184,7 +209,7 @@ class CommentList extends React.Component<IProps, IState> {
           {editLabel}
         </Link>{" "}
         |{" "}
-        <Link to="#" onClick={this.deleteComment}>
+        <Link to="#" onClick={this.confirmDelete}>
           delete
         </Link>
       </div>

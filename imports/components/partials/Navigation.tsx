@@ -256,9 +256,16 @@ class Navigation extends React.Component<IProps, IState> {
                     Terms
                   </NavLink>
                 </NavItem>
+                {User.can({ threshold: "creator" }) ? (
+                  <NavItem className={cPath.match(/create/) ? "active" : ""}>
+                    <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/create">
+                      Create
+                    </NavLink>
+                  </NavItem>
+                ) : null}
                 {User.can({ threshold: "admin" }) ? (
-                  <NavItem className={cPath.match(/admin/) ? "active" : ""}>
-                    <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/admin">
+                  <NavItem>
+                    <NavLink className="nav-link" onClick={this.closeNavbar} to="/admin">
                       Admin
                     </NavLink>
                   </NavItem>

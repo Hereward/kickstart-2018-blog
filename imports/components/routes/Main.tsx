@@ -6,7 +6,7 @@ import { withTracker } from "meteor/react-meteor-data";
 //import { withStyles } from "@material-ui/core/styles";
 import Index from "../pages/Index/Index";
 import Page from "../pages/Generated/Page";
-import Admin from "../pages/Admin/AdminIndex";
+import AdminIndex from "../pages/Admin/AdminIndex";
 import Profile from "../pages/Profile/ProfileIndex";
 import Error404 from "../pages/Error/Error404";
 //import BlogIndex from "../pages/Blog/BlogIndex";
@@ -30,6 +30,12 @@ import Spinner from "../partials/Spinner";
 function Loading(props) {
   return <Spinner error={props.error} type="page" />;
 }
+
+const CreateIndex = Loadable({
+  loader: () => import("../pages/Create/CreateIndex"),
+  loading: Loading,
+  delay: 300
+});
 
 const BlogIndex = Loadable({
   loader: () => import("../pages/Blog/BlogIndex"),
@@ -58,7 +64,8 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
   let locked = Library.nested(["userSettings", "locked"], cProps);
   let path = cProps.location.pathname;
   let redirectTo: string;
-  let admin = User.can({ threshold: "admin" });
+  const admin = User.can({ threshold: "admin" });
+  const create = User.can({ threshold: "create" });
 
   if (locked && path !== "/locked") {
     redirectTo = "/locked";
@@ -73,6 +80,8 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
   } else if (emailVerified === true && type === "emailVerify") {
     redirectTo = "/";
   } else if (type === "admin" && !User.loggingIn() && !admin) {
+    redirectTo = "/";
+  } else if (type === "create" && !User.loggingIn() && !create) {
     redirectTo = "/";
   } else if (!cProps.userId && type === "user") {
     redirectTo = "/";
@@ -114,7 +123,8 @@ class Routes extends React.Component<IProps> {
       <Switch>
         {pages}
         <AuthRoute exact path="/" cProps={props} component={Index} type="any" />
-        <AuthRoute path="/admin" cProps={props} component={Admin} type="admin" />
+        <AuthRoute path="/admin" cProps={props} component={AdminIndex} type="admin" />
+        <AuthRoute path="/create" cProps={props} component={CreateIndex} type="create" />
         <AuthRoute path="/members/verify-email" cProps={props} component={VerifyEmail} type="emailVerify" />
         <AuthRoute path="/members/enroll" cProps={props} component={Enroll} type="enrollment" />
         <AuthRoute path="/members/forgot-password-reset" cProps={props} component={ForgotPassWordReset} type="guest" />

@@ -39,6 +39,25 @@ export const editComment = new ValidatedMethod({
   }
 });
 
+export const deleteComment = new ValidatedMethod({
+  name: "comment.delete",
+  validate: new SimpleSchema({
+    id: { type: String }
+  }).validator(),
+
+  run(fields) {
+    if (!this.isSimulation) {
+      authCheck("comment.delete", this.userId);
+      //const dataSrc = postsDataSrc(fields.contentType);
+      //const keys = Object.keys(fields.selected);
+      Comments.remove(fields.id);
+
+      //log.info(`Selected Posts Deleted`, deletedList);
+    }
+    return true;
+  }
+});
+
 export const createComment = new ValidatedMethod({
   name: "comment.create",
   validate: new SimpleSchema({

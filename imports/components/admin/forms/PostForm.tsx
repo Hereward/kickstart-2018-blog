@@ -2,6 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 //import Done from "@material-ui/icons/Done";
+import * as dateFormat from "dateformat";
 import Button from "@material-ui/core/Button";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
@@ -111,7 +112,18 @@ class PostForm extends React.Component<IProps, IState> {
   }
 
   componentDidMount() {
-    Validation.validate(this);
+    const slugId = this.renderWidgetId("slug");
+    let rules: any = {};
+    rules[slugId] = { rangelength: [10, 60] };
+    /*
+    let rules = {
+      slugId: {
+        rangelength: [10, 60]
+      }
+    };
+    */
+
+    Validation.validate(this, rules);
   }
 
   miniAlert = (message = "") => {
@@ -189,9 +201,12 @@ class PostForm extends React.Component<IProps, IState> {
     let value = target.type === "checkbox" ? target.checked : target.value;
     let name = this.renderWidgetName(target.id);
     if (name === "title" && !edit) {
-      // set the slug value if the target field = 'title'
-      const slugString = slug(value, { lower: true });
-      this.setState({ slug: slugString });
+      const now = new Date();
+      const dateString = dateFormat(now, "yyyymmdd");
+      const truncVal = value.substring(0, 50);
+      const slugString = slug(truncVal, { lower: true });
+      const final = `${slugString}-${dateString}`;
+      this.setState({ slug: final });
     }
 
     this.setState({ [name]: value }); // set the value of the target field
@@ -274,6 +289,7 @@ class PostForm extends React.Component<IProps, IState> {
             </div>
 
             {this.getWidget({ baseName: "slug", name: this.renderWidgetId("slug"), label: "Slug" })}
+
             {this.getWidget({
               baseName: "summary",
               name: this.renderWidgetId("summary"),

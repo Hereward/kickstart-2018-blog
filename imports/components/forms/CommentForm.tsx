@@ -264,11 +264,15 @@ class CommentForm extends React.Component<IProps, IState> {
               formats={this.formats}
               theme="snow"
             />
-            <div className={classes.save}>
-              <Link to="#" onClick={this.handleSubmit}>
-                save &raquo;
-              </Link>
-            </div>
+            {this.touchDevice ? (
+              <div className={classes.save}>
+                <Link to="#" onClick={this.handleSubmit}>
+                  save &raquo;
+                </Link>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </form>
       </BlockUi>

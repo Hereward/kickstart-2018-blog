@@ -125,7 +125,7 @@ styles = theme => ({
   }
 });
 
-class Admin extends React.Component<IProps, IState> {
+class AdminIndex extends React.Component<IProps, IState> {
   //currentPanel: string;
   constructor(props) {
     super(props);
@@ -477,4 +477,4 @@ class Admin extends React.Component<IProps, IState> {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(Admin);
+export default withStyles(styles, { withTheme: true })(AdminIndex);
