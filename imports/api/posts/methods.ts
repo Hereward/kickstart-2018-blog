@@ -6,6 +6,7 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Posts } from "./publish";
 import { can as userCan } from "../../modules/user";
+import { Comments } from "../comments/publish";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -86,12 +87,28 @@ export const createPost = new ValidatedMethod({
   }
 });
 
+export const deletePost = new ValidatedMethod({
+  name: "post.delete",
+  validate: new SimpleSchema({
+    id: { type: String }
+  }).validator(),
+
+  run(fields) {
+    if (!this.isSimulation) {
+      authCheck("posts.deletePost", this.userId);
+      Posts.remove(fields.id);
+      Comments.remove({postId: fields.id});
+    }
+    return true;
+  }
+});
+
 export const updatePostInline = new ValidatedMethod({
   name: "posts.updateInline",
   validate: new SimpleSchema({
     id: { type: String },
     title: { type: String },
-    body: { type: String, optional: true },
+    body: { type: String, optional: true }
   }).validator(),
 
   run(fields) {

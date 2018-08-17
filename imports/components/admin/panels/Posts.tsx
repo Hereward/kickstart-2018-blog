@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import { Roles } from "meteor/alanning:roles";
+import PropTypes from "prop-types";
 import { Accounts } from "meteor/accounts-base";
 import * as striptags from "striptags";
 import * as truncate from "truncate-html";
@@ -43,8 +44,8 @@ interface IProps {
   theme: any;
   contentType: string;
   SystemOnline: boolean;
-  systemSettings: any;
-  dispatch: any;
+  systemSettings: PropTypes.object.isRequired;
+  dispatch: PropTypes.object.isRequired;
   allPosts: any;
   userData: any;
   userId: string;
@@ -256,7 +257,7 @@ class Posts extends React.Component<IProps, IState> {
     }
   };
 
-  handleNewPostCreated = () => {
+  handleNewPostUpdated = () => {
     this.setState({
       showNewPost: false
     });
@@ -344,16 +345,21 @@ class Posts extends React.Component<IProps, IState> {
   deleteSelected() {
     this.setState({ block: true });
     const { postDeleteMethod, contentType } = this.props;
+    const deleteComments = contentType === "posts";
 
-    Meteor.call(postDeleteMethod, { contentType: contentType, selected: this.state.selectedPosts }, err => {
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-        log.error(`Method [${postDeleteMethod}] failed`, err);
-      } else {
-        this.miniAlert("Selected posts were deleted!");
-        this.setState({ block: false });
+    Meteor.call(
+      postDeleteMethod,
+      { contentType: contentType, selected: this.state.selectedPosts, deleteComments: deleteComments },
+      err => {
+        if (err) {
+          Library.modalErrorAlert(err.reason);
+          log.error(`Method [${postDeleteMethod}] failed`, err);
+        } else {
+          this.miniAlert("Selected posts were deleted!");
+          this.setState({ block: false });
+        }
       }
-    });
+    );
   }
 
   deleteAll() {
@@ -432,18 +438,18 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   toggleNewPost = () => {
-    const vis = !this.state.showNewPost;
-    if (!vis && this.editingType.new === true) {
+    const newState = !this.state.showNewPost;
+    if (!newState && this.editingType.new === true) {
       Library.confirmDialog({ title: "Discard changes?", message: "off" }).then(result => {
         if (result) {
           this.setState({
-            showNewPost: vis
+            showNewPost: newState
           });
           this.editingType.new = false;
         }
       });
     } else {
-      this.setState({ showNewPost: vis });
+      this.setState({ showNewPost: newState });
     }
   };
 
@@ -588,9 +594,11 @@ class Posts extends React.Component<IProps, IState> {
         settingsObj={dataObj}
         imageIDedit={this.state.imageIDedit}
         imageIDnew={this.state.imageIDnew}
-        edit={dataObj ? true : false}
-        handleNewPostCreated={this.handleNewPostCreated}
+        editingExistingData={dataObj ? true : false}
+        handleNewPostCreated={this.handleNewPostUpdated}
+        handlePostUpdated={this.handleNewPostUpdated}
         handleEditing={this.handleEditing}
+        editMode="admin"
       />
     );
   }
@@ -717,8 +725,8 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps)(
   withTracker(props => {
     //log.info(`Posts.tracker()`, props);
-    let myImages: any;
-    const imagesHandle = Meteor.subscribe("editorialImages");
+    //let myImages: any;
+    //const imagesHandle = Meteor.subscribe("editorialImages");
     const postsHandle = Meteor.subscribe(props.subscription);
     const options = {
       sort: { created: -1 },

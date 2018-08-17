@@ -1,6 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
 //import Done from "@material-ui/icons/Done";
 import * as dateFormat from "dateformat";
 import Button from "@material-ui/core/Button";
@@ -17,16 +18,18 @@ import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
 const ReactQuill = require("react-quill");
 
 interface IProps {
-  settingsObj: any;
-  classes: any;
-  edit: boolean;
+  settingsObj: PropTypes.object.isRequired;
+  classes: PropTypes.object.isRequired;
+  editingExistingData: boolean;
   imageIDedit?: string;
   imageIDnew?: string;
   dispatch: any;
-  postUpdateMethod: any;
-  postCreateMethod: any;
-  handleNewPostCreated: any;
-  handleEditing: any;
+  postUpdateMethod: PropTypes.object.isRequired;
+  postCreateMethod: PropTypes.object.isRequired;
+  handleNewPostCreated: PropTypes.object.isRequired;
+  handlePostUpdated: PropTypes.object.isRequired;
+  handleEditing: PropTypes.object.isRequired;
+  editMode: string;
 }
 
 interface IState {
@@ -92,12 +95,12 @@ class PostForm extends React.Component<IProps, IState> {
     super(props);
 
     const { settingsObj } = this.props;
-    const { edit } = this.props;
+    const { editingExistingData } = this.props;
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
-    this.formID = edit ? `PostFormEdit_${settingsObj._id}` : `PostForm_New`;
-    this.rteID = edit ? `rte_${settingsObj._id}` : "rte";
+    this.formID = editingExistingData ? `PostFormEdit_${settingsObj._id}` : `PostForm_New`;
+    this.rteID = editingExistingData ? `rte_${settingsObj._id}` : "rte";
 
     this.state = {
       publish: settingsObj ? settingsObj.publish : false,
@@ -114,7 +117,7 @@ class PostForm extends React.Component<IProps, IState> {
   componentDidMount() {
     const slugId = this.renderWidgetId("slug");
     let rules: any = {};
-    rules[slugId] = { rangelength: [10, 60] };
+    rules[slugId] = { rangelength: [5, 60] };
     /*
     let rules = {
       slugId: {
@@ -136,14 +139,15 @@ class PostForm extends React.Component<IProps, IState> {
       settingsObj,
       imageIDedit,
       imageIDnew,
-      edit,
+      editingExistingData,
       postUpdateMethod,
       postCreateMethod,
       handleNewPostCreated,
+      handlePostUpdated,
       handleEditing
     } = this.props;
 
-    const image_id_current = edit ? imageIDedit : imageIDnew;
+    const image_id_current = editingExistingData ? imageIDedit : imageIDnew;
 
     const settingsImage = settingsObj ? settingsObj.image_id : "";
     let pageFields: any;
@@ -158,14 +162,14 @@ class PostForm extends React.Component<IProps, IState> {
       slug: this.state.slug
     };
 
-    if (!edit) {
+    if (!editingExistingData) {
       pageFields.allowComments = false;
     } else {
       pageFields.closeComments = false;
     }
 
     this.setState({ blockUI: true });
-    if (edit) {
+    if (editingExistingData) {
       Meteor.call(postUpdateMethod, pageFields, err => {
         this.setState({ blockUI: false });
         if (err) {
@@ -173,8 +177,8 @@ class PostForm extends React.Component<IProps, IState> {
           log.error(`PageMethods.updatePage failed`, err);
         } else {
           this.miniAlert(`Your post was updated.`);
-          handleNewPostCreated();
-          handleEditing(false, edit);
+          handleEditing(false, editingExistingData);
+          handlePostUpdated();
         }
       });
     } else {
@@ -185,8 +189,8 @@ class PostForm extends React.Component<IProps, IState> {
           log.error(`PageMethods.createPage failed`, err);
         } else {
           this.miniAlert(`A post was succesfully created.`);
-          handleNewPostCreated();
-          handleEditing(false, edit);
+          handleEditing(false, editingExistingData);
+          handleNewPostCreated(pageFields);
         }
       });
     }
@@ -194,13 +198,13 @@ class PostForm extends React.Component<IProps, IState> {
 
   handleChange = e => {
     const { handleEditing } = this.props;
-    const { edit } = this.props;
-    handleEditing(true, edit);
+    const { editingExistingData } = this.props;
+    handleEditing(true, editingExistingData);
 
     let target = e.target;
     let value = target.type === "checkbox" ? target.checked : target.value;
     let name = this.renderWidgetName(target.id);
-    if (name === "title" && !edit) {
+    if (name === "title" && !editingExistingData) {
       const now = new Date();
       const dateString = dateFormat(now, "yyyymmdd");
       const truncVal = value.substring(0, 50);
@@ -217,6 +221,8 @@ class PostForm extends React.Component<IProps, IState> {
   };
 
   getWidget = (props: any) => {
+    const { editMode } = this.props;
+    const readOnly = editMode === "creator" && props.baseName === "slug";
     let widgetType = props.widgetType ? props.widgetType : "simple";
     return (
       <Widget
@@ -225,6 +231,7 @@ class PostForm extends React.Component<IProps, IState> {
         dataObj={this.props.settingsObj}
         wProps={props}
         stateValue={this.state[props.baseName]}
+        readOnly={readOnly}
       />
     );
   };

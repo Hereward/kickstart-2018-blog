@@ -6,12 +6,15 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
+import PageContent from "../../partials/PageContent";
 
 let styles: any;
 styles = theme => ({});
 
 interface IProps {
+  history: PropTypes.object.isRequired;
   classes: PropTypes.object.isRequired;
+  systemSettings: PropTypes.object.isRequired;
   dispatch: any;
 }
 
@@ -20,18 +23,28 @@ interface IState {}
 class Boojam extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
-
     this.state = {};
   }
 
-  render() {
+  layout() {
     return (
-      <div className="container page-content">
-        {" "}
-        <h1>Create</h1>
-        <p>oink</p>
-      </div>
+      <PageContent
+        contentType="post"
+        systemSettings={this.props.systemSettings}
+        history={this.props.history}
+        permissionThreshold="creator"
+        updateMethod="posts.updateInline"
+        imageUpdateMethod="image.UpdatePostAdmin"
+        postUpdateMethod="posts.update"
+        postCreateMethod="post.create"
+        subscription="posts"
+        showFormInit={true}
+      />
     );
+  }
+
+  render() {
+    return <div className="container page-content">{this.layout()}</div>;
   }
 }
 

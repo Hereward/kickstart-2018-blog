@@ -8,6 +8,7 @@ interface IProps {
   widgetType: string;
   stateValue?: any;
   uncontrolled?: boolean;
+  readOnly?: boolean;
 }
 
 interface IState {}
@@ -55,8 +56,7 @@ export default class Widget extends React.Component<IProps, IState> {
     placeholder?: string;
     baseName?: string;
   }) {
-    const { stateValue } = this.props;
-    const { uncontrolled } = this.props;
+    const { stateValue, uncontrolled, readOnly } = this.props;
     let cssClass = wprops.required === false ? this.baseCSSClass : `${this.baseCSSClass} required`;
     let resolvedname = wprops.baseName || wprops.name;
     let widget: any;
@@ -67,8 +67,8 @@ export default class Widget extends React.Component<IProps, IState> {
     const typeAttribute = type === "textarea" ? "" : { type: attributeTypes[type] };
     const valueAttribute = uncontrolled
       ? { defaultValue: this.props.dataObj ? this.props.dataObj[wprops.name] : "" }
-      : { value: this.resolveControlledInputValue(resolvedname) }; 
-      // stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "")
+      : { value: this.resolveControlledInputValue(resolvedname) };
+    // stateValue || (this.props.dataObj ? this.props.dataObj[resolvedname] : "")
 
     widget = (
       <CustomTag
@@ -76,6 +76,7 @@ export default class Widget extends React.Component<IProps, IState> {
         className={cssClass}
         id={wprops.name}
         name={wprops.name}
+        readOnly={readOnly || false}
         placeholder={wprops.placeholder || ""}
         {...typeAttribute}
         {...valueAttribute}

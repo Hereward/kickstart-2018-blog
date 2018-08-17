@@ -91,7 +91,7 @@ export const imageUpdatePostAdmin = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    authCheck("admin.imageUpdatePost", this.userId, "admin");
+    authCheck("admin.imageUpdatePost", this.userId, "creator");
 
     Posts.update(fields.id, {
       $set: {
@@ -140,7 +140,7 @@ export const imageUpdatePageAdmin = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    authCheck("admin.imageUpdatePage", this.userId, "admin");
+    authCheck("admin.imageUpdatePage", this.userId, "creator");
 
     Pages.update(fields.id, {
       $set: {
@@ -505,7 +505,7 @@ export const publishPostList = new ValidatedMethod({
 
   run(fields) {
     if (!this.isSimulation) {
-      authCheck("deletePostList", this.userId, "admin");
+      authCheck("publishPostList", this.userId, "admin");
       const dataSrc = postsDataSrc(fields.contentType);
       const keys = Object.keys(fields.selected);
       let publishList = [];
@@ -533,7 +533,8 @@ export const deletePostList = new ValidatedMethod({
   name: "admin.deletePostList",
   validate: new SimpleSchema({
     selected: { type: Object, blackbox: true },
-    contentType: { type: String }
+    contentType: { type: String },
+    deleteComments: { type: Boolean, optional: true }
   }).validator(),
 
   run(fields) {
@@ -548,6 +549,10 @@ export const deletePostList = new ValidatedMethod({
         const val = fields.selected[key];
         if (val === true) {
           dataSrc.remove(key);
+          if (fields.deleteComments) {
+            log.info(`admin.deletePostList - deleting comments`);
+            Comments.remove({postId: key});
+          }
         }
       }
 

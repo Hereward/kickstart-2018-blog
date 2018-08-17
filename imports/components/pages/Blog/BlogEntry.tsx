@@ -48,12 +48,17 @@ class BlogEntry extends React.Component<IProps, IState> {
   template() {
     return (
       <PageContent
+        contentType="post"
         systemSettings={this.props.systemSettings}
         history={this.props.history}
-        contentType="post"
         permissionThreshold="creator"
         updateMethod="posts.updateInline"
         post={this.props.post}
+        imageUpdateMethod="image.UpdatePostAdmin"
+        postUpdateMethod="posts.update"
+        postCreateMethod="post.create"
+        subscription="posts"
+        showFormInit={false}
       />
     );
   }

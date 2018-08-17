@@ -37,12 +37,17 @@ class Page extends React.Component<IProps> {
     const { page } = this.props;
     return page ? (
       <PageContent
+        contentType="page"
         systemSettings={this.props.systemSettings}
         history={this.props.history}
-        permissionThreshold="editor"
-        contentType="page"
+        permissionThreshold="creator"
         updateMethod="pages.updateInline"
         post={this.props.page}
+        imageUpdateMethod="image.UpdatePageAdmin"
+        postCreateMethod="page.create"
+        postUpdateMethod="pages.update"
+        subscription="pages"
+        showFormInit={false}
       />
     ) : (
       <Spinner type="component" />
