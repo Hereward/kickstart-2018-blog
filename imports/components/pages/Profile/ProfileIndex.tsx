@@ -3,6 +3,9 @@
 import { Meteor } from "meteor/meteor";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
+import AppBar from "@material-ui/core/AppBar";
+import Tabs from "@material-ui/core/Tabs";
+import Tab from "@material-ui/core/Tab";
 import { Accounts } from "meteor/accounts-base";
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
@@ -23,15 +26,25 @@ import { purgeAllOtherSessions } from "../../../api/sessions/methods";
 import * as User from "../../../modules/user";
 import Spinner from "../../partials/Spinner";
 import MetaWrapper from "../../partials/MetaWrapper";
+import ProfilePosts from "./ProfilePosts";
 
 let styles: any;
 styles = theme => ({
   cardHeader: {
     fontWeight: "bold"
-  }
+  },
+  tabsRoot: {
+    flexGrow: 1,
+    width: "100%",
+    backgroundColor: "transparent",
+    marginTop: "1.6rem"
+    //backgroundColor: theme.palette.background.paper
+  },
+  tabs: {}
 });
 
 interface IProps {
+  match: PropTypes.object.isRequired;
   history: PropTypes.object.isRequired;
   classes: PropTypes.object.isRequired;
   systemSettings: PropTypes.object.isRequired;
@@ -55,6 +68,7 @@ interface IState {
   disableSubmitDeleteAllUsers: boolean;
   DeleteAllUsersDone: boolean;
   processing2FArequest: boolean;
+  tabValue: number;
 }
 
 class Profile extends React.Component<IProps, IState> {
@@ -87,6 +101,52 @@ class Profile extends React.Component<IProps, IState> {
     this.state = mapped;
   }
 
+  handleTabChange = (event, tabValue) => {
+    this.setState({ tabValue });
+  };
+
+  tabItem(val: number) {
+    const { match } = this.props;
+    switch (val) {
+      case 0:
+        return <ProfilePosts match={match} />;
+      case 1:
+        return (
+          <div className="container">
+            <Transition>{this.settings()}</Transition>
+          </div>
+        );
+
+      default:
+        return "";
+    }
+  }
+
+  tabContents() {
+    const { classes } = this.props;
+    const { tabValue } = this.state;
+
+    return (
+      <div className={classes.tabsRoot}>
+        <AppBar position="static" color="inherit">
+          <Tabs
+            className={classes.tabs}
+            value={tabValue}
+            onChange={this.handleTabChange}
+            indicatorColor="primary"
+            textColor="primary"
+            scrollable
+            scrollButtons="auto"
+          >
+            <Tab label="Posts" />
+            <Tab label="Settings" />
+          </Tabs>
+        </AppBar>
+        {this.tabItem(tabValue)}
+      </div>
+    );
+  }
+
   fieldMapper(type, props = "") {
     let obj = {};
     if (type === "init") {
@@ -98,6 +158,7 @@ class Profile extends React.Component<IProps, IState> {
       obj["DeleteAllUsersDone"] = false;
       obj["disableSubmitDeleteAllUsers"] = false;
       obj["processing2FArequest"] = false;
+      obj["tabValue"] = 0;
     } else if (type === "props") {
       this.fieldsArray.forEach(element => (obj[element] = props[element]));
     } else if (type === "method") {
@@ -354,7 +415,8 @@ class Profile extends React.Component<IProps, IState> {
     return layout;
   }
 
-  getLayout() {
+  settings() {
+    const { profile } = this.props;
     let layout: any = "";
     if (this.props.profile && this.state.editProfile) {
       layout = this.getForm("Edit Profile");
@@ -363,7 +425,8 @@ class Profile extends React.Component<IProps, IState> {
     } else if (this.props.profile) {
       layout = (
         <div>
-          <h1>Profile</h1>
+          <h1>{profile.screenName}</h1>
+          {this.getNotifications()}
           {this.renderImage()}
           <h2>
             Personal Details <EditIcon onClick={this.handleSetState} stateName="editProfile" />
@@ -432,15 +495,11 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   render() {
-    let layout = this.getLayout();
     return this.props.profile ? (
-      <Transition>
-        <div className="container page-content">
-          {this.getMeta()}
-          {this.getNotifications()}
-          {layout}
-        </div>
-      </Transition>
+      <div>
+        {this.getMeta()}
+        {this.tabContents()}
+      </div>
     ) : (
       <Spinner type="page" />
     );

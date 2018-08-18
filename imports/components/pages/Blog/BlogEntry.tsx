@@ -99,7 +99,11 @@ export default connect()(
 
     const slug = props.match.params.entry;
     if (postsDataHandle.ready()) {
-      post = Posts.findOne({ publish: true, slug: slug });
+      let raw = Posts.findOne({ slug: slug });
+      //log.info(`BlogEntry()`, raw, props.userId);
+      if (raw && (raw.publish || raw.authorId === props.userId)) {
+        post = raw;
+      }
     }
     return {
       post: post

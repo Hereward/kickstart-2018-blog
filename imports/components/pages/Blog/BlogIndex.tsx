@@ -76,7 +76,7 @@ class BlogIndex extends React.Component<IProps, IState> {
     let layout: any = "";
     if (post) {
       layout = (
-        <Transition>
+        <div>
           <h2 className="blogTitle">
             <Link to={`blog/${post.slug}`}>{post.title}</Link>
           </h2>
@@ -88,15 +88,16 @@ class BlogIndex extends React.Component<IProps, IState> {
           </h6>
           <div dangerouslySetInnerHTML={this.renderBody(post)} />
           {this.readMoreLink(post)}
-        </Transition>
+        </div>
       );
     }
 
     return layout;
   }
 
-  mapPosts(posts) {
-    const { classes } = this.props;
+  mapPosts() {
+    const { classes, posts } = this.props;
+    //log.info(`BlogIndex mapPosts`, this.props);
     const mapped = posts.map(post => {
       const layout = (
         <div className={classes.postListItem} key={post._id}>
@@ -126,7 +127,7 @@ class BlogIndex extends React.Component<IProps, IState> {
 
     return (
       <div>
-        {this.mapPosts(posts)}
+        {this.mapPosts()}
         {totalPosts > cursorLimit ? this.loadMoreButton() : ""}
       </div>
     );
@@ -140,11 +141,12 @@ class BlogIndex extends React.Component<IProps, IState> {
 
   render() {
     const { totalPosts } = this.props;
-    const layout = this.layout();
     return totalPosts ? (
       <div className="container page-content">
-        {layout}
-        {this.getMeta()}
+        <Transition>
+          {this.layout()}
+          {this.getMeta()}
+        </Transition>
       </div>
     ) : (
       ""
@@ -161,9 +163,8 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
-    //log.info(`BlogIndex tracker`, props);
     const commentsHandle = Meteor.subscribe("comments");
-    let PostsDataReady = Meteor.subscribe("posts");
+    let PostsDataHandle = Meteor.subscribe("posts");
     let totalPosts: number = 0;
     let posts: any;
     const options = {
@@ -171,10 +172,11 @@ export default connect(mapStateToProps)(
       limit: props.cursorLimit
     };
 
-    if (PostsDataReady) {
+    if (PostsDataHandle.ready()) {
       totalPosts = Posts.find({ publish: true }).count();
       posts = Posts.find({ publish: true }, options).fetch();
     }
+
     return { posts: posts, totalPosts: totalPosts };
   })(withStyles(styles, { withTheme: true })(BlogIndex))
 );

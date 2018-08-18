@@ -134,13 +134,14 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   getAuthLayout() {
+    const { userId } = this.props;
     let SignedInLayout = (
       <DropdownMenu>
         <NavLink exact className="dropdown-item nav-link" onClick={this.logOut} to="#">
           Sign Out
         </NavLink>
 
-        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to="/members/profile">
+        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to={`/members/profile/${userId}`}>
           Profile
         </NavLink>
 

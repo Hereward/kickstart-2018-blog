@@ -152,7 +152,7 @@ export const updatePost = new ValidatedMethod({
   run(fields) {
     authCheck("posts.update", this.userId);
     const truncatedBody = truncateHTML(fields.body);
-    log.info(`updatePost`, truncatedBody);
+    //og.info(`updatePost`, truncatedBody);
     const current = Posts.findOne(fields.id);
     slugCheck({ slug: fields.slug, type: "update", current: current.slug });
 

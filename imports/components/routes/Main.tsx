@@ -132,7 +132,7 @@ class Routes extends React.Component<IProps> {
         <AuthRoute exact path="/members/register" cProps={props} component={Register} type="guest" />
         <AuthRoute exact path="/members/signin" cProps={props} component={SignIn} type="guest" />
         <AuthRoute exact path="/members/authenticate" cProps={props} component={Authenticator} type="user" />
-        <AuthRoute exact path="/members/profile" cProps={props} component={Profile} type="user" />
+        <AuthRoute exact path="/members/profile/:userId" cProps={props} component={Profile} type="user" />
         <AuthRoute exact path="/blog" cProps={props} component={BlogIndex} type="any" />
         <AuthRoute exact path="/blog/:entry" cProps={props} component={BlogEntry} type="any" />
         <AuthRoute exact path="/locked" cProps={props} component={Locked} type="user" />

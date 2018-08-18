@@ -12,8 +12,7 @@ import Transition from "../partials/Transition";
 import PostForm from "../admin/forms/PostForm";
 import * as PageMethods from "../../api/pages/methods";
 import * as Library from "../../modules/library";
-//import * as Icon from "../../modules/icons";
-//import * as User from "../../modules/user";
+
 import MetaWrapper from "./MetaWrapper";
 import Author from "../pages/Blog/Author";
 import CommentCount from "../pages/Blog/CommentCount";
@@ -257,19 +256,6 @@ class PageContent extends React.Component<IProps, IState> {
     return { __html: html };
   }
 
-  /*
-  editLink() {
-    let allow: boolean = false;
-    const { permissionThreshold } = this.props;
-    if (permissionThreshold === "creator") {
-      allow = User.can({ threshold: "creator", owner: this.props.post.authorId });
-    } else if (User.can({ threshold: "admin" })) {
-      allow = true;
-    }
-    return allow ? <Icon.EditIcon onClick={this.handleSetState} stateName="edit" /> : "";
-  }
-  */
-
   miniAlert = (message = "") => {
     this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
   };
@@ -368,18 +354,29 @@ class PageContent extends React.Component<IProps, IState> {
   }
 
   headingReadMode() {
-    const { post } = this.props;
+    const { classes, post } = this.props;
+    const unpublishedIcon = post.publish ? (
+      ""
+    ) : (
+      <span>
+        <Icon>block</Icon>{" "}
+      </span>
+    );
     return (
       <div>
-        <h1>{post.title}</h1>
+        <h1>
+          {unpublishedIcon}
+          {post.title}
+        </h1>
         {this.edit()}
       </div>
     );
   }
 
   getLayout() {
-    const { post, contentType } = this.props;
+    const { classes, post, contentType } = this.props;
     const { showForm } = this.state;
+
     let layout: any;
 
     if (showForm) {
