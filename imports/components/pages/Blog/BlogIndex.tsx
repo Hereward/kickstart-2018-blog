@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as dateFormat from "dateformat";
-import Button from "@material-ui/core/Button";
+//import { Button } from "reactstrap";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Transition from "../../partials/Transition";
@@ -115,9 +115,9 @@ class BlogIndex extends React.Component<IProps, IState> {
     return (
       <div className={classes.loadMore}>
         <hr />
-        <Button variant="outlined" onClick={this.loadMore} size="small">
+        <button type="button" className="btn btn-load-more btn-sm" onClick={this.loadMore}>
           Load More
-        </Button>
+        </button>
       </div>
     );
   }

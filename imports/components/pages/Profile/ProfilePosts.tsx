@@ -35,16 +35,32 @@ interface IProps {
   publishedPosts: PropTypes.object.isRequired;
 }
 
-interface IState {}
+interface IState {
+  tabValue: number;
+  cursorLimitDraft: number;
+  cursorLimitPublished: number;
+}
 
 class ProfilePosts extends React.Component<IProps, IState> {
+  basePaginationUnit: number;
+
   constructor(props) {
     super(props);
 
+    this.basePaginationUnit = Meteor.settings.public.admin.basePaginationUnit;
+
     this.state = {
-      tabValue: 0
+      tabValue: 0,
+      cursorLimitDraft: this.basePaginationUnit,
+      cursorLimitPublished: this.basePaginationUnit,
     };
   }
+
+  loadMorePosts = (cursorType) => {
+    const currentTotal = this.state[cursorType];
+    const newTotal = currentTotal + this.basePaginationUnit;
+    this.setState({ [cursorType]: newTotal });
+  };
 
   renderBody(post) {
     return { __html: post.truncatedBody };
@@ -53,7 +69,7 @@ class ProfilePosts extends React.Component<IProps, IState> {
   readMoreLink(post) {
     const { classes } = this.props;
     return (
-      <Link className={classes.readMore} to={`blog/${post.slug}`}>
+      <Link className={classes.readMore} to={`/blog/${post.slug}`}>
         Read More &rarr;
       </Link>
     );

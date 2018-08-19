@@ -10,6 +10,17 @@ body {
   /* background-color: #343a40; */
 }
 
+.btn-load-more {
+  text-transform: uppercase;
+  border-color: #343a40;
+  color: #343a40;
+  background-color: white;
+}
+
+.btn-load-more:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
 p:last-child {
   margin-bottom: 0;
 }

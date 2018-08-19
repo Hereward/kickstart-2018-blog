@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import PropTypes from "prop-types";
-import Button from "@material-ui/core/Button";
+//import { Button } from "reactstrap";
 import { connect } from "react-redux";
 import Paper from "@material-ui/core/Paper";
 import { withTracker } from "meteor/react-meteor-data";
@@ -73,9 +73,9 @@ class CommentList extends React.Component<IProps, IState> {
     const { classes, comments, totalComments } = this.props;
     return (
       <div className={classes.loadMore}>
-        <Button variant="outlined" onClick={this.loadMore} size="small">
+        <button type="button" className="btn btn-load-more btn-sm" onClick={this.loadMore}>
           More Comments
-        </Button>
+        </button>
       </div>
     );
   }
@@ -100,7 +100,6 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
-   
     const commentsHandle = Meteor.subscribe("comments");
     const options = {
       sort: { created: -1 },

@@ -87,14 +87,14 @@ const CommentReplies = Loadable({
 });
 
 class CommentList extends React.Component<IProps, IState> {
-  basePaginationUnit = Meteor.settings.public.admin.basePaginationUnit;
+  basePaginationUnit: number;
 
   constructor(props) {
     super(props);
-
+    this.basePaginationUnit = Meteor.settings.public.admin.basePaginationUnit;
     this.state = {
       showReplyForm: false,
-      cursorLimitReplies: Meteor.settings.public.admin.basePaginationUnit,
+      cursorLimitReplies: this.basePaginationUnit,
       showEditForm: false
     };
   }
