@@ -106,10 +106,10 @@ class Profile extends React.Component<IProps, IState> {
   };
 
   tabItem(val: number) {
-    const { match } = this.props;
+    const { match, userId } = this.props;
     switch (val) {
       case 0:
-        return <ProfilePosts match={match} />;
+        return <ProfilePosts userId={userId} match={match} />;
       case 1:
         return (
           <div className="container">

@@ -133,9 +133,6 @@ class CommentList extends React.Component<IProps, IState> {
     this.setState({ cursorLimitReplies: newTotal });
   };
 
-  // <CardTitle>Card title</CardTitle>
-  // <Button>Button</Button>
-
   reply() {
     const { classes, comment, commenterProfile } = this.props;
     const parentId = comment.parentId || comment._id;
@@ -229,7 +226,7 @@ class CommentList extends React.Component<IProps, IState> {
     const cardBodyStyle = comment.parentId ? classes.cardBodyChild : classes.cardBody;
 
     const layout = (
-      <Card className={cardStyle}>
+      <div className={`card ${cardStyle}`}>
         <CardBody className={cardBodyStyle}>
           <h6>
             {commenterProfile.screenName} | {dateFormat(comment.created, "dd mmmm yyyy, h:MM:ss")}
@@ -249,7 +246,7 @@ class CommentList extends React.Component<IProps, IState> {
             ""
           )}
         </CardBody>
-      </Card>
+      </div>
     );
     return layout;
   }

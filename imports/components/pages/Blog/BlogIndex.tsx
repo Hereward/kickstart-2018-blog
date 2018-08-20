@@ -88,6 +88,7 @@ class BlogIndex extends React.Component<IProps, IState> {
           </h6>
           <div dangerouslySetInnerHTML={this.renderBody(post)} />
           {this.readMoreLink(post)}
+          <hr />
         </div>
       );
     }
@@ -114,7 +115,6 @@ class BlogIndex extends React.Component<IProps, IState> {
     const { classes } = this.props;
     return (
       <div className={classes.loadMore}>
-        <hr />
         <button type="button" className="btn btn-load-more btn-sm" onClick={this.loadMore}>
           Load More
         </button>
@@ -140,8 +140,8 @@ class BlogIndex extends React.Component<IProps, IState> {
   }
 
   render() {
-    const { totalPosts } = this.props;
-    return totalPosts ? (
+    const { totalPosts, posts } = this.props;
+    return posts.length ? (
       <div className="container page-content">
         <Transition>
           {this.layout()}
@@ -149,7 +149,7 @@ class BlogIndex extends React.Component<IProps, IState> {
         </Transition>
       </div>
     ) : (
-      ""
+      <Spinner type="component" />
     );
   }
 }
@@ -166,7 +166,7 @@ export default connect(mapStateToProps)(
     const commentsHandle = Meteor.subscribe("comments");
     let PostsDataHandle = Meteor.subscribe("posts");
     let totalPosts: number = 0;
-    let posts: any;
+    let posts: any = [];
     const options = {
       sort: { created: -1 },
       limit: props.cursorLimit

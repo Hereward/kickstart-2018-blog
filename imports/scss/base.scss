@@ -12,13 +12,18 @@ body {
 
 .btn-load-more {
   text-transform: uppercase;
-  border-color: #343a40;
+  //border-color: #343a40;
+  border-color: lightgray;
   color: #343a40;
   background-color: white;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 500;
+  font-size: 0.8125rem;
 }
 
 .btn-load-more:hover {
   background-color: rgba(0, 0, 0, 0.08);
+  border-color: #343a40;
 }
 
 p:last-child {
