@@ -27,6 +27,7 @@ import * as User from "../../../modules/user";
 import Spinner from "../../partials/Spinner";
 import MetaWrapper from "../../partials/MetaWrapper";
 import ProfilePosts from "./ProfilePosts";
+import { Posts } from "../../../api/posts/publish";
 
 let styles: any;
 styles = theme => ({
@@ -57,6 +58,7 @@ interface IProps {
   userEmail: string;
   emailVerified: boolean;
   userId: string;
+  totalPosts: number;
 }
 
 interface IState {
@@ -106,10 +108,15 @@ class Profile extends React.Component<IProps, IState> {
   };
 
   tabItem(val: number) {
-    const { match, userId } = this.props;
+    const { match, userId, totalPosts } = this.props;
     switch (val) {
       case 0:
-        return <ProfilePosts userId={userId} match={match} />;
+        if (totalPosts) {
+          return <ProfilePosts userId={userId} match={match} />;
+        } else {
+          return <Spinner />;
+        }
+
       case 1:
         return (
           <div className="container">
@@ -495,40 +502,53 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   render() {
-    return this.props.profile ? (
+    const { profile } = this.props;
+    return profile ? (
       <div>
         {this.getMeta()}
         {this.tabContents()}
       </div>
     ) : (
-      <Spinner />
+      <div className="container page-content">
+        <Spinner />
+      </div>
     );
   }
 }
 
 export default withTracker(props => {
   let myImages: any;
-  let ImagesDataReady = Meteor.subscribe("profileImages");
+  const postsHandle = Meteor.subscribe("posts");
+  const postsReady = postsHandle.ready();
+  let imagesDataHandle = Meteor.subscribe("profileImages");
   const profilesHandle = Meteor.subscribe("profiles");
   const profile = Profiles.findOne({ owner: props.userId });
   let userEmail: string;
   let emailVerified: boolean = false;
+  let totalPosts = 0;
+  //let totalPublished = 0;
 
   if (props.userData) {
     emailVerified = props.userData.emails[0].verified;
     userEmail = props.userData.emails[0].address;
   }
 
-  if (ImagesDataReady) {
+  if (imagesDataHandle.ready()) {
     if (profile) {
       let cursor: any = ProfileImages.find({ _id: profile.image_id });
       myImages = cursor.fetch();
     }
   }
+
+  if (postsReady) {
+    totalPosts = Posts.find({ authorId: props.userId }).count();
+  }
+
   return {
     profile: profile,
     myImages: myImages,
     userEmail: userEmail,
-    emailVerified: emailVerified
+    emailVerified: emailVerified,
+    totalPosts: totalPosts
   };
 })(withStyles(styles, { withTheme: true })(Profile));

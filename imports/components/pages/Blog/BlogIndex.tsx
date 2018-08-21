@@ -149,7 +149,9 @@ class BlogIndex extends React.Component<IProps, IState> {
         </Transition>
       </div>
     ) : (
-      <Spinner />
+      <div className="container page-content">
+        <Spinner />
+      </div>
     );
   }
 }

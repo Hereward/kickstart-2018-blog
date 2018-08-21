@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as dateFormat from "dateformat";
+//import { Divider } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
@@ -10,7 +11,6 @@ import Author from "../Blog/Author";
 import CommentCount from "../Blog/CommentCount";
 import { Posts } from "../../../api/posts/publish";
 import Spinner from "../../partials/Spinner";
-import { Divider } from "@material-ui/core";
 
 let styles: any;
 styles = theme => ({
@@ -135,29 +135,36 @@ class PostList extends React.Component<IProps, IState> {
     const totalPostsLabel = totalPosts ? ` (${totalPosts})` : "";
     return (
       <div className={classes.root}>
-        <h2 className={classes.mainHeading}>
-          {this.heading}{totalPostsLabel}
-        </h2>
+          <h2 className={classes.mainHeading}>
+            {this.heading}
+            {totalPostsLabel}
+          </h2>
         {posts.length > 0 ? (
           <div>
-            <div className={classes.profilePostSection}>{this.mapPosts()}</div>
-            {totalPosts > cursorLimit ? this.loadMoreButton() : ""}
+            <div className={classes.profilePostSection}>
+              {this.mapPosts()}
+              {totalPosts > cursorLimit ? this.loadMoreButton() : ""}
+            </div>
           </div>
+        ) : totalPosts ? (
+          <Spinner caption="loading" />
         ) : (
-          <Spinner />
+          ""
         )}
       </div>
     );
   }
 
   render() {
-    return this.layout();
+    const { totalPosts } = this.props;
+    //const hasData = totalPosts;
+    return totalPosts ? this.layout() : "";
   }
 }
 
 export default connect()(
   withTracker(props => {
-    const PostsHandle = Meteor.subscribe("posts");
+    
     let posts: any = [];
     let totalPosts = 0;
     const options = {
@@ -167,10 +174,11 @@ export default connect()(
     const publishFilter = props.publishStatus === "published";
     totalPosts = Posts.find({ publish: publishFilter, authorId: props.userId }).count();
     posts = Posts.find({ publish: publishFilter, authorId: props.userId }, options).fetch();
-    log.info(`PostList.tracker() publish=[${publishFilter}]`, posts, props);
+    
+    //log.info(`PostList.tracker() publish=[${publishFilter}]`, posts, props);
     return {
       posts: posts,
-      totalPosts: totalPosts
+      totalPosts: totalPosts,
     };
   })(withStyles(styles, { withTheme: true })(PostList))
 );

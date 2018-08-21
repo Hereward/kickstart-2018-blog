@@ -126,8 +126,13 @@ button:focus {
   opacity: 0.5;
 }
 
+.spinner-holder {
+  margin: auto;
+  text-align: center;
+}
+
 .spinner {
-  margin-top: 5%;
+  //margin-top: 5%;
   opacity: 0.5;
 }
 
@@ -135,7 +140,8 @@ button:focus {
   text-align: center;
   font-style: italic;
   color:red;
-  font-weight: bold;
+  //font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .sessionData {

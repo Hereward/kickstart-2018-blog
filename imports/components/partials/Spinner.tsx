@@ -19,10 +19,10 @@ export default class Spinner extends React.Component<IProps> {
     let spinnerClass = `d-flex align-items-center spinner`;
     let layout = (
       <div className={spinnerClass}>
-        <div className="m-auto spinner-holder">
-          <Loader type="Oval" color="red" height="80" width="80" />
-          {caption && <div className="mx-2 mt-2 spinner-caption">{this.props.caption}</div>}
-          {error && <div className="mx-2 mt-2 spinner-caption">Error! Something bad happened :(</div>}
+        <div className="spinner-holder">
+          <Loader type="Oval" color="red" height="60" width="60" />
+          {caption && <div className="mx-2 spinner-caption">{this.props.caption}</div>}
+          {error && <div className="mx-2 spinner-caption">Error! Something bad happened :(</div>}
         </div>
       </div>
     );

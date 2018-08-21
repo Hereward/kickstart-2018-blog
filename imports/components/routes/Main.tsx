@@ -28,7 +28,11 @@ import Splash from "../partials/Splash";
 import Spinner from "../partials/Spinner";
 
 function Loading(props) {
-  return <Spinner error={props.error} />;
+  return (
+    <div className="container page-content">
+      <Spinner error={props.error} />
+    </div>
+  );
 }
 
 const CreateIndex = Loadable({
@@ -65,8 +69,7 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
   let path = cProps.location.pathname;
   let redirectTo: string;
   const admin = User.can({ threshold: "admin" });
-  const create = User.can({ threshold: "create" });
-
+  const create = User.can({ threshold: "creator" });
   if (locked && path !== "/locked") {
     redirectTo = "/locked";
   } else if (!locked && !authRequired && path === "/locked") {
