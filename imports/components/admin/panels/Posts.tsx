@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import { Roles } from "meteor/alanning:roles";
+import * as deepEqual from "deep-equal";
 import PropTypes from "prop-types";
 import { Accounts } from "meteor/accounts-base";
 import * as striptags from "striptags";
@@ -59,6 +60,10 @@ interface IProps {
   subscription: string;
   totalPosts: number;
   cursorLimit: number;
+  totalFilteredPosts: number;
+  filterOn: boolean;
+  combinedFilters: any;
+  filters: PropTypes.object.isRequired;
 }
 
 interface IState {
@@ -89,7 +94,10 @@ styles = theme => ({
     marginRight: theme.spacing.unit,
     width: 250
   },
-  heading: { color: "dimGray" },
+  heading: {
+    color: "dimGray",
+    marginBottom: "0.5rem"
+  },
   loadMore: {
     marginTop: "1rem",
     textAlign: "center"
@@ -162,6 +170,10 @@ styles = theme => ({
     [theme.breakpoints.up("md")]: {
       display: "none"
     }
+  },
+  totals: {
+    fontSize: "0.9rem",
+    marginBottom: "1rem"
   }
 });
 
@@ -221,13 +233,18 @@ class Posts extends React.Component<IProps, IState> {
     this.props.dispatch({ type: "FILTER_INIT" });
   };
 
+
   componentDidUpdate(prevProps) {
-    const { location } = this.props;
+    const { location, combinedFilters, filters } = this.props;
     if (prevProps.contentType !== this.props.contentType) {
-      //log.info(`Posts.componentDidUpdate`, prevProps, this.props);
       this.initState();
+    } else if (!deepEqual(prevProps.filters, filters)) {
+      log.info(`Posts.componentDidUpdate | filtersChanged`, prevProps.filters, filters);
+      this.props.dispatch({ type: "LOAD_INIT" });
     }
   }
+
+  // !deepEqual(prevProps.filters, filters)
 
   UNSAFE_componentWillMount() {
     this.props.dispatch({ type: "LOAD_INIT" });
@@ -693,8 +710,11 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   layout() {
-    const { classes, allPosts, totalPosts, cursorLimit } = this.props;
+    const { classes, allPosts, totalPosts, cursorLimit, totalFilteredPosts, filterOn } = this.props;
     //log.info(`Posts.layout()`, allPosts, totalPosts, cursorLimit);
+
+    const total = filterOn ? totalFilteredPosts : totalPosts;
+    const viewing = total ? cursorLimit : 0;
     return (
       <BlockUi tag="div" blocking={this.state.block}>
         {this.bulkOptions()}
@@ -703,8 +723,11 @@ class Posts extends React.Component<IProps, IState> {
 
         <div>
           <h2 className={classes.heading}>Entries</h2>
+          <div className={classes.totals}>
+            (total: {total} viewing: {viewing})
+          </div>
           {allPosts ? <div>{this.mapPosts(allPosts)}</div> : ""}
-          {allPosts.length && totalPosts > cursorLimit ? this.loadMoreButton() : ""}
+          {total > cursorLimit ? this.loadMoreButton() : ""}
         </div>
       </BlockUi>
     );
@@ -724,14 +747,14 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
-    //log.info(`Posts.tracker()`, props);
-    //let myImages: any;
-    //const imagesHandle = Meteor.subscribe("editorialImages");
     const postsHandle = Meteor.subscribe(props.subscription);
+    const usersHandle = Meteor.subscribe("allUsers");
     const options = {
       sort: { created: -1 },
       limit: props.cursorLimit
     };
+    let totalPosts = 0;
+    let totalFilteredPosts = 0;
     let filters = props.filters;
     const titleString = props.filters.title;
     const bodyString = props.filters.body;
@@ -742,14 +765,12 @@ export default connect(mapStateToProps)(
     let bodyFilter: any;
     let idFilter: any;
     let emailFilter: any;
-    let combinedFilters = [];
+    let combinedFilters: any = [];
     let filterCount: number = 0;
-    //let defaultSearch: boolean = true;
     let user: any;
     let posts: any = [];
-    //let users: any;
 
-    const totalPosts = props.PostsDataSrc.find().count();
+    totalPosts = props.PostsDataSrc.find().count();
 
     if (titleString) {
       filterCount += 1;
@@ -768,50 +789,45 @@ export default connect(mapStateToProps)(
     if (idString) {
       filterCount += 1;
       let regex = new RegExp(`^${idString}.*`);
-      //idFilter = { _id: regex };
       idFilter = { authorId: regex };
       combinedFilters.push(idFilter);
     }
 
     if (emailString) {
-      //user = Accounts.findUserByEmail(emailString);
-      //let count: number = -1;
       let regex = new RegExp(`^${emailString}.*`, "i");
       user = Meteor.users.findOne({ "emails.0.address": regex });
-      //count= Meteor.users.find({ "emails.0.address" : regex }).count();
 
-      //emailString = user ? user.emails[0].address : ""
-
-      //emailFilter = { "emails.0.address": regex };
       if (user) {
-        //log.info(`Posts.tracker() emailString`, user);
+        //log.info(`Posts.tracker() USER`, user);
         filterCount += 1;
         emailFilter = { authorId: user._id };
         combinedFilters.push(emailFilter);
       }
     }
 
-    //log.info(`Posts.tracker() user`, user);
-
     if (filterCount > 0 || emailString) {
       filter = true;
     }
 
     if (filter) {
-      //log.info(`Posts.tracker() combinedFilters`, combinedFilters);
-      //log.info(`Posts.tracker() combinedFilters LENGTH`, combinedFilters.length);
-      //defaultSearch = false;
+      //log.info(`Posts.tracker() FILTER ON`, emailString, combinedFilters);
       if (combinedFilters.length) {
         posts = props.PostsDataSrc.find({ $or: combinedFilters }, options).fetch();
+        totalFilteredPosts = props.PostsDataSrc.find({ $or: combinedFilters }).count();
+        //log.info(`Posts.tracker() totalFilteredPosts`, totalFilteredPosts, posts);
       }
     } else {
+      //log.info(`Posts.tracker() NON FILTER SEARCH`);
       posts = props.PostsDataSrc.find({}, options).fetch();
     }
 
     return {
       allPosts: posts,
       PostsDataSrc: props.PostsDataSrc,
-      totalPosts: totalPosts
+      totalPosts: totalPosts,
+      totalFilteredPosts: totalFilteredPosts,
+      filterOn: filter,
+      combinedFilters: combinedFilters
     };
   })(withStyles(styles, { withTheme: true })(Posts))
 );

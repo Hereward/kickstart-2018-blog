@@ -4,7 +4,7 @@ import Loader from "react-loader-spinner";
 
 interface IProps {
   caption?: string;
-  type: string;
+  type?: string;
   error?: any;
 }
 
@@ -16,11 +16,11 @@ export default class Spinner extends React.Component<IProps> {
 
   getLayout() {
     const { caption, error } = this.props;
-    let spinnerClass = `d-flex align-items-center spinner-${this.props.type}`;
+    let spinnerClass = `d-flex align-items-center spinner`;
     let layout = (
       <div className={spinnerClass}>
         <div className="m-auto spinner-holder">
-          <Loader type="Oval" color="red" height="100" width="100" />
+          <Loader type="Oval" color="red" height="80" width="80" />
           {caption && <div className="mx-2 mt-2 spinner-caption">{this.props.caption}</div>}
           {error && <div className="mx-2 mt-2 spinner-caption">Error! Something bad happened :(</div>}
         </div>

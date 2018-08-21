@@ -50,7 +50,7 @@ class Page extends React.Component<IProps> {
         showFormInit={false}
       />
     ) : (
-      <Spinner type="component" />
+      <Spinner />
     );
   }
 }

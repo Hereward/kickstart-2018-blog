@@ -28,7 +28,7 @@ import Splash from "../partials/Splash";
 import Spinner from "../partials/Spinner";
 
 function Loading(props) {
-  return <Spinner error={props.error} type="page" />;
+  return <Spinner error={props.error} />;
 }
 
 const CreateIndex = Loadable({

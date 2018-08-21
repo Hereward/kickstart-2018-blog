@@ -501,7 +501,7 @@ class Profile extends React.Component<IProps, IState> {
         {this.tabContents()}
       </div>
     ) : (
-      <Spinner type="page" />
+      <Spinner />
     );
   }
 }

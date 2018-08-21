@@ -73,7 +73,7 @@ class VerifyEmail extends React.Component<IProps, IState> {
   }
 
   getLayout() {
-    return <Spinner caption="verifying" type="component" />;
+    return <Spinner caption="verifying" />;
   }
 
   render() {

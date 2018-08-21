@@ -9,9 +9,20 @@ import { withStyles } from "@material-ui/core/styles";
 import Author from "../Blog/Author";
 import CommentCount from "../Blog/CommentCount";
 import { Posts } from "../../../api/posts/publish";
+import Spinner from "../../partials/Spinner";
+import { Divider } from "@material-ui/core";
 
 let styles: any;
 styles = theme => ({
+  mainHeading: {
+    //border: "1px solid rgba(0, 0, 0, 0.1)",
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    padding: "0.5rem",
+    fontSize: "1rem",
+    textTransform: "uppercase",
+    textAlign: "center",
+    borderRadius: "5px"
+  },
   root: {
     marginBottom: "2rem"
   },
@@ -20,7 +31,13 @@ styles = theme => ({
     textAlign: "center"
   },
   postListItem: {
-      marginBottom: "1rem"
+    marginBottom: "1rem"
+  },
+  readMore: {
+    //marginLeft: "auto",
+    marginTop: "1rem",
+    display: "block",
+    textAlign: "left"
   }
 });
 
@@ -43,7 +60,7 @@ class PostList extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
-    this.heading = this.props.publishStatus === "draft" ? "Draft" : "Published";
+    this.heading = this.props.publishStatus === "draft" ? "draft posts" : "published posts";
 
     this.state = {};
   }
@@ -115,14 +132,21 @@ class PostList extends React.Component<IProps, IState> {
   layout() {
     const { classes, totalPosts, posts, cursorLimit } = this.props;
     log.info(`PostList.render()`, posts, totalPosts, cursorLimit);
-    return posts.length > 0 ? (
+    const totalPostsLabel = totalPosts ? ` (${totalPosts})` : "";
+    return (
       <div className={classes.root}>
-        <h2>{this.heading}</h2>
-        <div className={classes.profilePostSection}>{this.mapPosts()}</div>
-        {totalPosts > cursorLimit ? this.loadMoreButton() : ""}
+        <h2 className={classes.mainHeading}>
+          {this.heading}{totalPostsLabel}
+        </h2>
+        {posts.length > 0 ? (
+          <div>
+            <div className={classes.profilePostSection}>{this.mapPosts()}</div>
+            {totalPosts > cursorLimit ? this.loadMoreButton() : ""}
+          </div>
+        ) : (
+          <Spinner />
+        )}
       </div>
-    ) : (
-      ""
     );
   }
 
