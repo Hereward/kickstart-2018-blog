@@ -34,7 +34,7 @@ styles = theme => ({
 interface IProps {
   history: PropTypes.object.isRequired;
   systemSettings: PropTypes.object.isRequired;
-  classes: any;
+  classes: PropTypes.object.isRequired;
   posts: any;
   dispatch: any;
   totalPosts: number;

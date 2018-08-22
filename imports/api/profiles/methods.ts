@@ -24,6 +24,7 @@ export const newProfile = userId => {
 
   let id = Profiles.insert({
     screenName: nameArray[0],
+    about: "I am awesome!",
     fname: "",
     initial: "",
     lname: "",
@@ -87,6 +88,7 @@ export const updateProfile = new ValidatedMethod({
   validate: new SimpleSchema({
     id: { type: String },
     screenName: { type: String },
+    about: { type: String },
     fname: { type: String },
     initial: { type: String },
     lname: { type: String },
@@ -105,6 +107,7 @@ export const updateProfile = new ValidatedMethod({
     Profiles.update(fields.id, {
       $set: {
         screenName: fields.screenName,
+        about: fields.about,
         fname: fields.fname,
         initial: fields.initial,
         lname: fields.lname,

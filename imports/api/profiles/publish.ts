@@ -12,10 +12,12 @@ if (Meteor.isServer) {
       {
         fields: {
           screenName: 1,
+          about: 1,
           fname: 1,
           initial: 1,
           lname: 1,
-          owner: 1
+          owner: 1,
+          image_id: 1
         }
       }
     );
@@ -31,6 +33,7 @@ if (Meteor.isServer) {
       {
         fields: {
           screenName: 1,
+          about: 1,
           fname: 1,
           initial: 1,
           lname: 1,

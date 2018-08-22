@@ -51,6 +51,8 @@ interface IProps {
   status: string;
   userId: string;
   publishStatus: string;
+  ownerView: boolean;
+  profileUserId: string;
 }
 
 interface IState {}
@@ -130,15 +132,17 @@ class PostList extends React.Component<IProps, IState> {
   }
 
   layout() {
-    const { classes, totalPosts, posts, cursorLimit } = this.props;
+    const { classes, totalPosts, posts, cursorLimit, ownerView } = this.props;
     log.info(`PostList.render()`, posts, totalPosts, cursorLimit);
     const totalPostsLabel = totalPosts ? ` (${totalPosts})` : "";
     return (
       <div className={classes.root}>
+        {ownerView && (
           <h2 className={classes.mainHeading}>
             {this.heading}
             {totalPostsLabel}
           </h2>
+        )}
         {posts.length > 0 ? (
           <div>
             <div className={classes.profilePostSection}>
@@ -164,7 +168,6 @@ class PostList extends React.Component<IProps, IState> {
 
 export default connect()(
   withTracker(props => {
-    
     let posts: any = [];
     let totalPosts = 0;
     const options = {
@@ -172,13 +175,13 @@ export default connect()(
       limit: props.cursorLimit
     };
     const publishFilter = props.publishStatus === "published";
-    totalPosts = Posts.find({ publish: publishFilter, authorId: props.userId }).count();
-    posts = Posts.find({ publish: publishFilter, authorId: props.userId }, options).fetch();
-    
-    //log.info(`PostList.tracker() publish=[${publishFilter}]`, posts, props);
+    totalPosts = Posts.find({ publish: publishFilter, authorId: props.profileUserId }).count();
+    posts = Posts.find({ publish: publishFilter, authorId: props.profileUserId }, options).fetch();
+
+    log.info(`PostList.tracker() publish=[${publishFilter}]`, posts, props);
     return {
       posts: posts,
-      totalPosts: totalPosts,
+      totalPosts: totalPosts
     };
   })(withStyles(styles, { withTheme: true })(PostList))
 );

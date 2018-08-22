@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import Icon from "@material-ui/core/Icon";
@@ -12,6 +11,9 @@ import PostList from "./PostList";
 
 let styles: any;
 styles = theme => ({
+  mainHeading: {
+    marginBottom: "1rem"
+  },
   postListRoot: {
     marginTop: "1rem"
   },
@@ -25,28 +27,28 @@ styles = theme => ({
 
 interface IProps {
   classes: PropTypes.object.isRequired;
+  profile: PropTypes.object.isRequired;
   dispatch: any;
-  draftPosts: PropTypes.object.isRequired;
-  publishedPosts: PropTypes.object.isRequired;
   userId: string;
+  profileUserId: string;
 }
 
 interface IState {
-  tabValue: number;
   cursorLimitDraft: number;
   cursorLimitPublished: number;
 }
 
 class ProfilePosts extends React.Component<IProps, IState> {
   basePaginationUnit: number;
+  ownerView: boolean;
 
   constructor(props) {
     super(props);
 
     this.basePaginationUnit = Meteor.settings.public.admin.basePaginationUnit;
+    this.ownerView = props.userId === props.profile.owner;
 
     this.state = {
-      tabValue: 0,
       cursorLimitDraft: this.basePaginationUnit,
       cursorLimitPublished: this.basePaginationUnit
     };
@@ -61,12 +63,32 @@ class ProfilePosts extends React.Component<IProps, IState> {
   };
 
   layout() {
-    const { classes, draftPosts, publishedPosts, userId } = this.props;
+    const { profile, classes, userId, profileUserId } = this.props;
     const { cursorLimitPublished, cursorLimitDraft } = this.state;
     return (
-      <div className={classes.postListRoot}>
-        <PostList loadMorePosts={this.loadMorePosts} cursorLimit={cursorLimitDraft} userId={userId} publishStatus="draft" />
-        <PostList loadMorePosts={this.loadMorePosts} cursorLimit={cursorLimitPublished} userId={userId} publishStatus="published" />
+      <div>
+        <h1 className={classes.mainHeading}>Posts by {profile.screenName}</h1>
+
+        <div className={classes.postListRoot}>
+          {this.ownerView && (
+            <PostList
+              loadMorePosts={this.loadMorePosts}
+              cursorLimit={cursorLimitDraft}
+              userId={userId}
+              publishStatus="draft"
+              ownerView={this.ownerView}
+              profileUserId={profileUserId}
+            />
+          )}
+          <PostList
+            loadMorePosts={this.loadMorePosts}
+            cursorLimit={cursorLimitPublished}
+            userId={userId}
+            publishStatus="published"
+            ownerView={this.ownerView}
+            profileUserId={profileUserId}
+          />
+        </div>
       </div>
     );
   }
@@ -82,38 +104,6 @@ class ProfilePosts extends React.Component<IProps, IState> {
 
 export default connect()(
   withTracker(props => {
-    const postsDataHandle = Meteor.subscribe("posts");
-    //const commentsHandle = Meteor.subscribe("comments");
-    //let post: any;
-    let profileBelongsToUser = false;
-    const profileUserId = props.match.params.userId;
-
-    //log.info(`ProfilePosts tracker`, profileUserId);
-
-    if (profileUserId !== props.userId) {
-      profileBelongsToUser = true;
-    }
-
-    //let totalPosts: number = 0;
-    let publishedPosts: any = [];
-    let draftPosts: any = [];
-
-    const options = {
-      sort: { created: -1 },
-      limit: props.cursorLimit
-    };
-
-    if (postsDataHandle.ready()) {
-      //totalPosts = Posts.find({ publish: true }).count();
-      publishedPosts = Posts.find({ publish: true }, options).fetch();
-      if (profileBelongsToUser) {
-        draftPosts = Posts.find({ publish: false }, options).fetch();
-      }
-    }
-
-    return {
-      draftPosts: draftPosts,
-      publishedPosts: publishedPosts
-    };
+    return {};
   })(withStyles(styles, { withTheme: true })(ProfilePosts))
 );
