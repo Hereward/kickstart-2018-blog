@@ -8,12 +8,14 @@ import Button from "@material-ui/core/Button";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import * as BlockUi from "react-block-ui";
-import * as slug from "slug";
+//import * as slugify from "slugify";
 import * as Validation from "../../../modules/validation";
 import Widget from "../../forms/Widget";
 //import * as PageMethods from "../../../api/pages/methods";
 import * as Library from "../../../modules/library";
 import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
+
+const slugify = require('slugify');
 
 const ReactQuill = require("react-quill");
 
@@ -208,7 +210,7 @@ class PostForm extends React.Component<IProps, IState> {
       const now = new Date();
       const dateString = dateFormat(now, "yyyymmdd");
       const truncVal = value.substring(0, 50);
-      const slugString = slug(truncVal, { lower: true });
+      const slugString = slugify(truncVal, {lower: true, remove: /[^A-Za-z0-9-]/g});
       const final = `${slugString}-${dateString}`;
       this.setState({ slug: final });
     }
