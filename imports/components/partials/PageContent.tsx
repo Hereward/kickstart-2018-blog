@@ -8,7 +8,7 @@ import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import * as dateFormat from "dateformat";
 //import { Pages } from "../../api/pages/publish";
-import Transition from "../partials/Transition";
+
 import PostForm from "../admin/forms/PostForm";
 import * as PageMethods from "../../api/pages/methods";
 import * as Library from "../../modules/library";
@@ -435,12 +435,10 @@ class PageContent extends React.Component<IProps, IState> {
     const { post } = this.props;
     let layout = this.getLayout();
     return (
-      <Transition>
-        <div className="container page-content">
-          {this.getMeta()}
-          {layout}
-        </div>
-      </Transition>
+      <div className="container page-content">
+        {this.getMeta()}
+        {layout}
+      </div>
     );
   }
 }

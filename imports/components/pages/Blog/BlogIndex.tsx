@@ -142,12 +142,12 @@ class BlogIndex extends React.Component<IProps, IState> {
   render() {
     const { totalPosts, posts } = this.props;
     return posts.length ? (
-      <div className="container page-content">
-        <Transition>
+      <Transition>
+        <div className="container page-content">
           {this.layout()}
           {this.getMeta()}
-        </Transition>
-      </div>
+        </div>
+      </Transition>
     ) : (
       <div className="container page-content">
         <Spinner />

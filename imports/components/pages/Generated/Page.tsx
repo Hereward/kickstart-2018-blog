@@ -2,7 +2,7 @@ import { Meteor } from "meteor/meteor";
 import * as React from "react";
 import PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
-//import Transition from "../../partials/Transition";
+import Transition from "../../partials/Transition";
 import { Pages } from "../../../api/pages/publish";
 import PageContent from "../../partials/PageContent";
 //import * as User from "../../../modules/user";
@@ -34,21 +34,23 @@ class Page extends React.Component<IProps> {
   }
 
   render() {
-    const { page } = this.props;
+    const { page, systemSettings, history } = this.props;
     return page ? (
-      <PageContent
-        contentType="page"
-        systemSettings={this.props.systemSettings}
-        history={this.props.history}
-        permissionThreshold="creator"
-        updateMethod="pages.updateInline"
-        post={this.props.page}
-        imageUpdateMethod="image.UpdatePageAdmin"
-        postCreateMethod="page.create"
-        postUpdateMethod="pages.update"
-        subscription="pages"
-        showFormInit={false}
-      />
+      <Transition>
+        <PageContent
+          contentType="page"
+          systemSettings={systemSettings}
+          history={history}
+          permissionThreshold="creator"
+          updateMethod="pages.updateInline"
+          post={page}
+          imageUpdateMethod="image.UpdatePageAdmin"
+          postCreateMethod="page.create"
+          postUpdateMethod="pages.update"
+          subscription="pages"
+          showFormInit={false}
+        />
+      </Transition>
     ) : (
       <div className="container page-content">
         <Spinner />
@@ -66,8 +68,8 @@ export default withTracker(props => {
 
   //const slug = path.replace(/microsoft/i, "W3Schools");
   let page: any;
-  let PagesDataReady = Meteor.subscribe("pages");
-  if (PagesDataReady) {
+  let pagesHandle = Meteor.subscribe("pages");
+  if (pagesHandle.ready()) {
     page = Pages.findOne({ publish: true, slug: slug });
   }
   return { page: page };

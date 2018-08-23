@@ -95,9 +95,9 @@ class ProfilePosts extends React.Component<IProps, IState> {
 
   render() {
     return (
-      <div className="container">
-        <Transition>{this.layout()}</Transition>
-      </div>
+      <Transition>
+        <div className="container">{this.layout()}</div>
+      </Transition>
     );
   }
 }

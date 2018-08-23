@@ -95,11 +95,11 @@ class Profile extends React.Component<IProps, IState> {
       case 1:
         imageObj = myImages[0];
         return (
-          <div className="container">
-            <Transition>
+          <Transition>
+            <div className="container">
               <About imageObj={imageObj} profile={profile} />
-            </Transition>
-          </div>
+            </div>
+          </Transition>
         );
 
       case 2:
@@ -184,8 +184,8 @@ export default withTracker(props => {
   const postsHandle = Meteor.subscribe("posts");
   const postsReady = postsHandle.ready();
   let imagesDataHandle = Meteor.subscribe("profileImages");
- 
-  const profilesPublicHandle = Meteor.subscribe("profiles.public");
+
+  //const profilesPublicHandle = Meteor.subscribe("profiles.public");
 
   const profileUserId = props.match.params.userId;
   const profile = Profiles.findOne({ owner: profileUserId });

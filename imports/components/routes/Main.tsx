@@ -7,6 +7,7 @@ import { withTracker } from "meteor/react-meteor-data";
 import Index from "../pages/Index/Index";
 import Page from "../pages/Generated/Page";
 import AdminIndex from "../pages/Admin/AdminIndex";
+import AboutIndex from "../pages/About/AboutIndex";
 import Profile from "../pages/Profile/ProfileIndex";
 import Error404 from "../pages/Error/Error404";
 //import BlogIndex from "../pages/Blog/BlogIndex";
@@ -124,6 +125,7 @@ class Routes extends React.Component<IProps> {
     const props = this.props;
     return (
       <Switch>
+        <AuthRoute exact path="/about" cProps={props} component={AboutIndex} type="any" />
         {pages}
         <AuthRoute exact path="/" cProps={props} component={Index} type="any" />
         <AuthRoute path="/admin" cProps={props} component={AdminIndex} type="admin" />

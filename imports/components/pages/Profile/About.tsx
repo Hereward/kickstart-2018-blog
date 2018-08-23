@@ -1,6 +1,7 @@
 ///<reference path="../../../../index.d.ts"/>
 
 import * as React from "react";
+
 //import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 //import { connect } from "react-redux";

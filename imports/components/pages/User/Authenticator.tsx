@@ -129,32 +129,32 @@ class Authenticator extends React.Component<IProps, IState> {
 
   getLayout() {
     let layout = (
-      <div className="container page-content">
-        {this.state.showQRcode && this.props.userSettings && this.props.userSettings.authEnabled === 3 ? (
-          <QRCodeContainer handleQRclick={this.handleQRClick} />
-        ) : (
-          this.verifyLayout()
-        )}
-      </div>
+      <Transition>
+        <div className="container page-content">
+          {this.state.showQRcode && this.props.userSettings && this.props.userSettings.authEnabled === 3 ? (
+            <QRCodeContainer handleQRclick={this.handleQRClick} />
+          ) : (
+            this.verifyLayout()
+          )}
+        </div>
+      </Transition>
     );
     return layout;
   }
 
   verifyLayout() {
     let layout = (
-      <Transition>
-        <div>
-          <AuthenticatorForm
-            allowSubmit={this.state.allowSubmit}
-            handleChange={this.handleChange}
-            handleSubmit={this.handleSubmit}
-            userSettings={this.props.userSettings}
-            cancel2FA={this.cancel2FA}
-          />
+      <div>
+        <AuthenticatorForm
+          allowSubmit={this.state.allowSubmit}
+          handleChange={this.handleChange}
+          handleSubmit={this.handleSubmit}
+          userSettings={this.props.userSettings}
+          cancel2FA={this.cancel2FA}
+        />
 
-          {Meteor.settings.public.enhancedAuth.displayCode ? <AuthCodeDisplay /> : ""}
-        </div>
-      </Transition>
+        {Meteor.settings.public.enhancedAuth.displayCode ? <AuthCodeDisplay /> : ""}
+      </div>
     );
     return layout;
   }
