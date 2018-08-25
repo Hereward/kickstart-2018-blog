@@ -219,7 +219,7 @@ class Posts extends React.Component<IProps, IState> {
 
   initState = () => {
     const allowCreate = !(this.props.contentType === "comments");
-    log.info(`Posts.initState - allowCreate = `, allowCreate);
+    //log.info(`Posts.initState - allowCreate = `, allowCreate);
 
     this.setState({
       allowSubmit: true,
@@ -562,7 +562,7 @@ class Posts extends React.Component<IProps, IState> {
     return (
       <div className={classes.newPostDetail}>
         {hasImage && this.renderImage()}
-        {hasTags && <EditTags classNames={{suggestions: 'react-tags__suggestions'}} />}
+        {hasTags && <EditTags classNames={{ suggestions: "react-tags__suggestions" }} />}
         {this.renderForm()}
       </div>
     );
@@ -580,7 +580,7 @@ class Posts extends React.Component<IProps, IState> {
         </div>
 
         {hasAuthor ? <Author userId={dataObj.authorId} /> : ""}
-        {hasMeta && <MetaInfo data={dataObj} /> }
+        {hasMeta && <MetaInfo data={dataObj} />}
 
         {hasImage && this.renderImage(dataObj)}
         {hasTags && <EditTags dataObj={dataObj} />}
@@ -597,6 +597,9 @@ class Posts extends React.Component<IProps, IState> {
         layout = this.commentForm(dataObj);
         break;
       case "posts":
+        layout = this.postForm(dataObj);
+        break;
+      case "pages":
         layout = this.postForm(dataObj);
         break;
       case "tags":

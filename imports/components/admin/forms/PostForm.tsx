@@ -297,7 +297,7 @@ class PostForm extends React.Component<IProps, IState> {
                 label="Publish"
               />
             </div>
-            {this.getWidget({ baseName: "tags", name: this.renderWidgetId("tags"), label: "Tags" })}
+            {this.getWidget({ required: false, baseName: "tags", name: this.renderWidgetId("tags"), label: "Tags" })}
             {this.getWidget({ baseName: "slug", name: this.renderWidgetId("slug"), label: "Slug" })}
             {this.getWidget({
               baseName: "summary",

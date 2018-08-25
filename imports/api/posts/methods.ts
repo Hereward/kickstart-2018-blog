@@ -33,7 +33,7 @@ const slugCheck = (props: { slug: string; type: string; current?: string }) => {
       valid = found === 0;
     }
   }
-  log.info(`slugValid()`, valid);
+  //log.info(`slugValid()`, valid);
   if (!valid) {
     slugError();
   }

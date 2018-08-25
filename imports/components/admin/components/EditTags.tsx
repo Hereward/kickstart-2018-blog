@@ -92,7 +92,7 @@ export default connect()(
     const tagsHandle = Meteor.subscribe("tags");
     let tags: any = [];
     tags = Tags.find().fetch();
-    log.info(`PostForm Tracker`, tags);
+    //log.info(`PostForm Tracker`, tags);
     return { importedTags: tags };
   })(withStyles(styles, { withTheme: true })(EditTags))
 );
