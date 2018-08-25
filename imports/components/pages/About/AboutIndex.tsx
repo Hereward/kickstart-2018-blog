@@ -95,6 +95,9 @@ export default connect()(
     const pattern = /[a-z0-9]+(?:-[a-z0-9]+)*$/i;
     let match = pattern.exec(path);
     const slug = match[0];
+    const userSortOptions: any = {
+      sort: { created: 1 }
+    };
     //log.info(`Page.Tracker()`, path, slug, match);
     let page: any;
     let pagesHandle = Meteor.subscribe("pages");
@@ -104,7 +107,7 @@ export default connect()(
     if (pagesHandle.ready()) {
       page = Pages.findOne({ publish: true, slug: slug });
     }
-    const creators = Roles.getUsersInRole("creator").fetch();
+    const creators = Roles.getUsersInRole("creator", userSortOptions).fetch();
     log.info(`AboutIndex.Tracker()`, creators);
     return { page: page, creators: creators };
   })(withStyles(styles, { withTheme: true })(About))

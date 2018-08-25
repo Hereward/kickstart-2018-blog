@@ -14,6 +14,7 @@ import { ProfileImages } from "../images/methods";
 import { can as userCan } from "../../modules/user";
 import { systemSettings } from "./publish";
 import { Comments } from "../comments/publish";
+import { Tags } from "../tags/publish";
 import { lockAccountToggle, insertNewSession, purgeAllOtherSessions } from "../sessions/methods";
 import { sendVerificationEmail, newProfile } from "../profiles/methods";
 import { insertAuth } from "../auth/methods";
@@ -49,6 +50,8 @@ const postsDataSrc = contentType => {
       return Pages;
     case "comments":
       return Comments;
+      case "tags":
+      return Tags;
     default:
       return "";
   }

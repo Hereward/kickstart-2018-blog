@@ -30,8 +30,9 @@ import * as BlockUi from "react-block-ui";
 import * as Library from "../../../modules/library";
 import * as UserModule from "../../../modules/user";
 import OptionGroup from "../components/OptionGroup";
-import PostForm from "../../admin/forms/PostForm";
-import CommentForm from "../../admin/forms/CommentForm";
+import PostForm from "../forms/PostForm";
+import CommentForm from "../forms/CommentForm";
+import TagForm from "../forms/TagForm";
 import RenderImage from "../components/RenderImage";
 import Author from "../components/Author";
 import MetaInfo from "../components/MetaInfo";
@@ -62,6 +63,7 @@ interface IProps {
   cursorLimit: number;
   totalFilteredPosts: number;
   filterOn: boolean;
+  hasImage: boolean;
   combinedFilters: any;
   filters: PropTypes.object.isRequired;
 }
@@ -232,7 +234,6 @@ class Posts extends React.Component<IProps, IState> {
     this.props.dispatch({ type: "LOAD_INIT" });
     this.props.dispatch({ type: "FILTER_INIT" });
   };
-
 
   componentDidUpdate(prevProps) {
     const { location, combinedFilters, filters } = this.props;
@@ -470,16 +471,6 @@ class Posts extends React.Component<IProps, IState> {
     }
   };
 
-  getNewPostContent() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.newPostDetail}>
-        {this.renderImage()}
-        {this.postForm()}
-      </div>
-    );
-  }
-
   newPost() {
     const { classes } = this.props;
     const { showNewPost } = this.state;
@@ -562,8 +553,18 @@ class Posts extends React.Component<IProps, IState> {
     return layout;
   }
 
+  getNewPostContent() {
+    const { classes, hasImage } = this.props;
+    return (
+      <div className={classes.newPostDetail}>
+        {hasImage && this.renderImage()}
+        {this.renderForm()}
+      </div>
+    );
+  }
+
   getPostContent(dataObj) {
-    const { classes, contentType } = this.props;
+    const { classes, contentType, hasImage } = this.props;
     const checkedC = this.checkCheckBox(dataObj);
     const checkBox = this.checkBox("default", dataObj, checkedC);
     //log.info(`getPostContent`, dataObj);
@@ -576,10 +577,30 @@ class Posts extends React.Component<IProps, IState> {
         {dataObj.authorId ? <Author userId={dataObj.authorId} /> : ""}
         <MetaInfo data={dataObj} />
 
-        {contentType === "comments" ? "" : this.renderImage(dataObj)}
-        {contentType === "comments" ? this.commentForm(dataObj) : this.postForm(dataObj)}
+        {hasImage && this.renderImage(dataObj)}
+        {this.renderForm(dataObj)}
       </div>
     );
+  }
+
+  renderForm(dataObj: any = "") {
+    const { contentType } = this.props;
+    let layout: any = "";
+    switch (contentType) {
+      case "comments":
+        layout = this.commentForm(dataObj);
+        break;
+      case "posts":
+        layout = this.postForm(dataObj);
+        break;
+      case "tags":
+        layout = this.tagForm(dataObj);
+        break;
+
+      default:
+        layout = "";
+    }
+    return layout;
   }
 
   renderImage(dataObj = null) {
@@ -603,6 +624,21 @@ class Posts extends React.Component<IProps, IState> {
     return <CommentForm postUpdateMethod={this.props.postUpdateMethod} settingsObj={dataObj} />;
   }
 
+  tagForm(dataObj) {
+    return (
+      <TagForm
+        postCreateMethod={this.props.postCreateMethod}
+        postUpdateMethod={this.props.postUpdateMethod}
+        settingsObj={dataObj}
+        editingExistingData={dataObj ? true : false}
+        handleNewPostCreated={this.handleNewPostUpdated}
+        handlePostUpdated={this.handleNewPostUpdated}
+        handleEditing={this.handleEditing}
+        editMode="admin"
+      />
+    );
+  }
+
   postForm(dataObj = null) {
     return (
       <PostForm
@@ -624,13 +660,14 @@ class Posts extends React.Component<IProps, IState> {
     const { classes, contentType } = this.props;
     const { expanded } = this.state;
     //log.info(`Posts.renderPost`, dataObj);
-    const unpub = dataObj.publish ? (
-      ""
-    ) : (
-      <span>
-        <Icon className={classes.fontIcon}>block</Icon>{" "}
-      </span>
-    );
+    const unpub =
+      dataObj.publish === false ? (
+        <span>
+          <Icon className={classes.fontIcon}>block</Icon>{" "}
+        </span>
+      ) : (
+        ""
+      );
 
     return (
       <ExpansionPanel

@@ -2,18 +2,14 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-//import Done from "@material-ui/icons/Done";
 import * as dateFormat from "dateformat";
 import Button from "@material-ui/core/Button";
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import * as BlockUi from "react-block-ui";
-//import * as slugify from "slugify";
 import * as Validation from "../../../modules/validation";
 import Widget from "../../forms/Widget";
-//import * as PageMethods from "../../../api/pages/methods";
 import * as Library from "../../../modules/library";
-import ForgotPassWordResetForm from "../../forms/ForgotPassWordResetForm";
 
 const slugify = require('slugify');
 
@@ -113,21 +109,12 @@ class PostForm extends React.Component<IProps, IState> {
       body: settingsObj ? settingsObj.body : "",
       blockUI: false
     };
-    //log.info(`PostForm.constructor()`, this.props);
   }
 
   componentDidMount() {
     const slugId = this.renderWidgetId("slug");
     let rules: any = {};
     rules[slugId] = { rangelength: [5, 60] };
-    /*
-    let rules = {
-      slugId: {
-        rangelength: [10, 60]
-      }
-    };
-    */
-
     Validation.validate(this, rules);
   }
 
@@ -136,7 +123,7 @@ class PostForm extends React.Component<IProps, IState> {
   };
 
   handleSubmit = () => {
-    log.info(`PostForm.handleSubmit()`, this.props);
+    //log.info(`PostForm.handleSubmit()`, this.props);
     const {
       settingsObj,
       imageIDedit,
@@ -176,7 +163,7 @@ class PostForm extends React.Component<IProps, IState> {
         this.setState({ blockUI: false });
         if (err) {
           Library.modalErrorAlert(err.reason);
-          log.error(`PageMethods.updatePage failed`, err);
+          log.error(`${postUpdateMethod} failed`, err);
         } else {
           this.miniAlert(`Your post was updated.`);
           handleEditing(false, editingExistingData);
@@ -188,7 +175,7 @@ class PostForm extends React.Component<IProps, IState> {
         this.setState({ blockUI: false });
         if (err) {
           Library.modalErrorAlert(err.reason);
-          log.error(`PageMethods.createPage failed`, err);
+          log.error(`${postCreateMethod} failed`, err);
         } else {
           this.miniAlert(`A post was succesfully created.`);
           handleEditing(false, editingExistingData);
@@ -210,7 +197,7 @@ class PostForm extends React.Component<IProps, IState> {
       const now = new Date();
       const dateString = dateFormat(now, "yyyymmdd");
       const truncVal = value.substring(0, 50);
-      const slugString = slugify(truncVal, {lower: true, remove: /[^A-Za-z0-9-]/g});
+      const slugString = slugify(truncVal, {lower: true, remove: /[^A-Za-z0-9-\s]/g});
       const final = `${slugString}-${dateString}`;
       this.setState({ slug: final });
     }
@@ -257,6 +244,7 @@ class PostForm extends React.Component<IProps, IState> {
     return arraySplit[0];
   }
 
+  /*
   getSlug = () => {
     let resolvedname = this.renderWidgetId("slug");
     //const currentSlug = this.state.slug;
@@ -277,6 +265,7 @@ class PostForm extends React.Component<IProps, IState> {
     );
     return layout;
   };
+  */
 
   togglePublish = () => {
     const currentState = this.state.publish;

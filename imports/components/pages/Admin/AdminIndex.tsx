@@ -28,6 +28,7 @@ import Posts from "../../admin/panels/Posts";
 import Home from "../../admin/panels/Home";
 import { Pages as PageData } from "../../../api/pages/publish";
 import { Posts as PostData } from "../../../api/posts/publish";
+import { Tags as TagData } from "../../../api/tags/publish";
 import { Comments as CommentData } from "../../../api/comments/publish";
 import MetaWrapper from "../../partials/MetaWrapper";
 
@@ -218,6 +219,7 @@ class AdminIndex extends React.Component<IProps, IState> {
   pagesPanel() {
     return this.props.sessionReady ? (
       <Posts
+        hasImage={true}
         contentType="pages"
         imageUpdateMethod="image.UpdatePageAdmin"
         postUpdateMethod="pages.update"
@@ -238,6 +240,7 @@ class AdminIndex extends React.Component<IProps, IState> {
   postsPanel() {
     return this.props.sessionReady ? (
       <Posts
+        hasImage={true}
         contentType="posts"
         imageUpdateMethod="image.UpdatePostAdmin"
         postUpdateMethod="posts.update"
@@ -255,9 +258,30 @@ class AdminIndex extends React.Component<IProps, IState> {
     );
   }
 
+  tagsPanel() {
+    return this.props.sessionReady ? (
+      <Posts
+        hasImage={false}
+        contentType="tags"
+        postUpdateMethod="tag.update"
+        postCreateMethod="tag.create"
+        postDeleteMethod="admin.deletePostList"
+        postDeleteAllMethod="admin.deleteAllPosts"
+        subscription="tags"
+        PostsDataSrc={TagData}
+        location={this.props.location}
+        userId={this.props.userId}
+        userData={this.props.userData}
+      />
+    ) : (
+      ""
+    );
+  }
+
   commentsPanel() {
     return this.props.sessionReady ? (
       <Posts
+        hasImage={false}
         contentType="comments"
         imageUpdateMethod="image.UpdatePostAdmin"
         postUpdateMethod="comment.updateAdmin"
@@ -297,6 +321,9 @@ class AdminIndex extends React.Component<IProps, IState> {
           break;
         case "comments":
           layout = this.commentsPanel();
+          break;
+        case "tags":
+          layout = this.tagsPanel();
           break;
         default:
           layout = "";
@@ -397,6 +424,18 @@ class AdminIndex extends React.Component<IProps, IState> {
               <CommentsIcon />
             </ListItemIcon>
             <ListItemText classes={{ primary: this.getNavStyle("comments") }} primary="Comments" />
+          </ListItem>
+
+          <ListItem
+            onClick={() => {
+              this.activatePanel("tags");
+            }}
+            button
+          >
+            <ListItemIcon classes={{ root: this.getNavStyle("tags") }}>
+              <CommentsIcon />
+            </ListItemIcon>
+            <ListItemText classes={{ primary: this.getNavStyle("tags") }} primary="Tags" />
           </ListItem>
         </List>
       </div>

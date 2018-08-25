@@ -1,6 +1,4 @@
 import * as React from "react";
-import * as jquery from "jquery";
-import { Form, FormGroup, FormText } from "reactstrap";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
 import Switch from "@material-ui/core/Switch";
@@ -9,9 +7,6 @@ import { withStyles } from "@material-ui/core/styles";
 import * as BlockUi from "react-block-ui";
 import "react-block-ui/style.css";
 import "react-quill/dist/quill.snow.css";
-//import * as Validation from "../../modules/validation";
-//import { createComment } from "../../../api/comments/methods";
-import { updateCommentAdmin } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import Widget from "../../forms/Widget";
 
@@ -156,7 +151,7 @@ class CommentForm extends React.Component<IProps, IState> {
     e.preventDefault();
     const { postUpdateMethod, settingsObj } = this.props;
     this.setState({ blockUI: true });
-    log.info(`Admin.CommentForm.handleSubmit()`, this.state);
+    //log.info(`Admin.CommentForm.handleSubmit()`, this.state);
     const fields = {
       id: settingsObj._id,
       publish: this.state.publish,
@@ -169,15 +164,11 @@ class CommentForm extends React.Component<IProps, IState> {
       this.setState({ blockUI: false });
       if (err) {
         Library.modalErrorAlert(err.reason);
-        log.error(`updateCommentAdmin failed`, err);
+        log.error(`${postUpdateMethod} failed`, err);
       } else {
         this.miniAlert(`Comment was updated.`);
       }
     });
-  }
-
-  handleSetState(sVar, sVal) {
-    this.setState({ [sVar]: sVal });
   }
 
   nothing() {
@@ -195,15 +186,14 @@ class CommentForm extends React.Component<IProps, IState> {
     const { classes, settingsObj } = this.props;
     return (
       <BlockUi tag="div" blocking={this.state.blockUI}>
-        <div className="form-group">
-          <FormControlLabel
-            control={<Switch disabled={false} onChange={this.togglePublish} checked={this.state.publish} />}
-            label="Publish"
-          />
-        </div>
-        {settingsObj.parentId ? this.getWidget({ name: "parentId", label: "Parent ID" }) : ""}
-
         <form className={classes.form} id={this.formID} onSubmit={this.handleSubmit}>
+          <div className="form-group">
+            <FormControlLabel
+              control={<Switch disabled={false} onChange={this.togglePublish} checked={this.state.publish} />}
+              label="Publish"
+            />
+          </div>
+          {settingsObj.parentId ? this.getWidget({ name: "parentId", label: "Parent ID" }) : ""}
           <div className="form-group">
             <ReactQuill
               className={`${classes.rte} novalidate`}
