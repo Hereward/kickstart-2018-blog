@@ -41,6 +41,7 @@ function slugError() {
   throw new Meteor.Error(`Invalid slug`, "Slug must be unique.");
 }
 
+/*
 export const createPages = new ValidatedMethod({
   name: "pages.create",
 
@@ -48,10 +49,7 @@ export const createPages = new ValidatedMethod({
 
   run() {
     authCheck("pages.create", this.userId);
-    //let admin = false;
     let id: string;
-
-    //Profiles.remove({});
 
     let exists = Pages.findOne({ name: "about" });
 
@@ -68,11 +66,13 @@ export const createPages = new ValidatedMethod({
     return id;
   }
 });
+*/
 
 export const createPage = new ValidatedMethod({
   name: "page.create",
   validate: new SimpleSchema({
     id: { type: String, optional: true },
+    tags: { type: String, optional: true},
     publish: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
@@ -90,6 +90,7 @@ export const createPage = new ValidatedMethod({
 
     Pages.insert({
       publish: fields.publish,
+      tags: fields.tags || "",
       image_id: fields.image_id,
       title: fields.title,
       body: fields.body,
@@ -109,6 +110,7 @@ export const updatePage = new ValidatedMethod({
   name: "pages.update",
   validate: new SimpleSchema({
     id: { type: String },
+    tags: { type: String, optional: true},
     publish: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
@@ -129,6 +131,7 @@ export const updatePage = new ValidatedMethod({
     Pages.update(fields.id, {
       $set: {
         publish: fields.publish,
+        tags: fields.tags || "",
         image_id: fields.image_id,
         title: fields.title,
         body: fields.body,
@@ -143,6 +146,8 @@ export const updatePage = new ValidatedMethod({
   }
 });
 
+
+/*
 export const updatePageInline = new ValidatedMethod({
   name: "pages.updateInline",
   validate: new SimpleSchema({
@@ -153,7 +158,6 @@ export const updatePageInline = new ValidatedMethod({
 
   run(fields) {
     authCheck("pages.updatePageInline", this.userId);
-    //log.info(`updatePageInline`, fields);
     const allow = userCan({ threshold: "admin" });
     if (!allow) {
       console.log(`pages.updatePageInline - PERMISSION DENIED`);
@@ -170,3 +174,4 @@ export const updatePageInline = new ValidatedMethod({
     return true;
   }
 });
+*/

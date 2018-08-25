@@ -52,6 +52,7 @@ export const createPost = new ValidatedMethod({
   name: "post.create",
   validate: new SimpleSchema({
     id: { type: String, optional: true },
+    tags: { type: String, optional: true},
     publish: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
@@ -70,6 +71,7 @@ export const createPost = new ValidatedMethod({
 
     Posts.insert({
       publish: fields.publish,
+      tags: fields.tags || "",
       image_id: fields.image_id,
       title: fields.title,
       body: fields.body,
@@ -103,6 +105,7 @@ export const deletePost = new ValidatedMethod({
   }
 });
 
+/*
 export const updatePostInline = new ValidatedMethod({
   name: "posts.updateInline",
   validate: new SimpleSchema({
@@ -135,11 +138,13 @@ export const updatePostInline = new ValidatedMethod({
     return true;
   }
 });
+*/
 
 export const updatePost = new ValidatedMethod({
   name: "posts.update",
   validate: new SimpleSchema({
     id: { type: String },
+    tags: { type: String, optional: true},
     publish: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
@@ -159,6 +164,7 @@ export const updatePost = new ValidatedMethod({
     Posts.update(fields.id, {
       $set: {
         publish: fields.publish,
+        tags: fields.tags || "",
         image_id: fields.image_id,
         title: fields.title,
         body: fields.body,

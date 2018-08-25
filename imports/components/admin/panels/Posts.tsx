@@ -1,9 +1,9 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
-import { Roles } from "meteor/alanning:roles";
+//import { Roles } from "meteor/alanning:roles";
 import * as deepEqual from "deep-equal";
 import PropTypes from "prop-types";
-import { Accounts } from "meteor/accounts-base";
+//import { Accounts } from "meteor/accounts-base";
 import * as striptags from "striptags";
 import * as truncate from "truncate-html";
 import { connect } from "react-redux";
@@ -18,7 +18,7 @@ import Icon from "@material-ui/core/Icon";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
-import PublishIcon from "@material-ui/icons/Add";
+//import PublishIcon from "@material-ui/icons/Add";
 //import UnpublishIcon from "@material-ui/icons/Clear";
 //import BlockIcon from "@material-ui/icons/Block";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
@@ -37,6 +37,7 @@ import RenderImage from "../components/RenderImage";
 import Author from "../components/Author";
 import MetaInfo from "../components/MetaInfo";
 import { publishPostList } from "../../../api/admin/methods";
+import EditTags from "../components/EditTags";
 
 const drawerWidth = 240;
 let styles: any;
@@ -64,6 +65,9 @@ interface IProps {
   totalFilteredPosts: number;
   filterOn: boolean;
   hasImage: boolean;
+  hasTags?: boolean;
+  hasMeta?: boolean;
+  hasAuthor?: boolean;
   combinedFilters: any;
   filters: PropTypes.object.isRequired;
 }
@@ -554,17 +558,18 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   getNewPostContent() {
-    const { classes, hasImage } = this.props;
+    const { classes, hasImage, hasTags } = this.props;
     return (
       <div className={classes.newPostDetail}>
         {hasImage && this.renderImage()}
+        {hasTags && <EditTags classNames={{suggestions: 'react-tags__suggestions'}} />}
         {this.renderForm()}
       </div>
     );
   }
 
   getPostContent(dataObj) {
-    const { classes, contentType, hasImage } = this.props;
+    const { classes, contentType, hasImage, hasTags, hasMeta, hasAuthor } = this.props;
     const checkedC = this.checkCheckBox(dataObj);
     const checkBox = this.checkBox("default", dataObj, checkedC);
     //log.info(`getPostContent`, dataObj);
@@ -574,10 +579,11 @@ class Posts extends React.Component<IProps, IState> {
           <FormControlLabel control={checkBox} label="selected" />
         </div>
 
-        {dataObj.authorId ? <Author userId={dataObj.authorId} /> : ""}
-        <MetaInfo data={dataObj} />
+        {hasAuthor ? <Author userId={dataObj.authorId} /> : ""}
+        {hasMeta && <MetaInfo data={dataObj} /> }
 
         {hasImage && this.renderImage(dataObj)}
+        {hasTags && <EditTags dataObj={dataObj} />}
         {this.renderForm(dataObj)}
       </div>
     );

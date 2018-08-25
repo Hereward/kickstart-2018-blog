@@ -10,6 +10,11 @@ body {
   /* background-color: #343a40; */
 }
 
+.react-tags input {
+  padding: 5px;
+  min-width: 10rem;
+}
+
 .btn-load-more {
   text-transform: uppercase;
   //border-color: #343a40;
@@ -20,6 +25,8 @@ body {
   font-weight: 500;
   font-size: 0.8125rem;
 }
+
+
 
 .btn-load-more:hover {
   background-color: rgba(0, 0, 0, 0.08);

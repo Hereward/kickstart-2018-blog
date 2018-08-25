@@ -1,5 +1,7 @@
 import * as React from "react";
 import { connect } from "react-redux";
+
+import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
 import * as dateFormat from "dateformat";
@@ -11,13 +13,14 @@ import * as Validation from "../../../modules/validation";
 import Widget from "../../forms/Widget";
 import * as Library from "../../../modules/library";
 
-const slugify = require('slugify');
+const slugify = require("slugify");
 
 const ReactQuill = require("react-quill");
 
 interface IProps {
   settingsObj: PropTypes.object.isRequired;
   classes: PropTypes.object.isRequired;
+  importedTags: PropTypes.object.isRequired;
   editingExistingData: boolean;
   imageIDedit?: string;
   imageIDnew?: string;
@@ -32,6 +35,8 @@ interface IProps {
 
 interface IState {
   publish: boolean;
+  tagObj: any[];
+  tags: string;
   id: string;
   summary: string;
   slug: string;
@@ -60,6 +65,7 @@ const styles = theme => ({
 class PostForm extends React.Component<IProps, IState> {
   formID: string = "";
   rteID: string = "";
+
   //override: any = {};
 
   toolbarOptions = [
@@ -102,6 +108,8 @@ class PostForm extends React.Component<IProps, IState> {
 
     this.state = {
       publish: settingsObj ? settingsObj.publish : false,
+      tags: settingsObj ? settingsObj.tags : "",
+      tagObj: [],
       id: settingsObj ? settingsObj._id : "",
       summary: settingsObj ? settingsObj.summary : "",
       slug: settingsObj ? settingsObj.slug : "",
@@ -117,6 +125,8 @@ class PostForm extends React.Component<IProps, IState> {
     rules[slugId] = { rangelength: [5, 60] };
     Validation.validate(this, rules);
   }
+
+  componentDidUpdate() {}
 
   miniAlert = (message = "") => {
     this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
@@ -144,6 +154,7 @@ class PostForm extends React.Component<IProps, IState> {
     pageFields = {
       id: this.state.id,
       publish: this.state.publish,
+      tags: this.state.tags,
       body: this.state.body,
       image_id: image_id_current || settingsImage,
       title: this.state.title,
@@ -197,7 +208,7 @@ class PostForm extends React.Component<IProps, IState> {
       const now = new Date();
       const dateString = dateFormat(now, "yyyymmdd");
       const truncVal = value.substring(0, 50);
-      const slugString = slugify(truncVal, {lower: true, remove: /[^A-Za-z0-9-\s]/g});
+      const slugString = slugify(truncVal, { lower: true, remove: /[^A-Za-z0-9-\s]/g });
       const final = `${slugString}-${dateString}`;
       this.setState({ slug: final });
     }
@@ -275,19 +286,19 @@ class PostForm extends React.Component<IProps, IState> {
   };
 
   render() {
+    const { classes, settingsObj } = this.props;
     return (
       <div>
         <BlockUi tag="div" blocking={this.state.blockUI}>
-          <form id={this.formID} className={this.props.classes.adminPostsForm}>
+          <form id={this.formID} className={classes.adminPostsForm}>
             <div className="form-group">
               <FormControlLabel
                 control={<Switch disabled={false} onChange={this.togglePublish} checked={this.state.publish} />}
                 label="Publish"
               />
             </div>
-
+            {this.getWidget({ baseName: "tags", name: this.renderWidgetId("tags"), label: "Tags" })}
             {this.getWidget({ baseName: "slug", name: this.renderWidgetId("slug"), label: "Slug" })}
-
             {this.getWidget({
               baseName: "summary",
               name: this.renderWidgetId("summary"),
@@ -302,7 +313,7 @@ class PostForm extends React.Component<IProps, IState> {
               <ReactQuill
                 className={`${this.props.classes.rte} novalidate`}
                 id={this.renderWidgetId("bodyText")}
-                defaultValue={this.props.settingsObj ? this.props.settingsObj.body : ""}
+                defaultValue={settingsObj ? settingsObj.body : ""}
                 onChange={this.updateBody}
                 onFocusOut={this.nothing()}
                 modules={this.modules}
@@ -323,4 +334,10 @@ class PostForm extends React.Component<IProps, IState> {
   }
 }
 
-export default connect()(withStyles(styles, { withTheme: true })(PostForm));
+//export default connect()(withStyles(styles, { withTheme: true })(PostForm));
+
+export default connect()(
+  withTracker(props => {
+    return {};
+  })(withStyles(styles, { withTheme: true })(PostForm))
+);

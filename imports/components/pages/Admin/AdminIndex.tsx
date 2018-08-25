@@ -219,6 +219,9 @@ class AdminIndex extends React.Component<IProps, IState> {
   pagesPanel() {
     return this.props.sessionReady ? (
       <Posts
+        hasAuthor={true}
+        hasMeta={true}
+        hasTags={true}
         hasImage={true}
         contentType="pages"
         imageUpdateMethod="image.UpdatePageAdmin"
@@ -240,6 +243,9 @@ class AdminIndex extends React.Component<IProps, IState> {
   postsPanel() {
     return this.props.sessionReady ? (
       <Posts
+        hasAuthor={true}
+        hasMeta={true}
+        hasTags={true}
         hasImage={true}
         contentType="posts"
         imageUpdateMethod="image.UpdatePostAdmin"
@@ -281,6 +287,8 @@ class AdminIndex extends React.Component<IProps, IState> {
   commentsPanel() {
     return this.props.sessionReady ? (
       <Posts
+        hasAuthor={true}
+        hasMeta={true}
         hasImage={false}
         contentType="comments"
         imageUpdateMethod="image.UpdatePostAdmin"
