@@ -7,7 +7,8 @@ import { withTracker } from "meteor/react-meteor-data";
 import { connect } from "react-redux";
 import { withStyles } from "@material-ui/core/styles";
 import * as dateFormat from "dateformat";
-//import { Pages } from "../../api/pages/publish";
+import BlockIcon from "@material-ui/icons/Block";
+import CancelIcon from "@material-ui/icons/Cancel";
 
 import PostForm from "../admin/forms/PostForm";
 import * as PageMethods from "../../api/pages/methods";
@@ -324,7 +325,7 @@ class PageContent extends React.Component<IProps, IState> {
         showForm ? (
           <Link className={`${classes.cancel} d-flex justify-content-between`} to="#" onClick={this.toggleForm}>
             <div>
-              <Icon>cancel</Icon>
+              <CancelIcon className="svg-text-icon" />
             </div>{" "}
             <div>Cancel</div>
           </Link>
@@ -360,7 +361,7 @@ class PageContent extends React.Component<IProps, IState> {
       ""
     ) : (
       <span>
-        <Icon>block</Icon>{" "}
+        <BlockIcon />{" "}
       </span>
     );
     return (

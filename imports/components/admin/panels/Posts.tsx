@@ -15,6 +15,8 @@ import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import Icon from "@material-ui/core/Icon";
+import AddIcon from "@material-ui/icons/Add";
+import BlockIcon from "@material-ui/icons/Block";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
@@ -408,28 +410,28 @@ class Posts extends React.Component<IProps, IState> {
         <List component="nav">
           <ListItem onClick={this.confirmDeleteAll} button>
             <ListItemIcon>
-              <DeleteIcon />
+              <DeleteIcon className="svg-text-icon" />
             </ListItemIcon>
             <ListItemText primary="Delete ALL posts" />
           </ListItem>
 
           <ListItem onClick={this.confirmDeleteSelected} button>
             <ListItemIcon>
-              <DeleteIcon />
+              <DeleteIcon className="svg-text-icon" />
             </ListItemIcon>
             <ListItemText primary="Delete SELECTED" />
           </ListItem>
 
           <ListItem onClick={this.confirmPublishSelected} button>
             <ListItemIcon>
-              <Icon className={classes.fontIcon}>add</Icon>
+              <AddIcon className="svg-text-icon" />
             </ListItemIcon>
             <ListItemText primary="Publish SELECTED" />
           </ListItem>
 
           <ListItem onClick={this.confirmUnpublishSelected} button>
             <ListItemIcon>
-              <Icon className={classes.fontIcon}>block</Icon>
+              <BlockIcon className="svg-text-icon" />
             </ListItemIcon>
             <ListItemText primary="Unpublish SELECTED" />
           </ListItem>
@@ -668,7 +670,7 @@ class Posts extends React.Component<IProps, IState> {
     const unpub =
       dataObj.publish === false ? (
         <span>
-          <Icon className={classes.fontIcon}>block</Icon>{" "}
+          <BlockIcon className="svg-text-icon" />{" "}
         </span>
       ) : (
         ""
