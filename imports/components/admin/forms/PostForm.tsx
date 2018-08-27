@@ -12,6 +12,7 @@ import * as BlockUi from "react-block-ui";
 import * as Validation from "../../../modules/validation";
 import Widget from "../../forms/Widget";
 import * as Library from "../../../modules/library";
+import EditTags from "../components/EditTags";
 
 const slugify = require("slugify");
 
@@ -31,6 +32,7 @@ interface IProps {
   handlePostUpdated: PropTypes.object.isRequired;
   handleEditing: PropTypes.object.isRequired;
   editMode: string;
+  hasTags: boolean;
 }
 
 interface IState {
@@ -132,6 +134,10 @@ class PostForm extends React.Component<IProps, IState> {
     this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
   };
 
+  updateTagList = tags => {
+    this.setState({ tags: tags });
+  };
+
   handleSubmit = () => {
     //log.info(`PostForm.handleSubmit()`, this.props);
     const {
@@ -222,7 +228,10 @@ class PostForm extends React.Component<IProps, IState> {
 
   getWidget = (props: any) => {
     const { editMode } = this.props;
-    const readOnly = editMode === "creator" && props.baseName === "slug";
+    let readOnly = props.readOnly || false;
+    if (props.baseName === "slug" && editMode === "creator") {
+      readOnly = true;
+    }
     let widgetType = props.widgetType ? props.widgetType : "simple";
     return (
       <Widget
@@ -286,18 +295,25 @@ class PostForm extends React.Component<IProps, IState> {
   };
 
   render() {
-    const { classes, settingsObj } = this.props;
+    const { classes, settingsObj, hasTags } = this.props;
     return (
       <div>
         <BlockUi tag="div" blocking={this.state.blockUI}>
           <form id={this.formID} className={classes.adminPostsForm}>
-            <div className="form-group">
-              <FormControlLabel
-                control={<Switch disabled={false} onChange={this.togglePublish} checked={this.state.publish} />}
-                label="Publish"
-              />
-            </div>
-            {this.getWidget({ required: false, baseName: "tags", name: this.renderWidgetId("tags"), label: "Tags" })}
+            {hasTags && <EditTags updateTagList={this.updateTagList} preSelected={this.state.tags} />}
+
+            <FormControlLabel
+              control={<Switch disabled={false} onChange={this.togglePublish} checked={this.state.publish} />}
+              label="Publish"
+            />
+
+            {this.getWidget({
+              readOnly: true,
+              required: false,
+              baseName: "tags",
+              name: this.renderWidgetId("tags"),
+              label: "Tags"
+            })}
             {this.getWidget({ baseName: "slug", name: this.renderWidgetId("slug"), label: "Slug" })}
             {this.getWidget({
               baseName: "summary",

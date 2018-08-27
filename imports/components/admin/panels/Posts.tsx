@@ -18,9 +18,6 @@ import Icon from "@material-ui/core/Icon";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DeleteIcon from "@material-ui/icons/Delete";
-//import PublishIcon from "@material-ui/icons/Add";
-//import UnpublishIcon from "@material-ui/icons/Clear";
-//import BlockIcon from "@material-ui/icons/Block";
 import ExpansionPanel from "@material-ui/core/ExpansionPanel";
 import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
@@ -37,7 +34,6 @@ import RenderImage from "../components/RenderImage";
 import Author from "../components/Author";
 import MetaInfo from "../components/MetaInfo";
 import { publishPostList } from "../../../api/admin/methods";
-import EditTags from "../components/EditTags";
 
 const drawerWidth = 240;
 let styles: any;
@@ -294,7 +290,7 @@ class Posts extends React.Component<IProps, IState> {
     let targetName: any;
     targetName = props.dataObj ? "imageIDedit" : "imageIDnew";
     this.setState({ [targetName]: props.image_id });
-    log.info(`updateImageId`, props, this.state);
+    //log.info(`updateImageId`, props, this.state);
   };
 
   loadMore() {
@@ -562,7 +558,6 @@ class Posts extends React.Component<IProps, IState> {
     return (
       <div className={classes.newPostDetail}>
         {hasImage && this.renderImage()}
-        {hasTags && <EditTags classNames={{ suggestions: "react-tags__suggestions" }} />}
         {this.renderForm()}
       </div>
     );
@@ -581,9 +576,7 @@ class Posts extends React.Component<IProps, IState> {
 
         {hasAuthor ? <Author userId={dataObj.authorId} /> : ""}
         {hasMeta && <MetaInfo data={dataObj} />}
-
         {hasImage && this.renderImage(dataObj)}
-        {hasTags && <EditTags dataObj={dataObj} />}
         {this.renderForm(dataObj)}
       </div>
     );
@@ -649,13 +642,16 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   postForm(dataObj = null) {
+    const { hasTags, postCreateMethod, postUpdateMethod } = this.props;
+    const { imageIDedit, imageIDnew } = this.state;
     return (
       <PostForm
-        postCreateMethod={this.props.postCreateMethod}
-        postUpdateMethod={this.props.postUpdateMethod}
+        postCreateMethod={postCreateMethod}
+        postUpdateMethod={postUpdateMethod}
         settingsObj={dataObj}
-        imageIDedit={this.state.imageIDedit}
-        imageIDnew={this.state.imageIDnew}
+        imageIDedit={imageIDedit}
+        hasTags={hasTags}
+        imageIDnew={imageIDnew}
         editingExistingData={dataObj ? true : false}
         handleNewPostCreated={this.handleNewPostUpdated}
         handlePostUpdated={this.handleNewPostUpdated}

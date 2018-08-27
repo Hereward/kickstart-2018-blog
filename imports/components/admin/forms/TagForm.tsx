@@ -26,6 +26,7 @@ interface IProps {
   handleNewPostCreated: PropTypes.object.isRequired;
   handlePostUpdated: PropTypes.object.isRequired;
   handleEditing: PropTypes.object.isRequired;
+  preSelected: string;
 }
 
 interface IState {

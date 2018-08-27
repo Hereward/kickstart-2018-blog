@@ -241,6 +241,7 @@ class PageContent extends React.Component<IProps, IState> {
           postCreateMethod={this.props.postCreateMethod}
           postUpdateMethod={this.props.postUpdateMethod}
           settingsObj={post}
+          hasTags={true}
           imageIDedit={this.state.imageIDedit}
           imageIDnew={this.state.imageIDnew}
           editingExistingData={post ? true : false}

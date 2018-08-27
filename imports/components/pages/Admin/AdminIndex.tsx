@@ -7,6 +7,7 @@ import UsersIcon from "@material-ui/icons/Contacts";
 import HomeIcon from "@material-ui/icons/Home";
 import PagesIcon from "@material-ui/icons/Description";
 import CommentsIcon from "@material-ui/icons/Comment";
+import TagIcon from "@material-ui/icons/More";
 import PostsIcon from "@material-ui/icons/Pages";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Drawer from "@material-ui/core/Drawer";
@@ -441,7 +442,7 @@ class AdminIndex extends React.Component<IProps, IState> {
             button
           >
             <ListItemIcon classes={{ root: this.getNavStyle("tags") }}>
-              <CommentsIcon />
+              <TagIcon />
             </ListItemIcon>
             <ListItemText classes={{ primary: this.getNavStyle("tags") }} primary="Tags" />
           </ListItem>
