@@ -28,7 +28,7 @@ styles = theme => ({
     flexGrow: 1,
     width: "100%",
     backgroundColor: "transparent",
-    marginTop: "1.6rem"
+    marginTop: "-0.4rem"
   }
 });
 
@@ -87,7 +87,11 @@ class Profile extends React.Component<IProps, IState> {
     switch (val) {
       case 0:
         if (totalPosts) {
-          return <ProfilePosts profile={profile} profileUserId={profileUserId} userId={userId} match={match} />;
+          return (
+            <div className="container">
+              <ProfilePosts profile={profile} profileUserId={profileUserId} userId={userId} match={match} />
+            </div>
+          );
         } else {
           return <Spinner />;
         }
@@ -171,7 +175,7 @@ class Profile extends React.Component<IProps, IState> {
         {this.tabContents()}
       </div>
     ) : (
-      <div className="container page-content">
+      <div className="page-content">
         <Spinner />
       </div>
     );

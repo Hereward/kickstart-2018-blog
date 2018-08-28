@@ -375,6 +375,21 @@ class PageContent extends React.Component<IProps, IState> {
     );
   }
 
+  renderTags(tags) {
+    const { classes } = this.props;
+    const tagArray = tags.split(" ");
+    const mapped = tagArray.map(tag => {
+      const layout = (
+        <span className={classes.tagItem} key={`tag_${tag}`}>
+          <Link to={`/blog/tag/${tag}`}>{tag}</Link>{" "}
+        </span>
+      );
+      return layout;
+    });
+
+    return mapped;
+  }
+
   getLayout() {
     const { classes, post, contentType } = this.props;
     const { showForm } = this.state;
@@ -398,6 +413,7 @@ class PageContent extends React.Component<IProps, IState> {
               <h6>
                 {dateFormat(post.created, "dd mmmm yyyy")} | <CommentCount postId={post._id} /> Comments
               </h6>
+              {post.tags && <h6>{this.renderTags(post.tags)}</h6>}
             </div>
           ) : (
             ""
@@ -437,7 +453,7 @@ class PageContent extends React.Component<IProps, IState> {
     const { post } = this.props;
     let layout = this.getLayout();
     return (
-      <div className="container page-content">
+      <div className="page-content">
         {this.getMeta()}
         {layout}
       </div>

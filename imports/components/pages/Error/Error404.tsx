@@ -21,7 +21,7 @@ class Error404 extends React.Component<IProps, IState> {
 
   render() {
     return (
-      <div className="container page-content">
+      <div className="page-content">
         {" "}
         <h1>Oops...</h1>
         <p>Page Not Found</p>

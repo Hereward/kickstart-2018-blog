@@ -126,7 +126,7 @@ class EditTags extends React.Component<IProps, IState> {
     );
   }
 
-  render() {
+  layout() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
@@ -135,6 +135,15 @@ class EditTags extends React.Component<IProps, IState> {
         </OptionGroup>
       </div>
     );
+  }
+
+  render() {
+    const { importedTags } = this.props;
+    if (importedTags.length) {
+      return this.layout();
+    } else {
+      return "";
+    }
   }
 }
 

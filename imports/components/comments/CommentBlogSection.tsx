@@ -54,7 +54,7 @@ class CommentBlogSection extends React.Component<IProps, IState> {
   render() {
     const { classes, postId } = this.props;
     return (
-      <div className="container">
+      <div>
         <hr />
         <h3 className={classes.heading}>Join The Discussion</h3>
         <p className={classes.review}>Please review the Terms of Service before reading or responding to comments.</p>

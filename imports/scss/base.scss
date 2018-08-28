@@ -10,6 +10,15 @@ body {
   /* background-color: #343a40; */
 }
 
+.right-col {
+  margin-top: 2rem;
+}
+
+.jumbotron {
+  padding-top: 2rem;
+  margin-top: -1rem;
+}
+
 .svg-text-icon {
   vertical-align: bottom
 }
@@ -294,7 +303,7 @@ h3 {
 }
 
 .page-content {
-  margin-top: 4rem;
+  margin-top: 2rem;
   /* margin-bottom: 2rem; */
 }
 
@@ -323,6 +332,7 @@ nav.main-nav .dropdown-menu {
 
 .container-fluid.header {
   padding: 0;
+  margin-bottom: 4rem;
 }
 
 .main-nav .dropdown-item {

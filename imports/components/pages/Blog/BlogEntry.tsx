@@ -77,7 +77,7 @@ class BlogEntry extends React.Component<IProps, IState> {
     const { post } = this.props;
     return post ? (
       <Transition>
-        <div className="container page-content">
+        <div className="page-content">
           {this.renderPost()}
           {this.comments()}
         </div>

@@ -31,8 +31,9 @@ class Offline extends React.Component<IProps> {
   }
 
   getLayout() {
+    const {classes} = this.props;
     let layout = (
-      <div className={`container ${this.props.classes.offline}`}>
+      <div className={classes.offline}>
         <div>
           <SyncProblem color="error" style={{ fontSize: 80 }} />
         </div>

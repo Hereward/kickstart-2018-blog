@@ -88,7 +88,7 @@ styles = theme => ({
     listStyleType: "none"
   },
   root: {
-    marginTop: "1.5rem",
+    marginTop: "-0.5rem",
     flexGrow: 1,
     height: "auto",
     zIndex: 1,

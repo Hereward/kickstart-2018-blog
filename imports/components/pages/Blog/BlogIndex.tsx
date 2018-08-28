@@ -19,6 +19,15 @@ import Spinner from "../../partials/Spinner";
 let styles: any;
 
 styles = theme => ({
+  mainHeading: {
+    //border: "1px solid rgba(0, 0, 0, 0.1)",
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
+    padding: "0.5rem",
+    fontSize: "1rem",
+    textTransform: "uppercase",
+    textAlign: "center",
+    borderRadius: "5px"
+  },
   loadMore: {
     marginTop: "1rem",
     textAlign: "center"
@@ -39,6 +48,7 @@ interface IProps {
   dispatch: any;
   totalPosts: number;
   cursorLimit: number;
+  tag: string;
 }
 
 interface IState {}
@@ -61,14 +71,34 @@ class BlogIndex extends React.Component<IProps, IState> {
   readMoreLink(post) {
     const { classes } = this.props;
     return (
-      <Link className={classes.readMore} to={`blog/${post.slug}`}>
+      <Link className={classes.readMore} to={`/blog/${post.slug}`}>
         Read More &rarr;
       </Link>
     );
   }
 
+  mainHeading() {
+    const { classes, tag } = this.props;
+    return <h1 className={classes.mainHeading}>{tag ? `blog posts tagged [${tag}]` : "blog posts"}</h1>;
+  }
+
   renderBody(post) {
     return { __html: post.truncatedBody };
+  }
+
+  renderTags(tags) {
+    const { classes } = this.props;
+    const tagArray = tags.split(" ");
+    const mapped = tagArray.map(tag => {
+      const layout = (
+        <span className={classes.tagItem} key={`tag_${tag}`}>
+          <Link to={`/blog/tag/${tag}`}>{tag}</Link>{" "}
+        </span>
+      );
+      return layout;
+    });
+
+    return mapped;
   }
 
   renderPost(post: any) {
@@ -78,7 +108,7 @@ class BlogIndex extends React.Component<IProps, IState> {
       layout = (
         <div>
           <h2 className="blogTitle">
-            <Link to={`blog/${post.slug}`}>{post.title}</Link>
+            <Link to={`/blog/${post.slug}`}>{post.title}</Link>
           </h2>
           <h6>
             <Author authorId={post.authorId} />
@@ -86,6 +116,7 @@ class BlogIndex extends React.Component<IProps, IState> {
           <h6>
             {dateFormat(post.created, "dd mmmm yyyy")} | <CommentCount postId={post._id} /> Comments
           </h6>
+          {post.tags && <h6>{this.renderTags(post.tags)}</h6>}
           <div dangerouslySetInnerHTML={this.renderBody(post)} />
           {this.readMoreLink(post)}
           <hr />
@@ -127,6 +158,7 @@ class BlogIndex extends React.Component<IProps, IState> {
 
     return (
       <div>
+        {this.mainHeading()}
         {this.mapPosts()}
         {totalPosts > cursorLimit ? this.loadMoreButton() : ""}
       </div>
@@ -143,15 +175,13 @@ class BlogIndex extends React.Component<IProps, IState> {
     const { totalPosts, posts } = this.props;
     return posts.length ? (
       <Transition>
-        <div className="container page-content">
+        <div className="page-content">
           {this.layout()}
           {this.getMeta()}
         </div>
       </Transition>
     ) : (
-      <div className="container page-content">
-        <Spinner />
-      </div>
+      <Spinner />
     );
   }
 }
@@ -169,16 +199,27 @@ export default connect(mapStateToProps)(
     let PostsDataHandle = Meteor.subscribe("posts");
     let totalPosts: number = 0;
     let posts: any = [];
+    let searchCriteria: any;
+    const tag = props.match.params.tag;
     const options = {
       sort: { created: -1 },
       limit: props.cursorLimit
     };
 
     if (PostsDataHandle.ready()) {
-      totalPosts = Posts.find({ publish: true }).count();
-      posts = Posts.find({ publish: true }, options).fetch();
+      searchCriteria = { publish: true };
+      if (tag) {
+        //const findRegex = `/.*${tag}.*/`;
+        const findRegex = { $regex: tag, $options: "i" };
+        searchCriteria.tags = findRegex;
+        // Items.find({"description": {$regex: ".*" + variable + ".*", $options: '<options>'}}).fetch();
+      }
+      totalPosts = Posts.find(searchCriteria).count();
+      posts = Posts.find(searchCriteria, options).fetch();
     }
 
-    return { posts: posts, totalPosts: totalPosts };
+    log.info(`BlogIndex.tracker() totalPosts =[${totalPosts}] tags = [${tag}]`, searchCriteria, posts);
+
+    return { posts: posts, totalPosts: totalPosts, tag: tag };
   })(withStyles(styles, { withTheme: true })(BlogIndex))
 );

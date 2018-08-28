@@ -19,7 +19,7 @@ class Locked extends React.Component<IProps> {
 
   layout() {
     let layout = (
-      <div className="container page-content">
+      <div className="page-content">
         <h1>Account Locked</h1>
         <div>
           Your account has been locked. This can happen for a variety of reasons. Please contact Admin to reinstate access.

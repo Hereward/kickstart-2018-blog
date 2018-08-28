@@ -25,7 +25,7 @@ class Page extends React.Component<IProps> {
 
   defaultLayout() {
     let layout = (
-      <div className="container page-content">
+      <div className="page-content">
         <h1>{Meteor.settings.public.defaultContent.about.heading}</h1>
         <div dangerouslySetInnerHTML={this.createMarkup(Meteor.settings.public.defaultContent.about.body)} />
       </div>
@@ -52,7 +52,7 @@ class Page extends React.Component<IProps> {
         />
       </Transition>
     ) : (
-      <div className="container page-content">
+      <div className="page-content">
         <Spinner />
       </div>
     );

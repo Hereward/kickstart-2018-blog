@@ -44,7 +44,7 @@ class Boojam extends React.Component<IProps, IState> {
   }
 
   render() {
-    return <div className="container page-content">{this.layout()}</div>;
+    return <div className="page-content">{this.layout()}</div>;
   }
 }
 

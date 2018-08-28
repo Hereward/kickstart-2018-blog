@@ -15,6 +15,7 @@ import { systemSettings } from "../../../api/admin/publish";
 import Snackbar from "../../partials/Snackbar";
 import Meta from "../../partials/Meta";
 import Splash from "../../partials/Splash";
+import HomeContent from "../../partials/Home";
 
 interface IProps {
   history: PropTypes.object.isRequired;
@@ -55,14 +56,14 @@ class App extends React.Component<IProps, IState> {
 
   mainContent() {
     const path = this.props.history.location.pathname;
+    //log.info(`path = `, path);
     const meta = this.props.systemSettings ? <Meta location={path} settings={this.props.systemSettings} /> : "";
     return (
       <div className="router-parent d-flex flex-column">
         {meta}
         <Header {...this.props} />
-        <main>
+        {path === "/" && <HomeContent />}
           <MainRouter {...this.props} />
-        </main>
         {!path.match(/admin/) ? <Footer {...this.props} /> : ""}
         <Snackbar message={this.props.miniAlert.message} close={this.closeMiniAlert} isOpen={this.props.miniAlert.on} />
       </div>
@@ -121,7 +122,6 @@ export default withRouter(
         let hashedToken = sessionToken ? User.hash(sessionToken) : "";
 
         profilePublic = Profiles.findOne({ owner: userId });
-       
 
         userSettingsRec = userSettings.findOne({ owner: userId });
 
@@ -163,7 +163,7 @@ export default withRouter(
         systemSettings: systemSettingsRec,
         loggingOut: loggingOut,
         miniAlert: miniAlert,
-        isClient: isClient,
+        isClient: isClient
       };
     })(App)
   )

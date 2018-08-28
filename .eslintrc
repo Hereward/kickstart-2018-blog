@@ -103,7 +103,7 @@
     "jsx-a11y/no-static-element-interactions": "warn",
     "no-unused-expressions": "warn",
     "semi": ["error", "always"],
-    "no-lonely-if": "warn",
+    "no-lonely-if": "off",
     "no-continue": "warn",
     "yoda": "warn",
     "react/jsx-first-prop-new-line": "off",

@@ -130,7 +130,7 @@ class Authenticator extends React.Component<IProps, IState> {
   getLayout() {
     let layout = (
       <Transition>
-        <div className="container page-content">
+        <div className="page-content">
           {this.state.showQRcode && this.props.userSettings && this.props.userSettings.authEnabled === 3 ? (
             <QRCodeContainer handleQRclick={this.handleQRClick} />
           ) : (

@@ -127,7 +127,7 @@ class SignIn extends React.Component<IProps, IState> {
   render() {
     return (
       <Transition>
-        <div className="container page-content">{this.getLayout()}</div>
+        <div className="page-content">{this.getLayout()}</div>
       </Transition>
     );
   }

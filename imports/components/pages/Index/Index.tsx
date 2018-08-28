@@ -16,7 +16,7 @@ import * as Methods from "../../../api/tasks/methods";
 import * as Library from "../../../modules/library";
 import * as Icon from "../../../modules/icons";
 import { Pages } from "../../../api/pages/publish";
-import HomeContent from "../../partials/Home";
+//import HomeContent from "../../partials/Home";
 import * as User from "../../../modules/user";
 
 momentDurationFormatSetup(moment);
@@ -239,9 +239,8 @@ class Index extends React.Component<IProps, IState> {
   render() {
     return (
       <Transition>
-        <HomeContent />
-        <div className="container sessionData">{this.sessionData()}</div>
-        <div className="container todos">{this.todosSection()}</div>
+        <div className="sessionData">{this.sessionData()}</div>
+        <div className="todos">{this.todosSection()}</div>
       </Transition>
     );
   }

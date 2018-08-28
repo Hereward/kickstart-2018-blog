@@ -153,7 +153,7 @@ class Enroll extends React.Component<IProps, IState> {
       </div>
     );
 
-    return <div className="container page-content">{layout}</div>;
+    return <div className="page-content">{layout}</div>;
   }
 
   render() {

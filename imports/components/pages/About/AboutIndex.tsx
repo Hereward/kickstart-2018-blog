@@ -41,7 +41,7 @@ class About extends React.Component<IProps> {
     const { classes } = this.props;
     const userList = this.mapUsers();
     return (
-      <div className={`container ${classes.contributors}`}>
+      <div className={classes.contributors}>
         <h2>Our Contributors</h2>
         <ul>{userList}</ul>
       </div>
@@ -82,9 +82,7 @@ class About extends React.Component<IProps> {
         {creators && this.customContent()}
       </Transition>
     ) : (
-      <div className="container page-content">
-        <Spinner />
-      </div>
+      <Spinner />
     );
   }
 }

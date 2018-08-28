@@ -27,10 +27,11 @@ import * as Library from "../../modules/library";
 import { Pages } from "../../api/pages/publish";
 import Splash from "../partials/Splash";
 import Spinner from "../partials/Spinner";
+import LayoutWrapper from "../partials/LayoutWrapper";
 
 function Loading(props) {
   return (
-    <div className="container page-content">
+    <div className="page-content">
       <Spinner error={props.error} />
     </div>
   );
@@ -57,6 +58,7 @@ const BlogEntry = Loadable({
 interface IProps {
   slugs: any;
   pages: any;
+  location: any;
 }
 
 const RedirectRoute = ({ path, ...rest }) => {
@@ -65,6 +67,7 @@ const RedirectRoute = ({ path, ...rest }) => {
 
 const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
   let authRequired = User.authRequired(cProps);
+  let layoutType = "multicol";
   let emailVerified = Library.nested(["userData", "emails", 0, "verified"], cProps);
   let locked = Library.nested(["userSettings", "locked"], cProps);
   let path = cProps.location.pathname;
@@ -98,7 +101,7 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
   } else if (cProps.systemSettings && cProps.systemSettings.systemOnline !== true && !admin) {
     return <Route {...rest} render={props => <Offline {...cProps} {...props} />} />;
   } else {
-    return <Route {...rest} render={props => <Component {...cProps} {...props} />} />;
+    return <Route {...rest} render={props => <LayoutWrapper path={path}><Component {...cProps} {...props} /></LayoutWrapper>} />;
   }
 };
 
@@ -138,6 +141,7 @@ class Routes extends React.Component<IProps> {
         <AuthRoute exact path="/members/signin" cProps={props} component={SignIn} type="guest" />
         <AuthRoute exact path="/members/authenticate" cProps={props} component={Authenticator} type="user" />
         <AuthRoute exact path="/members/profile/:userId" cProps={props} component={Profile} type="any" />
+        <AuthRoute exact path="/blog/tag/:tag" cProps={props} component={BlogIndex} type="any" />
         <AuthRoute exact path="/blog" cProps={props} component={BlogIndex} type="any" />
         <AuthRoute exact path="/blog/:entry" cProps={props} component={BlogEntry} type="any" />
         <AuthRoute exact path="/locked" cProps={props} component={Locked} type="user" />
@@ -154,6 +158,7 @@ class Routes extends React.Component<IProps> {
     layout = this.switches(pages);
     return layout;
   };
+
 
   render() {
     return this.mainRouter();

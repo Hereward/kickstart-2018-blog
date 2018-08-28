@@ -1,7 +1,9 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import Transition from "./Transition";
 
 const HomeContent = props => (
+  <Transition>
   <div className="jumbotron">
     <div className="container">
       <h1 className="display-4">A starter platform for Meteor projects</h1>
@@ -33,6 +35,7 @@ const HomeContent = props => (
       </div>
     </div>
   </div>
+  </Transition>
 );
 
 export default HomeContent;
