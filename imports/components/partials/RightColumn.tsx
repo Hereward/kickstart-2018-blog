@@ -39,7 +39,7 @@ class RightColumn extends React.Component<IProps, IState> {
     const { classes, tags } = this.props;
     return (
       <div>
-        <h2 className="feature-heading">Tags</h2>
+        <h2 className="feature-heading">Tag Search</h2>
         { tags.length ? <div className={classes.tagBlock}>{this.renderTags()}</div> : <Spinner />}
       </div>
     );

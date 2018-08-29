@@ -48,7 +48,7 @@ interface IProps {
   dispatch: any;
   totalPosts: number;
   cursorLimit: number;
-  tag: string;
+  urlTag: string;
 }
 
 interface IState {}
@@ -62,6 +62,12 @@ class BlogIndex extends React.Component<IProps, IState> {
 
   UNSAFE_componentWillMount() {
     this.props.dispatch({ type: "LOAD_INIT" });
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.urlTag !== prevProps.urlTag) {
+      this.props.dispatch({ type: "LOAD_INIT" });
+    }
   }
 
   loadMore = () => {
@@ -78,8 +84,8 @@ class BlogIndex extends React.Component<IProps, IState> {
   }
 
   mainHeading() {
-    const { classes, tag } = this.props;
-    return <h1 className="feature-heading">{tag ? `blog posts tagged [${tag}]` : "blog posts"}</h1>;
+    const { classes, urlTag } = this.props;
+    return <h1 className="feature-heading">{urlTag ? `blog posts tagged [${urlTag}]` : "blog posts"}</h1>;
   }
 
   renderBody(post) {
@@ -201,7 +207,7 @@ export default connect(mapStateToProps)(
     let totalPosts: number = 0;
     let posts: any = [];
     let searchCriteria: any;
-    const tag = props.match.params.tag;
+    const urlTag = props.match.params.tag;
     const options = {
       sort: { created: -1 },
       limit: props.cursorLimit
@@ -209,9 +215,9 @@ export default connect(mapStateToProps)(
 
     if (PostsDataHandle.ready()) {
       searchCriteria = { publish: true };
-      if (tag) {
+      if (urlTag) {
         //const findRegex = `/.*${tag}.*/`;
-        const findRegex = { $regex: tag, $options: "i" };
+        const findRegex = { $regex: urlTag, $options: "i" };
         searchCriteria.tags = findRegex;
         // Items.find({"description": {$regex: ".*" + variable + ".*", $options: '<options>'}}).fetch();
       }
@@ -219,8 +225,6 @@ export default connect(mapStateToProps)(
       posts = Posts.find(searchCriteria, options).fetch();
     }
 
-    
-
-    return { posts: posts, totalPosts: totalPosts, tag: tag };
+    return { posts: posts, totalPosts: totalPosts, urlTag: urlTag };
   })(withStyles(styles, { withTheme: true })(BlogIndex))
 );
