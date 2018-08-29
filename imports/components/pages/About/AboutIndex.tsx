@@ -106,7 +106,7 @@ export default connect()(
       page = Pages.findOne({ publish: true, slug: slug });
     }
     const creators = Roles.getUsersInRole("creator", userSortOptions).fetch();
-    log.info(`AboutIndex.Tracker()`, creators);
+    
     return { page: page, creators: creators };
   })(withStyles(styles, { withTheme: true })(About))
 );

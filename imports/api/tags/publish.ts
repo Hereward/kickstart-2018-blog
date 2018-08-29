@@ -8,8 +8,4 @@ if (Meteor.isServer) {
   Meteor.publish("tags", function tagsPublication() {
     return Tags.find();
   });
-
-  Meteor.startup(() => {
-    
-  });
 }

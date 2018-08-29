@@ -101,7 +101,16 @@ const AuthRoute = ({ component: Component, type, cProps, ...rest }) => {
   } else if (cProps.systemSettings && cProps.systemSettings.systemOnline !== true && !admin) {
     return <Route {...rest} render={props => <Offline {...cProps} {...props} />} />;
   } else {
-    return <Route {...rest} render={props => <LayoutWrapper path={path}><Component {...cProps} {...props} /></LayoutWrapper>} />;
+    return (
+      <Route
+        {...rest}
+        render={props => (
+          <LayoutWrapper {...cProps} {...props}>
+            <Component {...cProps} {...props} />
+          </LayoutWrapper>
+        )}
+      />
+    );
   }
 };
 
@@ -158,7 +167,6 @@ class Routes extends React.Component<IProps> {
     layout = this.switches(pages);
     return layout;
   };
-
 
   render() {
     return this.mainRouter();

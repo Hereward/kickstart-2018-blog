@@ -79,7 +79,7 @@ class BlogIndex extends React.Component<IProps, IState> {
 
   mainHeading() {
     const { classes, tag } = this.props;
-    return <h1 className={classes.mainHeading}>{tag ? `blog posts tagged [${tag}]` : "blog posts"}</h1>;
+    return <h1 className="feature-heading">{tag ? `blog posts tagged [${tag}]` : "blog posts"}</h1>;
   }
 
   renderBody(post) {
@@ -195,6 +195,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
+    log.info(`BlogIndex.Tracker()`, props);
     const commentsHandle = Meteor.subscribe("comments");
     let PostsDataHandle = Meteor.subscribe("posts");
     let totalPosts: number = 0;
@@ -218,7 +219,7 @@ export default connect(mapStateToProps)(
       posts = Posts.find(searchCriteria, options).fetch();
     }
 
-    log.info(`BlogIndex.tracker() totalPosts =[${totalPosts}] tags = [${tag}]`, searchCriteria, posts);
+    
 
     return { posts: posts, totalPosts: totalPosts, tag: tag };
   })(withStyles(styles, { withTheme: true })(BlogIndex))

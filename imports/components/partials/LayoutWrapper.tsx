@@ -1,9 +1,11 @@
 import * as React from "react";
+import RightColumn from "./RightColumn";
 
 const LayoutWrapper = props => {
-  const { path, children } = props;
+  const { location, children } = props;
   let type: string = "multi";
   let contained = true;
+  const path = location.pathname;
   if (path.match(/admin/)) {
     type = "single";
     contained = false;
@@ -25,7 +27,9 @@ const LayoutWrapper = props => {
           <div className="col-lg-10">
             <main>{children}</main>
           </div>
-          <div className="col-lg-2 right-col">RIGHT COL</div>
+          <div className="col-lg-2 right-col">
+            <RightColumn {...props} />
+          </div>
         </div>
       </div>
     );

@@ -138,7 +138,7 @@ class PostList extends React.Component<IProps, IState> {
     return (
       <div className={classes.root}>
         {ownerView && (
-          <h2 className={classes.mainHeading}>
+          <h2 className="feature-heading">
             {this.heading}
             {totalPostsLabel}
           </h2>
