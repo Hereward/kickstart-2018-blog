@@ -27,26 +27,28 @@ export default class Image extends React.Component<IProps, IState> {
   }
 
   removeFile() {
-    const { removeNewImageFromUploads } = this.props;
-    const { dataObj } = this.props;
+    const { dataObj, removeNewImageFromUploads } = this.props;
 
-    let conf = confirm("Are you sure you want to delete the file?") || false;
-    if (conf === true) {
-      const recId = this.props.dataObj ? this.props.dataObj._id : "";
-      log.info(`Image.removeImage()`, recId);
+    //let conf = confirm("Are you sure you want to delete the file?") || false;
 
-      Meteor.call("image.remove", { id: this.props.fileId, dataSource: "editorial" }, (err, res) => {
-        if (err) {
-          console.log(err);
-          Library.modalErrorAlert(err.reason);
-        } else {
-          if (removeNewImageFromUploads) {
-            removeNewImageFromUploads();
+    Library.confirmDialog({ title: "Are you sure you want to delete the file?", message: "off" }).then(result => {
+      if (result) {
+        const recId = this.props.dataObj ? this.props.dataObj._id : "";
+        log.info(`Image.removeImage()`, recId);
+
+        Meteor.call("image.remove", { id: this.props.fileId, dataSource: "editorial" }, (err, res) => {
+          if (err) {
+            console.log(err);
+            Library.modalErrorAlert(err.reason);
+          } else {
+            if (removeNewImageFromUploads) {
+              removeNewImageFromUploads();
+            }
+            Meteor.call(this.props.updateMethod, { id: recId, image_id: "" });
           }
-          Meteor.call(this.props.updateMethod, { id: recId, image_id: "" });
-        }
-      });
-    }
+        });
+      }
+    });
   }
 
   renameFile() {

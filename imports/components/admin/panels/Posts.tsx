@@ -280,14 +280,6 @@ class Posts extends React.Component<IProps, IState> {
     this.editingType[type] = state;
   };
 
-  /*
-  updateImageId = (props: { image_id: string; dataObj?: any }) => {
-    let targetName: any;
-    targetName = props.dataObj ? "imageIDedit" : "imageIDnew";
-    this.setState({ [targetName]: props.image_id });
-    //log.info(`updateImageId`, props, this.state);
-  };
-  */
 
   loadMore() {
     this.props.dispatch({ type: "LOAD_MORE" });
@@ -595,19 +587,6 @@ class Posts extends React.Component<IProps, IState> {
     }
     return layout;
   }
-
-  /*
-  renderImage(dataObj = null) {
-    return (
-      <RenderImage
-        allowEdit={true}
-        updateMethod={this.props.imageUpdateMethod}
-        updateImageId={this.updateImageId}
-        dataObj={dataObj}
-      />
-    );
-  }
-  */
 
   truncateHTML(html) {
     const trunc = truncate(html, 15, { byWords: true });

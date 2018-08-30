@@ -1,4 +1,5 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 import { Meteor } from "meteor/meteor";
 import { _ } from "meteor/underscore";
 import Image from "../partials/Image";
@@ -10,10 +11,11 @@ interface IProps {
   Images: any;
   fileLocator: any;
   loading: boolean;
-  imageArray: any;
-  dataObj: any;
+  imageArray: any[];
+  dataObj: PropTypes.object;
   updateMethod: string;
-  updateImageId?: any;
+  updateImageId?: PropTypes.object;
+  setNewImageObject?: PropTypes.object;
   updateDirect?: boolean;
   allowEdit: boolean;
 }
@@ -47,14 +49,17 @@ export default class UploadForm extends React.Component<IProps, IState> {
   getFromServer(e) {}
 
   removeNewImage = () => {
-    log.info(`UploadForm.removeNewImage()`);
+    const { updateImageId, setNewImageObject } = this.props;
+    //log.info(`UploadForm.removeNewImage()`);
     this.setState({ newImage: false });
+    setNewImageObject();
+    updateImageId({ imageId: "" });
   };
 
   uploadIt(e) {
     e.preventDefault();
 
-    const { Images, updateMethod, dataObj, updateDirect } = this.props;
+    const { Images, updateMethod, dataObj, updateDirect, updateImageId, setNewImageObject } = this.props;
 
     //let self = this;
 
@@ -90,14 +95,16 @@ export default class UploadForm extends React.Component<IProps, IState> {
           //console.log("On end File Object: ", fileObj);
         });
 
-        uploadInstance.on("uploaded", (error, fileObj) => {
+        uploadInstance.on("uploaded", (error, newDataObject) => {
           //console.log(`uploaded image: [${self.props.profile._id}]`, self.props.profile, fileObj._id);
 
           if (dataObj && updateDirect) {
-            Meteor.call(updateMethod, { id: this.props.dataObj._id, image_id: fileObj._id });
+            Meteor.call(updateMethod, { id: this.props.dataObj._id, image_id: newDataObject._id });
           } else {
-            this.props.updateImageId({ image_id: fileObj._id, dataObj: dataObj });
-            this.fileObj = fileObj;
+            updateImageId({ imageId: newDataObject._id, newDataObject: newDataObject });
+            setNewImageObject({ newDataObject: newDataObject });
+
+            this.fileObj = newDataObject;
 
             this.setState({ newImage: true });
           }
@@ -182,7 +189,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
 
     let renderedImages: any = "";
 
-    if (imageArray && !newImage) {
+    if (imageArray.length && !newImage) {
       renderedImages = imageArray.map((imageObject, key) => {
         return this.getImage(imageObject, key);
       });

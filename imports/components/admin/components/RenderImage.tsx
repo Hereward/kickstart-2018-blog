@@ -15,11 +15,12 @@ import OptionGroup from "../components/OptionGroup";
 let styles: any;
 
 interface IProps {
-  classes: any;
+  classes: PropTypes.object;
   theme: any;
-  dataObj: any;
+  dataObj: PropTypes.object;
+  newDataObject: PropTypes.object;
   updateImageId?: PropTypes.object;
-  imageArray?: any;
+  imageArray: any[];
   toggleShowImage?: PropTypes.object;
   updateMethod: string;
   allowEdit: boolean;
@@ -29,6 +30,7 @@ interface IProps {
 
 interface IState {
   editImage: boolean;
+  newDataObject: any;
 }
 
 styles = theme => ({
@@ -41,7 +43,8 @@ class RenderImage extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      editImage: false
+      editImage: false,
+      newDataObject: ""
     };
   }
 
@@ -52,7 +55,12 @@ class RenderImage extends React.Component<IProps, IState> {
 
   updateImageId = props => {
     this.props.updateImageId(props);
+    //this.setState({ newDataObject: props.newDataObject });
   };
+
+  setNewImageObject = (newDataObject="") => {
+    this.setState({ newDataObject: newDataObject });
+  }
 
   toggleImageEdit = e => {
     const newState = !this.state.editImage;
@@ -61,9 +69,13 @@ class RenderImage extends React.Component<IProps, IState> {
 
   layout() {
     const { classes, toggleShowImage, dataObj, imageArray, allowEdit, showImage, imageId } = this.props;
+    const { newDataObject } = this.state;
+    const newDataArray = newDataObject ? [newDataObject] : [];
     let layout: any = "";
+    let resolvedImageArray: any[] = [];
 
     if (this.state.editImage) {
+      resolvedImageArray = imageArray.length ? imageArray : newDataArray;
       layout = (
         <div className={classes.imageContainer}>
           <UploadForm
@@ -73,9 +85,10 @@ class RenderImage extends React.Component<IProps, IState> {
             allowEdit={allowEdit}
             fileLocator=""
             loading={false}
-            imageArray={imageArray}
+            imageArray={resolvedImageArray}
             dataObj={dataObj}
             updateDirect={false}
+            setNewImageObject={this.setNewImageObject}
           />
           {imageId &&
             toggleShowImage && (
@@ -109,14 +122,14 @@ export default connect()(
     const editorialImagesHandle = Meteor.subscribe("editorialImages");
     const profileImagesHandle = Meteor.subscribe("profileImages");
     let imageCursor: any;
-    let imageArray: any;
+    let imageArray: any[] = [];
     if (props.dataObj) {
       const imageId = props.dataObj.image_id;
       imageCursor = EditorialImages.find({ _id: imageId });
       imageArray = imageCursor.fetch();
     }
 
-    //log.info(`RenderImage tracker`, props, imageArray);
+    log.info(`RenderImage tracker`, props, imageArray);
 
     return {
       imageArray: imageArray

@@ -81,9 +81,6 @@ class Settings extends React.Component<IProps, IState> {
   };
 
   updateImageId = (props: { image_id: string; dataObj?: any }) => {
-    //let targetName: any;
-    //targetName = props.dataObj ? "image_id_edit" : "image_id_new";
-    //log.info(`Posts.updateImageId()`, targetName, props.image_id);
     this.setState({ image_id: props.image_id });
   };
 

@@ -230,8 +230,8 @@ class PostForm extends React.Component<IProps, IState> {
     );
   }
 
-  updateImageId = (props: { image_id: string; dataObj?: any }) => {
-    this.setState({ imageId: props.image_id });
+  updateImageId = (props: { imageId: string; newDataObject?: any }) => {
+    this.setState({ imageId: props.imageId });
   };
 
   handleChange = e => {
