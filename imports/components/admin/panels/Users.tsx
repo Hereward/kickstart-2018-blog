@@ -570,7 +570,6 @@ export default connect(mapStateToProps)(
     let emailFilter: any;
     let combinedFilters = [];
     let filterCount: number = 0;
-    //let defaultSearch: boolean = true;
     let users: any = [];
     let filter: boolean = false;
 
@@ -593,33 +592,12 @@ export default connect(mapStateToProps)(
     }
 
     if (filter) {
-      //log.info(`Posts.tracker() combinedFilters`, emailString, filterCount, combinedFilters);
-      //defaultSearch = false;
       if (combinedFilters.length) {
         users = Meteor.users.find({ $or: combinedFilters }, options).fetch();
       }
     } else {
       users = Meteor.users.find({}, options).fetch();
     }
-
-    /*
-    switch (filterCount) {
-      case 1:
-        defaultSearch = false;
-        users = Meteor.users.find(combinedFilters, options).fetch();
-        break;
-      case 2:
-        defaultSearch = false;
-        users = Meteor.users.find({ $or: [idFilter, emailFilter] }, options).fetch();
-        break;
-      default:
-        break;
-    }
-
-    if (defaultSearch) {
-      users = Meteor.users.find({}, options).fetch();
-    }
-    */
 
     return {
       allUsers: users,

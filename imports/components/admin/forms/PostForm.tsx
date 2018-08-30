@@ -1,6 +1,5 @@
 import * as React from "react";
 import { connect } from "react-redux";
-
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
@@ -13,18 +12,21 @@ import * as Validation from "../../../modules/validation";
 import Widget from "../../forms/Widget";
 import * as Library from "../../../modules/library";
 import EditTags from "../components/EditTags";
+import RenderImage from "../components/RenderImage";
 
 const slugify = require("slugify");
 
 const ReactQuill = require("react-quill");
+/*
+imageIDedit?: string;
+imageIDnew?: string;
+*/
 
 interface IProps {
   settingsObj: PropTypes.object.isRequired;
   classes: PropTypes.object.isRequired;
   importedTags: PropTypes.object.isRequired;
   editingExistingData: boolean;
-  imageIDedit?: string;
-  imageIDnew?: string;
   dispatch: any;
   postUpdateMethod: PropTypes.object.isRequired;
   postCreateMethod: PropTypes.object.isRequired;
@@ -33,12 +35,16 @@ interface IProps {
   handleEditing: PropTypes.object.isRequired;
   editMode: string;
   hasTags: boolean;
+  hasImage: boolean;
+  imageUpdateMethod: PropTypes.object.isRequired;
 }
 
 interface IState {
   publish: boolean;
   tagObj: any[];
   tags: string;
+  imageId: string;
+  showImage: boolean;
   id: string;
   summary: string;
   slug: string;
@@ -113,6 +119,8 @@ class PostForm extends React.Component<IProps, IState> {
       tags: settingsObj ? settingsObj.tags : "",
       tagObj: [],
       id: settingsObj ? settingsObj._id : "",
+      imageId: settingsObj ? settingsObj.image_id : "",
+      showImage: settingsObj ? settingsObj.showImage : false,
       summary: settingsObj ? settingsObj.summary : "",
       slug: settingsObj ? settingsObj.slug : "",
       title: settingsObj ? settingsObj.title : "",
@@ -142,8 +150,6 @@ class PostForm extends React.Component<IProps, IState> {
     //log.info(`PostForm.handleSubmit()`, this.props);
     const {
       settingsObj,
-      imageIDedit,
-      imageIDnew,
       editingExistingData,
       postUpdateMethod,
       postCreateMethod,
@@ -152,9 +158,15 @@ class PostForm extends React.Component<IProps, IState> {
       handleEditing
     } = this.props;
 
-    const image_id_current = editingExistingData ? imageIDedit : imageIDnew;
+    /*
+     imageIDedit,
+      imageIDnew,
+      */
 
-    const settingsImage = settingsObj ? settingsObj.image_id : "";
+    //const image_id_current = editingExistingData ? imageIDedit : imageIDnew;
+    // image_id_current || settingsImage,
+
+    //const settingsImage = settingsObj ? settingsObj.image_id : "";
     let pageFields: any;
 
     pageFields = {
@@ -162,7 +174,8 @@ class PostForm extends React.Component<IProps, IState> {
       publish: this.state.publish,
       tags: this.state.tags,
       body: this.state.body,
-      image_id: image_id_current || settingsImage,
+      image_id: this.state.imageId,
+      showImage: this.state.showImage,
       title: this.state.title,
       summary: this.state.summary,
       slug: this.state.slug
@@ -200,6 +213,25 @@ class PostForm extends React.Component<IProps, IState> {
         }
       });
     }
+  };
+
+  renderImage() {
+    const { settingsObj } = this.props;
+    return (
+      <RenderImage
+        allowEdit={true}
+        updateMethod={this.props.imageUpdateMethod}
+        updateImageId={this.updateImageId}
+        toggleShowImage={this.toggleShowImage}
+        showImage={this.state.showImage}
+        dataObj={settingsObj}
+        imageId={this.state.imageId}
+      />
+    );
+  }
+
+  updateImageId = (props: { image_id: string; dataObj?: any }) => {
+    this.setState({ imageId: props.image_id });
   };
 
   handleChange = e => {
@@ -294,12 +326,20 @@ class PostForm extends React.Component<IProps, IState> {
     return true;
   };
 
+  toggleShowImage = () => {
+    const currentState = this.state.showImage;
+    const newState = !currentState;
+    this.setState({ showImage: newState });
+    return true;
+  }
+
   render() {
-    const { classes, settingsObj, hasTags } = this.props;
+    const { classes, settingsObj, hasTags, hasImage } = this.props;
     return (
       <div>
         <BlockUi tag="div" blocking={this.state.blockUI}>
           <form id={this.formID} className={classes.adminPostsForm}>
+            {hasImage && this.renderImage()}
             {hasTags && <EditTags updateTagList={this.updateTagList} preSelected={this.state.tags} />}
 
             <FormControlLabel

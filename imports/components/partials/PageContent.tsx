@@ -53,8 +53,6 @@ interface IState {
   showFilterOptions: boolean;
   selectedPosts: any;
   showNewPost: boolean;
-  imageIDedit: string;
-  imageIDnew: string;
   showForm: boolean;
 }
 
@@ -93,8 +91,6 @@ class PageContent extends React.Component<IProps, IState> {
       showFilterOptions: false,
       selectedPosts: {},
       showNewPost: false,
-      imageIDedit: "",
-      imageIDnew: "",
       showForm: props.showFormInit
     };
 
@@ -216,35 +212,31 @@ class PageContent extends React.Component<IProps, IState> {
   }
   */
 
+  /*
   updateImageId = (props: { image_id: string; dataObj?: any }) => {
     let targetName: any;
     targetName = props.dataObj ? "imageIDedit" : "imageIDnew";
     this.setState({ [targetName]: props.image_id });
     log.info(`updateImageId`, props, this.state);
   };
+  */
 
   editLayout() {
-    const { post } = this.props;
+    const { post, imageUpdateMethod } = this.props;
     log.info(`PageContent.editLayout()`, this.props);
     const headingLabel = post ? "Edit Post" : "New Post";
     return (
       <div>
         {this.headingEditMode(headingLabel)}
-        <RenderImage
-          allowEdit={true}
-          updateMethod={this.props.imageUpdateMethod}
-          updateImageId={this.updateImageId}
-          dataObj={post}
-        />
 
         <PostForm
+          imageUpdateMethod={imageUpdateMethod}
+          hasImage={true}
           handleEditing={this.handleEditing}
           postCreateMethod={this.props.postCreateMethod}
           postUpdateMethod={this.props.postUpdateMethod}
           settingsObj={post}
           hasTags={true}
-          imageIDedit={this.state.imageIDedit}
-          imageIDnew={this.state.imageIDnew}
           editingExistingData={post ? true : false}
           handleNewPostCreated={this.handleNewPostCreated}
           handlePostUpdated={this.handlePostUpdated}

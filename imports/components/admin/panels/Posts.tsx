@@ -14,7 +14,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import Icon from "@material-ui/core/Icon";
+//import Icon from "@material-ui/core/Icon";
 import AddIcon from "@material-ui/icons/Add";
 import BlockIcon from "@material-ui/icons/Block";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -32,7 +32,7 @@ import OptionGroup from "../components/OptionGroup";
 import PostForm from "../forms/PostForm";
 import CommentForm from "../forms/CommentForm";
 import TagForm from "../forms/TagForm";
-import RenderImage from "../components/RenderImage";
+//import RenderImage from "../components/RenderImage";
 import Author from "../components/Author";
 import MetaInfo from "../components/MetaInfo";
 import { publishPostList } from "../../../api/admin/methods";
@@ -81,8 +81,6 @@ interface IState {
   showFilterOptions: boolean;
   selectedPosts: any;
   showNewPost: boolean;
-  imageIDedit: string;
-  imageIDnew: string;
   allowCreate: boolean;
 }
 
@@ -209,8 +207,6 @@ class Posts extends React.Component<IProps, IState> {
       showFilterOptions: false,
       selectedPosts: {},
       showNewPost: false,
-      imageIDedit: "",
-      imageIDnew: "",
       allowCreate: !(props.contentType === "comments")
     };
   }
@@ -229,8 +225,6 @@ class Posts extends React.Component<IProps, IState> {
       showFilterOptions: false,
       selectedPosts: {},
       showNewPost: false,
-      imageIDedit: "",
-      imageIDnew: "",
       allowCreate: allowCreate
     });
     this.props.dispatch({ type: "LOAD_INIT" });
@@ -263,16 +257,14 @@ class Posts extends React.Component<IProps, IState> {
       Library.confirmDialog({ title: "Discard changes?", message: "off" }).then(result => {
         if (result) {
           this.setState({
-            expanded: expanded ? panel : false,
-            imageIDedit: ""
+            expanded: expanded ? panel : false
           });
           this.editingType.edit = false;
         }
       });
     } else {
       this.setState({
-        expanded: expanded ? panel : false,
-        imageIDedit: ""
+        expanded: expanded ? panel : false
       });
     }
   };
@@ -288,12 +280,14 @@ class Posts extends React.Component<IProps, IState> {
     this.editingType[type] = state;
   };
 
+  /*
   updateImageId = (props: { image_id: string; dataObj?: any }) => {
     let targetName: any;
     targetName = props.dataObj ? "imageIDedit" : "imageIDnew";
     this.setState({ [targetName]: props.image_id });
     //log.info(`updateImageId`, props, this.state);
   };
+  */
 
   loadMore() {
     this.props.dispatch({ type: "LOAD_MORE" });
@@ -557,12 +551,7 @@ class Posts extends React.Component<IProps, IState> {
 
   getNewPostContent() {
     const { classes, hasImage, hasTags } = this.props;
-    return (
-      <div className={classes.newPostDetail}>
-        {hasImage && this.renderImage()}
-        {this.renderForm()}
-      </div>
-    );
+    return <div className={classes.newPostDetail}>{this.renderForm()}</div>;
   }
 
   getPostContent(dataObj) {
@@ -578,7 +567,7 @@ class Posts extends React.Component<IProps, IState> {
 
         {hasAuthor ? <Author userId={dataObj.authorId} /> : ""}
         {hasMeta && <MetaInfo data={dataObj} />}
-        {hasImage && this.renderImage(dataObj)}
+
         {this.renderForm(dataObj)}
       </div>
     );
@@ -607,6 +596,7 @@ class Posts extends React.Component<IProps, IState> {
     return layout;
   }
 
+  /*
   renderImage(dataObj = null) {
     return (
       <RenderImage
@@ -617,6 +607,7 @@ class Posts extends React.Component<IProps, IState> {
       />
     );
   }
+  */
 
   truncateHTML(html) {
     const trunc = truncate(html, 15, { byWords: true });
@@ -644,16 +635,15 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   postForm(dataObj = null) {
-    const { hasTags, postCreateMethod, postUpdateMethod } = this.props;
-    const { imageIDedit, imageIDnew } = this.state;
+    const { hasTags, postCreateMethod, postUpdateMethod, imageUpdateMethod, hasImage } = this.props;
     return (
       <PostForm
+        imageUpdateMethod={imageUpdateMethod}
+        hasImage={hasImage}
         postCreateMethod={postCreateMethod}
         postUpdateMethod={postUpdateMethod}
         settingsObj={dataObj}
-        imageIDedit={imageIDedit}
         hasTags={hasTags}
-        imageIDnew={imageIDnew}
         editingExistingData={dataObj ? true : false}
         handleNewPostCreated={this.handleNewPostUpdated}
         handlePostUpdated={this.handleNewPostUpdated}

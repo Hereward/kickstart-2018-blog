@@ -1,7 +1,10 @@
 import * as React from "react";
+import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
+import Checkbox from "@material-ui/core/Checkbox";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 //import Button from "@material-ui/core/Button";
 import { EditorialImages } from "../../../api/images/methods";
 import UploadForm from "../../forms/UploadForm";
@@ -15,10 +18,13 @@ interface IProps {
   classes: any;
   theme: any;
   dataObj: any;
-  updateImageId?: any;
+  updateImageId?: PropTypes.object;
   imageArray?: any;
+  toggleShowImage?: PropTypes.object;
   updateMethod: string;
   allowEdit: boolean;
+  showImage?: boolean;
+  imageId: string;
 }
 
 interface IState {
@@ -27,7 +33,7 @@ interface IState {
 
 styles = theme => ({
   root: {},
-  imageContainer: { margin: "1rem" }
+  imageContainer: { margin: "1rem 1rem 0 1rem" }
 });
 
 class RenderImage extends React.Component<IProps, IState> {
@@ -54,10 +60,7 @@ class RenderImage extends React.Component<IProps, IState> {
   };
 
   layout() {
-    const { classes } = this.props;
-    const { dataObj } = this.props;
-    const { imageArray } = this.props;
-    const { allowEdit } = this.props;
+    const { classes, toggleShowImage, dataObj, imageArray, allowEdit, showImage, imageId } = this.props;
     let layout: any = "";
 
     if (this.state.editImage) {
@@ -74,6 +77,13 @@ class RenderImage extends React.Component<IProps, IState> {
             dataObj={dataObj}
             updateDirect={false}
           />
+          {imageId &&
+            toggleShowImage && (
+              <FormControlLabel
+                control={<Checkbox checked={showImage} onChange={toggleShowImage} value="showImage" />}
+                label="Show Image on Page"
+              />
+            )}
         </div>
       );
     }

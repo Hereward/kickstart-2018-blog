@@ -15,6 +15,7 @@ if (Meteor.isServer) {
       Pages.insert({
         summary: Meteor.settings.public.defaultContent.about.title,
         image_id: "",
+        showImage: false,
         tags: "",
         slug: "about",
         title: Meteor.settings.public.defaultContent.about.title,

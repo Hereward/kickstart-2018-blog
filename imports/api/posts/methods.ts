@@ -33,7 +33,7 @@ const slugCheck = (props: { slug: string; type: string; current?: string }) => {
       valid = found === 0;
     }
   }
-  //log.info(`slugValid()`, valid);
+
   if (!valid) {
     slugError();
   }
@@ -54,6 +54,7 @@ export const createPost = new ValidatedMethod({
     id: { type: String, optional: true },
     tags: { type: String, optional: true},
     publish: { type: Boolean },
+    showImage: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
     summary: { type: String },
@@ -65,12 +66,12 @@ export const createPost = new ValidatedMethod({
   run(fields) {
     authCheck("post.create", this.userId);
     const truncatedBody = truncateHTML(fields.body);
-    //log.info(`post.create`, fields);
 
     slugCheck({ slug: fields.slug, type: "new" });
 
     Posts.insert({
       publish: fields.publish,
+      showImage: fields.showImage,
       tags: fields.tags || "",
       image_id: fields.image_id,
       title: fields.title,
@@ -105,40 +106,7 @@ export const deletePost = new ValidatedMethod({
   }
 });
 
-/*
-export const updatePostInline = new ValidatedMethod({
-  name: "posts.updateInline",
-  validate: new SimpleSchema({
-    id: { type: String },
-    title: { type: String },
-    body: { type: String, optional: true }
-  }).validator(),
 
-  run(fields) {
-    authCheck("posts.updateInline", this.userId);
-    log.info(`posts.updateInline`, fields);
-
-    const current = Posts.findOne(fields.id);
-
-    const allow = userCan({ threshold: "creator", owner: current.author });
-
-    if (!allow) {
-      console.log(`posts.updateInline - PERMISSION DENIED`);
-      throw new Meteor.Error(`not-authorized [posts.updateInline]`, "PERMISSION DENIED");
-    }
-
-    Posts.update(fields.id, {
-      $set: {
-        title: fields.title,
-        body: fields.body,
-        modified: new Date()
-      }
-    });
-
-    return true;
-  }
-});
-*/
 
 export const updatePost = new ValidatedMethod({
   name: "posts.update",
@@ -146,6 +114,7 @@ export const updatePost = new ValidatedMethod({
     id: { type: String },
     tags: { type: String, optional: true},
     publish: { type: Boolean },
+    showImage: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
     summary: { type: String },
@@ -164,6 +133,7 @@ export const updatePost = new ValidatedMethod({
     Posts.update(fields.id, {
       $set: {
         publish: fields.publish,
+        showImage: fields.showImage,
         tags: fields.tags || "",
         image_id: fields.image_id,
         title: fields.title,

@@ -7,6 +7,7 @@ import { toggleSystemOnline, updateSettings } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import SettingsForm from "../../admin/forms/SettingsForm";
 import RenderImage from "../components/RenderImage";
+import Spinner from "../../partials/Spinner";
 
 const drawerWidth = 240;
 let styles: any;
@@ -121,8 +122,7 @@ class Settings extends React.Component<IProps, IState> {
   };
 
   layout() {
-    const { systemSettings } = this.props;
-    const { imageUpdateMethod } = this.props;
+    const { systemSettings, imageUpdateMethod } = this.props;
     return (
       <div>
         <h2 className={this.props.classes.heading}>General Settings</h2>
@@ -137,6 +137,7 @@ class Settings extends React.Component<IProps, IState> {
           updateMethod={imageUpdateMethod}
           updateImageId={this.updateImageId}
           dataObj={systemSettings}
+          imageId={systemSettings.image_id}
         />
         <SettingsForm
           allowSubmit={this.state.allowSubmit}
@@ -150,7 +151,8 @@ class Settings extends React.Component<IProps, IState> {
   }
 
   render() {
-    return this.layout();
+    const { systemSettings, imageUpdateMethod } = this.props;
+    return systemSettings ? this.layout() : <Spinner />;
   }
 }
 

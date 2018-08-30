@@ -41,32 +41,7 @@ function slugError() {
   throw new Meteor.Error(`Invalid slug`, "Slug must be unique.");
 }
 
-/*
-export const createPages = new ValidatedMethod({
-  name: "pages.create",
 
-  validate: null,
-
-  run() {
-    authCheck("pages.create", this.userId);
-    let id: string;
-
-    let exists = Pages.findOne({ name: "about" });
-
-    if (!exists) {
-      id = Pages.insert({
-        name: "about",
-        heading: Meteor.settings.public.defaultContent.about.heading,
-        body: Meteor.settings.public.defaultContent.about.body,
-        created: new Date(),
-        owner: ""
-      });
-    }
-
-    return id;
-  }
-});
-*/
 
 export const createPage = new ValidatedMethod({
   name: "page.create",
@@ -74,6 +49,7 @@ export const createPage = new ValidatedMethod({
     id: { type: String, optional: true },
     tags: { type: String, optional: true},
     publish: { type: Boolean },
+    showImage: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
     summary: { type: String },
@@ -90,6 +66,7 @@ export const createPage = new ValidatedMethod({
 
     Pages.insert({
       publish: fields.publish,
+      showImage: fields.showImage,
       tags: fields.tags || "",
       image_id: fields.image_id,
       title: fields.title,
@@ -112,6 +89,7 @@ export const updatePage = new ValidatedMethod({
     id: { type: String },
     tags: { type: String, optional: true},
     publish: { type: Boolean },
+    showImage: { type: Boolean },
     image_id: { type: String },
     title: { type: String },
     summary: { type: String },
@@ -131,6 +109,7 @@ export const updatePage = new ValidatedMethod({
     Pages.update(fields.id, {
       $set: {
         publish: fields.publish,
+        showImage: fields.showImage,
         tags: fields.tags || "",
         image_id: fields.image_id,
         title: fields.title,
@@ -147,31 +126,4 @@ export const updatePage = new ValidatedMethod({
 });
 
 
-/*
-export const updatePageInline = new ValidatedMethod({
-  name: "pages.updateInline",
-  validate: new SimpleSchema({
-    id: { type: String },
-    title: { type: String },
-    body: { type: String, optional: true }
-  }).validator(),
 
-  run(fields) {
-    authCheck("pages.updatePageInline", this.userId);
-    const allow = userCan({ threshold: "admin" });
-    if (!allow) {
-      console.log(`pages.updatePageInline - PERMISSION DENIED`);
-      throw new Meteor.Error(`not-authorized [pages.updatePageInline]`, "PERMISSION DENIED");
-    }
-    Pages.update(fields.id, {
-      $set: {
-        title: fields.title,
-        body: fields.body,
-        modified: new Date()
-      }
-    });
-
-    return true;
-  }
-});
-*/
