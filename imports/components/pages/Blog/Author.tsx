@@ -41,20 +41,12 @@ class Author extends React.Component<IProps, IState> {
 }
 
 export default withTracker(props => {
-  //let profilesHandle = Meteor.subscribe("profiles.public");
   let author: any;
   let profile: any;
-  //let profileCursor: any;
-  //let count: any;
   const authorId = props.authorId;
   profile = Profiles.findOne({ owner: authorId });
-  //profileCursor = Profiles.find();
-  //count = profileCursor.count();
-
-  //log.info(`Author tracker`, profile);
   if (profile) {
     author = profile.screenName;
   }
-
   return { author: author };
 })(withStyles(styles, { withTheme: true })(Author));

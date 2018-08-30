@@ -66,7 +66,7 @@ class RightColumn extends React.Component<IProps, IState> {
 
 export default connect()(
   withTracker(props => {
-    log.info(`RightColumn.tracker()`, props);
+    //log.info(`RightColumn.tracker()`, props);
     const tagsHandle = Meteor.subscribe("tags");
     const urlTag = props.match.params.tag;
     const options = {

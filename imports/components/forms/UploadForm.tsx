@@ -149,21 +149,21 @@ export default class UploadForm extends React.Component<IProps, IState> {
     }
   }
 
-  getImage(aFile, key, link?: any) {
+  getImage(imageObject, key, link?: any) {
     const { Images } = this.props;
     const { allowEdit } = this.props;
     if (!link) {
-      link = Images.link(aFile);
+      link = Images.link(imageObject);
     }
 
     let elKey = `file_${key}`;
     return (
       <div key={elKey}>
         <Image
-          fileName={aFile.name}
+          fileName={imageObject.name}
           fileUrl={link}
-          fileId={aFile._id}
-          fileSize={aFile.size}
+          fileId={imageObject._id}
+          fileSize={imageObject.size}
           Images={this.props.Images}
           allowEdit={allowEdit}
           dataObj={this.props.dataObj}
@@ -183,14 +183,14 @@ export default class UploadForm extends React.Component<IProps, IState> {
     let renderedImages: any = "";
 
     if (imageArray && !newImage) {
-      renderedImages = imageArray.map((aFile, key) => {
-        return this.getImage(aFile, key);
+      renderedImages = imageArray.map((imageObject, key) => {
+        return this.getImage(imageObject, key);
       });
 
       return this.getLayout(renderedImages);
     } else if (newImage) {
-      renderedImages = [this.fileObj].map((aFile, key) => {
-        return this.getImage(aFile, key);
+      renderedImages = [this.fileObj].map((imageObject, key) => {
+        return this.getImage(imageObject, key);
       });
 
       return this.getLayout(renderedImages);

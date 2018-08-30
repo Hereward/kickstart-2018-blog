@@ -86,7 +86,7 @@ export default class Image extends React.Component<IProps, IState> {
     return (
       <div>
         <div>
-          <img className="profile-image" src={this.props.fileUrl} alt={this.props.fileName} />{" "}
+          <img className="standard-image" src={this.props.fileUrl} alt={this.props.fileName} />{" "}
         </div>
         {this.renderEdit()}
       </div>

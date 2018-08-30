@@ -1,13 +1,7 @@
 ///<reference path="../../../../index.d.ts"/>
-
 import * as React from "react";
-
-//import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
-//import { connect } from "react-redux";
-//import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
-//import Image from "../../partials/Image";
 import { ProfileImages } from "../../../api/images/methods";
 
 let styles: any;
@@ -41,7 +35,6 @@ class About extends React.Component<IProps, IState> {
     this.state = {};
   }
 
-  
   layout() {
     const { profile, classes, imageObj } = this.props;
     let image: any = "";
@@ -58,20 +51,9 @@ class About extends React.Component<IProps, IState> {
     );
   }
 
-  // <img className={classes.image} src={link} alt={imageObj.fileName} />
-  
-
   render() {
     return this.layout();
   }
 }
-
-/*
-export default connect()(
-  withTracker(props => {
-    return {};
-  })(withStyles(styles, { withTheme: true })(About))
-);
-*/
 
 export default withStyles(styles, { withTheme: true })(About);

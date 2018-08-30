@@ -1,7 +1,7 @@
 ////<reference path="index.d.ts"/>
 import * as React from "react";
 import PropTypes from "prop-types";
-import Icon from "@material-ui/core/Icon";
+//import Icon from "@material-ui/core/Icon";
 import { Link } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import { connect } from "react-redux";
@@ -11,15 +11,16 @@ import BlockIcon from "@material-ui/icons/Block";
 import CancelIcon from "@material-ui/icons/Cancel";
 
 import PostForm from "../admin/forms/PostForm";
-import * as PageMethods from "../../api/pages/methods";
+//import * as PageMethods from "../../api/pages/methods";
 import * as Library from "../../modules/library";
 
 import MetaWrapper from "./MetaWrapper";
 import Author from "../pages/Blog/Author";
 import CommentCount from "../pages/Blog/CommentCount";
-import RenderImage from "../admin/components/RenderImage";
+//import RenderImage from "../admin/components/RenderImage";
 import { can as userCan } from "../../modules/user";
 import { deletePost } from "../../api/posts/methods";
+import EditorialImage from "../pages/Blog/EditorialImage";
 
 interface IProps {
   history: PropTypes.object.isRequired;
@@ -410,7 +411,7 @@ class PageContent extends React.Component<IProps, IState> {
           ) : (
             ""
           )}
-
+          {post.image_id && post.showImage && <EditorialImage imageId={post.image_id} />}
           <div dangerouslySetInnerHTML={this.createMarkup(post.body)} />
         </div>
       );

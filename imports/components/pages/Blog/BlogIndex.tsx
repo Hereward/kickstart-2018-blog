@@ -14,6 +14,8 @@ import MetaWrapper from "../../partials/MetaWrapper";
 import Author from "./Author";
 import CommentCount from "./CommentCount";
 import Spinner from "../../partials/Spinner";
+import EditorialImage from "./EditorialImage";
+
 //import Splash from "../../partials/Splash";
 
 let styles: any;
@@ -107,6 +109,11 @@ class BlogIndex extends React.Component<IProps, IState> {
     return mapped;
   }
 
+  image() {}
+
+
+
+
   renderPost(post: any) {
     const { classes } = this.props;
     let layout: any = "";
@@ -123,6 +130,7 @@ class BlogIndex extends React.Component<IProps, IState> {
             {dateFormat(post.created, "dd mmmm yyyy")} | <CommentCount postId={post._id} /> Comments
           </h6>
           {post.tags && <h6>{this.renderTags(post.tags)}</h6>}
+          {post.image_id && post.showImage && <EditorialImage imageId={post.image_id} />}
           <div dangerouslySetInnerHTML={this.renderBody(post)} />
           {this.readMoreLink(post)}
           <hr />
@@ -201,7 +209,7 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
-    log.info(`BlogIndex.Tracker()`, props);
+    //log.info(`BlogIndex.Tracker()`, props);
     const commentsHandle = Meteor.subscribe("comments");
     let PostsDataHandle = Meteor.subscribe("posts");
     let totalPosts: number = 0;
