@@ -26,7 +26,8 @@ export default class Image extends React.Component<IProps, IState> {
     this.state = {};
   }
 
-  removeFile() {
+  removeFile(e) {
+    e.preventDefault();
     const { dataObj, removeNewImageFromUploads } = this.props;
 
     //let conf = confirm("Are you sure you want to delete the file?") || false;
@@ -34,7 +35,7 @@ export default class Image extends React.Component<IProps, IState> {
     Library.confirmDialog({ title: "Are you sure you want to delete the file?", message: "off" }).then(result => {
       if (result) {
         const recId = this.props.dataObj ? this.props.dataObj._id : "";
-        log.info(`Image.removeImage()`, recId);
+        //log.info(`Image.removeImage()`, recId);
 
         Meteor.call("image.remove", { id: this.props.fileId, dataSource: "editorial" }, (err, res) => {
           if (err) {

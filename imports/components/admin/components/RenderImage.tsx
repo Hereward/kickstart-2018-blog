@@ -18,7 +18,6 @@ interface IProps {
   classes: PropTypes.object;
   theme: any;
   dataObj: PropTypes.object;
-  newDataObject: PropTypes.object;
   updateImageId?: PropTypes.object;
   imageArray: any[];
   toggleShowImage?: PropTypes.object;
@@ -73,9 +72,10 @@ class RenderImage extends React.Component<IProps, IState> {
     const newDataArray = newDataObject ? [newDataObject] : [];
     let layout: any = "";
     let resolvedImageArray: any[] = [];
-
+    
     if (this.state.editImage) {
       resolvedImageArray = imageArray.length ? imageArray : newDataArray;
+      //log.info(`RenderImage.layout() imageId = [${imageId}]`, imageArray, newDataObject, newDataArray, resolvedImageArray );
       layout = (
         <div className={classes.imageContainer}>
           <UploadForm
@@ -129,7 +129,7 @@ export default connect()(
       imageArray = imageCursor.fetch();
     }
 
-    log.info(`RenderImage tracker`, props, imageArray);
+    //log.info(`RenderImage tracker`, props, imageArray);
 
     return {
       imageArray: imageArray

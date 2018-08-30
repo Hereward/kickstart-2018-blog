@@ -64,71 +64,71 @@ export default class UploadForm extends React.Component<IProps, IState> {
     //let self = this;
 
     if (e.currentTarget.files && e.currentTarget.files[0]) {
-      let file = e.currentTarget.files[0];
-
-      if (file) {
-        let uploadInstance = this.props.Images.insert(
-          {
-            file: file,
-            meta: {
-              locator: this.props.fileLocator,
-              userId: User.id() // Optional, used to check on server for file tampering
-            },
-            streams: "dynamic",
-            chunkSize: "dynamic",
-            allowWebWorkers: true // If you see issues with uploads, change this to false
+      const file = e.currentTarget.files[0];
+      e.target.value = null;
+      let uploadInstance = this.props.Images.insert(
+        {
+          file: file,
+          meta: {
+            locator: this.props.fileLocator,
+            userId: User.id() // Optional, used to check on server for file tampering
           },
-          false
-        );
+          streams: "dynamic",
+          chunkSize: "dynamic",
+          allowWebWorkers: true // If you see issues with uploads, change this to false
+        },
+        false
+      );
+
+      this.setState({
+        uploading: uploadInstance, // Keep track of this instance to use below
+        inProgress: true // Show the progress bar now
+      });
+
+      // These are the event functions, don't need most of them, it shows where we are in the process
+      uploadInstance.on("start", () => {
+        //log.info(`upload starting`);
+      });
+
+      uploadInstance.on("end", (error, newDataObject) => {
+        //log.info(`upload end File Object`, newDataObject);
+      });
+
+      uploadInstance.on("uploaded", (error, newDataObject) => {
+        //log.info(`upload DONE`);
+
+        if (dataObj && updateDirect) {
+          Meteor.call(updateMethod, { id: this.props.dataObj._id, image_id: newDataObject._id });
+        } else {
+          updateImageId({ imageId: newDataObject._id, newDataObject: newDataObject });
+          setNewImageObject(newDataObject);
+
+          this.fileObj = newDataObject;
+
+          this.setState({ newImage: true });
+        }
 
         this.setState({
-          uploading: uploadInstance, // Keep track of this instance to use below
-          inProgress: true // Show the progress bar now
+          uploading: [],
+          progress: 0,
+          inProgress: false
         });
+      });
 
-        // These are the event functions, don't need most of them, it shows where we are in the process
-        uploadInstance.on("start", () => {
-          //console.log("Starting");
+      uploadInstance.on("error", function uploadError(error, fileObj) {
+        log.error("Error during upload: " + error);
+      });
+
+      uploadInstance.on("progress", (progress, fileObj) => {
+        // Update our progress bar
+        this.setState({
+          progress: progress
         });
+      });
 
-        uploadInstance.on("end", (error, fileObj) => {
-          //console.log("On end File Object: ", fileObj);
-        });
-
-        uploadInstance.on("uploaded", (error, newDataObject) => {
-          //console.log(`uploaded image: [${self.props.profile._id}]`, self.props.profile, fileObj._id);
-
-          if (dataObj && updateDirect) {
-            Meteor.call(updateMethod, { id: this.props.dataObj._id, image_id: newDataObject._id });
-          } else {
-            updateImageId({ imageId: newDataObject._id, newDataObject: newDataObject });
-            setNewImageObject({ newDataObject: newDataObject });
-
-            this.fileObj = newDataObject;
-
-            this.setState({ newImage: true });
-          }
-
-          this.setState({
-            uploading: [],
-            progress: 0,
-            inProgress: false
-          });
-        });
-
-        uploadInstance.on("error", function uploadError(error, fileObj) {
-          log.error("Error during upload: " + error);
-        });
-
-        uploadInstance.on("progress", (progress, fileObj) => {
-          // Update our progress bar
-          this.setState({
-            progress: progress
-          });
-        });
-
-        uploadInstance.start(); // Must manually start the upload
-      }
+      uploadInstance.start(); // Must manually start the upload
+    } else {
+      //log.info(`Tried to upload but NO FILE`);
     }
   }
 
@@ -163,6 +163,8 @@ export default class UploadForm extends React.Component<IProps, IState> {
       link = Images.link(imageObject);
     }
 
+    //log.info(`UploadForm.getImage() link = [${link}]`, imageObject);
+
     let elKey = `file_${key}`;
     return (
       <div key={elKey}>
@@ -183,20 +185,14 @@ export default class UploadForm extends React.Component<IProps, IState> {
 
   render() {
     //let image: any;
-    const { Images } = this.props;
+    //const { Images } = this.props;
     const { imageArray } = this.props;
-    const { newImage } = this.state;
-
+    //const { newImage } = this.state;
     let renderedImages: any = "";
 
-    if (imageArray.length && !newImage) {
+    if (imageArray.length) {
+      //log.info(`UploadForm.render()`, imageArray );
       renderedImages = imageArray.map((imageObject, key) => {
-        return this.getImage(imageObject, key);
-      });
-
-      return this.getLayout(renderedImages);
-    } else if (newImage) {
-      renderedImages = [this.fileObj].map((imageObject, key) => {
         return this.getImage(imageObject, key);
       });
 
@@ -205,6 +201,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
       return this.getLayout();
     }
   }
+
 
   getLayout(image: any = "") {
     let layout = (
