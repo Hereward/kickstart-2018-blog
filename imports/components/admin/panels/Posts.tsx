@@ -37,7 +37,7 @@ import Author from "../components/Author";
 import MetaInfo from "../components/MetaInfo";
 import { publishPostList } from "../../../api/admin/methods";
 
-const drawerWidth = 240;
+//const drawerWidth = 240;
 let styles: any;
 
 interface IProps {

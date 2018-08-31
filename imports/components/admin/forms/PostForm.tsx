@@ -66,7 +66,8 @@ const styles = theme => ({
   },
 
   rte: {
-    backgroundColor: "white"
+    backgroundColor: "white",
+    marginBottom: "1rem"
   }
 });
 
@@ -299,29 +300,6 @@ class PostForm extends React.Component<IProps, IState> {
     return arraySplit[0];
   }
 
-  /*
-  getSlug = () => {
-    let resolvedname = this.renderWidgetId("slug");
-    //const currentSlug = this.state.slug;
-
-    const layout = (
-      <div className="form-group">
-        <label htmlFor={resolvedname}>Slug:</label>
-        <input
-          onChange={this.handleChange}
-          type="text"
-          className="form-control tooltipster required"
-          id={resolvedname}
-          name={resolvedname}
-          placeholder=""
-          value={this.state.slug || (this.props.settingsObj ? this.props.settingsObj[resolvedname] : "")}
-        />
-      </div>
-    );
-    return layout;
-  };
-  */
-
   togglePublish = () => {
     const currentState = this.state.publish;
     const newState = !currentState;
@@ -334,7 +312,7 @@ class PostForm extends React.Component<IProps, IState> {
     const newState = !currentState;
     this.setState({ showImage: newState });
     return true;
-  }
+  };
 
   render() {
     const { classes, settingsObj, hasTags, hasImage } = this.props;
@@ -343,27 +321,11 @@ class PostForm extends React.Component<IProps, IState> {
         <BlockUi tag="div" blocking={this.state.blockUI}>
           <form id={this.formID} className={classes.adminPostsForm}>
             {hasImage && this.renderImage()}
-            {hasTags && <EditTags updateTagList={this.updateTagList} preSelected={this.state.tags} />}
 
             <FormControlLabel
               control={<Switch disabled={false} onChange={this.togglePublish} checked={this.state.publish} />}
               label="Publish"
             />
-
-            {this.getWidget({
-              readOnly: true,
-              required: false,
-              baseName: "tags",
-              name: this.renderWidgetId("tags"),
-              label: "Tags"
-            })}
-            {this.getWidget({ baseName: "slug", name: this.renderWidgetId("slug"), label: "Slug" })}
-            {this.getWidget({
-              baseName: "summary",
-              name: this.renderWidgetId("summary"),
-              label: "Summary",
-              type: "textarea"
-            })}
 
             {this.getWidget({ baseName: "title", name: this.renderWidgetId("title"), label: "Title" })}
 
@@ -379,6 +341,32 @@ class PostForm extends React.Component<IProps, IState> {
                 formats={this.formats}
                 theme="snow"
               />
+
+              {this.getWidget({
+                placeholder: "Select 'Edit Tags' to add/remove tags",
+                readOnly: true,
+                required: false,
+                baseName: "tags",
+                name: this.renderWidgetId("tags"),
+                label: "Tags"
+              })}
+
+              {hasTags && <EditTags updateTagList={this.updateTagList} preSelected={this.state.tags} />}
+
+              {this.getWidget({
+                placeholder: "URL identifier: filled automatically",
+                baseName: "slug",
+                name: this.renderWidgetId("slug"),
+                label: "Slug"
+              })}
+
+              {this.getWidget({
+                placeholder: "Will be displayed in previews on social media",
+                baseName: "summary",
+                name: this.renderWidgetId("summary"),
+                label: "Summary",
+                type: "textarea"
+              })}
             </div>
 
             <div className="form-group">

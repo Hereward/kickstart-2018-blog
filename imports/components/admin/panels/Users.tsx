@@ -31,7 +31,7 @@ import InvitationForm from "../../admin/forms/InvitationForm";
 
 const defaultRoles = Meteor.settings.public.admin.roles;
 
-const drawerWidth = 240;
+//const drawerWidth = 240;
 let styles: any;
 
 interface IProps {

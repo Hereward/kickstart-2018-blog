@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as dateFormat from "dateformat";
 //import { Button } from "reactstrap";
+import Button from "@material-ui/core/Button";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Transition from "../../partials/Transition";
@@ -156,7 +157,7 @@ class BlogIndex extends React.Component<IProps, IState> {
     return mapped;
   }
 
-  loadMoreButton() {
+  loadMoreButtonBS() {
     const { classes } = this.props;
     return (
       <div className={classes.loadMore}>
@@ -166,6 +167,18 @@ class BlogIndex extends React.Component<IProps, IState> {
       </div>
     );
   }
+
+  loadMoreButton() {
+    const { classes } = this.props;
+    return (
+      <div className={classes.loadMore}>
+        <Button variant="outlined" onClick={this.loadMore} size="small">
+          Load More
+        </Button>
+      </div>
+    );
+  }
+
 
   layout() {
     const { classes, posts, totalPosts, cursorLimit } = this.props;

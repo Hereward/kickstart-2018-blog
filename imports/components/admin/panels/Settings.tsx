@@ -9,7 +9,7 @@ import SettingsForm from "../../admin/forms/SettingsForm";
 import RenderImage from "../components/RenderImage";
 import Spinner from "../../partials/Spinner";
 
-const drawerWidth = 240;
+//const drawerWidth = 240;
 let styles: any;
 
 interface IProps {

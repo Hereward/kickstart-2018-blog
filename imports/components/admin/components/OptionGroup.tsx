@@ -1,13 +1,9 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-//import Icon from "@material-ui/core/Icon";
 import { withStyles } from "@material-ui/core/styles";
-//import DropUpIcon from "@material-ui/icons/ArrowDropUp";
 import ArrowRightIcon from "@material-ui/icons/KeyboardArrowRight";
 import ArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-//import DropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Button from "@material-ui/core/Button";
-//import IconButton from "@material-ui/core/IconButton";
 
 let styles: any;
 
@@ -76,7 +72,6 @@ styles = theme => ({
     width: "auto",
     paddingTop: "0.2rem",
     paddingBottom: "0.2rem",
-    //paddingRight: 0,
     color: "rgba(0, 0, 0, 0.8)",
     textTransform: "none",
     height: "30px !important",
@@ -141,9 +136,6 @@ class OptionGroup extends React.Component<IProps, IState> {
       iconStyle = classes.smallIcon;
       customButtonStyle = ` ${classes.minimalButt}`;
     }
-    //const customStyle = minimal ? ` ${classes.minimalButt}` : "";
-    //const buttSize = buttonSize ? buttonSize : "small";
-    //buttSize = "small";
     const buttSize: any = this.props.buttonSize || "small";
     return (
       <Button

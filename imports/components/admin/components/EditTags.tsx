@@ -11,8 +11,10 @@ import "../../../scss/partials/_react-tagsinput.css";
 
 let styles: any;
 styles = theme => ({
-  root: {},
-  tagContainer: { margin: "1rem" }
+  root: {
+    margin: "-0.5rem 1rem 1rem 0rem"
+  },
+  tagContainer: { margin: "0 1rem 0.5rem 1rem" }
 });
 
 interface IProps {
@@ -130,7 +132,13 @@ class EditTags extends React.Component<IProps, IState> {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
-        <OptionGroup transparent={true} show={this.state.editTags} label="Edit Tags" action={this.toggleEditTags}>
+        <OptionGroup
+          minimal={true}
+          transparent={true}
+          show={this.state.editTags}
+          label="Edit Tags"
+          action={this.toggleEditTags}
+        >
           <div className={classes.tagContainer}>{this.renderTags()}</div>
         </OptionGroup>
       </div>

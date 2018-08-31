@@ -65,6 +65,7 @@ styles = theme => ({
   mobileDrawerContainer: {
     zIndex: "3000 !important"
   },
+  desktopDrawerContainer: {},
   adminDrawer: {
     margin: "1rem 1rem",
     fontWeight: "bold"
@@ -78,14 +79,11 @@ styles = theme => ({
   panelGroups: {
     maxWidth: "55rem"
   },
-  fuckyou: {
-    color: "red"
-  },
   dashItem: {
     marginTop: "0.5rem"
   },
-  drawerList: {
-    listStyleType: "none"
+  adminDrawerList: {
+    //minHeight: "100vh"
   },
   root: {
     marginTop: "-0.5rem",
@@ -116,10 +114,15 @@ styles = theme => ({
       position: "relative"
     }
   },
+  paperAnchorDockedLeft: {
+    border: 0
+  },
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
+    minHeight: "100vh",
+    borderLeft: "1px solid rgba(0, 0, 0, 0.12)",
     [theme.breakpoints.down("sm")]: {
       marginTop: "4rem",
       paddingBottom: "8rem"
@@ -363,7 +366,7 @@ class AdminIndex extends React.Component<IProps, IState> {
           <div className={classes.adminDrawer}>Admin Dashboard</div>
         </Hidden>
         <Divider />
-        <List component="nav">
+        <List className={classes.adminDrawerList} component="nav">
           <ListItem
             onClick={() => {
               this.activatePanel("home");
@@ -491,14 +494,14 @@ class AdminIndex extends React.Component<IProps, IState> {
 
         <Hidden mdUp>
           <Drawer
+            classes={{
+              paper: classes.drawerPaper
+            }}
             className={classes.mobileDrawerContainer}
             variant="temporary"
             anchor={theme.direction === "rtl" ? "right" : "left"}
             open={this.state.mobileOpen}
             onClose={this.handleDrawerToggle}
-            classes={{
-              paper: classes.drawerPaper
-            }}
             ModalProps={{
               keepMounted: true // Better open performance on mobile.
             }}
@@ -508,18 +511,20 @@ class AdminIndex extends React.Component<IProps, IState> {
         </Hidden>
         <Hidden smDown implementation="css">
           <Drawer
+            classes={{
+              paper: classes.drawerPaper,
+              paperAnchorDockedLeft: classes.paperAnchorDockedLeft
+            }}
+            className={classes.desktopDrawerContainer}
             variant="permanent"
             open
-            classes={{
-              paper: classes.drawerPaper
-            }}
           >
             {drawerContents}
           </Drawer>
         </Hidden>
-        <main className={classes.content}>
+        <div className={classes.content}>
           <div className={classes.panelGroups}>{panel}</div>
-        </main>
+        </div>
       </div>
     );
   }

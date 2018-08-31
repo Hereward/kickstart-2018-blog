@@ -21,7 +21,7 @@ import * as UserModule from "../../../modules/user";
 import OptionGroup from "../components/OptionGroup";
 
 const defaultRoles = Meteor.settings.public.admin.roles;
-const drawerWidth = 240;
+//const drawerWidth = 240;
 let styles: any;
 
 interface IProps {
