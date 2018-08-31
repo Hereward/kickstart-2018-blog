@@ -51,10 +51,13 @@ class About extends React.Component<IProps> {
   mapUsers() {
     const { classes, creators } = this.props;
     const mapped = creators.map(user => {
-      const layout = (
+      const verified = user.emails[0].verified;
+      const layout = verified ? (
         <li className={classes.contributor} key={`contributor_${user._id}`}>
           <Author authorId={user._id} />
         </li>
+      ) : (
+        ""
       );
       return layout;
     });
@@ -106,7 +109,7 @@ export default connect()(
       page = Pages.findOne({ publish: true, slug: slug });
     }
     const creators = Roles.getUsersInRole("creator", userSortOptions).fetch();
-    
+
     return { page: page, creators: creators };
   })(withStyles(styles, { withTheme: true })(About))
 );

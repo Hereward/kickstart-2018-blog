@@ -109,7 +109,7 @@ class RenderImage extends React.Component<IProps, IState> {
 
     return (
       <div className={classes.root}>
-        <OptionGroup transparent={true} show={this.state.editImage} label="Edit Image" action={this.toggleImageEdit}>
+        <OptionGroup transparent={true} show={this.state.editImage} label="Hero Image" action={this.toggleImageEdit}>
           {this.layout()}
         </OptionGroup>
       </div>
