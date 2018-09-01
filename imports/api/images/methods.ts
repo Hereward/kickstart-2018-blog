@@ -28,6 +28,7 @@ const imagesCollection = (name = "test") => {
 
 export const ProfileImages = imagesCollection("profile");
 export const EditorialImages = imagesCollection("editorial");
+export const AvatarImages = imagesCollection("avatars");
 
 function resolveImageSource(label) {
   switch (label) {
@@ -35,6 +36,8 @@ function resolveImageSource(label) {
       return EditorialImages;
     case "profile":
       return ProfileImages;
+    case "avatar":
+      return AvatarImages;
     default:
       return EditorialImages;
   }

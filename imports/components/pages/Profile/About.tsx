@@ -2,7 +2,8 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { ProfileImages } from "../../../api/images/methods";
+import { AvatarImages } from "../../../api/images/methods";
+import Avatar from "./Avatar";
 
 let styles: any;
 styles = theme => ({
@@ -22,7 +23,6 @@ styles = theme => ({
 interface IProps {
   classes: PropTypes.object.isRequired;
   profile: PropTypes.object.isRequired;
-  imageObj: PropTypes.object.isRequired;
   dispatch: any;
 }
 
@@ -36,11 +36,12 @@ class About extends React.Component<IProps, IState> {
   }
 
   layout() {
-    const { profile, classes, imageObj } = this.props;
+    const { profile, classes } = this.props;
     let image: any = "";
-    if (imageObj) {
-      const link = ProfileImages.link(imageObj);
-      image = <img className={classes.image} src={link} alt={imageObj.fileName} />;
+    
+    if (profile.avatarId) {
+
+      image = <Avatar profile={profile} size="large" imageId={profile.avatarId} />; 
     }
     return (
       <div>
@@ -57,3 +58,4 @@ class About extends React.Component<IProps, IState> {
 }
 
 export default withStyles(styles, { withTheme: true })(About);
+

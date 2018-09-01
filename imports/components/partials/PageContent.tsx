@@ -22,6 +22,7 @@ import { can as userCan } from "../../modules/user";
 import { deletePost } from "../../api/posts/methods";
 import EditorialImage from "../pages/Blog/EditorialImage";
 
+
 interface IProps {
   history: PropTypes.object.isRequired;
   classes: PropTypes.object.isRequired;
@@ -67,6 +68,9 @@ styles = theme => ({
   cancel: {
     color: "black",
     width: "5rem"
+  },
+  tags: {
+   marginTop: "1rem"
   }
 });
 
@@ -98,8 +102,6 @@ class PageContent extends React.Component<IProps, IState> {
     this.props.dispatch({ type: "LOAD_INIT" });
     this.props.dispatch({ type: "FILTER_INIT" });
   }
-
-  
 
   editLayout() {
     const { post, imageUpdateMethod } = this.props;
@@ -285,7 +287,7 @@ class PageContent extends React.Component<IProps, IState> {
               <h6>
                 {dateFormat(post.created, "dd mmmm yyyy")} | <CommentCount postId={post._id} /> Comments
               </h6>
-              {post.tags && <h6>{this.renderTags(post.tags)}</h6>}
+              {post.tags && <h6 className={classes.tags} >{this.renderTags(post.tags)}</h6>}
             </div>
           ) : (
             ""

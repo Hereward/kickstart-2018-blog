@@ -98,7 +98,7 @@ export default class UploadForm extends React.Component<IProps, IState> {
         //log.info(`upload DONE`);
 
         if (dataObj && updateDirect) {
-          Meteor.call(updateMethod, { id: this.props.dataObj._id, image_id: newDataObject._id });
+          Meteor.call(updateMethod, { id: this.props.dataObj._id, avatarId: newDataObject._id });
         } else {
           updateImageId({ imageId: newDataObject._id, newDataObject: newDataObject });
           setNewImageObject(newDataObject);
@@ -162,8 +162,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
     if (!link) {
       link = Images.link(imageObject);
     }
-
-    //log.info(`UploadForm.getImage() link = [${link}]`, imageObject);
 
     let elKey = `file_${key}`;
     return (

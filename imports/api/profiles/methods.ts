@@ -20,7 +20,6 @@ export const newProfile = userId => {
   const user = Meteor.users.findOne(userId);
   const email = user.emails[0].address;
   const nameArray = email.split("@");
-  //log.info("newProfile()", name);
 
   let id = Profiles.insert({
     screenName: nameArray[0],
@@ -35,7 +34,7 @@ export const newProfile = userId => {
     region: "",
     postcode: "",
     country: "",
-    image_id: "",
+    avatarId: "",
     new: true,
     created: new Date(),
     owner: userId
@@ -66,16 +65,16 @@ export const updateProfileImage = new ValidatedMethod({
   name: "profileImage.update",
   validate: new SimpleSchema({
     id: { type: String },
-    image_id: { type: String }
+    avatarId: { type: String }
   }).validator(),
 
   run(fields) {
-    log.info(`profileImage.update`, fields.id, fields.image_id);
+    log.info(`profileImage.update`, fields.id, fields.avatarId);
     authCheck("profileImage.update", this.userId);
 
     Profiles.update(fields.id, {
       $set: {
-        image_id: fields.image_id
+        avatarId: fields.avatarId
       }
     });
 

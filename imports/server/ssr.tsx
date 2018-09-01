@@ -21,21 +21,6 @@ const context = {};
 
 const store = createStore(rootReducer);
 
-/*
-const extractDataZ = (post, defaultImageLink) => {
-  let image: any;
-  let data: any;
-  const imageId = post.image_id;
-  if (imageId) {
-    post.imageLink = getImageLink(imageId);
-  } else if (defaultImageLink) {
-    post.imageLink = defaultImageLink;
-  }
-  data = post;
-  return data;
-};
-*/
-
 const getImageLink = (imageId = "") => {
   let link = "";
   if (imageId) {

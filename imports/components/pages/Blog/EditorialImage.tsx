@@ -17,7 +17,11 @@ styles = theme => ({
     display: "block",
     maxWidth: "500px",
     margin: "1rem 0",
-    borderRadius: "7px"
+    borderRadius: "7px",
+    height: "auto",
+    [theme.breakpoints.down("sm")]: {
+      maxWidth: "100%;"
+    }
   }
 });
 

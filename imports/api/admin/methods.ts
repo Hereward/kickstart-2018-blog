@@ -10,7 +10,7 @@ import { userSettings } from "../settings/publish";
 import { Profiles } from "../profiles/publish";
 import { Pages } from "../pages/publish";
 import { Posts } from "../posts/publish";
-import { ProfileImages } from "../images/methods";
+import { AvatarImages } from "../images/methods";
 import { can as userCan } from "../../modules/user";
 import { systemSettings } from "./publish";
 import { Comments } from "../comments/publish";
@@ -77,7 +77,7 @@ const protectedUser = (id, userId) => {
 function deleteOneUser(id) {
   const userProfileRecord = Profiles.findOne({ owner: id });
   if (userProfileRecord) {
-    ProfileImages.remove(userProfileRecord._id, () => {});
+    AvatarImages.remove(userProfileRecord._id, () => {});
   }
   Meteor.users.remove(id);
   Auth.remove({ owner: id });
@@ -623,13 +623,13 @@ export const deleteAllUsers = new ValidatedMethod({
       userSettings.remove({ owner: { $nin: excludeUsersExpression } });
       Profiles.remove({ owner: { $nin: excludeUsersExpression } });
 
-      let imagesCursor: any = ProfileImages.find({ _id: { $nin: excludeImagesExpression } });
-      let imagesCount = imagesCursor.count();
+      let avatarsCursor: any = AvatarImages.find({ _id: { $nin: excludeImagesExpression } });
+      let avatarsCount = avatarsCursor.count();
 
-      if (imagesCount) {
-        const imagesArray = imagesCursor.fetch();
-        log.info(`deleteAllUsers - image found! [${imagesCount}]`, imagesArray);
-        ProfileImages.remove({ _id: { $nin: excludeImagesExpression } }, function remove(error) {
+      if (avatarsCount) {
+        const imagesArray = avatarsCursor.fetch();
+        log.info(`deleteAllUsers - image found! [${avatarsCount}]`, imagesArray);
+        AvatarImages.remove({ _id: { $nin: excludeImagesExpression } }, function remove(error) {
           if (error) {
             log.error("IMAGE File wasn't removed, error: " + error.reason);
           } else {

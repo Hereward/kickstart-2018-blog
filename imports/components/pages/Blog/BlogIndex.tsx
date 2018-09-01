@@ -40,6 +40,9 @@ styles = theme => ({
     marginTop: "-0.5rem",
     display: "block",
     textAlign: "right"
+  },
+  tags: {
+   marginTop: "1rem"
   }
 });
 
@@ -112,9 +115,6 @@ class BlogIndex extends React.Component<IProps, IState> {
 
   image() {}
 
-
-
-
   renderPost(post: any) {
     const { classes } = this.props;
     let layout: any = "";
@@ -125,12 +125,12 @@ class BlogIndex extends React.Component<IProps, IState> {
             <Link to={`/blog/${post.slug}`}>{post.title}</Link>
           </h2>
           <h6>
-            <Author authorId={post.authorId} />
+           <Author authorId={post.authorId} />
           </h6>
           <h6>
             {dateFormat(post.created, "dd mmmm yyyy")} | <CommentCount postId={post._id} /> Comments
           </h6>
-          {post.tags && <h6>{this.renderTags(post.tags)}</h6>}
+          {post.tags && <h6 className={classes.tags}>{this.renderTags(post.tags)}</h6>}
           {post.image_id && post.showImage && <EditorialImage imageId={post.image_id} />}
           <div dangerouslySetInnerHTML={this.renderBody(post)} />
           {this.readMoreLink(post)}
@@ -178,7 +178,6 @@ class BlogIndex extends React.Component<IProps, IState> {
       </div>
     );
   }
-
 
   layout() {
     const { classes, posts, totalPosts, cursorLimit } = this.props;

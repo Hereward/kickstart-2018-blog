@@ -120,7 +120,6 @@ class RenderImage extends React.Component<IProps, IState> {
 export default connect()(
   withTracker(props => {
     const editorialImagesHandle = Meteor.subscribe("editorialImages");
-    const profileImagesHandle = Meteor.subscribe("profileImages");
     let imageCursor: any;
     let imageArray: any[] = [];
     if (props.dataObj) {

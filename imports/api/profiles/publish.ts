@@ -17,7 +17,7 @@ if (Meteor.isServer) {
           initial: 1,
           lname: 1,
           owner: 1,
-          image_id: 1
+          avatarId: 1
         }
       }
     );
@@ -44,7 +44,7 @@ if (Meteor.isServer) {
           region: 1,
           postcode: 1,
           country: 1,
-          image_id: 1,
+          avatarId: 1,
           new: 1,
           created: 1,
           owner: 1

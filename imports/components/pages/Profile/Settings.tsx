@@ -15,7 +15,7 @@ import * as Library from "../../../modules/library";
 import UploadForm from "../../forms/UploadForm";
 import Image from "../../partials/Image";
 import Notification from "../../partials/Notification";
-import { ProfileImages } from "../../../api/images/methods";
+import { AvatarImages } from "../../../api/images/methods";
 
 let styles: any;
 styles = theme => ({
@@ -30,7 +30,7 @@ styles = theme => ({
 interface IProps {
   classes: PropTypes.object.isRequired;
   profile: PropTypes.object.isRequired;
-  myImages: PropTypes.object.isRequired;
+  avatarImage: PropTypes.object.isRequired;
   userSettings: PropTypes.object.isRequired;
   emailVerified: boolean;
   enhancedAuth: boolean;
@@ -280,7 +280,8 @@ class Settings extends React.Component<IProps, IState> {
   }
 
   renderImage() {
-    const { profile, myImages } = this.props;
+    const { profile, avatarImage } = this.props;
+    const avatarImageArray  = avatarImage ? [avatarImage] : [];
     let layout: any;
     if (profile) {
       if (this.state.editImage) {
@@ -291,10 +292,10 @@ class Settings extends React.Component<IProps, IState> {
               <CancelEditIcon className="cancel-edit-icon" onClick={this.handleSetState} stateName="editImage" />
             </h2>
             <UploadForm
-              Images={ProfileImages}
+              Images={AvatarImages}
               fileLocator=""
               loading={false}
-              imageArray={myImages}
+              imageArray={avatarImageArray}
               dataObj={profile}
               updateMethod="profileImage.update"
               updateDirect={true}
@@ -302,10 +303,8 @@ class Settings extends React.Component<IProps, IState> {
             />
           </div>
         );
-      } else if (this.props.myImages && this.props.myImages[0]) {
-        let fileCursor = this.props.myImages[0];
-        //const link = fileCursor.link(); //ProfileImages.findOne({ _id: fileCursor._id }).link();
-        const link = ProfileImages.link(fileCursor);
+      } else if (avatarImage) {
+        const link = AvatarImages.link(avatarImage);
 
         layout = (
           <div className="profile-image-holder">
@@ -313,11 +312,11 @@ class Settings extends React.Component<IProps, IState> {
               Avatar Image <EditIcon onClick={this.handleSetState} stateName="editImage" />
             </h2>
             <Image
-              fileName={fileCursor.name}
+              fileName={avatarImage.name}
               fileUrl={link}
-              fileId={fileCursor._id}
-              fileSize={fileCursor.size}
-              Images={ProfileImages}
+              fileId={avatarImage._id}
+              fileSize={avatarImage.size}
+              Images={AvatarImages}
               allowEdit={false}
               dataObj={this.props.profile}
               updateMethod="profileImage.update"

@@ -17,7 +17,7 @@ import ProfilePosts from "./ProfilePosts";
 import About from "./About";
 import { Posts } from "../../../api/posts/publish";
 import Settings from "./Settings";
-import { ProfileImages } from "../../../api/images/methods";
+import { AvatarImages } from "../../../api/images/methods";
 
 let styles: any;
 styles = theme => ({
@@ -47,7 +47,7 @@ interface IProps {
   userId: string;
   totalPosts: number;
   profileUserId: string;
-  myImages: PropTypes.object.isRequired;
+  avatarImage: PropTypes.object.isRequired;
 }
 
 interface IState {
@@ -76,7 +76,7 @@ class Profile extends React.Component<IProps, IState> {
       userId,
       totalPosts,
       profile,
-      myImages,
+      avatarImage,
       profileUserId,
       emailVerified,
       enhancedAuth,
@@ -97,11 +97,10 @@ class Profile extends React.Component<IProps, IState> {
         }
 
       case 1:
-        imageObj = myImages[0];
         return (
           <Transition>
             <div className="container">
-              <About imageObj={imageObj} profile={profile} />
+              <About profile={profile} />
             </div>
           </Transition>
         );
@@ -114,7 +113,7 @@ class Profile extends React.Component<IProps, IState> {
                 userSettings={userSettings}
                 enhancedAuth={enhancedAuth}
                 emailVerified={emailVerified}
-                myImages={myImages}
+                avatarImage={avatarImage}
                 userId={userId}
                 profile={profile}
               />
@@ -184,10 +183,10 @@ class Profile extends React.Component<IProps, IState> {
 
 export default withTracker(props => {
   log.info(`ProfileIndex tracker`, props);
-  let myImages: any;
+  let avatarImage: any;
   const postsHandle = Meteor.subscribe("posts");
   const postsReady = postsHandle.ready();
-  let imagesDataHandle = Meteor.subscribe("profileImages");
+  const avatarImagesDataHandle = Meteor.subscribe("avatarImages");
 
   //const profilesPublicHandle = Meteor.subscribe("profiles.public");
 
@@ -204,10 +203,10 @@ export default withTracker(props => {
     userEmail = props.userData.emails[0].address;
   }
 
-  if (imagesDataHandle.ready()) {
+  if (avatarImagesDataHandle.ready()) {
     if (profile) {
-      const cursor: any = ProfileImages.find({ _id: profile.image_id });
-      myImages = cursor.fetch();
+      const cursor: any = AvatarImages.find({ _id: profile.avatarId });
+      avatarImage = cursor.fetch()[0];
     }
   }
 
@@ -215,11 +214,11 @@ export default withTracker(props => {
     totalPosts = Posts.find({ authorId: profileUserId }).count();
   }
 
-  log.info(`ProfileIndex tracker`, profile.image_id, myImages);
+  log.info(`ProfileIndex tracker`, profile.avatarId, avatarImage);
 
   return {
     profile: profile,
-    myImages: myImages,
+    avatarImage: avatarImage,
     userEmail: userEmail,
     emailVerified: emailVerified,
     totalPosts: totalPosts,
