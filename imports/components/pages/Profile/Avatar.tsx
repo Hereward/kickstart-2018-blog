@@ -60,7 +60,7 @@ class AvatarClass extends React.Component<IProps, IState> {
     let layout: any = "";
     if (imageObject) {
       const link = AvatarImages.link(imageObject);
-      log.info(`Avatar.getImage()`, link, this.props);
+      //log.info(`Avatar.getImage()`, link, this.props);
       layout = <Avatar alt="AVATAR" src={link} className={classNames(classes.avatar, sizeClass)} />;
       //return <Avatar alt="BOOJAM" src={link} className={classNames(classes.avatar, classes.bigAvatar)} />; //classNames(classes.avatar, classes.bigAvatar)
     } else {
@@ -85,7 +85,7 @@ export default withTracker(props => {
   if (props.imageId && avatarImagesDataHandle.ready()) {
     const cursor: any = AvatarImages.find({ _id: props.imageId });
     const count = cursor.count();
-    log.info(`Avatar.tracker() count = [${count}]`, cursor, props);
+    //log.info(`Avatar.tracker() count = [${count}]`, cursor, props);
     imageObject = cursor.fetch()[0];
   }
 

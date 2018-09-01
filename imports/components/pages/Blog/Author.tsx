@@ -18,6 +18,7 @@ styles = theme => ({
 interface IProps {
   classes: PropTypes.object.isRequired;
   profile: PropTypes.object.isRequired;
+  authorId: string;
   dispatch: any;
 }
 
@@ -31,11 +32,11 @@ class Author extends React.Component<IProps, IState> {
   }
 
   layout() {
-    const { classes, profile } = this.props;
+    const { classes, authorId, profile } = this.props;
     return (
       <div>
         <Avatar profile={profile} imageId={profile.avatarId} />
-        <Link className={classes.link} to={`/members/profile/${profile._id}`}>
+        <Link className={classes.link} to={`/members/profile/${authorId}`}>
           {profile.screenName}
         </Link>
       </div>
@@ -58,5 +59,5 @@ export default withTracker(props => {
   const authorId = props.authorId;
   profile = Profiles.findOne({ owner: authorId });
 
-  return { profile: profile };
+  return { authorId: authorId, profile: profile };
 })(withStyles(styles, { withTheme: true })(Author));

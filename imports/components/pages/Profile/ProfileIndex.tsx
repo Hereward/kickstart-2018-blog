@@ -52,17 +52,16 @@ interface IProps {
 
 interface IState {
   tabValue: number;
+  ownerView: boolean;
 }
 
 class Profile extends React.Component<IProps, IState> {
-  ownerView: boolean;
-
   constructor(props) {
     super(props);
 
-    this.ownerView = props.userId === props.profile.owner;
     this.state = {
-      tabValue: 0
+      tabValue: 0,
+      ownerView: false
     };
   }
 
@@ -144,7 +143,7 @@ class Profile extends React.Component<IProps, IState> {
           >
             <Tab label="Posts" />
             <Tab label="About" />
-            {this.ownerView && <Tab label="Settings" />}
+            {this.state.ownerView && <Tab label="Settings" />}
           </Tabs>
         </AppBar>
         {this.tabItem(tabValue)}
@@ -152,7 +151,15 @@ class Profile extends React.Component<IProps, IState> {
     );
   }
 
-  componentDidUpdate() {}
+  componentDidUpdate(prevProps) {
+    const { profile, userId } = this.props;
+    //log.info(`Profile componentDidUpdate`, userId, this.props, prevProps);
+
+    if (this.state.ownerView === false && userId === profile.owner) {
+      log.info(`Profile componentDidUpdate`, userId, profile.owner, profile, prevProps);
+      this.setState({ ownerView: true });
+    }
+  }
 
   componentWillUnmount() {}
 
@@ -182,21 +189,16 @@ class Profile extends React.Component<IProps, IState> {
 }
 
 export default withTracker(props => {
-  log.info(`ProfileIndex tracker`, props);
   let avatarImage: any;
   const postsHandle = Meteor.subscribe("posts");
-  const postsReady = postsHandle.ready();
+  let postsReady = postsHandle.ready();
   const avatarImagesDataHandle = Meteor.subscribe("avatarImages");
-
-  //const profilesPublicHandle = Meteor.subscribe("profiles.public");
-
-  const profileUserId = props.match.params.userId;
-  const profile = Profiles.findOne({ owner: profileUserId });
-  //log.info(`ProfileIndex tracker`, profile);
+  let profile: any = "";
+  let profileUserId = props.match.params.userId;
+  profile = Profiles.findOne({ owner: profileUserId });
   let userEmail: string;
   let emailVerified: boolean = false;
   let totalPosts = 0;
-  //let totalPublished = 0;
 
   if (props.userData) {
     emailVerified = props.userData.emails[0].verified;
@@ -204,9 +206,11 @@ export default withTracker(props => {
   }
 
   if (avatarImagesDataHandle.ready()) {
+    //log.info(`avatarImagesDataHandle.ready`);
     if (profile) {
       const cursor: any = AvatarImages.find({ _id: profile.avatarId });
       avatarImage = cursor.fetch()[0];
+      //log.info(`ProfileIndex tracker`, profile.avatarId, avatarImage);
     }
   }
 
@@ -214,7 +218,7 @@ export default withTracker(props => {
     totalPosts = Posts.find({ authorId: profileUserId }).count();
   }
 
-  log.info(`ProfileIndex tracker`, profile.avatarId, avatarImage);
+  //log.info(`ProfileIndex tracker DONE`, profile);
 
   return {
     profile: profile,

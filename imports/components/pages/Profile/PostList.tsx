@@ -93,7 +93,7 @@ class PostList extends React.Component<IProps, IState> {
   }
 
   mapPosts() {
-    log.info(`ProfilePosts.mapPosts()`, this.props);
+    //log.info(`ProfilePosts.mapPosts()`, this.props);
     const { classes, totalPosts, posts, cursorLimit } = this.props;
     const mapped = posts.map(post => {
       const layout = (
@@ -133,7 +133,7 @@ class PostList extends React.Component<IProps, IState> {
 
   layout() {
     const { classes, totalPosts, posts, cursorLimit, ownerView } = this.props;
-    log.info(`PostList.render()`, posts, totalPosts, cursorLimit);
+    //log.info(`PostList.render()`, posts, totalPosts, cursorLimit);
     const totalPostsLabel = totalPosts ? ` (${totalPosts})` : "";
     return (
       <div className={classes.root}>
@@ -178,7 +178,7 @@ export default connect()(
     totalPosts = Posts.find({ publish: publishFilter, authorId: props.profileUserId }).count();
     posts = Posts.find({ publish: publishFilter, authorId: props.profileUserId }, options).fetch();
 
-    log.info(`PostList.tracker() publish=[${publishFilter}]`, posts, props);
+    //log.info(`PostList.tracker() publish=[${publishFilter}]`, posts, props);
     return {
       posts: posts,
       totalPosts: totalPosts
