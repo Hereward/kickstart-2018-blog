@@ -90,10 +90,10 @@ export default withRouter(
     withTracker(props => {
       let isClient = Meteor.isClient;
       let userSettingsRec: any;
-      let profilesHandle = Meteor.subscribe("profiles.public");
-      let userSettingsHandle = Meteor.subscribe("userSettings");
-      let userSessionHandle = Meteor.subscribe("userSessions");
-      let systemSettingsHandle = Meteor.subscribe("systemSettings");
+      const profilesHandle = Meteor.subscribe("profiles.public");
+      const userSettingsHandle = Meteor.subscribe("userSettings");
+      const userSessionHandle = Meteor.subscribe("userSessions");
+      const systemSettingsHandle = Meteor.subscribe("systemSettings");
       let systemSettingsRec = systemSettings.findOne();
       let sessionReady = false;
       let userSession: any;

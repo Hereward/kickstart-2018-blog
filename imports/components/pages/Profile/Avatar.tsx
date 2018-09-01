@@ -26,8 +26,8 @@ styles = theme => ({
   small: {
     width: 50,
     height: 50,
-    float: "left",
-    marginRight: "1rem"
+    //float: "left",
+    //marginRight: "1rem"
   },
   letter: {
   }

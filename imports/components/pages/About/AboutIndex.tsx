@@ -18,9 +18,13 @@ styles = theme => ({
   contributors: {
     marginTop: "2rem"
   },
+  contributorList: {
+    padding: 0
+  },
   contributor: {
     fontWeight: "bold",
-    fontSize: "1.2rem"
+    fontSize: "1.2rem",
+    listStyleType: "none"
   }
 });
 
@@ -43,7 +47,7 @@ class About extends React.Component<IProps> {
     return (
       <div className={classes.contributors}>
         <h2>Our Contributors</h2>
-        <ul>{userList}</ul>
+        <ul className={classes.contributorList}>{userList}</ul>
       </div>
     );
   }
@@ -92,23 +96,28 @@ class About extends React.Component<IProps> {
 
 export default connect()(
   withTracker(props => {
+    const allUsersPublicHandle = Meteor.subscribe("allUsersPublic", "creator");
     const path = props.location.pathname;
+    let creators: any = "";
     const pattern = /[a-z0-9]+(?:-[a-z0-9]+)*$/i;
     let match = pattern.exec(path);
     const slug = match[0];
     const userSortOptions: any = {
-      sort: { created: 1 }
+      sort: { createdAt: 1 }
     };
-    //log.info(`Page.Tracker()`, path, slug, match);
+
     let page: any;
     let pagesHandle = Meteor.subscribe("pages");
     let usersHandle = Meteor.subscribe("allUsers");
-    //const profilesPublicHandle = Meteor.subscribe("profiles.public");
 
     if (pagesHandle.ready()) {
       page = Pages.findOne({ publish: true, slug: slug });
     }
-    const creators = Roles.getUsersInRole("creator", userSortOptions).fetch();
+    if (allUsersPublicHandle.ready()) {
+      const cursor = Roles.getUsersInRole("creator", userSortOptions);
+      creators = cursor.fetch();
+      //log.info(`About.Tracker()`, creators);
+    }
 
     return { page: page, creators: creators };
   })(withStyles(styles, { withTheme: true })(About))

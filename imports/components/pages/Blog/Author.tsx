@@ -12,6 +12,10 @@ import Avatar from "..//Profile/Avatar";
 let styles: any;
 
 styles = theme => ({
+  root: {},
+  author: {
+    marginLeft: "1rem"
+  },
   link: {}
 });
 
@@ -34,11 +38,13 @@ class Author extends React.Component<IProps, IState> {
   layout() {
     const { classes, authorId, profile } = this.props;
     return (
-      <div>
+      <div className="d-flex align-items-center">
         <Avatar profile={profile} imageId={profile.avatarId} />
-        <Link className={classes.link} to={`/members/profile/${authorId}`}>
-          {profile.screenName}
-        </Link>
+        <div className={classes.author}>
+          <Link className={classes.link} to={`/members/profile/${authorId}`}>
+            {profile.screenName}
+          </Link>
+        </div>
       </div>
     );
   }

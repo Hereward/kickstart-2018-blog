@@ -24,7 +24,7 @@ if (Meteor.isServer) {
     );
   });
 
-  Meteor.publish("allUsers", function allUsersPublication() {
+  Meteor.publish("allUsers", function allUsers() {
     let admin = false;
     if (this.userId) {
       admin = Roles.userIsInRole(this.userId, ["super-admin", "admin"]);
@@ -35,6 +35,13 @@ if (Meteor.isServer) {
     } else {
       return Meteor.users.find({});
     }
+  });
+
+  Meteor.publish("allUsersPublic", function allUsersPublic(type="") {
+    const userSortOptions: any = {
+      sort: { createdAt: 1 }
+    };
+    return Roles.getUsersInRole(type, userSortOptions);
   });
 
   Meteor.publish("roles", function rolesPublication() {

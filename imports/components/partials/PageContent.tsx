@@ -281,7 +281,7 @@ class PageContent extends React.Component<IProps, IState> {
 
           {contentType === "post" ? (
             <div>
-              <h6>
+              <h6 className="author-heading">
                 <Author authorId={post.authorId} />
               </h6>
               <h6>

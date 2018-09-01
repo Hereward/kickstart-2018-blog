@@ -124,7 +124,7 @@ class BlogIndex extends React.Component<IProps, IState> {
           <h2 className="blogTitle">
             <Link to={`/blog/${post.slug}`}>{post.title}</Link>
           </h2>
-          <h6>
+          <h6 className="author-heading">
            <Author authorId={post.authorId} />
           </h6>
           <h6>
