@@ -30,6 +30,7 @@ styles = theme => ({
     //marginRight: "1rem"
   },
   letter: {
+    textTransform: "uppercase"
   }
 });
 

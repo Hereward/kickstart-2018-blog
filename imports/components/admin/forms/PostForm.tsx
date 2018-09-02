@@ -134,6 +134,7 @@ class PostForm extends React.Component<IProps, IState> {
     const slugId = this.renderWidgetId("slug");
     let rules: any = {};
     rules[slugId] = { rangelength: [5, 60] };
+    rules.title = { rangelength: [10, 90] };
     Validation.validate(this, rules);
   }
 
@@ -159,15 +160,6 @@ class PostForm extends React.Component<IProps, IState> {
       handleEditing
     } = this.props;
 
-    /*
-     imageIDedit,
-      imageIDnew,
-      */
-
-    //const image_id_current = editingExistingData ? imageIDedit : imageIDnew;
-    // image_id_current || settingsImage,
-
-    //const settingsImage = settingsObj ? settingsObj.image_id : "";
     let pageFields: any;
 
     pageFields = {
@@ -254,8 +246,8 @@ class PostForm extends React.Component<IProps, IState> {
       const final = `${slugString}-${dateString}`;
       this.setState({ slug: final });
     }
-
-    this.setState({ [name]: value }); // set the value of the target field
+    //log.info(`PostForm.handleCHange() value = [${value}]`, name);
+    this.setState({ [name]: value }); 
   };
 
   updateBody = body => {
@@ -362,6 +354,7 @@ class PostForm extends React.Component<IProps, IState> {
 
               {this.getWidget({
                 placeholder: "Will be displayed in previews on social media",
+                required: false,
                 baseName: "summary",
                 name: this.renderWidgetId("summary"),
                 label: "Summary",

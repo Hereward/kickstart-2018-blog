@@ -38,10 +38,9 @@ class About extends React.Component<IProps, IState> {
   layout() {
     const { profile, classes } = this.props;
     let image: any = "";
-    
-    if (profile.avatarId) {
 
-      image = <Avatar profile={profile} size="large" imageId={profile.avatarId} />; 
+    if (profile.avatarId) {
+      image = <Avatar profile={profile} size="large" imageId={profile.avatarId} />;
     }
     return (
       <div>
@@ -58,4 +57,3 @@ class About extends React.Component<IProps, IState> {
 }
 
 export default withStyles(styles, { withTheme: true })(About);
-

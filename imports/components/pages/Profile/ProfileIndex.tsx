@@ -10,6 +10,7 @@ import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import Transition from "../../partials/Transition";
 import { Profiles } from "../../../api/profiles/publish";
+import { can as userCan } from "../../../modules/user";
 
 import Spinner from "../../partials/Spinner";
 import MetaWrapper from "../../partials/MetaWrapper";
@@ -52,7 +53,6 @@ interface IProps {
 
 interface IState {
   tabValue: number;
-  ownerView: boolean;
 }
 
 class Profile extends React.Component<IProps, IState> {
@@ -60,8 +60,7 @@ class Profile extends React.Component<IProps, IState> {
     super(props);
 
     this.state = {
-      tabValue: 0,
-      ownerView: false
+      tabValue: 0
     };
   }
 
@@ -126,7 +125,7 @@ class Profile extends React.Component<IProps, IState> {
   }
 
   tabContents() {
-    const { classes } = this.props;
+    const { classes, profile } = this.props;
     const { tabValue } = this.state;
 
     return (
@@ -143,7 +142,7 @@ class Profile extends React.Component<IProps, IState> {
           >
             <Tab label="Posts" />
             <Tab label="About" />
-            {this.state.ownerView && <Tab label="Settings" />}
+            {userCan({ threshold: "owner", owner: profile.owner }) && <Tab label="Settings" />}
           </Tabs>
         </AppBar>
         {this.tabItem(tabValue)}
@@ -151,15 +150,7 @@ class Profile extends React.Component<IProps, IState> {
     );
   }
 
-  componentDidUpdate(prevProps) {
-    const { profile, userId } = this.props;
-    //log.info(`Profile componentDidUpdate`, userId, this.props, prevProps);
-
-    if (this.state.ownerView === false && userId === profile.owner) {
-      log.info(`Profile componentDidUpdate`, userId, profile.owner, profile, prevProps);
-      this.setState({ ownerView: true });
-    }
-  }
+  componentDidUpdate(prevProps) {}
 
   componentWillUnmount() {}
 

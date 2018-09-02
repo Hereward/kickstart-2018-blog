@@ -20,9 +20,9 @@ export const newProfile = userId => {
   const user = Meteor.users.findOne(userId);
   const email = user.emails[0].address;
   const nameArray = email.split("@");
-
+  const screenName = nameArray[0].substring(0, 20);
   let id = Profiles.insert({
-    screenName: nameArray[0],
+    screenName: screenName,
     about: "I am awesome!",
     fname: "",
     initial: "",

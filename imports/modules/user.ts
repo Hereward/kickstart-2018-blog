@@ -177,6 +177,10 @@ export function can(params: { do?: string; threshold?: any; owner?: any }) {
       allowed = true;
     } else if (params.threshold === "super-admin") {
       allowed = Roles.userIsInRole(userId, ["super-admin"]);
+    } else if (params.threshold === "owner") {
+      if (params.owner === userId) {
+        allowed = true;
+      }
     } else if (params.threshold === "admin") {
       allowed = Roles.userIsInRole(userId, ["super-admin", "admin"]);
     } else if (params.threshold === "editor") {
@@ -191,6 +195,7 @@ export function can(params: { do?: string; threshold?: any; owner?: any }) {
       } else if (Roles.userIsInRole(userId, ["super-admin", "admin", "editor"])) {
         allowed = true;
       }
+    
     } else if (params.threshold) {
       allowed = Roles.userIsInRole(userId, params.threshold);
     } else if (params.do === "configureNewUser") {

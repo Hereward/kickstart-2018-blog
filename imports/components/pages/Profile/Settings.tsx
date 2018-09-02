@@ -23,7 +23,7 @@ styles = theme => ({
     marginBottom: "2rem"
   },
   personalDetails: {
-    width: "auto",
+    width: "auto"
   }
 });
 
@@ -281,7 +281,7 @@ class Settings extends React.Component<IProps, IState> {
 
   renderImage() {
     const { profile, avatarImage } = this.props;
-    const avatarImageArray  = avatarImage ? [avatarImage] : [];
+    const avatarImageArray = avatarImage ? [avatarImage] : [];
     let layout: any;
     if (profile) {
       if (this.state.editImage) {
@@ -380,7 +380,8 @@ class Settings extends React.Component<IProps, IState> {
   }
 
   render() {
-    return this.settings();
+    const { profile } = this.props;
+    return User.can({ threshold: "owner", owner: profile.owner }) ? this.settings() : <div>Not Authorised.</div>;
   }
 }
 

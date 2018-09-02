@@ -48,11 +48,18 @@ function truncateHTML(html) {
   return trunc;
 }
 
+function truncatePlainText(text) {
+  const trunc = truncate(text, 50, { byWords: true, stripTags: true });
+  return trunc;
+}
+
+
+
 export const createPost = new ValidatedMethod({
   name: "post.create",
   validate: new SimpleSchema({
     id: { type: String, optional: true },
-    tags: { type: String, optional: true},
+    tags: { type: String, optional: true },
     publish: { type: Boolean },
     showImage: { type: Boolean },
     image_id: { type: String },
@@ -66,6 +73,9 @@ export const createPost = new ValidatedMethod({
   run(fields) {
     authCheck("post.create", this.userId);
     const truncatedBody = truncateHTML(fields.body);
+    if (!fields.summary) {
+      fields.summary = truncatePlainText(fields.body);
+    }
 
     slugCheck({ slug: fields.slug, type: "new" });
 
@@ -100,19 +110,17 @@ export const deletePost = new ValidatedMethod({
     if (!this.isSimulation) {
       authCheck("posts.deletePost", this.userId);
       Posts.remove(fields.id);
-      Comments.remove({postId: fields.id});
+      Comments.remove({ postId: fields.id });
     }
     return true;
   }
 });
 
-
-
 export const updatePost = new ValidatedMethod({
   name: "posts.update",
   validate: new SimpleSchema({
     id: { type: String },
-    tags: { type: String, optional: true},
+    tags: { type: String, optional: true },
     publish: { type: Boolean },
     showImage: { type: Boolean },
     image_id: { type: String },
@@ -126,7 +134,10 @@ export const updatePost = new ValidatedMethod({
   run(fields) {
     authCheck("posts.update", this.userId);
     const truncatedBody = truncateHTML(fields.body);
-    //og.info(`updatePost`, truncatedBody);
+    if (!fields.summary) {
+      fields.summary = truncatePlainText(fields.body);
+    }
+    //log.info(`updatePost`, fields);
     const current = Posts.findOne(fields.id);
     slugCheck({ slug: fields.slug, type: "update", current: current.slug });
 
@@ -139,7 +150,7 @@ export const updatePost = new ValidatedMethod({
         title: fields.title,
         body: fields.body,
         truncatedBody: truncatedBody,
-        summary: fields.summary || current.summary,
+        summary: fields.summary,
         closeComments: fields.closeComments,
         slug: fields.slug || current.slug,
         modified: new Date()

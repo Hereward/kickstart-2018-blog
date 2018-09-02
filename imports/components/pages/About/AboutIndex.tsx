@@ -24,7 +24,8 @@ styles = theme => ({
   contributor: {
     fontWeight: "bold",
     fontSize: "1.2rem",
-    listStyleType: "none"
+    listStyleType: "none",
+    marginBottom: "1rem"
   }
 });
 

@@ -8,6 +8,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Posts } from "../../../api/posts/publish";
 import Transition from "../../partials/Transition";
 import PostList from "./PostList";
+import { can as userCan } from "../../../modules/user";
 
 let styles: any;
 styles = theme => ({
@@ -46,7 +47,8 @@ class ProfilePosts extends React.Component<IProps, IState> {
     super(props);
 
     this.basePaginationUnit = Meteor.settings.public.admin.basePaginationUnit;
-    this.ownerView = props.userId === props.profile.owner;
+    //this.ownerView = props.userId === props.profile.owner;
+    this.ownerView = userCan({ threshold: "owner", owner: props.profile.owner });
 
     this.state = {
       cursorLimitDraft: this.basePaginationUnit,
@@ -67,7 +69,7 @@ class ProfilePosts extends React.Component<IProps, IState> {
     const { cursorLimitPublished, cursorLimitDraft } = this.state;
     return (
       <div>
-        <h1 className={classes.mainHeading}>Posts by {profile.screenName}</h1>
+        {!this.ownerView && <h1 className="feature-heading">Posts by {profile.screenName}</h1>}
 
         <div className={classes.postListRoot}>
           {this.ownerView && (

@@ -14,7 +14,8 @@ let styles: any;
 styles = theme => ({
   root: {},
   author: {
-    marginLeft: "1rem"
+    marginLeft: "1rem",
+    textTransform: "capitalize"
   },
   link: {}
 });

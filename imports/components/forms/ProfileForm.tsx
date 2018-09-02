@@ -41,7 +41,9 @@ export default class ProfileForm extends React.Component<IProps, IState> {
   }
 
   componentDidMount() {
-    Validation.validate(this);
+    let rules: any = {};
+    rules.screenName = { rangelength: [2, 25] };
+    Validation.validate(this, rules);
   }
 
   handleSetStateUpstream(sVar, sVal) {
