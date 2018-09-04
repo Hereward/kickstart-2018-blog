@@ -5,6 +5,7 @@
     "description": "A silly, twisted app.",
     "copyright": "\u00A9 MyCompany 2018. All rights reserved.",
     "logLevel": "trace",
+    "fb_app_id": "537172216737060",
     "enhancedAuth": {
       "active": true,
       "maxAttempts": 3,

@@ -56,6 +56,14 @@ declare namespace Meteor.User {
 }
 
 declare var log: any;
+declare var _FB_initFB: any;
+declare var _FB_feedDialog: any;
+declare var _FB_checkLoginState: any;
+declare var _FB_ogShare: any;
+declare var _FB_share: any;
+declare var _FB_checkLoginState: any;
+declare var _FB_login: any;
+
 
 declare module "meteor/simply:reactive-local-storage" {
   function setItem(key: string, value: string): any;

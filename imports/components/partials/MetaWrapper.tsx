@@ -1,7 +1,7 @@
 import * as React from "react";
 import Meta from "./Meta";
 
-const MetaWrapper = (props: { customSettings?: any; path: any; settings: any; title?: string }) => {
+const MetaWrapper = (props: { customSettings?: any; settings: any; title?: string }) => {
   const { settings, customSettings, title } = props;
   let resolvedSettings: any;
   if (customSettings) {
@@ -15,7 +15,7 @@ const MetaWrapper = (props: { customSettings?: any; path: any; settings: any; ti
     }
   }
 
-  return <Meta location={props.path} settings={resolvedSettings} />;
+  return <Meta settings={resolvedSettings} />;
 };
 
 export default MetaWrapper;

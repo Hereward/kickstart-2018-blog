@@ -193,7 +193,7 @@ class BlogIndex extends React.Component<IProps, IState> {
 
   getMeta() {
     return (
-      <MetaWrapper path={this.props.history.location.pathname} settings={this.props.systemSettings} title="Blog Page" />
+      <MetaWrapper settings={this.props.systemSettings} title="Blog Page" />
     );
   }
 

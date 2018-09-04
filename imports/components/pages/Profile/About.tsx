@@ -8,10 +8,14 @@ import Avatar from "./Avatar";
 let styles: any;
 styles = theme => ({
   heading: {
-    marginBottom: "1rem"
+    marginBottom: "1rem",
+    textTransform: "capitalize"
   },
   about: {
     fontStyle: "italic"
+  },
+  avatar: {
+    marginBottom: "1rem"
   },
   image: {
     maxWidth: "200px",
@@ -39,13 +43,12 @@ class About extends React.Component<IProps, IState> {
     const { profile, classes } = this.props;
     let image: any = "";
 
-    if (profile.avatarId) {
-      image = <Avatar profile={profile} size="large" imageId={profile.avatarId} />;
-    }
+    image = <Avatar profile={profile} size="large" imageId={profile.avatarId} />;
+
     return (
       <div>
         <h1 className={classes.heading}>{profile.screenName}</h1>
-        {image}
+        {profile.avatarId && <div className={classes.avatar}>{image}</div>}
         <div className={classes.about}>{profile.about}</div>
       </div>
     );

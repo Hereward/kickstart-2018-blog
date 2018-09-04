@@ -57,7 +57,7 @@ class App extends React.Component<IProps, IState> {
   mainContent() {
     const path = this.props.history.location.pathname;
     //log.info(`path = `, path);
-    const meta = this.props.systemSettings ? <Meta location={path} settings={this.props.systemSettings} /> : "";
+    const meta = this.props.systemSettings ? <Meta settings={this.props.systemSettings} /> : "";
     return (
       <div className="router-parent d-flex flex-column">
         {meta}

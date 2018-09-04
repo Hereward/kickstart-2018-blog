@@ -21,13 +21,14 @@ import CommentCount from "../pages/Blog/CommentCount";
 import { can as userCan } from "../../modules/user";
 import { deletePost } from "../../api/posts/methods";
 import EditorialImage from "../pages/Blog/EditorialImage";
-
+import CommentBlogSection from "../comments/CommentBlogSection";
 
 interface IProps {
   history: PropTypes.object.isRequired;
   classes: PropTypes.object.isRequired;
   systemSettings: PropTypes.object.isRequired;
   dispatch: PropTypes.object.isRequired;
+  userId: string;
   post?: any;
   updateMethod: string;
   permissionThreshold?: string;
@@ -42,6 +43,7 @@ interface IProps {
   cursorLimit: number;
   contentType: string;
   showFormInit: boolean;
+  hasComments?: boolean;
 }
 
 interface IState {
@@ -59,9 +61,9 @@ interface IState {
 }
 
 let styles: any;
+
 styles = theme => ({
   editPost: {
-    //marginTop: "-0.75rem",
     marginBottom: "0.25rem",
     fontSize: "0.9rem"
   },
@@ -70,7 +72,7 @@ styles = theme => ({
     width: "5rem"
   },
   tags: {
-   marginTop: "1rem"
+    marginTop: "1rem"
   }
 });
 
@@ -264,8 +266,16 @@ class PageContent extends React.Component<IProps, IState> {
     return mapped;
   }
 
+  comments() {
+    let layout: any = "";
+    if (this.props.post) {
+      layout = <CommentBlogSection userId={this.props.userId} postId={this.props.post._id} />;
+    }
+    return layout;
+  }
+
   getLayout() {
-    const { classes, post, contentType } = this.props;
+    const { classes, post, contentType, hasComments } = this.props;
     const { showForm } = this.state;
 
     let layout: any;
@@ -287,13 +297,14 @@ class PageContent extends React.Component<IProps, IState> {
               <h6>
                 {dateFormat(post.created, "dd mmmm yyyy")} | <CommentCount postId={post._id} /> Comments
               </h6>
-              {post.tags && <h6 className={classes.tags} >{this.renderTags(post.tags)}</h6>}
+              {post.tags && <h6 className={classes.tags}>{this.renderTags(post.tags)}</h6>}
             </div>
           ) : (
             ""
           )}
           {post.image_id && post.showImage && <EditorialImage imageId={post.image_id} />}
           <div dangerouslySetInnerHTML={this.createMarkup(post.body)} />
+          {hasComments && this.comments()}
         </div>
       );
     } else {
@@ -305,13 +316,7 @@ class PageContent extends React.Component<IProps, IState> {
 
   getMeta() {
     const { post } = this.props;
-    return (
-      <MetaWrapper
-        path={this.props.history.location.pathname}
-        settings={this.props.systemSettings}
-        customSettings={post}
-      />
-    );
+    return <MetaWrapper settings={this.props.systemSettings} customSettings={post} />;
   }
 
   /*

@@ -16,6 +16,7 @@ interface IProps {
   classes: PropTypes.object.isRequired;
   systemSettings: PropTypes.object.isRequired;
   dispatch: any;
+  userId: string;
 }
 
 interface IState {}
@@ -39,6 +40,7 @@ class Boojam extends React.Component<IProps, IState> {
         postCreateMethod="post.create"
         subscription="posts"
         showFormInit={true}
+        userId={this.props.userId}
       />
     );
   }

@@ -459,7 +459,6 @@ class AdminIndex extends React.Component<IProps, IState> {
   getMeta() {
     return (
       <MetaWrapper
-        path={this.props.history.location.pathname}
         settings={this.props.systemSettings}
         title="Admin Page"
       />

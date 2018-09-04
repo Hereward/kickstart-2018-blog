@@ -1,5 +1,6 @@
 //import { Mongo } from "meteor/mongo";
 import { Meteor } from "meteor/meteor";
+import { can as userCan, can } from "../../modules/user";
 
 declare var Mongo: any;
 
@@ -28,8 +29,10 @@ if (Meteor.isServer) {
       return this.ready();
     }
 
+    const options = can({threshold: "super-admin"}) ? {} : { owner: this.userId };
+
     return Profiles.find(
-      { owner: this.userId },
+      options,
       {
         fields: {
           screenName: 1,

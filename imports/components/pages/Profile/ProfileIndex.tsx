@@ -19,6 +19,7 @@ import About from "./About";
 import { Posts } from "../../../api/posts/publish";
 import Settings from "./Settings";
 import { AvatarImages } from "../../../api/images/methods";
+//import FBLogin from "../../facebook/Login";
 
 let styles: any;
 styles = theme => ({
@@ -62,6 +63,7 @@ class Profile extends React.Component<IProps, IState> {
     this.state = {
       tabValue: 0
     };
+    _FB_checkLoginState();
   }
 
   handleTabChange = (event, tabValue) => {
@@ -157,12 +159,22 @@ class Profile extends React.Component<IProps, IState> {
   getMeta() {
     return (
       <MetaWrapper
-        path={this.props.history.location.pathname}
         settings={this.props.systemSettings}
         title="Profile Page"
       />
     );
   }
+
+  /*
+  facebookLogin() {
+    const { classes } = this.props;
+    return (
+      <div className={classes.FBLogin}>
+        <FBLogin />
+      </div>
+    );
+  }
+  */
 
   render() {
     const { profile } = this.props;

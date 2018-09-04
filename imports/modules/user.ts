@@ -178,7 +178,7 @@ export function can(params: { do?: string; threshold?: any; owner?: any }) {
     } else if (params.threshold === "super-admin") {
       allowed = Roles.userIsInRole(userId, ["super-admin"]);
     } else if (params.threshold === "owner") {
-      if (params.owner === userId) {
+      if (params.owner === userId || Roles.userIsInRole(userId, ["super-admin"])) {
         allowed = true;
       }
     } else if (params.threshold === "admin") {

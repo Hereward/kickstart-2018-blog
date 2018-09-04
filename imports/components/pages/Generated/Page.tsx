@@ -12,6 +12,7 @@ interface IProps {
   page: any;
   history: PropTypes.object.isRequired;
   systemSettings: PropTypes.object.isRequired;
+  userId: string;
 }
 
 class Page extends React.Component<IProps> {
@@ -49,6 +50,7 @@ class Page extends React.Component<IProps> {
           postUpdateMethod="pages.update"
           subscription="pages"
           showFormInit={false}
+          userId={this.props.userId}
         />
       </Transition>
     ) : (

@@ -2,6 +2,7 @@ import * as React from "react";
 import { Accounts } from "meteor/accounts-base";
 import * as dateFormat from "dateformat";
 import PropTypes from "prop-types";
+import Button from "@material-ui/core/Button";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
@@ -24,6 +25,9 @@ styles = theme => ({
   },
   personalDetails: {
     width: "auto"
+  },
+  fbButtons: {
+    margin: "1rem"
   }
 });
 
@@ -337,6 +341,14 @@ class Settings extends React.Component<IProps, IState> {
     return layout;
   }
 
+  doFeedDialog() {
+    _FB_feedDialog();
+  }
+
+  ogShare() {
+    _FB_ogShare();
+  }
+
   settings() {
     const { profile, classes } = this.props;
     let layout: any = "";
@@ -348,7 +360,11 @@ class Settings extends React.Component<IProps, IState> {
       layout = (
         <div>
           <h1 className={classes.heading}>{profile.screenName}</h1>
+          <div className={classes.fbButtons}>
+            <Button onClick={this.doFeedDialog} variant="contained">Feed</Button> <Button onClick={this.ogShare} variant="contained">ogShare</Button>
+          </div>
           {this.getNotifications()}
+
           {this.renderImage()}
           <h2>
             Personal Details <EditIcon onClick={this.handleSetState} stateName="editProfile" />
@@ -378,6 +394,17 @@ class Settings extends React.Component<IProps, IState> {
     }
     return <div className="profile-details">{layout}</div>;
   }
+
+  /*
+  facebookLogin() {
+    const { classes } = this.props;
+    return (
+      <div className={classes.FBLogin}>
+        <FBLogin />
+      </div>
+    );
+  }
+  */
 
   render() {
     const { profile } = this.props;

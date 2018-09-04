@@ -9,7 +9,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { Posts } from "../../../api/posts/publish";
 import Transition from "../../partials/Transition";
 import PageContent from "../../partials/PageContent";
-import CommentBlogSection from "../../comments/CommentBlogSection";
+//import CommentBlogSection from "../../comments/CommentBlogSection";
 import { Comments } from "../../../api/comments/publish";
 import { Profiles } from "../../../api/profiles/publish";
 import Spinner from "../../partials/Spinner";
@@ -59,28 +59,19 @@ class BlogEntry extends React.Component<IProps, IState> {
         postCreateMethod="post.create"
         subscription="posts"
         showFormInit={false}
+        hasComments={true}
+        userId={this.props.userId}
       />
     );
   }
 
   allowEdit() {}
 
-  comments() {
-    let layout: any = "";
-    if (this.props.post) {
-      layout = <CommentBlogSection userId={this.props.userId} postId={this.props.post._id} />;
-    }
-    return layout;
-  }
-
   render() {
     const { post } = this.props;
     return post ? (
       <Transition>
-        <div className="page-content">
-          {this.renderPost()}
-          {this.comments()}
-        </div>
+        <div className="page-content">{this.renderPost()}</div>
       </Transition>
     ) : (
       ""

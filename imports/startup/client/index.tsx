@@ -12,6 +12,7 @@ import * as User from "../../modules/user";
 import rootReducer from "../../redux/reducers";
 
 declare var window: any;
+declare var FB: any;
 
 const store = createStore(rootReducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
 
@@ -51,6 +52,29 @@ Accounts.onLogout(() => {
   store.dispatch({ type: "LOGOUT_DONE" });
 });
 
+/*
+const initFB = () => {
+
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '537172216737060',
+      xfbml      : true,
+      version    : 'v3.1'
+    });
+    FB.AppEvents.logPageView();
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+  
+}; 
+*/
+
 Meteor.startup(() => {
   ReactDOM.hydrate(<Launch />, document.getElementById("react-root"));
   let timeOutOn = Meteor.settings.public.session.timeOutOn === false ? false : true;
@@ -69,4 +93,10 @@ Meteor.startup(() => {
       activityDetected = true;
     });
   }
+  //initFB();
 });
+
+window.onfocus = () => {
+  log.info("Reconnecting Meteor...");
+  Meteor.reconnect();
+};

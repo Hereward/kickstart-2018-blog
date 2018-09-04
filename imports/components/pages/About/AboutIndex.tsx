@@ -35,6 +35,7 @@ interface IProps {
   history: PropTypes.object.isRequired;
   systemSettings: PropTypes.object.isRequired;
   creators: PropTypes.object.isRequired;
+  userId: string;
 }
 
 class About extends React.Component<IProps> {
@@ -86,6 +87,7 @@ class About extends React.Component<IProps> {
           postUpdateMethod="pages.update"
           subscription="pages"
           showFormInit={false}
+          userId={this.props.userId}
         />
         {creators && this.customContent()}
       </Transition>

@@ -50,6 +50,7 @@ const extractData = (match, DataSrc, defaultImageLink) => {
 
 const getCustomMetaData = (url, defaultImageLink, systemSettings) => {
   let slug = "";
+  let objectType:string = "website";
   const path = url.pathname;
   const pagePattern = /([a-z0-9]+(?:-[a-z0-9]+)*$)/i;
   const blogPattern = /blog\/([a-z0-9]+(?:-[a-z0-9]+)*$)/i;
@@ -69,8 +70,10 @@ const getCustomMetaData = (url, defaultImageLink, systemSettings) => {
     customTitle = "Admin Page";
   } else if (blogMatch) {
     data = extractData(blogMatch, Posts, defaultImageLink);
+    objectType = "article";
   } else if (pageMatch) {
     data = extractData(pageMatch, Pages, defaultImageLink);
+    objectType = "article";
   }
 
   if (clone) {
@@ -80,6 +83,7 @@ const getCustomMetaData = (url, defaultImageLink, systemSettings) => {
 
   if (data) {
     data.title += ` - ${systemSettings.shortTitle}`;
+    data.objectType = objectType;
   }
   return data;
 };
@@ -88,13 +92,17 @@ onPageLoad(sink => {
   const sheet = new ServerStyleSheet();
   let url: any;
   url = sink.request.url;
-  let path = url.path;
+  const pathname = url.pathname;
+  const meteorHost = Meteor.absoluteUrl();
+  const fullUrl = meteorHost + pathname.replace(/^\/+/g, '');
+  //log.info(`onPageLoad url =`, url);
+  //let path = url.path;
   const systemSettingsObj = systemSettings.findOne();
   const defaultImageLink = getImageLink(systemSettingsObj.image_id);
   systemSettingsObj.imageLink = defaultImageLink;
   const customSettings = getCustomMetaData(url, defaultImageLink, systemSettingsObj);
   const resolvedSettings = customSettings || systemSettingsObj;
-  sink.renderIntoElementById("react-root", renderToStaticMarkup(<Meta settings={resolvedSettings} location={path} />));
+  sink.renderIntoElementById("react-root", renderToStaticMarkup(<Meta settings={resolvedSettings} url={fullUrl} />));
   const helmet = Helmet.renderStatic();
   sink.appendToHead(helmet.meta.toString());
   sink.appendToHead(helmet.title.toString());
