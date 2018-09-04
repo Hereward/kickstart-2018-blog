@@ -35,7 +35,7 @@ const extractData = (match, DataSrc, defaultImageLink) => {
   let data: any;
   const slug = match[1];
   const post = DataSrc.findOne({ slug: slug });
-  log.info(`getCustomMetaData - extractData`, slug);
+  //log.info(`getCustomMetaData - extractData`, slug);
   if (post) {
     const imageId = post.image_id;
     if (imageId) {
@@ -50,7 +50,7 @@ const extractData = (match, DataSrc, defaultImageLink) => {
 
 const getCustomMetaData = (url, defaultImageLink, systemSettings) => {
   let slug = "";
-  let objectType:string = "website";
+  let objectType: string = "website";
   const path = url.pathname;
   const pagePattern = /([a-z0-9]+(?:-[a-z0-9]+)*$)/i;
   const blogPattern = /blog\/([a-z0-9]+(?:-[a-z0-9]+)*$)/i;
@@ -95,16 +95,14 @@ onPageLoad(sink => {
   url = sink.request.url;
   const pathname = url.pathname;
   const meteorHost = Meteor.absoluteUrl();
-  const fullUrl = meteorHost + pathname.replace(/^\/+/g, '');
-  //log.info(`onPageLoad url =`, url);
-  //let path = url.path;
+  const fullUrl = meteorHost + pathname.replace(/^\/+/g, "");
   const systemSettingsObj = systemSettings.findOne();
 
   if (systemSettingsObj) {
     defaultImageLink = getImageLink(systemSettingsObj.image_id);
     systemSettingsObj.imageLink = defaultImageLink;
+    systemSettingsObj.objectType = "website";
   }
- 
 
   const customSettings = getCustomMetaData(url, defaultImageLink, systemSettingsObj);
   const resolvedSettings = customSettings || systemSettingsObj;
