@@ -155,6 +155,8 @@ export const imageUpdatePageAdmin = new ValidatedMethod({
   }
 });
 
+
+/*
 export const imageUpdateSettingsAdmin = new ValidatedMethod({
   name: "image.UpdateSettingsAdmin",
   validate: new SimpleSchema({
@@ -164,7 +166,6 @@ export const imageUpdateSettingsAdmin = new ValidatedMethod({
 
   run(fields) {
     authCheck("admin.UpdateSettingsAdmin", this.userId, "admin");
-
     systemSettings.update(fields.id, {
       $set: {
         image_id: fields.image_id
@@ -174,6 +175,7 @@ export const imageUpdateSettingsAdmin = new ValidatedMethod({
     return true;
   }
 });
+*/
 
 export const adminToggle2FA = new ValidatedMethod({
   name: "admin.adminToggle2FA",
@@ -296,6 +298,7 @@ export const updateSettings = new ValidatedMethod({
   run(fields) {
     if (!this.isSimulation) {
       authCheck("updateSettings", this.userId, "admin");
+      log.info(`admin.updateSetting`, fields);
 
       systemSettings.update(
         { active: true },

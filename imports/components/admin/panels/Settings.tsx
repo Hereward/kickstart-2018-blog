@@ -3,10 +3,10 @@ import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Switch from "@material-ui/core/Switch";
-import { toggleSystemOnline, updateSettings } from "../../../api/admin/methods";
+import { toggleSystemOnline } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import SettingsForm from "../../admin/forms/SettingsForm";
-import RenderImage from "../components/RenderImage";
+//import RenderImage from "../components/RenderImage";
 import Spinner from "../../partials/Spinner";
 
 //const drawerWidth = 240;
@@ -21,16 +21,7 @@ interface IProps {
   imageUpdateMethod: string;
 }
 
-interface IState {
-  [x: number]: any;
-  allowSubmit: boolean;
-  title: string;
-  shortTitle: string;
-  copyright: string;
-  summary: string;
-  updateDone: boolean;
-  image_id: string;
-}
+interface IState {}
 
 styles = theme => ({
   groupHeading: {
@@ -57,8 +48,6 @@ styles = theme => ({
 class Settings extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
 
     this.state = {
       allowSubmit: true,
@@ -66,8 +55,7 @@ class Settings extends React.Component<IProps, IState> {
       shortTitle: this.props.systemSettings.shortTitle,
       copyright: this.props.systemSettings.copyright,
       summary: this.props.systemSettings.summary,
-      image_id: this.props.systemSettings.image_id,
-      updateDone: false
+      image_id: this.props.systemSettings.image_id
     };
   }
 
@@ -84,40 +72,6 @@ class Settings extends React.Component<IProps, IState> {
     this.setState({ image_id: props.image_id });
   };
 
-  handleChange(e) {
-    let target = e.target;
-    let value = target.type === "checkbox" ? target.checked : target.value;
-    let id = target.id;
-    this.setState({ [id]: value, updateDone: false });
-    log.info(`admin handleChange`, id, value, this.state);
-  }
-
-  handleSubmit() {
-    log.info(`admin submit`, this.state);
-    this.setState({ allowSubmit: false, updateDone: true });
-    const settings = {
-      title: this.state.title,
-      shortTitle: this.state.shortTitle,
-      copyright: this.state.copyright,
-      summary: this.state.summary,
-      image_id: this.state.image_id
-    };
-
-    updateSettings.call(settings, err => {
-      this.setState({ allowSubmit: true });
-
-      if (err) {
-        Library.modalErrorAlert(err.reason);
-      } else {
-        this.miniAlert("Update Succesful.");
-      }
-    });
-  }
-
-  miniAlert = (message = "") => {
-    this.props.dispatch({ type: "MINI_ALERT_ON", message: message });
-  };
-
   layout() {
     const { systemSettings, imageUpdateMethod } = this.props;
     return (
@@ -129,20 +83,8 @@ class Settings extends React.Component<IProps, IState> {
             System Online: <Switch onChange={this.toggleOnline()} checked={this.props.systemSettings.systemOnline} />
           </div>
         </div>
-        <RenderImage
-          allowEdit={false}
-          updateMethod={imageUpdateMethod}
-          updateImageId={this.updateImageId}
-          dataObj={systemSettings}
-          imageId={systemSettings.image_id}
-        />
-        <SettingsForm
-          allowSubmit={this.state.allowSubmit}
-          handleChange={this.handleChange}
-          handleSubmit={this.handleSubmit}
-          settingsObj={systemSettings}
-          updateDone={this.state.updateDone}
-        />
+
+        <SettingsForm imageUpdateMethod={imageUpdateMethod} settingsObj={systemSettings} />
       </div>
     );
   }

@@ -107,8 +107,7 @@ class PostForm extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
 
-    const { settingsObj } = this.props;
-    const { editingExistingData } = this.props;
+    const { settingsObj, editingExistingData } = props;
 
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);

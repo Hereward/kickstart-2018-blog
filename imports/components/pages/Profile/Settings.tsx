@@ -349,6 +349,10 @@ class Settings extends React.Component<IProps, IState> {
     _FB_ogShare();
   }
 
+  fbShare() {
+    _FB_share();
+  }
+
   settings() {
     const { profile, classes } = this.props;
     let layout: any = "";
@@ -361,7 +365,7 @@ class Settings extends React.Component<IProps, IState> {
         <div>
           <h1 className={classes.heading}>{profile.screenName}</h1>
           <div className={classes.fbButtons}>
-            <Button onClick={this.doFeedDialog} variant="contained">Feed</Button> <Button onClick={this.ogShare} variant="contained">ogShare</Button>
+            <Button onClick={this.doFeedDialog} variant="contained">Feed</Button> <Button onClick={this.ogShare} variant="contained">ogShare</Button> <Button onClick={this.fbShare} variant="contained">fbShare</Button>
           </div>
           {this.getNotifications()}
 

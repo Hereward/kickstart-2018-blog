@@ -57,9 +57,9 @@ class RenderImage extends React.Component<IProps, IState> {
     //this.setState({ newDataObject: props.newDataObject });
   };
 
-  setNewImageObject = (newDataObject="") => {
+  setNewImageObject = (newDataObject = "") => {
     this.setState({ newDataObject: newDataObject });
-  }
+  };
 
   toggleImageEdit = e => {
     const newState = !this.state.editImage;
@@ -72,7 +72,7 @@ class RenderImage extends React.Component<IProps, IState> {
     const newDataArray = newDataObject ? [newDataObject] : [];
     let layout: any = "";
     let resolvedImageArray: any[] = [];
-    
+
     if (this.state.editImage) {
       resolvedImageArray = imageArray.length ? imageArray : newDataArray;
       //log.info(`RenderImage.layout() imageId = [${imageId}]`, imageArray, newDataObject, newDataArray, resolvedImageArray );
@@ -122,9 +122,15 @@ export default connect()(
     const editorialImagesHandle = Meteor.subscribe("editorialImages");
     let imageCursor: any;
     let imageArray: any[] = [];
-    if (props.dataObj) {
-      const imageId = props.dataObj.image_id;
-      imageCursor = EditorialImages.find({ _id: imageId });
+    let resolvedImageId: string = "";
+    if (props.imageId) {
+      resolvedImageId = props.imageId;
+    } else if (props.dataObj) {
+      resolvedImageId = props.dataObj.imageId;
+    }
+    if (resolvedImageId) {
+      //const imageId = props.dataObj.image_id;
+      imageCursor = EditorialImages.find({ _id: resolvedImageId });
       imageArray = imageCursor.fetch();
     }
 

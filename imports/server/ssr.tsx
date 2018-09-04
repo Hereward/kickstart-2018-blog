@@ -91,6 +91,7 @@ const getCustomMetaData = (url, defaultImageLink, systemSettings) => {
 onPageLoad(sink => {
   const sheet = new ServerStyleSheet();
   let url: any;
+  let defaultImageLink: string;
   url = sink.request.url;
   const pathname = url.pathname;
   const meteorHost = Meteor.absoluteUrl();
@@ -98,10 +99,16 @@ onPageLoad(sink => {
   //log.info(`onPageLoad url =`, url);
   //let path = url.path;
   const systemSettingsObj = systemSettings.findOne();
-  const defaultImageLink = getImageLink(systemSettingsObj.image_id);
-  systemSettingsObj.imageLink = defaultImageLink;
+
+  if (systemSettingsObj) {
+    defaultImageLink = getImageLink(systemSettingsObj.image_id);
+    systemSettingsObj.imageLink = defaultImageLink;
+  }
+ 
+
   const customSettings = getCustomMetaData(url, defaultImageLink, systemSettingsObj);
   const resolvedSettings = customSettings || systemSettingsObj;
+
   sink.renderIntoElementById("react-root", renderToStaticMarkup(<Meta settings={resolvedSettings} url={fullUrl} />));
   const helmet = Helmet.renderStatic();
   sink.appendToHead(helmet.meta.toString());

@@ -286,7 +286,7 @@ class PageContent extends React.Component<IProps, IState> {
     } else if (post) {
       // VIEW PAGE
       layout = (
-        <div>
+        <div ref="fbplugins">
           {this.headingReadMode()}
 
           {contentType === "post" ? (
@@ -303,7 +303,8 @@ class PageContent extends React.Component<IProps, IState> {
             ""
           )}
           {post.image_id && post.showImage && <EditorialImage imageId={post.image_id} />}
-          <div dangerouslySetInnerHTML={this.createMarkup(post.body)} />
+          <article dangerouslySetInnerHTML={this.createMarkup(post.body)} />
+          <div className="fb-quote" />
           {hasComments && this.comments()}
         </div>
       );
