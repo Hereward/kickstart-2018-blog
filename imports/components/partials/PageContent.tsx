@@ -281,8 +281,7 @@ class PageContent extends React.Component<IProps, IState> {
   getLayout() {
     const { classes, post, contentType, hasComments } = this.props;
     const { showForm } = this.state;
-    const quote = truncate(post.body, 100, { byWords: true, stripTags: true });
-
+    
     let layout: any;
 
     if (showForm) {
@@ -290,6 +289,8 @@ class PageContent extends React.Component<IProps, IState> {
       layout = this.editLayout();
     } else if (post) {
       // VIEW PAGE
+      const quote = truncate(post.body, 100, { byWords: true, stripTags: true });
+
       layout = (
         <div>
           {this.headingReadMode()}
