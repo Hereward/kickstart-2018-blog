@@ -1,5 +1,8 @@
 ////<reference path="index.d.ts"/>
 import * as React from "react";
+import { Meteor } from "meteor/meteor";
+//import FacebookProvider, { Share } from "react-facebook";
+import * as truncate from "truncate-html";
 import PropTypes from "prop-types";
 //import Icon from "@material-ui/core/Icon";
 import { Link } from "react-router-dom";
@@ -22,6 +25,7 @@ import { can as userCan } from "../../modules/user";
 import { deletePost } from "../../api/posts/methods";
 import EditorialImage from "../pages/Blog/EditorialImage";
 import CommentBlogSection from "../comments/CommentBlogSection";
+import Share from "./Share";
 
 interface IProps {
   history: PropTypes.object.isRequired;
@@ -277,6 +281,7 @@ class PageContent extends React.Component<IProps, IState> {
   getLayout() {
     const { classes, post, contentType, hasComments } = this.props;
     const { showForm } = this.state;
+    const quote = truncate(post.body, 100, { byWords: true, stripTags: true });
 
     let layout: any;
 
@@ -286,7 +291,7 @@ class PageContent extends React.Component<IProps, IState> {
     } else if (post) {
       // VIEW PAGE
       layout = (
-        <div ref="fbplugins">
+        <div>
           {this.headingReadMode()}
 
           {contentType === "post" ? (
@@ -298,6 +303,7 @@ class PageContent extends React.Component<IProps, IState> {
                 {dateFormat(post.created, "dd mmmm yyyy")} | <CommentCount postId={post._id} /> Comments
               </h6>
               {post.tags && <h6 className={classes.tags}>{this.renderTags(post.tags)}</h6>}
+              <Share quote={quote} title={post.title} />
             </div>
           ) : (
             ""

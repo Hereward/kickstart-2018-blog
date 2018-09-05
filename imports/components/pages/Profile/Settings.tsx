@@ -353,6 +353,12 @@ class Settings extends React.Component<IProps, IState> {
     _FB_share();
   }
 
+  /*
+  <div className={classes.fbButtons}>
+            <Button onClick={this.doFeedDialog} variant="contained">Feed</Button> <Button onClick={this.ogShare} variant="contained">ogShare</Button> <Button onClick={this.fbShare} variant="contained">fbShare</Button>
+          </div>
+          */
+
   settings() {
     const { profile, classes } = this.props;
     let layout: any = "";
@@ -364,9 +370,7 @@ class Settings extends React.Component<IProps, IState> {
       layout = (
         <div>
           <h1 className={classes.heading}>{profile.screenName}</h1>
-          <div className={classes.fbButtons}>
-            <Button onClick={this.doFeedDialog} variant="contained">Feed</Button> <Button onClick={this.ogShare} variant="contained">ogShare</Button> <Button onClick={this.fbShare} variant="contained">fbShare</Button>
-          </div>
+
           {this.getNotifications()}
 
           {this.renderImage()}

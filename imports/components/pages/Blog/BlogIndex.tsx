@@ -5,7 +5,9 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as dateFormat from "dateformat";
+//import * as parseDomain from "parse-domain";
 //import { Button } from "reactstrap";
+import * as truncate from "truncate-html";
 import Button from "@material-ui/core/Button";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
@@ -16,6 +18,7 @@ import Author from "./Author";
 import CommentCount from "./CommentCount";
 import Spinner from "../../partials/Spinner";
 import EditorialImage from "./EditorialImage";
+import Share from "../../partials/Share";
 
 //import Splash from "../../partials/Splash";
 
@@ -55,6 +58,7 @@ interface IProps {
   totalPosts: number;
   cursorLimit: number;
   urlTag: string;
+  location: PropTypes.object.isRequired;
 }
 
 interface IState {}
@@ -116,8 +120,13 @@ class BlogIndex extends React.Component<IProps, IState> {
   image() {}
 
   renderPost(post: any) {
-    const { classes } = this.props;
+    
+    const { classes, location } = this.props;
+    //const parsedDomain = parseDomain(window.location.href);
     let layout: any = "";
+    const url = `${window.location.hostname}${location.pathname}/${post.slug}`;
+    const quote = truncate(post.body, 100, { byWords: true, stripTags: true });
+    log.info(`BlogIndex.renderPost()`, url, this.props, window.location.hostname);
     if (post) {
       layout = (
         <div>
@@ -131,6 +140,7 @@ class BlogIndex extends React.Component<IProps, IState> {
             {dateFormat(post.created, "dd mmmm yyyy")} | <CommentCount postId={post._id} /> Comments
           </h6>
           {post.tags && <h6 className={classes.tags}>{this.renderTags(post.tags)}</h6>}
+          <Share url={url} quote={quote} title={post.title} />
           {post.image_id && post.showImage && <EditorialImage imageId={post.image_id} />}
           <div dangerouslySetInnerHTML={this.renderBody(post)} />
           {this.readMoreLink(post)}

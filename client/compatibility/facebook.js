@@ -25,10 +25,15 @@ const _FB_initFB = () => {
 };
 
 function _FB_login() {
-  FB.login(function(response) {
-    // Handle the response object, like in statusChangeCallback() in our demo
-    // code.
-  });
+  FB.login(
+    function(response) {
+      // handle the response
+    },
+    {
+      scope: "email",
+      return_scopes: true
+    }
+  );
 }
 
 function _FB_feedDialog() {
@@ -97,4 +102,4 @@ const _FB_checkLoginState = () => {
   });
 };
 
-_FB_initFB();
+//_FB_initFB();
