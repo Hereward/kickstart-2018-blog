@@ -73,7 +73,7 @@ class Share extends React.Component<IProps, IState> {
           </TelegramShareButton>
         </div>
         <div className={classes.shareItemContainer}>
-          <EmailShareButton url={url} subject={title} body={quote} className={classes.shareButton}>
+          <EmailShareButton url={url} subject={title} body={`${url}\n\n ${quote}`} className={classes.shareButton}>
             <EmailIcon size={32} round />
           </EmailShareButton>
         </div>
