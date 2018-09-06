@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import * as dateFormat from "dateformat";
 //import * as parseDomain from "parse-domain";
 //import { Button } from "reactstrap";
-import * as truncate from "truncate-html";
+//import * as truncate from "truncate-html";
 import Button from "@material-ui/core/Button";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
@@ -19,6 +19,7 @@ import CommentCount from "./CommentCount";
 import Spinner from "../../partials/Spinner";
 import EditorialImage from "./EditorialImage";
 import Share from "../../partials/Share";
+import * as Library from "../../../modules/library";
 
 //import Splash from "../../partials/Splash";
 
@@ -125,8 +126,9 @@ class BlogIndex extends React.Component<IProps, IState> {
     //const parsedDomain = parseDomain(window.location.href);
     let layout: any = "";
     const url = `${window.location.hostname}${location.pathname}/${post.slug}`;
-    const quote = truncate(post.body, 100, { byWords: true, stripTags: true });
-    log.info(`BlogIndex.renderPost()`, url, this.props, window.location.hostname);
+    const quote = Library.formatPlainText({text: post.body, wordCount: 100});
+    //const quote = truncate(post.body, 100, { byWords: true, stripTags: true });
+    //log.info(`BlogIndex.renderPost()`, url, this.props, window.location.hostname);
     if (post) {
       layout = (
         <div>

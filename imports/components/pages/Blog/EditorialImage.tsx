@@ -65,7 +65,7 @@ export default withTracker(props => {
     imageObject = cursor.fetch();
   }
 
-  log.info(`EditorialImage`, imageObject);
+  //log.info(`EditorialImage`, imageObject);
 
   return { imageObject: imageObject };
 })(withStyles(styles, { withTheme: true })(EditorialImage));

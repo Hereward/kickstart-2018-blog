@@ -1,4 +1,7 @@
 import * as _swal from "sweetalert";
+import * as truncate from "truncate-html";
+import * as htmlToText from "html-to-text";
+
 import { SweetAlert } from "sweetalert/typings/core";
 import * as User from "./user";
 
@@ -7,17 +10,13 @@ const swal: SweetAlert = temp;
 declare var window: any;
 
 declare var DocHead: any;
-/*
-export function addMeta(systemSettings) {
-  let metaInfo = {
-    name: "viewport",
-    content: "width=device-width, initial-scale=1",
-    description: systemSettings.description
-  };
-  DocHead.addMeta(metaInfo);
-  DocHead.setTitle(systemSettings.mainTitle);
+
+export function formatPlainText(props: { text: string; wordCount: number }) {
+  const truncatedHML = truncate(props.text, props.wordCount, { byWords: true });
+  const formattedText = htmlToText.fromString(truncatedHML, { wordwrap: false });
+  log.info(`Library.formatPlainText()`, props, formattedText);
+  return formattedText;
 }
-*/
 
 const authErrors = {
   invalidCode: "Invalid Code",

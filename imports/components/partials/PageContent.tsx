@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 //import FacebookProvider, { Share } from "react-facebook";
-import * as truncate from "truncate-html";
+//import * as truncate from "truncate-html";
 import PropTypes from "prop-types";
 //import Icon from "@material-ui/core/Icon";
 import { Link } from "react-router-dom";
@@ -289,7 +289,7 @@ class PageContent extends React.Component<IProps, IState> {
       layout = this.editLayout();
     } else if (post) {
       // VIEW PAGE
-      const quote = truncate(post.body, 100, { byWords: true, stripTags: true });
+      const quote = Library.formatPlainText({text: post.body, wordCount: 100}); //truncate(post.body, 100, { byWords: true, stripTags: true });
 
       layout = (
         <div>

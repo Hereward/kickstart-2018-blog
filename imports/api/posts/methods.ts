@@ -7,6 +7,7 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Posts } from "./publish";
 import { can as userCan } from "../../modules/user";
 import { Comments } from "../comments/publish";
+import { formatPlainText } from "../../modules/library";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -48,12 +49,12 @@ function truncateHTML(html) {
   return trunc;
 }
 
+/*
 function truncatePlainText(text) {
   const trunc = truncate(text, 50, { byWords: true, stripTags: true });
   return trunc;
 }
-
-
+*/
 
 export const createPost = new ValidatedMethod({
   name: "post.create",
@@ -74,7 +75,8 @@ export const createPost = new ValidatedMethod({
     authCheck("post.create", this.userId);
     const truncatedBody = truncateHTML(fields.body);
     if (!fields.summary) {
-      fields.summary = truncatePlainText(fields.body);
+      //fields.summary = truncatePlainText(fields.body);
+      fields.summary = formatPlainText({text: fields.body, wordCount: 100});
     }
 
     slugCheck({ slug: fields.slug, type: "new" });
@@ -135,7 +137,8 @@ export const updatePost = new ValidatedMethod({
     authCheck("posts.update", this.userId);
     const truncatedBody = truncateHTML(fields.body);
     if (!fields.summary) {
-      fields.summary = truncatePlainText(fields.body);
+      //fields.summary = truncatePlainText(fields.body);
+      fields.summary = formatPlainText({text: fields.body, wordCount: 100});
     }
     //log.info(`updatePost`, fields);
     const current = Posts.findOne(fields.id);
