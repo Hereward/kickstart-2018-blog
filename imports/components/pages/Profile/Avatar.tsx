@@ -26,8 +26,10 @@ styles = theme => ({
   small: {
     width: 50,
     height: 50,
-    //float: "left",
-    //marginRight: "1rem"
+  },
+  tiny: {
+    width: 25,
+    height: 25,
   },
   letter: {
     textTransform: "uppercase"
@@ -55,17 +57,13 @@ class AvatarClass extends React.Component<IProps, IState> {
     const { classes, imageObject, altTag, size, profile } = this.props;
 
     let configuredSize = size || "small";
-
+    const letter = profile.screenName.substring(0, 1);
     const sizeClass = classes[configuredSize];
-
     let layout: any = "";
     if (imageObject) {
       const link = AvatarImages.link(imageObject);
-      //log.info(`Avatar.getImage()`, link, this.props);
       layout = <Avatar alt="AVATAR" src={link} className={classNames(classes.avatar, sizeClass)} />;
-      //return <Avatar alt="BOOJAM" src={link} className={classNames(classes.avatar, classes.bigAvatar)} />; //classNames(classes.avatar, classes.bigAvatar)
     } else {
-      const letter = profile.screenName.substring(0, 1);
       layout = (
         <Avatar alt="AVATAR" className={classNames(classes.avatar, sizeClass)}><span className={classes.letter}>{letter}</span></Avatar>
       );

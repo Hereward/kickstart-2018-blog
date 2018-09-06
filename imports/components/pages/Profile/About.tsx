@@ -43,12 +43,14 @@ class About extends React.Component<IProps, IState> {
     const { profile, classes } = this.props;
     let image: any = "";
 
-    image = <Avatar profile={profile} size="large" imageId={profile.avatarId} />;
-
     return (
       <div>
         <h1 className={classes.heading}>{profile.screenName}</h1>
-        {profile.avatarId && <div className={classes.avatar}>{image}</div>}
+        {profile.avatarId && (
+          <div className={classes.avatar}>
+            <Avatar profile={profile} size="large" imageId={profile.avatarId} />
+          </div>
+        )}
         <div className={classes.about}>{profile.about}</div>
       </div>
     );

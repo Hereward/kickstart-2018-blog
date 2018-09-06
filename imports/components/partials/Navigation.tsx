@@ -1,7 +1,9 @@
 import * as React from "react";
 import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
+import { withStyles } from "@material-ui/core/styles";
 import * as PropTypes from "prop-types";
+import Typography from "@material-ui/core/Typography";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { Link, NavLink } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
@@ -14,12 +16,21 @@ import * as SessionMethods from "../../api/sessions/methods";
 import * as Library from "../../modules/library";
 import * as User from "../../modules/user";
 import DashDisplay from "./DashDisplay";
+//import Avatar from "../pages/Profile/Avatar";
+
+let styles: any;
+styles = theme => ({
+  root: {
+    fontSize: "0.9rem"
+  }
+});
 
 interface IProps {
   history: any;
+  classes: PropTypes.object.isRequired;
   ShortTitle: any;
   enhancedAuth: boolean;
-  profile: any;
+  profilePublic: PropTypes.object.isRequired;
   location: any;
   userSession: any;
   userSettings: any;
@@ -51,7 +62,7 @@ class Navigation extends React.Component<IProps, IState> {
   reduxStore: any;
 
   emailVerifyPrompted: boolean;
-  constructor(props, context) {
+  constructor(props) {
     super(props);
     this.toggleNavbar = this.toggleNavbar.bind(this);
     this.closeNavbar = this.closeNavbar.bind(this);
@@ -64,7 +75,7 @@ class Navigation extends React.Component<IProps, IState> {
     };
     this.emailVerifyPrompted = false;
 
-    const { store } = context;
+    //const { store } = context;
   }
 
   componentDidMount() {
@@ -201,8 +212,10 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   renderDashDisplay = () => {
+    //log.info(`Navigation.renderDashDisplay()`, this.props);
     return this.props.isClient ? (
       <DashDisplay
+        profilePublic={this.props.profilePublic}
         userSession={this.props.userSession}
         userSettings={this.props.userSettings}
         enhancedAuth={this.props.enhancedAuth}
@@ -221,17 +234,19 @@ class Navigation extends React.Component<IProps, IState> {
   };
 
   navBar() {
+    const {systemSettings, profilePublic} = this.props;
     const cPath = this.props.history.location.pathname;
     let admin = User.can({ threshold: "super-admin" });
+    let dashDisplay: any = "";
+    if (systemSettings) {
+      if (systemSettings.systemOnline || admin) {
+        dashDisplay = this.renderDashDisplay();
+      }
+    }
     return (
       <div>
         <Navbar color="dark" expand="lg" className="main-nav fixed-top" dark>
-          <div className="navbar-brand verified">
-            {this.props.systemSettings ? this.props.systemSettings.shortTitle : ""}{" "}
-            {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin
-              ? this.renderDashDisplay()
-              : ""}
-          </div>
+          <div className="navbar-brand verified">{dashDisplay}</div>
 
           <NavbarToggler onClick={this.toggleNavbar} />
           {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin ? (
@@ -248,15 +263,24 @@ class Navigation extends React.Component<IProps, IState> {
                   </NavLink>
                 </NavItem>
                 <NavItem>
-                  <NavLink className="nav-link" onClick={this.closeNavbar} to="/blog">
-                    Blog
-                  </NavLink>
-                </NavItem>
-                <NavItem>
                   <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/terms-of-service">
                     Terms
                   </NavLink>
                 </NavItem>
+                <Dropdown nav inNavbar isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown}>
+                  <DropdownToggle className={cPath.match(/members/) ? "active" : ""} nav caret>
+                    Members
+                  </DropdownToggle>
+                  <Typography variant="body1" gutterBottom>
+                    {this.getAuthLayout()}
+                  </Typography>
+                </Dropdown>
+                <NavItem>
+                  <NavLink className="nav-link" onClick={this.closeNavbar} to="/blog">
+                    Blog
+                  </NavLink>
+                </NavItem>
+
                 {User.can({ threshold: "creator" }) ? (
                   <NavItem className={cPath.match(/create/) ? "active" : ""}>
                     <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/create">
@@ -264,6 +288,7 @@ class Navigation extends React.Component<IProps, IState> {
                     </NavLink>
                   </NavItem>
                 ) : null}
+
                 {User.can({ threshold: "admin" }) ? (
                   <NavItem>
                     <NavLink className="nav-link" onClick={this.closeNavbar} to="/admin">
@@ -271,13 +296,6 @@ class Navigation extends React.Component<IProps, IState> {
                     </NavLink>
                   </NavItem>
                 ) : null}
-
-                <Dropdown nav inNavbar isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown}>
-                  <DropdownToggle className={cPath.match(/members/) ? "active" : ""} nav caret>
-                    Members
-                  </DropdownToggle>
-                  {this.getAuthLayout()}
-                </Dropdown>
               </Nav>
             </Collapse>
           ) : (
@@ -289,8 +307,14 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   render() {
-    return this.navBar();
+    const {classes} = this.props;
+    return (
+      <Typography className={classes.root} variant="body2" gutterBottom>
+        {this.navBar()}
+      </Typography>
+    );
   }
 }
 
-export default Navigation;
+export default withStyles(styles, { withTheme: true })(Navigation);
+//export default Navigation;

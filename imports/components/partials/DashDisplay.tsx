@@ -1,7 +1,9 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
+import * as PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import { withStyles } from "@material-ui/core/styles";
 import Loader from "react-loader-spinner";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -13,11 +15,31 @@ import "tooltipster";
 import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
+import Avatar from "../pages/Profile/Avatar";
 
 import * as User from "../../modules/user";
 
+let styles: any;
+styles = theme => ({
+  root: {
+    maxWidth: "13.5rem",
+    overflow: "hidden",
+    [theme.breakpoints.up("sm")]: {
+      maxWidth: "20rem"
+    }
+  },
+  verifiedIndicator: {
+    marginRight: "0.5rem"
+  },
+  avatar: {
+    marginRight: "0.5rem"
+  }
+});
+
 interface IProps {
   sessionExpired: boolean;
+  classes: PropTypes.object.isRequired;
+  profilePublic: PropTypes.object.isRequired;
   userData: any;
   userId: string;
   userSettings: any;
@@ -53,7 +75,7 @@ const tip = {
   }
 };
 
-export default class DashDisplay extends React.Component<IProps, IState> {
+export class DashDisplay extends React.Component<IProps, IState> {
   currentTip: string = "";
 
   emailVerifyPrompted: boolean;
@@ -142,13 +164,13 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     }
   }
 
-  emailDashDisplay() {
+  userDisplay() {
     let display: string;
 
     if (this.props.loggingOut && this.props.userData) {
       display = ` ${tip.loggingOut}`;
     } else if (!this.props.sessionExpired && this.props.userData) {
-      display = ` ${this.props.userData.emails[0].address}`;
+      display = ` ${this.props.profilePublic.screenName}`;
     } else if (this.props.loggingIn) {
       display = ` ${tip.loggingIn}`;
     } else {
@@ -162,6 +184,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
   }
 
   getVerifiedIndicator() {
+    const { classes } = this.props;
     let layout: any;
     let verified = this.resolveVerification(this.props);
     let tag: any = null;
@@ -180,7 +203,7 @@ export default class DashDisplay extends React.Component<IProps, IState> {
       tag = <HighlightOff className="action-highlight-off" />;
     }
     layout = (
-      <div className="d-inline-block" id="VerifiedIndicator">
+      <div className={`${classes.verifiedIndicator} d-inline-block`} id="VerifiedIndicator">
         {tag}
       </div>
     );
@@ -188,12 +211,26 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     return layout || "";
   }
 
+  getAvatar() {
+    const { profilePublic, classes } = this.props;
+    let layout: any = "";
+
+    return (
+      <div className={classes.avatar}>
+        <Avatar profile={profilePublic} size="tiny" imageId={profilePublic.avatarId} />
+      </div>
+    );
+  }
+  // d-inline-block
   authVerifiedLayout() {
+    const { classes } = this.props;
     let verifiedLayout: any;
-    let emailDashDisplay = this.emailDashDisplay();
+    let userDisplay = this.userDisplay();
     verifiedLayout = (
-      <div className="d-inline-block">
-        {this.getVerifiedIndicator()} <div className="d-none d-sm-inline-block">{emailDashDisplay}</div>
+      <div className={`${classes.root} d-flex justify-content-between align-items-center`}>
+        {this.getAvatar()}
+        {this.getVerifiedIndicator()}
+        <div>{userDisplay}</div>
       </div>
     );
     return verifiedLayout || "";
@@ -203,3 +240,5 @@ export default class DashDisplay extends React.Component<IProps, IState> {
     return this.authVerifiedLayout();
   }
 }
+
+export default withStyles(styles, { withTheme: true })(DashDisplay);

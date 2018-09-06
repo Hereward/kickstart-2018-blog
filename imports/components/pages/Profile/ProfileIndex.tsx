@@ -31,6 +31,10 @@ styles = theme => ({
     width: "100%",
     backgroundColor: "transparent",
     marginTop: "-0.4rem"
+  },
+  tabs: {
+    boxShadow: "0 4px 10px -2px rgba(0, 0, 0, 0.3)",
+    marginBottom: "2rem"
   }
 });
 
@@ -63,7 +67,6 @@ class Profile extends React.Component<IProps, IState> {
     this.state = {
       tabValue: 0
     };
-    _FB_checkLoginState();
   }
 
   handleTabChange = (event, tabValue) => {
@@ -132,21 +135,19 @@ class Profile extends React.Component<IProps, IState> {
 
     return (
       <div className={classes.tabsRoot}>
-        <AppBar position="static" color="inherit">
-          <Tabs
-            className={classes.tabs}
-            value={tabValue}
-            onChange={this.handleTabChange}
-            indicatorColor="primary"
-            textColor="primary"
-            scrollable
-            scrollButtons="auto"
-          >
-            <Tab label="Posts" />
-            <Tab label="About" />
-            {userCan({ threshold: "owner", owner: profile.owner }) && <Tab label="Settings" />}
-          </Tabs>
-        </AppBar>
+        <Tabs
+          className={classes.tabs}
+          value={tabValue}
+          onChange={this.handleTabChange}
+          indicatorColor="primary"
+          textColor="primary"
+          scrollable
+          scrollButtons="auto"
+        >
+          <Tab label="Posts" />
+          <Tab label="About" />
+          {userCan({ threshold: "owner", owner: profile.owner }) && <Tab label="Settings" />}
+        </Tabs>
         {this.tabItem(tabValue)}
       </div>
     );
@@ -157,12 +158,7 @@ class Profile extends React.Component<IProps, IState> {
   componentWillUnmount() {}
 
   getMeta() {
-    return (
-      <MetaWrapper
-        settings={this.props.systemSettings}
-        title="Profile Page"
-      />
-    );
+    return <MetaWrapper settings={this.props.systemSettings} title="Profile Page" />;
   }
 
   /*

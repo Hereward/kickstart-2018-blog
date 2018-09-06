@@ -106,13 +106,7 @@ span {
   margin-bottom: 0.5rem;
 }
 
-.navbar-dark .navbar-nav .show > .nav-link {
-  color: rgba(255, 255, 255, 0.5);
-}
 
-.navbar-dark .navbar-nav .nav-link.active {
-  color: #fff;
-}
 
 button:focus {
   outline: none;
@@ -297,20 +291,20 @@ img.standard-image {
   margin-top: 4rem;
 }
 
+/*
 nav.main-nav .dropdown-menu {
   background-color: #343a40;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
 }
+*/
 
 .container-fluid.header {
   padding: 0;
   margin-bottom: 4rem;
 }
 
-.main-nav .dropdown-item {
-  background-color: #343a40;
-}
+
 
 .circle {
   border-radius: 50%;
@@ -346,14 +340,53 @@ div.about h1 {
   text-align: center;
 }
 
+.main-nav .dropdown-item {
+  /* background-color: #343a40; */
+}
+
+
+.main-nav .dropdown-item:hover, .main-nav .dropdown-item:focus {
+  /* color: #16181b; */
+  text-decoration: none;
+  background-color: #446ab9; /* #f8f9fa; */
+}
+
+.navbar-dark .navbar-nav .show > .nav-link {
+  color: rgba(255, 255, 255, 0.5); 
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+  color: #fff;
+}
+
+.navbar-dark.bg-dark {
+  background-color: #2d467b !important;
+  /*314e88*/
+}
+
 nav.main-nav {
   padding-left: 1rem;
   padding-right: 1rem;
+  box-shadow: 0 2px 10px -1px rgba(0, 0, 0, 0.3); /*0 2px 6px 1px rgba(0, 0, 0, 0.3)*/
 }
 
 .main-nav .dropdown-menu {
   padding: 0;
   margin-left: 0.4rem;
+  top: 45px;
+  border-radius: 0;
+  /* border-radius: 0 0 0.25rem 0.25rem; */
+  color: white;
+  min-width: 10rem;
+  border: 0;
+  /*
+  border-left: 1px solid #2d467b;
+  border-right: 1px solid #2d467b;
+  border-bottom: 1px solid #2d467b;
+  */
+  box-shadow: 0 2px 6px 1px rgba(0, 0, 0, 0.3);
+  background-color: #2d467b;
+  font-size: inherit;
 }
 
 .main-nav .dropdown-item {
@@ -365,19 +398,21 @@ nav.main-nav {
 }
 
 .main-nav .dropdown-menu .nav-link {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+  padding: 0.5rem;
 }
 
+/*
 .main-nav.navbar-light .dropdown-item .nav-link {
   color: rgba(0, 0, 0, 0.9);
-  font-size: 1rem;
+  font-size: 1rem; 
 }
+*/
 
 .main-nav .navbar-brand {
-  font-size: 1rem;
-  font-weight: bold;
+  /* font-size: 1rem; */
+  /* font-weight: bold;*/
   color: white;
+  font-size: inherit;
   // color: rgba(0, 0, 0, 0.9);
 }
 
