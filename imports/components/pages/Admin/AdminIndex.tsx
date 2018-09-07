@@ -86,7 +86,7 @@ styles = theme => ({
     //minHeight: "100vh"
   },
   root: {
-    marginTop: "-0.5rem",
+    marginTop: "-1.1rem",
     flexGrow: 1,
     height: "auto",
     zIndex: 1,
@@ -100,6 +100,11 @@ styles = theme => ({
     marginLeft: drawerWidth,
     [theme.breakpoints.up("md")]: {
       width: `calc(100% - ${drawerWidth}px)`
+    }
+  },
+  toolBar: {
+    [theme.breakpoints.down("md")]: {
+      minHeight: "50px"
     }
   },
   navIconHide: {
@@ -457,12 +462,7 @@ class AdminIndex extends React.Component<IProps, IState> {
   }
 
   getMeta() {
-    return (
-      <MetaWrapper
-        settings={this.props.systemSettings}
-        title="Admin Page"
-      />
-    );
+    return <MetaWrapper settings={this.props.systemSettings} title="Admin Page" />;
   }
 
   render() {
@@ -475,7 +475,7 @@ class AdminIndex extends React.Component<IProps, IState> {
         {this.getMeta()}
         <Hidden mdUp>
           <AppBar className={classes.appBar}>
-            <Toolbar>
+            <Toolbar className={classes.toolBar}>
               <IconButton
                 color="inherit"
                 aria-label="open drawer"

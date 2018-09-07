@@ -212,7 +212,6 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   renderDashDisplay = () => {
-    //log.info(`Navigation.renderDashDisplay()`, this.props);
     return this.props.isClient ? (
       <DashDisplay
         profilePublic={this.props.profilePublic}

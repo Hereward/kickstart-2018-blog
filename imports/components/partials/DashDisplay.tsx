@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import * as PropTypes from "prop-types";
+import * as classNames from "classnames";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { withStyles } from "@material-ui/core/styles";
@@ -8,7 +9,7 @@ import Loader from "react-loader-spinner";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import VerifiedUser from "@material-ui/icons/VerifiedUser";
-import HighlightOff from "@material-ui/icons/HighlightOff";
+import ErrorIcon from "@material-ui/icons/HighlightOff";
 import SyncProblem from "@material-ui/icons/SyncProblem";
 import * as jquery from "jquery";
 import "tooltipster";
@@ -22,17 +23,39 @@ import * as User from "../../modules/user";
 let styles: any;
 styles = theme => ({
   root: {
-    maxWidth: "13.5rem",
+    maxWidth: "14rem",
     overflow: "hidden",
     [theme.breakpoints.up("sm")]: {
       maxWidth: "20rem"
     }
+  },
+  baseIcon: {
+    fontSize: 22
   },
   verifiedIndicator: {
     marginRight: "0.5rem"
   },
   avatar: {
     marginRight: "0.5rem"
+  },
+  link: {
+    color: "white",
+    "&:hover": {
+      color: "rgba(255, 255, 255, 0.75)"
+      //color: 'blue'
+    }
+  },
+  errorIcon: {
+    color: "red"
+  },
+  verifiedUserIcon: {
+    color: "lime"
+  },
+  syncProblemIcon: {
+    color: "orange"
+  },
+  spinner: {
+    strokeWidth: 5
   }
 });
 
@@ -165,23 +188,33 @@ export class DashDisplay extends React.Component<IProps, IState> {
   }
 
   userDisplay() {
-    let display: string;
+    let display: any = "";
+    const { classes, userId, userData, profilePublic } = this.props;
 
-    if (this.props.loggingOut && this.props.userData) {
-      display = ` ${tip.loggingOut}`;
+    if (this.props.loggingOut && userData) {
+      display = <span> {tip.loggingOut}</span>;
     } else if (!this.props.sessionExpired && this.props.userData) {
-      display = ` ${this.props.profilePublic.screenName}`;
+      const profileLink = `/members/profile/${userId}`;
+      display = (
+        <Link className={classes.link} to={profileLink}>
+          {" "}
+          {profilePublic.screenName}
+        </Link>
+      );
     } else if (this.props.loggingIn) {
-      display = ` ${tip.loggingIn}`;
+      display = <span> {tip.loggingIn}</span>;
     } else {
-      display = null;
+      display = "";
     }
     return display;
   }
 
   spinner() {
-    return <CircularProgress className="dashboard-spinner" size={20} />;
+    const { classes } = this.props;
+    return <CircularProgress size={22} className={classNames(classes.baseIcon, classes.spinner)} />;
   }
+
+  // size={20}
 
   getVerifiedIndicator() {
     const { classes } = this.props;
@@ -196,20 +229,22 @@ export class DashDisplay extends React.Component<IProps, IState> {
     ) {
       tag = this.spinner();
     } else if (this.props.userData && (!this.props.connected || !this.props.sessionReady)) {
-      tag = <SyncProblem className="notification-sync-problem" />;
+      tag = <SyncProblem className={classNames(classes.baseIcon, classes.syncProblemIcon)} />;
     } else if (verified) {
-      tag = <VerifiedUser className="action-verified-user" />;
+      tag = <VerifiedUser className={classNames(classes.baseIcon, classes.verifiedUserIcon)} />;
     } else if (this.props.sessionReady) {
-      tag = <HighlightOff className="action-highlight-off" />;
+      tag = <ErrorIcon className={classNames(classes.baseIcon, classes.errorIcon)} />;
     }
     layout = (
-      <div className={`${classes.verifiedIndicator} d-inline-block`} id="VerifiedIndicator">
+      <div className={`${classes.verifiedIndicator} d-flex`} id="VerifiedIndicator">
         {tag}
       </div>
     );
 
     return layout || "";
   }
+
+  // className={classes.errorIcon}
 
   getAvatar() {
     const { profilePublic, classes } = this.props;
@@ -223,12 +258,12 @@ export class DashDisplay extends React.Component<IProps, IState> {
   }
   // d-inline-block
   authVerifiedLayout() {
-    const { classes } = this.props;
-    let verifiedLayout: any;
+    const { classes, profilePublic } = this.props;
+    let verifiedLayout: any = "";
     let userDisplay = this.userDisplay();
     verifiedLayout = (
       <div className={`${classes.root} d-flex justify-content-between align-items-center`}>
-        {this.getAvatar()}
+        {profilePublic && this.getAvatar()}
         {this.getVerifiedIndicator()}
         <div>{userDisplay}</div>
       </div>
