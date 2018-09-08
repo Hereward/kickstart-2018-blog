@@ -214,6 +214,7 @@ class Navigation extends React.Component<IProps, IState> {
   renderDashDisplay = () => {
     return this.props.isClient ? (
       <DashDisplay
+        history={this.props.history}
         profilePublic={this.props.profilePublic}
         userSession={this.props.userSession}
         userSettings={this.props.userSettings}
@@ -233,7 +234,7 @@ class Navigation extends React.Component<IProps, IState> {
   };
 
   navBar() {
-    const {systemSettings, profilePublic} = this.props;
+    const { systemSettings, profilePublic, userSession } = this.props;
     const cPath = this.props.history.location.pathname;
     let admin = User.can({ threshold: "super-admin" });
     let dashDisplay: any = "";
@@ -245,7 +246,7 @@ class Navigation extends React.Component<IProps, IState> {
     return (
       <div>
         <Navbar color="dark" expand="lg" className="main-nav fixed-top" dark>
-          <div className="navbar-brand verified">{dashDisplay}</div>
+          <div className="navbar-brand">{dashDisplay}</div>
 
           <NavbarToggler onClick={this.toggleNavbar} />
           {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin ? (
@@ -270,7 +271,7 @@ class Navigation extends React.Component<IProps, IState> {
                   <DropdownToggle className={cPath.match(/members/) ? "active" : ""} nav caret>
                     Members
                   </DropdownToggle>
-                  <Typography variant="body1" gutterBottom>
+                  <Typography component="div" variant="body1" gutterBottom>
                     {this.getAuthLayout()}
                   </Typography>
                 </Dropdown>
@@ -306,7 +307,7 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   render() {
-    const {classes} = this.props;
+    const { classes } = this.props;
     return (
       <Typography className={classes.root} variant="body2" gutterBottom>
         {this.navBar()}

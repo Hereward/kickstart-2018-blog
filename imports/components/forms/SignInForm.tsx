@@ -112,12 +112,12 @@ export default class SignInForm extends React.Component<IProps, IState> {
             </div>
 
             <div className="form-group">
-              <Link href="/" to="/register">
+              <Link href="/" to="/members/register">
                 Click here to register...
               </Link>
             </div>
             <div className="form-group">
-              <Link href="/" to="/forgot-password">
+              <Link href="/" to="/members/forgot-password">
                 Forgot Password ?
               </Link>
             </div>

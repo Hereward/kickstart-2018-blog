@@ -5,6 +5,7 @@ import * as classNames from "classnames";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { withStyles } from "@material-ui/core/styles";
+import Button from "@material-ui/core/Button";
 import Loader from "react-loader-spinner";
 import SvgIcon from "@material-ui/core/SvgIcon";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -56,11 +57,22 @@ styles = theme => ({
   },
   spinner: {
     strokeWidth: 5
+  },
+  button: {
+    minHeight: "auto",
+    padding: "4px 10px",
+    fontSize: "0.78rem",
+    letterSpacing: "0.05rem"
+  },
+  signinButton: {
+    color: "white",
+    borderColor: "rgb(255,255,255, 0.25)"
   }
 });
 
 interface IProps {
   sessionExpired: boolean;
+  history: PropTypes.object.isRequired;
   classes: PropTypes.object.isRequired;
   profilePublic: PropTypes.object.isRequired;
   userData: any;
@@ -75,9 +87,7 @@ interface IProps {
   connectionRetryCount: number;
 }
 
-interface IState {
-  verified: boolean;
-}
+interface IState {}
 
 const tip = {
   loggedOut: "You are signed out.",
@@ -98,27 +108,51 @@ const tip = {
   }
 };
 
+const Wrapper = props => {
+  //const showTip = props.componentProps.userData ? " showTip" : "";
+  return (
+    <div className={`${props.rootClass} d-flex justify-content-between align-items-center tooltipster`}>
+      {props.children}
+    </div>
+  );
+};
+
 export class DashDisplay extends React.Component<IProps, IState> {
   currentTip: string = "";
 
   emailVerifyPrompted: boolean;
   constructor(props) {
     super(props);
-    this.state = {
-      verified: false
-    };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.set(nextProps);
+    //this.setToolTips(nextProps);
   }
 
   componentWillUpdate(nextProps) {}
 
-  componentDidUpdate() {}
+  componentDidUpdate(prevProps) {
+    //log.info(`DashDisplay.componentDidUpdate()`, prevProps, this.props);
+    const { userData, userSession, loggingOut } = this.props;
+
+    if (loggingOut !== prevProps.loggingOut || userData !== prevProps.userData || userSession !== prevProps.userSession) {
+      //log.info(`DashDisplay.componentDidUpdate() TIPS DESTROY`);
+      //this.destroyTip();
+      if (loggingOut || !userData) {
+        this.destroyTip();
+      } else {
+        log.info(`DashDisplay.componentDidUpdate() TIPS ON`, this.props);
+        this.setToolTips(this.props);
+      }
+    }
+  }
 
   componentDidMount() {
-    this.set(this.props);
+    const { userData } = this.props;
+
+    if (userData) {
+      this.setToolTips(this.props);
+    }
   }
 
   dashBoardTip(props) {
@@ -134,7 +168,7 @@ export class DashDisplay extends React.Component<IProps, IState> {
     } else if (props.loggingOut) {
       message = tip.loggingOut;
     } else {
-      verifiedFlag = this.resolveVerification(props);
+      verifiedFlag = this.resolveVerification();
       if (hasAuth) {
         message = verifiedFlag ? tip.verified.enhanced.verified : tip.verified.enhanced.auth2FA;
       } else {
@@ -145,33 +179,38 @@ export class DashDisplay extends React.Component<IProps, IState> {
     return { verified: verifiedFlag, tip: message };
   }
 
-  resolveVerification(props) {
-    if (!props.userData || !props.userSettings) {
+  resolveVerification() {
+    const { userData, userSettings, enhancedAuth, userSession } = this.props;
+    if (!userData || !userSettings) {
       return false;
     }
     let verifiedFlag: boolean = false;
-    let emailVerified = props.userData ? props.userData.emails[0].verified : false;
-    if (props.enhancedAuth === false || props.userSettings.authEnabled === 0) {
+    let emailVerified = userData ? userData.emails[0].verified : false;
+    if (enhancedAuth === false || userSettings.authEnabled === 0) {
       verifiedFlag = emailVerified;
     } else {
-      verifiedFlag =
-        ((props.userSession && props.userSession.verified) || !props.userSettings.authEnabled) && emailVerified;
+      verifiedFlag = ((userSession && userSession.verified) || !userSettings.authEnabled) && emailVerified;
     }
 
     return verifiedFlag;
   }
 
-  set(props) {
-    let initialised = jquery(`.verified`).hasClass("tooltipstered");
+  destroyTip() {
+    let initialised = jquery(`.tooltipster`).hasClass("tooltipstered");
+    if (initialised) {
+      log.info(`DashDisplay.destroyTip()`);
+      jquery(`.tooltipster`).tooltipster("destroy");
+    }
+    this.currentTip = "";
+  }
+
+  setToolTips(props) {
+    //log.info(`DashDisplay.setToolTips()`);
     let newTip = this.dashBoardTip(props).tip;
-
     if (newTip !== this.currentTip) {
+      this.destroyTip();
       this.currentTip = newTip;
-      if (initialised) {
-        jquery(`.verified`).tooltipster("destroy");
-      }
-
-      jquery(`.verified`).tooltipster({
+      jquery(`.tooltipster`).tooltipster({
         trigger: "hover",
         animation: "slide",
         theme: ["tooltipster-shadow", "tooltipster-shadow-customized"],
@@ -219,7 +258,7 @@ export class DashDisplay extends React.Component<IProps, IState> {
   getVerifiedIndicator() {
     const { classes } = this.props;
     let layout: any;
-    let verified = this.resolveVerification(this.props);
+    let verified = this.resolveVerification();
     let tag: any = null;
     let style: any;
     if (
@@ -257,22 +296,59 @@ export class DashDisplay extends React.Component<IProps, IState> {
     );
   }
   // d-inline-block
-  authVerifiedLayout() {
-    const { classes, profilePublic } = this.props;
-    let verifiedLayout: any = "";
-    let userDisplay = this.userDisplay();
-    verifiedLayout = (
-      <div className={`${classes.root} d-flex justify-content-between align-items-center`}>
-        {profilePublic && this.getAvatar()}
-        {this.getVerifiedIndicator()}
-        <div>{userDisplay}</div>
+
+  action = type => {
+    const { classes, history } = this.props;
+    history.push(`/members/${type}`);
+  };
+
+  loggedOutView() {
+    const { classes } = this.props;
+
+    const layout = (
+      <div>
+        <Button variant="outlined" className={classNames(classes.button, classes.signinButton)} onClick={() => this.action("signin")} size="small">
+          Sign In
+        </Button>&nbsp;&nbsp;&nbsp;
+        <Button className={classes.button} onClick={() => this.action("register")} size="small" variant="contained" color="primary">
+          Register
+        </Button>
       </div>
     );
-    return verifiedLayout || "";
+    return layout;
+  }
+
+  // onClick={history.push("/members/signin")}
+  // onClick={history.push("/members/register")}
+
+  // <div className={`${classes.root} d-flex justify-content-between align-items-center`}>
+
+  layout() {
+    const { classes, profilePublic, userData, userId } = this.props;
+    let layout: any = "";
+    const rootClass = classes.root;
+    if (userId) {
+      let userDisplay = this.userDisplay();
+      layout = (
+        <Wrapper componentProps={this.props} rootClass={rootClass}>
+          {profilePublic && this.getAvatar()}
+          {this.getVerifiedIndicator()}
+          <div>{userDisplay}</div>
+        </Wrapper>
+      );
+    } else {
+      layout = (
+        <Wrapper componentProps={this.props} rootClass={rootClass}>
+          {this.loggedOutView()}
+        </Wrapper>
+      );
+    }
+
+    return layout;
   }
 
   render() {
-    return this.authVerifiedLayout();
+    return this.layout();
   }
 }
 
