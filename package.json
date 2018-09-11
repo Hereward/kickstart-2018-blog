@@ -44,6 +44,7 @@
     "jquery-validation": "^1.17.0",
     "loglevel": "^1.6.1",
     "material-ui": "^0.20.0",
+    "mdi-material-ui": "^5.4.0",
     "meteor-node-stubs": "^0.3.2",
     "moment": "^2.22.0",
     "moment-duration-format": "^2.2.2",

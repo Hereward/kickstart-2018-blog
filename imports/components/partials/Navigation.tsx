@@ -237,6 +237,7 @@ class Navigation extends React.Component<IProps, IState> {
     const { systemSettings, profilePublic, userSession } = this.props;
     const cPath = this.props.history.location.pathname;
     let admin = User.can({ threshold: "super-admin" });
+    const adminPage = cPath.match(/admin/);
     let dashDisplay: any = "";
     if (systemSettings) {
       if (systemSettings.systemOnline || admin) {
@@ -249,7 +250,7 @@ class Navigation extends React.Component<IProps, IState> {
           <div className="navbar-brand">{dashDisplay}</div>
 
           <NavbarToggler onClick={this.toggleNavbar} />
-          {(this.props.systemSettings && this.props.systemSettings.systemOnline) || admin ? (
+          {!adminPage && ((this.props.systemSettings && this.props.systemSettings.systemOnline) || admin) ? (
             <Collapse isOpen={!this.state.collapsed} navbar>
               <Nav className="ml-auto" navbar>
                 <NavItem>
@@ -264,7 +265,7 @@ class Navigation extends React.Component<IProps, IState> {
                 </NavItem>
                 <NavItem>
                   <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/terms-of-service">
-                    Terms
+                    Terms of Service
                   </NavLink>
                 </NavItem>
                 <Dropdown nav inNavbar isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown}>

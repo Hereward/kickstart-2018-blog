@@ -2,6 +2,7 @@ import { Meteor } from "meteor/meteor";
 import * as React from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import CssBaseline from "@material-ui/core/CssBaseline";
 import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import Header from "../../partials/Header";
@@ -57,13 +58,15 @@ class App extends React.Component<IProps, IState> {
   mainContent() {
     const path = this.props.history.location.pathname;
     //log.info(`path = `, path);
+    // <CssBaseline />
     const meta = this.props.systemSettings ? <Meta settings={this.props.systemSettings} /> : "";
     return (
       <div className="router-parent d-flex flex-column">
+        <CssBaseline />
         {meta}
         <Header {...this.props} />
         {path === "/" && <HomeContent />}
-          <MainRouter {...this.props} />
+        <MainRouter {...this.props} />
         {!path.match(/admin/) ? <Footer {...this.props} /> : ""}
         <Snackbar message={this.props.miniAlert.message} close={this.closeMiniAlert} isOpen={this.props.miniAlert.on} />
       </div>

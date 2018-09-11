@@ -2,6 +2,8 @@ import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import * as PropTypes from "prop-types";
 import * as classNames from "classnames";
+import PowerOffIcon from "@material-ui/icons/PowerSettingsNew";
+import IconButton from "@material-ui/core/IconButton";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { withStyles } from "@material-ui/core/styles";
@@ -18,6 +20,7 @@ import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
 import Avatar from "../pages/Profile/Avatar";
+import MainDrawer from "./MainDrawer";
 
 import * as User from "../../modules/user";
 
@@ -29,6 +32,9 @@ styles = theme => ({
     [theme.breakpoints.up("sm")]: {
       maxWidth: "20rem"
     }
+  },
+  powerOff: {
+    cursor: "pointer"
   },
   baseIcon: {
     fontSize: 22
@@ -62,7 +68,8 @@ styles = theme => ({
     minHeight: "auto",
     padding: "4px 10px",
     fontSize: "0.78rem",
-    letterSpacing: "0.05rem"
+    letterSpacing: "0.05rem",
+    boxShadow: "none"
   },
   signinButton: {
     color: "white",
@@ -110,11 +117,7 @@ const tip = {
 
 const Wrapper = props => {
   //const showTip = props.componentProps.userData ? " showTip" : "";
-  return (
-    <div className={`${props.rootClass} d-flex justify-content-between align-items-center tooltipster`}>
-      {props.children}
-    </div>
-  );
+  return <div className={`${props.rootClass} d-flex justify-content-between align-items-center`}>{props.children}</div>;
 };
 
 export class DashDisplay extends React.Component<IProps, IState> {
@@ -135,7 +138,11 @@ export class DashDisplay extends React.Component<IProps, IState> {
     //log.info(`DashDisplay.componentDidUpdate()`, prevProps, this.props);
     const { userData, userSession, loggingOut } = this.props;
 
-    if (loggingOut !== prevProps.loggingOut || userData !== prevProps.userData || userSession !== prevProps.userSession) {
+    if (
+      loggingOut !== prevProps.loggingOut ||
+      userData !== prevProps.userData ||
+      userSession !== prevProps.userSession
+    ) {
       //log.info(`DashDisplay.componentDidUpdate() TIPS DESTROY`);
       //this.destroyTip();
       if (loggingOut || !userData) {
@@ -275,7 +282,7 @@ export class DashDisplay extends React.Component<IProps, IState> {
       tag = <ErrorIcon className={classNames(classes.baseIcon, classes.errorIcon)} />;
     }
     layout = (
-      <div className={`${classes.verifiedIndicator} d-flex`} id="VerifiedIndicator">
+      <div className={`${classes.verifiedIndicator} d-flex tooltipster`} id="VerifiedIndicator">
         {tag}
       </div>
     );
@@ -297,6 +304,24 @@ export class DashDisplay extends React.Component<IProps, IState> {
   }
   // d-inline-block
 
+  drawer() {
+    const { classes, history } = this.props;
+    const path = this.props.history.location.pathname;
+    const adminPage = path.match(/admin/);
+    let layout: any = "";
+    if (adminPage) {
+      layout = (
+        <IconButton color="inherit" aria-label="Exit Admin" onClick={() => history.push("/")}>
+          <PowerOffIcon />
+        </IconButton>
+      );
+      //layout = <PowerOffIcon onClick={() => history.push("/")} className={classes.powerOff} />;
+    } else {
+      layout = <MainDrawer />;
+    }
+    return layout;
+  }
+
   action = type => {
     const { classes, history } = this.props;
     history.push(`/members/${type}`);
@@ -304,44 +329,54 @@ export class DashDisplay extends React.Component<IProps, IState> {
 
   loggedOutView() {
     const { classes } = this.props;
+    const rootClass = classes.root;
 
     const layout = (
-      <div>
-        <Button variant="outlined" className={classNames(classes.button, classes.signinButton)} onClick={() => this.action("signin")} size="small">
+      <Wrapper componentProps={this.props} rootClass={rootClass}>
+        {this.drawer()}
+        <Button
+          variant="outlined"
+          className={classNames(classes.button, classes.signinButton)}
+          onClick={() => this.action("signin")}
+          size="small"
+        >
           Sign In
         </Button>&nbsp;&nbsp;&nbsp;
-        <Button className={classes.button} onClick={() => this.action("register")} size="small" variant="contained" color="primary">
+        <Button
+          className={classes.button}
+          onClick={() => this.action("register")}
+          size="small"
+          variant="contained"
+          color="primary"
+        >
           Register
         </Button>
-      </div>
+      </Wrapper>
     );
     return layout;
   }
 
-  // onClick={history.push("/members/signin")}
-  // onClick={history.push("/members/register")}
-
-  // <div className={`${classes.root} d-flex justify-content-between align-items-center`}>
+  loggedInView() {
+    const { classes, profilePublic } = this.props;
+    const rootClass = classes.root;
+    const userDisplay = this.userDisplay();
+    return (
+      <Wrapper componentProps={this.props} rootClass={rootClass}>
+        {this.drawer()}
+        {profilePublic && this.getAvatar()}
+        {this.getVerifiedIndicator()}
+        <div>{userDisplay}</div>
+      </Wrapper>
+    );
+  }
 
   layout() {
-    const { classes, profilePublic, userData, userId } = this.props;
+    const { userId } = this.props;
     let layout: any = "";
-    const rootClass = classes.root;
     if (userId) {
-      let userDisplay = this.userDisplay();
-      layout = (
-        <Wrapper componentProps={this.props} rootClass={rootClass}>
-          {profilePublic && this.getAvatar()}
-          {this.getVerifiedIndicator()}
-          <div>{userDisplay}</div>
-        </Wrapper>
-      );
+      layout = this.loggedInView();
     } else {
-      layout = (
-        <Wrapper componentProps={this.props} rootClass={rootClass}>
-          {this.loggedOutView()}
-        </Wrapper>
-      );
+      layout = this.loggedOutView();
     }
 
     return layout;

@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Accounts } from "meteor/accounts-base";
+
 import { Meteor } from "meteor/meteor";
 import { BrowserRouter } from "react-router-dom";
 import { createStore } from "redux";

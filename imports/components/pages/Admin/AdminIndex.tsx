@@ -8,6 +8,7 @@ import HomeIcon from "@material-ui/icons/Home";
 import PagesIcon from "@material-ui/icons/Description";
 import CommentsIcon from "@material-ui/icons/Comment";
 import TagIcon from "@material-ui/icons/More";
+import PowerOffIcon from "@material-ui/icons/PowerSettingsNew";
 import PostsIcon from "@material-ui/icons/Pages";
 import SettingsIcon from "@material-ui/icons/Settings";
 import Drawer from "@material-ui/core/Drawer";
@@ -67,8 +68,10 @@ styles = theme => ({
   },
   desktopDrawerContainer: {},
   adminDrawer: {
-    margin: "1rem 1rem",
+    margin: "1rem 1rem 0.5rem 1.75rem",
+    padding: 0,
     fontWeight: "bold"
+
   },
   adminContainer: {
     width: "100%",
@@ -86,7 +89,7 @@ styles = theme => ({
     //minHeight: "100vh"
   },
   root: {
-    marginTop: "-1.1rem",
+    marginTop: "-1.2rem",
     flexGrow: 1,
     height: "auto",
     zIndex: 1,
@@ -103,6 +106,7 @@ styles = theme => ({
     }
   },
   toolBar: {
+    paddingLeft: "1rem !important",
     [theme.breakpoints.down("md")]: {
       minHeight: "50px"
     }
@@ -129,7 +133,7 @@ styles = theme => ({
     minHeight: "100vh",
     borderLeft: "1px solid rgba(0, 0, 0, 0.12)",
     [theme.breakpoints.down("sm")]: {
-      marginTop: "4rem",
+      marginTop: "3rem",
       paddingBottom: "8rem"
     }
   }
@@ -453,6 +457,17 @@ class AdminIndex extends React.Component<IProps, IState> {
               <TagIcon />
             </ListItemIcon>
             <ListItemText classes={{ primary: this.getNavStyle("tags") }} primary="Tags" />
+          </ListItem>
+          <ListItem
+            onClick={() => {
+              this.props.history.push("/");
+            }}
+            button
+          >
+            <ListItemIcon>
+              <PowerOffIcon />
+            </ListItemIcon>
+            <ListItemText primary="Exit" />
           </ListItem>
         </List>
       </div>
