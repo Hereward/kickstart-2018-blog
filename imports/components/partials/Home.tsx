@@ -5,7 +5,7 @@ import Transition from "./Transition";
 let fb: any;
 
 const HomeContent = props => (
-  <Transition>
+    <Transition>
     <div className="jumbotron">
       <div className="container">
         <h1 className="display-4">A starter platform for Meteor projects</h1>
@@ -40,7 +40,7 @@ const HomeContent = props => (
         </div>
       </div>
     </div>
-  </Transition>
+    </Transition>
 );
 
 export default HomeContent;

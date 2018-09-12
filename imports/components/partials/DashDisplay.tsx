@@ -4,6 +4,7 @@ import * as PropTypes from "prop-types";
 import * as classNames from "classnames";
 import PowerOffIcon from "@material-ui/icons/PowerSettingsNew";
 import IconButton from "@material-ui/core/IconButton";
+import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { withStyles } from "@material-ui/core/styles";
@@ -20,7 +21,7 @@ import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
 import Avatar from "../pages/Profile/Avatar";
-import MainDrawer from "./MainDrawer";
+//import MainDrawer from "./MainDrawer";
 
 import * as User from "../../modules/user";
 
@@ -29,6 +30,8 @@ styles = theme => ({
   root: {
     maxWidth: "14rem",
     overflow: "hidden",
+    fontSize: "0.9rem",
+    letterSpacing: "0.02rem",
     [theme.breakpoints.up("sm")]: {
       maxWidth: "20rem"
     }
@@ -116,8 +119,12 @@ const tip = {
 };
 
 const Wrapper = props => {
-  //const showTip = props.componentProps.userData ? " showTip" : "";
-  return <div className={`${props.rootClass} d-flex justify-content-between align-items-center`}>{props.children}</div>;
+  const { componentProps, children } = props;
+  return (
+    <Typography className={`${componentProps.classes.root} d-flex justify-content-between align-items-center`}>
+      {children}
+    </Typography>
+  );
 };
 
 export class DashDisplay extends React.Component<IProps, IState> {
@@ -304,8 +311,9 @@ export class DashDisplay extends React.Component<IProps, IState> {
   }
   // d-inline-block
 
+  /*
   drawer() {
-    const { classes, history } = this.props;
+    const { classes, history, userId, loggingIn, loggingOut, sessionReady } = this.props;
     const path = this.props.history.location.pathname;
     const adminPage = path.match(/admin/);
     let layout: any = "";
@@ -317,10 +325,11 @@ export class DashDisplay extends React.Component<IProps, IState> {
       );
       //layout = <PowerOffIcon onClick={() => history.push("/")} className={classes.powerOff} />;
     } else {
-      layout = <MainDrawer />;
+      layout = <MainDrawer sessionReady={sessionReady} loggingIn={loggingIn} loggingOut={loggingOut} userId={userId} />;
     }
     return layout;
   }
+  */
 
   action = type => {
     const { classes, history } = this.props;
@@ -332,8 +341,7 @@ export class DashDisplay extends React.Component<IProps, IState> {
     const rootClass = classes.root;
 
     const layout = (
-      <Wrapper componentProps={this.props} rootClass={rootClass}>
-        {this.drawer()}
+      <Wrapper componentProps={this.props}>
         <Button
           variant="outlined"
           className={classNames(classes.button, classes.signinButton)}
@@ -361,8 +369,7 @@ export class DashDisplay extends React.Component<IProps, IState> {
     const rootClass = classes.root;
     const userDisplay = this.userDisplay();
     return (
-      <Wrapper componentProps={this.props} rootClass={rootClass}>
-        {this.drawer()}
+      <Wrapper componentProps={this.props}>
         {profilePublic && this.getAvatar()}
         {this.getVerifiedIndicator()}
         <div>{userDisplay}</div>
@@ -383,6 +390,7 @@ export class DashDisplay extends React.Component<IProps, IState> {
   }
 
   render() {
+    const { classes } = this.props;
     return this.layout();
   }
 }

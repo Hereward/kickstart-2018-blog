@@ -5,7 +5,8 @@ import { Link, NavLink } from "react-router-dom";
 import * as classNames from "classnames";
 import Drawer from "@material-ui/core/Drawer";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
-import TermsIcon from 'mdi-material-ui/BookOpen';
+import TermsIcon from "mdi-material-ui/BookOpen";
+import BlogIcon from "mdi-material-ui/Web";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import HomeIcon from "@material-ui/icons/Home";
@@ -16,10 +17,16 @@ import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import * as User from "../../modules/user";
 //import { mailFolderListItems, otherMailFolderListItems } from './tileData';
 
 interface IProps {
   classes: PropTypes.object.isRequired;
+  userId: string;
+  loggingOut: boolean;
+  sessionReady: boolean;
+  logOut: PropTypes.object.isRequired;
+  history: PropTypes.object.isRequired;
 }
 
 interface IState {
@@ -28,16 +35,22 @@ interface IState {
 
 const styles: any = {
   menuItems: {
-    "& a": {color: "rgba(0, 0, 0, 0.70)"},
-    "& .active": {color: "red"}
+    "& a": { color: "rgba(0, 0, 0, 0.70)" },
+    "& .active": { color: "red" }
   },
-  menuItem: {
+  listItemText: {
+    color: "inherit"
+  },
+  listItemStaticText: {
+    color: "rgba(0, 0, 0, 0.70)"
+  },
+  listItemIcon: {
     color: "inherit"
   },
   drawerRoot: {
     zIndex: "3000 !important"
   },
-  list: {
+  listContainer: {
     width: 250
   },
   fullList: {
@@ -49,6 +62,13 @@ const styles: any = {
   },
   hide: {
     display: "none"
+  },
+  listItem: {
+    paddingTop: "8px",
+    paddingBottom: "8px"
+  },
+  divider: {
+    height: "0.05rem"
   }
 };
 
@@ -67,40 +87,155 @@ class MainDrawer extends React.Component<IProps, IState> {
     });
   };
 
-  listItem(link: string , label: string, icon: any) {
-    const { classes } = this.props;
+  abortLink(e) {
+    e.preventDefault();
+  }
+
+  listItemLink(link: string, label: string, icon?: any) {
+    const { classes, history } = this.props;
     return (
-      <ListItem button>
-        <NavLink className="d-flex" exact to={link}>
-          <ListItemIcon classes={{ root: classes.menuItem }}>
-            {icon}
-          </ListItemIcon>
-          <ListItemText classes={{ primary: classes.menuItem }} primary={label} />
+      <ListItem className={classes.listItem} onClick={e => history.push(link)} button>
+        <NavLink className="d-flex" exact onClick={this.abortLink} to={link}>
+          {icon && <ListItemIcon classes={{ root: classes.listItemIcon }}>{icon}</ListItemIcon>}
+          <ListItemText classes={{ primary: classes.listItemText }} primary={label} />
         </NavLink>
       </ListItem>
     );
   }
 
-  render() {
+  listItemText(label: string, icon?: any) {
     const { classes } = this.props;
+    return (
+      <ListItem className={classes.listItem} component="div">
+        <ListItemText classes={{ primary: classes.listItemText }} primary="Signing Out..." />
+      </ListItem>
+    );
+  }
+
+  signedOutLinks() {
+    const { classes } = this.props;
+    return (
+      <List component="div" className={classes.menuItems}>
+        {this.listItemLink("/members/signin", "Sign In")}
+        {this.listItemLink("/members/register", "Register")}
+        {this.listItemLink("/members/forgot-password", "Forgot Password")}
+      </List>
+    );
+  }
+
+  signedInLinks() {
+    const { classes, userId } = this.props;
+    const profileLink = `/members/profile/${userId}`;
+    return (
+      <List component="div" className={classes.menuItems}>
+        {this.listItemLink(profileLink, "Profile")}
+        {this.listItemLink("/members/change-password", "Change Password")}
+      </List>
+    );
+  }
+
+  authLinks() {
+    const { classes, sessionReady, loggingOut } = this.props;
+    let layout: any = "";
+    if (loggingOut) {
+      layout = (
+        <List component="div" className={classes.menuItems}>
+          {this.listItemText("Signing Out...")}
+        </List>
+      );
+    } else {
+      if (sessionReady) {
+        layout = this.signedInLinks();
+      } else {
+        layout = this.signedOutLinks();
+      }
+    }
+    return (
+      <React.Fragment>
+        <Divider className={classes.divider} />
+        {layout}
+      </React.Fragment>
+    );
+  }
+
+  logOutLink() {
+    const { classes, logOut, loggingOut, userId } = this.props;
+    let layout: any = "";
+
+    if (userId && !loggingOut) {
+      layout = (
+        <React.Fragment>
+          <Divider className={classes.divider} />
+          <List component="div" className={classes.menuItems}>
+            <ListItem className={classes.listItem} button onClick={logOut}>
+              <ListItemText classes={{ primary: classes.listItemStaticText }} primary="Sign Out" />
+            </ListItem>
+          </List>
+        </React.Fragment>
+      );
+    }
+
+    return layout;
+  }
+
+  adminLink() {
+    const { classes, logOut, loggingOut, userId } = this.props;
+    let layout: any = "";
+
+    if (User.can({ threshold: "admin" })) {
+      layout = (
+        <React.Fragment>
+          <Divider className={classes.divider} />
+          <List component="div" className={classes.menuItems}>
+            {this.listItemLink("/admin", "Admin")}
+          </List>
+        </React.Fragment>
+      );
+    }
+    return layout;
+  }
+
+  creatorLinks() {
+    const { classes, logOut, loggingOut, userId } = this.props;
+    let layout: any = "";
+
+    if (User.can({ threshold: "creator" })) {
+      layout = (
+        <React.Fragment>
+          <Divider className={classes.divider} />
+          <List component="div" className={classes.menuItems}>
+            {this.listItemLink("/create", "Create")}
+          </List>
+        </React.Fragment>
+      );
+    }
+    return layout;
+  }
+
+  baseLinks() {
+    const { classes } = this.props;
+
+    return (
+      <List component="div" className={classes.menuItems}>
+        {this.listItemLink("/", "Home", <HomeIcon />)}
+        {this.listItemLink("/about", "About", <InfoIcon />)}
+        {this.listItemLink("/terms-of-service", "Terms of Service", <TermsIcon />)}
+        {this.listItemLink("/blog", "Blog", <BlogIcon />)}
+      </List>
+    );
+  }
+
+  render() {
+    const { classes, userId, loggingOut } = this.props;
     const { open } = this.state;
 
     const menuItems = (
-      <div className={classes.list}>
-        <List className={classes.menuItems}>
-          {this.listItem("/", "Home", <HomeIcon />)}
-          {this.listItem("/about", "About", <InfoIcon />)}
-          {this.listItem("/terms-of-service", "Terms of Service", <TermsIcon />)}
-        </List>
-        <Divider />
-        <List>
-          <ListItem button>
-            <ListItemText primary="Oink" />
-          </ListItem>
-          <ListItem button component="a" href="#simple-list">
-            <ListItemText primary="Boink" />
-          </ListItem>
-        </List>
+      <div className={classes.listContainer}>
+        {this.baseLinks()}
+        {this.authLinks()}
+        {this.creatorLinks()}
+        {this.adminLink()}
+        {this.logOutLink()}
       </div>
     );
 

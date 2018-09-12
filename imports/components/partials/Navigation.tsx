@@ -3,6 +3,8 @@ import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
 import { withStyles } from "@material-ui/core/styles";
 import * as PropTypes from "prop-types";
+import PowerOffIcon from "@material-ui/icons/PowerSettingsNew";
+import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { Link, NavLink } from "react-router-dom";
@@ -16,12 +18,16 @@ import * as SessionMethods from "../../api/sessions/methods";
 import * as Library from "../../modules/library";
 import * as User from "../../modules/user";
 import DashDisplay from "./DashDisplay";
+import MainDrawer from "./MainDrawer";
 //import Avatar from "../pages/Profile/Avatar";
 
 let styles: any;
 styles = theme => ({
-  root: {
-    fontSize: "0.9rem"
+  typographyRoot: {
+    fontSize: "0.9rem",
+    letterSpacing: "0.02rem",
+    textTransform: "uppercase",
+    fontWeight: "200"
   }
 });
 
@@ -144,6 +150,34 @@ class Navigation extends React.Component<IProps, IState> {
     });
   }
 
+  drawer() {
+    const { classes, history, userId, loggingIn, loggingOut, sessionReady } = this.props;
+    const path = this.props.history.location.pathname;
+    const adminPage = path.match(/admin/);
+    let layout: any = "";
+    if (adminPage) {
+      layout = (
+        <IconButton color="inherit" aria-label="Exit Admin" onClick={() => history.push("/")}>
+          <PowerOffIcon />
+        </IconButton>
+      );
+      //layout = <PowerOffIcon onClick={() => history.push("/")} className={classes.powerOff} />;
+    } else {
+      layout = (
+        <MainDrawer
+          sessionReady={sessionReady}
+          logOut={this.logOut}
+          loggingIn={loggingIn}
+          loggingOut={loggingOut}
+          userId={userId}
+          history={history}
+        />
+      );
+    }
+    return layout;
+  }
+
+  /*
   getAuthLayout() {
     const { userId } = this.props;
     let SignedInLayout = (
@@ -180,6 +214,7 @@ class Navigation extends React.Component<IProps, IState> {
 
     return this.props.sessionReady ? SignedInLayout : SignedOutLayout;
   }
+  */
 
   logOut() {
     if (this.props.sessionReady) {
@@ -212,29 +247,43 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   renderDashDisplay = () => {
-    return this.props.isClient ? (
-      <DashDisplay
-        history={this.props.history}
-        profilePublic={this.props.profilePublic}
-        userSession={this.props.userSession}
-        userSettings={this.props.userSettings}
-        enhancedAuth={this.props.enhancedAuth}
-        loggingOut={this.props.loggingOut}
-        loggingIn={this.props.loggingIn}
-        userData={this.props.userData}
-        userId={this.props.userId}
-        sessionExpired={this.props.sessionExpired}
-        sessionReady={this.props.sessionReady}
-        connected={this.props.connected}
-        connectionRetryCount={this.props.connectionRetryCount}
-      />
-    ) : (
-      ""
+    return (
+      <div className="navbar-brand d-flex">
+        {this.drawer()}
+        <DashDisplay
+          history={this.props.history}
+          profilePublic={this.props.profilePublic}
+          userSession={this.props.userSession}
+          userSettings={this.props.userSettings}
+          enhancedAuth={this.props.enhancedAuth}
+          loggingOut={this.props.loggingOut}
+          loggingIn={this.props.loggingIn}
+          userData={this.props.userData}
+          userId={this.props.userId}
+          sessionExpired={this.props.sessionExpired}
+          sessionReady={this.props.sessionReady}
+          connected={this.props.connected}
+          connectionRetryCount={this.props.connectionRetryCount}
+        />
+      </div>
     );
   };
 
+  renderNavItem(label, link) {
+    const { classes } = this.props;
+    return (
+      <NavItem>
+        <Typography className={classes.typographyRoot} variant="body2">
+          <NavLink exact className="nav-link" to={link}>
+            {label}
+          </NavLink>
+        </Typography>
+      </NavItem>
+    );
+  }
+
   navBar() {
-    const { systemSettings, profilePublic, userSession } = this.props;
+    const { classes, systemSettings, profilePublic, userSession } = this.props;
     const cPath = this.props.history.location.pathname;
     let admin = User.can({ threshold: "super-admin" });
     const adminPage = cPath.match(/admin/);
@@ -245,75 +294,25 @@ class Navigation extends React.Component<IProps, IState> {
       }
     }
     return (
-      <div>
-        <Navbar color="dark" expand="lg" className="main-nav fixed-top" dark>
-          <div className="navbar-brand">{dashDisplay}</div>
+      <Navbar color="dark" expand="lg" className="main-nav fixed-top " dark>
+        {dashDisplay}
 
-          <NavbarToggler onClick={this.toggleNavbar} />
-          {!adminPage && ((this.props.systemSettings && this.props.systemSettings.systemOnline) || admin) ? (
-            <Collapse isOpen={!this.state.collapsed} navbar>
-              <Nav className="ml-auto" navbar>
-                <NavItem>
-                  <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/">
-                    Home
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/about">
-                    About
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/terms-of-service">
-                    Terms of Service
-                  </NavLink>
-                </NavItem>
-                <Dropdown nav inNavbar isOpen={this.state.dropdownOpen} toggle={this.toggleDropDown}>
-                  <DropdownToggle className={cPath.match(/members/) ? "active" : ""} nav caret>
-                    Members
-                  </DropdownToggle>
-                  <Typography component="div" variant="body1" gutterBottom>
-                    {this.getAuthLayout()}
-                  </Typography>
-                </Dropdown>
-                <NavItem>
-                  <NavLink className="nav-link" onClick={this.closeNavbar} to="/blog">
-                    Blog
-                  </NavLink>
-                </NavItem>
-
-                {User.can({ threshold: "creator" }) ? (
-                  <NavItem className={cPath.match(/create/) ? "active" : ""}>
-                    <NavLink exact className="nav-link" onClick={this.closeNavbar} to="/create">
-                      Create
-                    </NavLink>
-                  </NavItem>
-                ) : null}
-
-                {User.can({ threshold: "admin" }) ? (
-                  <NavItem>
-                    <NavLink className="nav-link" onClick={this.closeNavbar} to="/admin">
-                      Admin
-                    </NavLink>
-                  </NavItem>
-                ) : null}
-              </Nav>
-            </Collapse>
-          ) : (
-            ""
+        {!adminPage &&
+          ((this.props.systemSettings && this.props.systemSettings.systemOnline) || admin) && (
+            <Nav className="ml-auto mr-2 d-none d-lg-flex" navbar>
+              {this.renderNavItem("Home", "/")}
+              {this.renderNavItem("About", "/about")}
+              {this.renderNavItem("Terms of Service", "/terms-of-service")}
+              {this.renderNavItem("Blog", "/blog")}
+            </Nav>
           )}
-        </Navbar>
-      </div>
+      </Navbar>
     );
   }
 
   render() {
     const { classes } = this.props;
-    return (
-      <Typography className={classes.root} variant="body2" gutterBottom>
-        {this.navBar()}
-      </Typography>
-    );
+    return this.navBar();
   }
 }
 

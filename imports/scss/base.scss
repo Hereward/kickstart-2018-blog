@@ -29,8 +29,7 @@ body {
 }
 
 .jumbotron {
-  padding-top: 2rem;
-  margin-top: -1rem;
+  padding: 2rem !important;
 }
 
 .svg-text-icon {
@@ -303,7 +302,7 @@ img.standard-image {
 
 .container-fluid.header {
   padding: 0;
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
 }
 
 .circle {
@@ -358,6 +357,7 @@ div.about h1 {
 .navbar-toggler {
   font-size: 0.9rem;
 }
+
 
 /*
 .main-drawer-items a, .main-drawer-items a:link {
@@ -528,7 +528,6 @@ nav.main-nav {
 }
 
 @media (min-width: 1200px) {
-
 }
 
 @media (min-width: 1921px) {

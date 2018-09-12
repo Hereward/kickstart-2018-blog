@@ -89,7 +89,6 @@ styles = theme => ({
     //minHeight: "100vh"
   },
   root: {
-    marginTop: "-1.2rem",
     flexGrow: 1,
     height: "auto",
     zIndex: 1,
