@@ -11,14 +11,16 @@ This project builds on my previous project [Meteor/React Kickstart 2018](https:/
 
 **New features:**
 
-* permissions system (meteor-roles)
-* admin panel
-* user management  
-* send invitations
-* SSR (implemented for header and loading screen)
-* ability to set HTML meta data via admin panel
-* react-redux
-* improved routing
+* Blog (create/edit/delete)
+* Tags (create/edit/delete)
+* Comments (create/edit/delete)
+* Integration of blog editing with permission system
+* Integration of blog & page content with SSR
+* Added OG meta data for blog & page posts
+* Replaced bootstrap navbar with material-ui Drawer component
+* Implemented JSS - component level CSS styling
+* Added react-share - social media share buttons
+* Added tabbed profile pages for users (posts/about/settings)
 
 Fill in `settings/private/adminEmail` to grant top level permissions to the user who registers with that email address.
 
