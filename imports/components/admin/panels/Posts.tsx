@@ -614,7 +614,7 @@ class Posts extends React.Component<IProps, IState> {
   }
 
   postForm(dataObj = null) {
-    const { hasTags, postCreateMethod, postUpdateMethod, imageUpdateMethod, hasImage } = this.props;
+    const { hasTags, postCreateMethod, postUpdateMethod, imageUpdateMethod, hasImage, contentType } = this.props;
     return (
       <PostForm
         imageUpdateMethod={imageUpdateMethod}
@@ -628,6 +628,7 @@ class Posts extends React.Component<IProps, IState> {
         handlePostUpdated={this.handleNewPostUpdated}
         handleEditing={this.handleEditing}
         editMode="admin"
+        contentType={contentType}
       />
     );
   }

@@ -97,6 +97,7 @@ export default withRouter(
       const userSettingsHandle = Meteor.subscribe("userSettings");
       const userSessionHandle = Meteor.subscribe("userSessions");
       const systemSettingsHandle = Meteor.subscribe("systemSettings");
+      const postsDataHandle = Meteor.subscribe("publishedPosts");
       let systemSettingsRec = systemSettings.findOne();
       let sessionReady = false;
       let userSession: any;
@@ -142,6 +143,7 @@ export default withRouter(
           userSettingsHandle.ready() &&
           userSessionHandle.ready() &&
           systemSettingsHandle.ready() &&
+          postsDataHandle.ready() &&
           userData &&
           !loggingIn
         ) {

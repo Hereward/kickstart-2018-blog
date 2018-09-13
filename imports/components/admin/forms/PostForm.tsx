@@ -37,6 +37,7 @@ interface IProps {
   hasTags: boolean;
   hasImage: boolean;
   imageUpdateMethod: PropTypes.object.isRequired;
+  contentType: string;
 }
 
 interface IState {
@@ -51,6 +52,7 @@ interface IState {
   title: string;
   body: string;
   blockUI: boolean;
+  type: boolean;
 }
 
 const styles = theme => ({
@@ -125,6 +127,7 @@ class PostForm extends React.Component<IProps, IState> {
       slug: settingsObj ? settingsObj.slug : "",
       title: settingsObj ? settingsObj.title : "",
       body: settingsObj ? settingsObj.body : "",
+      type: settingsObj ? settingsObj.type : "story",
       blockUI: false
     };
   }
@@ -156,7 +159,8 @@ class PostForm extends React.Component<IProps, IState> {
       postCreateMethod,
       handleNewPostCreated,
       handlePostUpdated,
-      handleEditing
+      handleEditing,
+      contentType
     } = this.props;
 
     let pageFields: any;
@@ -178,6 +182,11 @@ class PostForm extends React.Component<IProps, IState> {
     } else {
       pageFields.closeComments = false;
     }
+
+    if (contentType === "posts") {
+      pageFields.type = this.state.type;
+    }
+    
 
     this.setState({ blockUI: true });
     if (editingExistingData) {

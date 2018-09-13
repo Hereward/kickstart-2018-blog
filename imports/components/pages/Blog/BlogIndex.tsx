@@ -46,7 +46,7 @@ styles = theme => ({
     textAlign: "right"
   },
   tags: {
-   marginTop: "1rem"
+    marginTop: "1rem"
   }
 });
 
@@ -121,12 +121,11 @@ class BlogIndex extends React.Component<IProps, IState> {
   image() {}
 
   renderPost(post: any) {
-    
     const { classes, location } = this.props;
     //const parsedDomain = parseDomain(window.location.href);
     let layout: any = "";
     const url = `${window.location.hostname}${location.pathname}/${post.slug}`;
-    const quote = Library.formatPlainText({text: post.body, wordCount: 100});
+    const quote = Library.formatPlainText({ text: post.body, wordCount: 100 });
     //const quote = truncate(post.body, 100, { byWords: true, stripTags: true });
     //log.info(`BlogIndex.renderPost()`, url, this.props, window.location.hostname);
     if (post) {
@@ -136,7 +135,7 @@ class BlogIndex extends React.Component<IProps, IState> {
             <Link to={`/blog/${post.slug}`}>{post.title}</Link>
           </h2>
           <h6 className="author-heading">
-           <Author authorId={post.authorId} />
+            <Author authorId={post.authorId} />
           </h6>
           <h6>
             {dateFormat(post.created, "dd mmmm yyyy")} | <CommentCount postId={post._id} /> Comments
@@ -204,9 +203,7 @@ class BlogIndex extends React.Component<IProps, IState> {
   }
 
   getMeta() {
-    return (
-      <MetaWrapper settings={this.props.systemSettings} title="Blog Page" />
-    );
+    return <MetaWrapper settings={this.props.systemSettings} title="Blog Page" />;
   }
 
   render() {
@@ -235,7 +232,7 @@ export default connect(mapStateToProps)(
   withTracker(props => {
     //log.info(`BlogIndex.Tracker()`, props);
     const commentsHandle = Meteor.subscribe("comments");
-    let PostsDataHandle = Meteor.subscribe("posts");
+    //let PostsDataHandle = Meteor.subscribe("posts");
     let totalPosts: number = 0;
     let posts: any = [];
     let searchCriteria: any;
@@ -245,17 +242,17 @@ export default connect(mapStateToProps)(
       limit: props.cursorLimit
     };
 
-    if (PostsDataHandle.ready()) {
-      searchCriteria = { publish: true };
-      if (urlTag) {
-        //const findRegex = `/.*${tag}.*/`;
-        const findRegex = { $regex: urlTag, $options: "i" };
-        searchCriteria.tags = findRegex;
-        // Items.find({"description": {$regex: ".*" + variable + ".*", $options: '<options>'}}).fetch();
-      }
-      totalPosts = Posts.find(searchCriteria).count();
-      posts = Posts.find(searchCriteria, options).fetch();
+    //if (PostsDataHandle.ready()) {
+    searchCriteria = {};
+    if (urlTag) {
+      //const findRegex = `/.*${tag}.*/`;
+      const findRegex = { $regex: urlTag, $options: "i" };
+      searchCriteria.tags = findRegex;
+      // Items.find({"description": {$regex: ".*" + variable + ".*", $options: '<options>'}}).fetch();
     }
+    totalPosts = Posts.find(searchCriteria).count();
+    posts = Posts.find(searchCriteria, options).fetch();
+    //}
 
     return { posts: posts, totalPosts: totalPosts, urlTag: urlTag };
   })(withStyles(styles, { withTheme: true })(BlogIndex))

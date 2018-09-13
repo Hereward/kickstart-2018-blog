@@ -189,8 +189,8 @@ class Profile extends React.Component<IProps, IState> {
 
 export default withTracker(props => {
   let avatarImage: any;
-  const postsHandle = Meteor.subscribe("posts");
-  let postsReady = postsHandle.ready();
+  //const postsHandle = Meteor.subscribe("publishedPosts");
+  //let postsReady = postsHandle.ready();
   const avatarImagesDataHandle = Meteor.subscribe("avatarImages");
   let profile: any = "";
   let profileUserId = props.match.params.userId;
@@ -213,9 +213,9 @@ export default withTracker(props => {
     }
   }
 
-  if (postsReady) {
-    totalPosts = Posts.find({ authorId: profileUserId }).count();
-  }
+  //if (postsReady) {
+  totalPosts = Posts.find({ authorId: profileUserId }).count();
+  //}
 
   //log.info(`ProfileIndex tracker DONE`, profile);
 

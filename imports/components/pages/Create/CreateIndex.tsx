@@ -30,7 +30,7 @@ class Boojam extends React.Component<IProps, IState> {
   layout() {
     return (
       <PageContent
-        contentType="post"
+        contentType="posts"
         systemSettings={this.props.systemSettings}
         history={this.props.history}
         permissionThreshold="creator"

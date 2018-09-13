@@ -76,7 +76,7 @@ class About extends React.Component<IProps> {
     return page ? (
       <Transition>
         <PageContent
-          contentType="page"
+          contentType="pages"
           systemSettings={this.props.systemSettings}
           history={history}
           permissionThreshold="creator"

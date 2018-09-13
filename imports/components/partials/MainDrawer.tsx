@@ -34,9 +34,12 @@ interface IState {
 }
 
 const styles: any = {
-  menuItems: {
+  menuItemGroup: {
     "& a": { color: "rgba(0, 0, 0, 0.70)" },
-    "& .active": { color: "red" }
+    "& .active": { color: "red" },
+    paddingTop: "0px",
+    paddingBottom: "0px",
+    borderBottom: "1px solid rgba(0, 0, 0, 0.05)"
   },
   listItemText: {
     color: "inherit"
@@ -51,6 +54,7 @@ const styles: any = {
     zIndex: "3000 !important"
   },
   listContainer: {
+    marginTop: "0.5rem",
     width: 250
   },
   fullList: {
@@ -64,11 +68,12 @@ const styles: any = {
     display: "none"
   },
   listItem: {
-    paddingTop: "8px",
-    paddingBottom: "8px"
+    paddingTop: "10px",
+    paddingBottom: "10px"
   },
   divider: {
-    height: "0.05rem"
+    height: "1px",
+    backgroundColor: "rgba(0, 0, 0, 0.09)"
   }
 };
 
@@ -115,7 +120,7 @@ class MainDrawer extends React.Component<IProps, IState> {
   signedOutLinks() {
     const { classes } = this.props;
     return (
-      <List component="div" className={classes.menuItems}>
+      <List component="div" className={classes.menuItemGroup}>
         {this.listItemLink("/members/signin", "Sign In")}
         {this.listItemLink("/members/register", "Register")}
         {this.listItemLink("/members/forgot-password", "Forgot Password")}
@@ -127,7 +132,7 @@ class MainDrawer extends React.Component<IProps, IState> {
     const { classes, userId } = this.props;
     const profileLink = `/members/profile/${userId}`;
     return (
-      <List component="div" className={classes.menuItems}>
+      <List component="div" className={classes.menuItemGroup}>
         {this.listItemLink(profileLink, "Profile")}
         {this.listItemLink("/members/change-password", "Change Password")}
       </List>
@@ -139,7 +144,7 @@ class MainDrawer extends React.Component<IProps, IState> {
     let layout: any = "";
     if (loggingOut) {
       layout = (
-        <List component="div" className={classes.menuItems}>
+        <List component="div" className={classes.menuItemGroup}>
           {this.listItemText("Signing Out...")}
         </List>
       );
@@ -150,12 +155,7 @@ class MainDrawer extends React.Component<IProps, IState> {
         layout = this.signedOutLinks();
       }
     }
-    return (
-      <React.Fragment>
-        <Divider className={classes.divider} />
-        {layout}
-      </React.Fragment>
-    );
+    return <React.Fragment>{layout}</React.Fragment>;
   }
 
   logOutLink() {
@@ -164,14 +164,11 @@ class MainDrawer extends React.Component<IProps, IState> {
 
     if (userId && !loggingOut) {
       layout = (
-        <React.Fragment>
-          <Divider className={classes.divider} />
-          <List component="div" className={classes.menuItems}>
-            <ListItem className={classes.listItem} button onClick={logOut}>
-              <ListItemText classes={{ primary: classes.listItemStaticText }} primary="Sign Out" />
-            </ListItem>
-          </List>
-        </React.Fragment>
+        <List component="div" className={classes.menuItemGroup}>
+          <ListItem className={classes.listItem} button onClick={logOut}>
+            <ListItemText classes={{ primary: classes.listItemStaticText }} primary="Sign Out" />
+          </ListItem>
+        </List>
       );
     }
 
@@ -184,12 +181,9 @@ class MainDrawer extends React.Component<IProps, IState> {
 
     if (User.can({ threshold: "admin" })) {
       layout = (
-        <React.Fragment>
-          <Divider className={classes.divider} />
-          <List component="div" className={classes.menuItems}>
-            {this.listItemLink("/admin", "Admin")}
-          </List>
-        </React.Fragment>
+        <List component="div" className={classes.menuItemGroup}>
+          {this.listItemLink("/admin", "Admin")}
+        </List>
       );
     }
     return layout;
@@ -201,12 +195,9 @@ class MainDrawer extends React.Component<IProps, IState> {
 
     if (User.can({ threshold: "creator" })) {
       layout = (
-        <React.Fragment>
-          <Divider className={classes.divider} />
-          <List component="div" className={classes.menuItems}>
-            {this.listItemLink("/create", "Create")}
-          </List>
-        </React.Fragment>
+        <List component="div" className={classes.menuItemGroup}>
+          {this.listItemLink("/create", "Create")}
+        </List>
       );
     }
     return layout;
@@ -216,12 +207,14 @@ class MainDrawer extends React.Component<IProps, IState> {
     const { classes } = this.props;
 
     return (
-      <List component="div" className={classes.menuItems}>
-        {this.listItemLink("/", "Home", <HomeIcon />)}
-        {this.listItemLink("/about", "About", <InfoIcon />)}
-        {this.listItemLink("/terms-of-service", "Terms of Service", <TermsIcon />)}
-        {this.listItemLink("/blog", "Blog", <BlogIcon />)}
-      </List>
+      <React.Fragment>
+        <List component="div" className={classes.menuItemGroup}>
+          {this.listItemLink("/", "Home", <HomeIcon />)}
+          {this.listItemLink("/about", "About", <InfoIcon />)}
+          {this.listItemLink("/terms-of-service", "Terms of Service", <TermsIcon />)}
+          {this.listItemLink("/blog", "Blog", <BlogIcon />)}
+        </List>
+      </React.Fragment>
     );
   }
 

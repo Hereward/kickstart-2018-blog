@@ -27,7 +27,7 @@ styles = theme => ({
     fontSize: "0.9rem",
     letterSpacing: "0.02rem",
     textTransform: "uppercase",
-    fontWeight: "200"
+    fontWeight: "400"
   }
 });
 
@@ -248,7 +248,7 @@ class Navigation extends React.Component<IProps, IState> {
 
   renderDashDisplay = () => {
     return (
-      <div className="navbar-brand d-flex">
+      <div className="navbar-brand d-flex justify-content-between align-items-center">
         {this.drawer()}
         <DashDisplay
           history={this.props.history}
@@ -272,13 +272,11 @@ class Navigation extends React.Component<IProps, IState> {
   renderNavItem(label, link) {
     const { classes } = this.props;
     return (
-      <NavItem>
-        <Typography className={classes.typographyRoot} variant="body2">
-          <NavLink exact className="nav-link" to={link}>
-            {label}
-          </NavLink>
-        </Typography>
-      </NavItem>
+      <Typography className={classes.typographyRoot} variant="body2">
+        <NavLink exact className="nav-item nav-link" to={link}>
+          {label}
+        </NavLink>
+      </Typography>
     );
   }
 
@@ -294,19 +292,19 @@ class Navigation extends React.Component<IProps, IState> {
       }
     }
     return (
-      <Navbar color="dark" expand="lg" className="main-nav fixed-top " dark>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark main-nav fixed-top">
         {dashDisplay}
 
         {!adminPage &&
           ((this.props.systemSettings && this.props.systemSettings.systemOnline) || admin) && (
-            <Nav className="ml-auto mr-2 d-none d-lg-flex" navbar>
+            <div className="navbar-nav ml-auto mr-2 d-none d-lg-flex">
               {this.renderNavItem("Home", "/")}
               {this.renderNavItem("About", "/about")}
               {this.renderNavItem("Terms of Service", "/terms-of-service")}
               {this.renderNavItem("Blog", "/blog")}
-            </Nav>
+            </div>
           )}
-      </Navbar>
+      </nav>
     );
   }
 

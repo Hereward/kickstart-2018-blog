@@ -110,7 +110,7 @@ class PageContent extends React.Component<IProps, IState> {
   }
 
   editLayout() {
-    const { post, imageUpdateMethod } = this.props;
+    const { post, imageUpdateMethod, contentType } = this.props;
     //log.info(`PageContent.editLayout()`, this.props);
     const headingLabel = post ? "Edit Post" : "New Post";
     return (
@@ -129,6 +129,7 @@ class PageContent extends React.Component<IProps, IState> {
           handleNewPostCreated={this.handleNewPostCreated}
           handlePostUpdated={this.handlePostUpdated}
           editMode="creator"
+          contentType={contentType}
         />
       </div>
     );
@@ -235,7 +236,7 @@ class PageContent extends React.Component<IProps, IState> {
     );
   }
 
-  headingReadMode() {
+  postTitle() {
     const { classes, post } = this.props;
     const unpublishedIcon = post.publish ? (
       ""
@@ -293,9 +294,9 @@ class PageContent extends React.Component<IProps, IState> {
 
       layout = (
         <div>
-          {this.headingReadMode()}
+          {this.postTitle()}
 
-          {contentType === "post" ? (
+          {contentType === "posts" ? (
             <div>
               <h6 className="author-heading">
                 <Author authorId={post.authorId} />

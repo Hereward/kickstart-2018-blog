@@ -48,7 +48,7 @@ class BlogEntry extends React.Component<IProps, IState> {
   template() {
     return (
       <PageContent
-        contentType="post"
+        contentType="posts"
         systemSettings={this.props.systemSettings}
         history={this.props.history}
         permissionThreshold="creator"
@@ -81,21 +81,23 @@ class BlogEntry extends React.Component<IProps, IState> {
 
 export default connect()(
   withTracker(props => {
-    let postsDataHandle = Meteor.subscribe("posts");
+    //let postsDataHandle = Meteor.subscribe("publishedPosts");
     const commentsHandle = Meteor.subscribe("comments");
-    let post: any;
+    //let post: any;
     let totalComments = 0;
     let author: string = "";
     let profile: any;
 
     const slug = props.match.params.entry;
-    if (postsDataHandle.ready()) {
-      let raw = Posts.findOne({ slug: slug });
-      //log.info(`BlogEntry()`, slug, raw, props.userId);
-      if (raw && (raw.publish || raw.authorId === props.userId)) {
-        post = raw;
-      }
+
+    const post = Posts.findOne({ slug: slug });
+    //log.info(`BlogEntry()`, slug, raw, props.userId);
+    /*
+    if (raw && (raw.publish || raw.authorId === props.userId)) {
+      post = raw;
     }
+    */
+
     return {
       post: post
     };

@@ -39,7 +39,7 @@ class Page extends React.Component<IProps> {
     return page ? (
       <Transition>
         <PageContent
-          contentType="page"
+          contentType="pages"
           systemSettings={systemSettings}
           history={history}
           permissionThreshold="creator"
