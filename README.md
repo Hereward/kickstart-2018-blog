@@ -13,12 +13,13 @@ This project builds on a previous project: [Meteor/React Kickstart Enhanced 2018
 * Blog (create/edit/delete)
 * Tags (create/edit/delete)
 * Comments (create/edit/delete)
-* Integration of blog editing with permission system
-* Integration of blog & page content with SSR
+* Integrated blog editing with permission system
+* Added (react-autosuggest)[https://www.npmjs.com/package/react-autosuggest] & [react-tagsinput](https://www.npmjs.com/package/react-tagsinput) for tag editing
+* Integrated blog & page content with SSR
 * Added OG meta data for blog & page posts
 * Replaced bootstrap navbar with material-ui Drawer component
 * Implemented JSS ([CSSinJS](http://cssinjs.org/)) - component level CSS styling - provided by [material-ui](https://material-ui.com/customization/css-in-js/)
-* Added react-share - social media share buttons
+* Added [react-share](https://www.npmjs.com/package/react-share) - social media share buttons
 * Added tabbed profile pages for users (posts/about/settings)
 
 Fill in `settings/private/adminEmail` to grant top level permissions to the user who registers with that email address.
