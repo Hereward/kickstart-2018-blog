@@ -1,4 +1,3 @@
-
 # Meteor/React Kickstart 2018 Blog
 
 [![standard-readme compliant](https://img.shields.io/badge/standard--readme-OK-green.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
@@ -18,7 +17,7 @@ This project builds on a previous project: [Meteor/React Kickstart Enhanced 2018
 * Integration of blog & page content with SSR
 * Added OG meta data for blog & page posts
 * Replaced bootstrap navbar with material-ui Drawer component
-* Implemented JSS - component level CSS styling
+* Implemented JSS ([CSSinJS](http://cssinjs.org/)) - component level CSS styling - provided by [material-ui](https://material-ui.com/customization/css-in-js/)
 * Added react-share - social media share buttons
 * Added tabbed profile pages for users (posts/about/settings)
 
@@ -137,6 +136,7 @@ There is a separate 'modules' folder which contains a number of function librari
 * validation.ts
 
 ## <a name="admin"></a>Admin Functions
+
 Currently there is only one admin function provided. If logged in as an "admin" user (see [settings](#settings)), you will see an option to delete all non-admin users on the Profile page.
 
 ## <a name="settings"></a>Meteor Settngs
@@ -149,27 +149,30 @@ The following file names have been added to the included .gitignore file:
 * settings-development.json
 
 #### configurable settings:
+
 `private/adminEmail` - use this setting to specify the email address of 1 administrator
 
 `public/enhancedAuth` - use these settings to enable/disable 2 factor authentication & change settings
+
 * `active` - Determines whether the app runs with 2FA
 * `maxAttempts` - Maximum number of failed attempts allowed
 * `displayCode` - For development, display the auth code on screen
 
 `private/enhancedAuth` - These settings are used to store users' 2FA private keys securely. More info: https://nodejs.org/api/crypto.html
+
 * `iv` - Initialisation vector (16 character random string in UTF-8 encoding)
 * `algorithm` - Algorithm used to encrypt the private key
 
 `public/session` - use these settings to control session features
+
 * `heartbeatInterval (integer)` - interval between activity detection messages sent to server (ms - default: 300000)
 * `inactivityTimeout (integer)` - length of time before inactive users are logged out (ms - default: 3600000)
 * `timeOutOn (boolean)` - turn on or off the timeout feature (default: true)
-* `allowMultiSession` - allow multiple client sessions for the same user. 
+* `allowMultiSession` - allow multiple client sessions for the same user.
 * `sessionTokenName` - name of token for sessions (HTML localStorage)
 * `userDataKey` - name of key for caching user data (HTML localStorage)
 
 `private/smtp` - populate these settings with your SMTP server configuration
-
 
 ## <a name="2FA"></a>2FA Security
 
@@ -192,9 +195,8 @@ Settings for these features can be set in [Meteor Settings](#settings).
 
 ## <a name="run"></a>Run
 
-You need to specify a settings file when you run Meteor otherwise there will be runtime errors. 
+You need to specify a settings file when you run Meteor otherwise there will be runtime errors.
 Using NPM preconfigured script: `npm start` (See [NPM Function Calls](#npm) section)
-
 
 ## <a name="deploy"></a>Deploy
 
