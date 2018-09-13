@@ -21,10 +21,11 @@ This project builds on a previous project: [Meteor/React Kickstart Enhanced 2018
 * Implemented JSS ([CSSinJS](http://cssinjs.org/)) - component level CSS styling - provided by [material-ui](https://material-ui.com/customization/css-in-js/)
 * Added [react-share](https://www.npmjs.com/package/react-share) - social media share buttons
 * Added tabbed profile pages for users (posts/about/settings)
+* Automatic route creation for generated pages
 
 Fill in `settings/private/adminEmail` to grant top level permissions to the user who registers with that email address.
 
-All code is in Typescript. The front-end is React.
+All code is in Typescript. The front-end is coded in React.
 
 The project contains a complete user registration process using custom templates including email verification and (optionally) 2 factor authentication.
 
@@ -40,7 +41,7 @@ The Home page contains an implementation of the simple todos example from the Me
 
 The About page features the Quill rich text editor.
 
-The Profile page features a form for uploading personal data as well as an image.
+The Profile page features a tabbed interface with 3 tabs: Posts | About | Settings.
 
 The project has session timeout features, with some settings which are configurable in the settings file.
 
