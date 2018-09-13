@@ -121,7 +121,7 @@ const tip = {
 const Wrapper = props => {
   const { componentProps, children } = props;
   return (
-    <Typography className={`${componentProps.classes.root} d-flex justify-content-between align-items-center`}>
+    <Typography component="div" className={`${componentProps.classes.root} d-flex justify-content-between align-items-center`}>
       {children}
     </Typography>
   );

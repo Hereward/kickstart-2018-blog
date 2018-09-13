@@ -127,7 +127,7 @@ class PostForm extends React.Component<IProps, IState> {
       slug: settingsObj ? settingsObj.slug : "",
       title: settingsObj ? settingsObj.title : "",
       body: settingsObj ? settingsObj.body : "",
-      type: settingsObj ? settingsObj.type : "story",
+      type: settingsObj ? settingsObj.type : "",
       blockUI: false
     };
   }
@@ -184,9 +184,9 @@ class PostForm extends React.Component<IProps, IState> {
     }
 
     if (contentType === "posts") {
-      pageFields.type = this.state.type;
+      const type = this.state.type || "story";
+      pageFields.type = type;
     }
-    
 
     this.setState({ blockUI: true });
     if (editingExistingData) {
@@ -255,7 +255,7 @@ class PostForm extends React.Component<IProps, IState> {
       this.setState({ slug: final });
     }
     //log.info(`PostForm.handleCHange() value = [${value}]`, name);
-    this.setState({ [name]: value }); 
+    this.setState({ [name]: value });
   };
 
   updateBody = body => {

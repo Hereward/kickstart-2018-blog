@@ -178,7 +178,7 @@ export default connect()(
     totalPosts = Posts.find({ publish: publishFilter, authorId: props.profileUserId }).count();
     posts = Posts.find({ publish: publishFilter, authorId: props.profileUserId }, options).fetch();
 
-    //log.info(`PostList.tracker() publish=[${publishFilter}]`, posts, props);
+    log.info(`PostList.tracker() publish=[${publishFilter}]`, posts, props);
     return {
       posts: posts,
       totalPosts: totalPosts

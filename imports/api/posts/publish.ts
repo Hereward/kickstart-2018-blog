@@ -11,7 +11,7 @@ if (Meteor.isServer) {
 
   Meteor.publish("publishedPosts", function postsPublic() {
     return Posts.find({
-      $or: [{ published: true }, { authorId: this.userId }]
+      $or: [{ publish: true }, { authorId: this.userId }]
     });
   });
 

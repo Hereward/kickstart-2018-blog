@@ -30,7 +30,6 @@ styles = theme => ({
     flexGrow: 1,
     width: "100%",
     backgroundColor: "transparent",
-    marginTop: "-0.4rem"
   },
   tabs: {
     boxShadow: "0 4px 10px -2px rgba(0, 0, 0, 0.3)",
@@ -217,7 +216,7 @@ export default withTracker(props => {
   totalPosts = Posts.find({ authorId: profileUserId }).count();
   //}
 
-  //log.info(`ProfileIndex tracker DONE`, profile);
+  log.info(`ProfileIndex tracker [${totalPosts}]`, profileUserId, profile);
 
   return {
     profile: profile,

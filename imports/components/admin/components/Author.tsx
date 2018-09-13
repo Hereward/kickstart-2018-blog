@@ -1,12 +1,14 @@
 ///<reference path="../../../../index.d.ts"/>
 
 import * as React from "react";
+import { Link } from "react-router-dom";
 import { Divider } from "@material-ui/core";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import OptionGroup from "./OptionGroup";
+import { Profiles } from "../../../api/profiles/publish";
 //import { userInfo } from "os";
 
 let styles: any;
@@ -29,6 +31,7 @@ interface IProps {
   dispatch: any;
   userId: string;
   user: PropTypes.object.isRequired;
+  profile: PropTypes.object.isRequired;
 }
 
 interface IState {
@@ -50,10 +53,16 @@ class Author extends React.Component<IProps, IState> {
   };
 
   authorDetails() {
-    const { user, classes } = this.props;
+    const { user, classes, profile } = this.props;
+    const profileLink = profile ? <Link to={`/members/profile/${user._id}`}>{profile.screenName}</Link> : "";
     return (
       <div className={classes.authorInfo}>
         <strong>id:</strong> {user._id} <br />
+        {profileLink && (
+          <span>
+            {profileLink} <br />
+          </span>
+        )}
         {user.emails[0].address}
       </div>
     );
@@ -78,7 +87,9 @@ export default connect()(
   withTracker(props => {
     const usersHandle = Meteor.subscribe("allUsers");
     const user = Meteor.users.findOne(props.userId);
+
+    const profile = Profiles.findOne({ owner: props.userId });
     //log.info(`Author tracker`, props);
-    return { user: user };
+    return { user: user, profile: profile };
   })(withStyles(styles, { withTheme: true })(Author))
 );
