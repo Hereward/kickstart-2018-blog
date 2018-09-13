@@ -7,7 +7,7 @@
 
 **DEMO WEBSITE: https://kickstart2018.eyeofthetiger.asia/**
 
-This project builds on my previous project [Meteor/React Kickstart 2018](https://github.com/Hereward/kickstart-2018-enhanced.git).
+This project builds on a previous project: [Meteor/React Kickstart Enhanced 2018](https://github.com/Hereward/kickstart-2018-enhanced.git).
 
 **New features:**
 
