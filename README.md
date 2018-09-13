@@ -14,7 +14,7 @@ This project builds on a previous project: [Meteor/React Kickstart Enhanced 2018
 * Tags (create/edit/delete)
 * Comments (create/edit/delete)
 * Integrated blog editing with permission system
-* Added (react-autosuggest)[https://www.npmjs.com/package/react-autosuggest] & [react-tagsinput](https://www.npmjs.com/package/react-tagsinput) for tag editing
+* Added [react-autosuggest](https://www.npmjs.com/package/react-autosuggest) & [react-tagsinput](https://www.npmjs.com/package/react-tagsinput) for tag editing
 * Integrated blog & page content with SSR
 * Added OG meta data for blog & page posts
 * Replaced bootstrap navbar with material-ui Drawer component
