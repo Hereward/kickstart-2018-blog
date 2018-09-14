@@ -1,10 +1,7 @@
 ////<reference path="index.d.ts"/>
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
-//import FacebookProvider, { Share } from "react-facebook";
-//import * as truncate from "truncate-html";
 import PropTypes from "prop-types";
-//import Icon from "@material-ui/core/Icon";
 import { Link } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import { connect } from "react-redux";
@@ -81,17 +78,13 @@ styles = theme => ({
 });
 
 class PageContent extends React.Component<IProps, IState> {
-  //editingType = { edit: false, new: false };
-  //fieldsArray = ["body", "title"];
+
   editInProgress = false;
 
   constructor(props) {
     super(props);
-    //this.handleChange = this.handleChange.bind(this);
-    //this.handleSetState = this.handleSetState.bind(this);
-    // this.handleSubmit = this.handleSubmit.bind(this);
+
     let mapped: any;
-    // mapped = this.fieldMapper("init");
     this.state = {
       allowSubmit: true,
       updateDone: false,

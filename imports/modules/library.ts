@@ -1,20 +1,35 @@
 import * as _swal from "sweetalert";
 import * as truncate from "truncate-html";
 import * as htmlToText from "html-to-text";
-
+import * as sanitizeHtml from "sanitize-html";
 import { SweetAlert } from "sweetalert/typings/core";
 import * as User from "./user";
 
 const temp: any = _swal;
 const swal: SweetAlert = temp;
 declare var window: any;
-
 declare var DocHead: any;
+
+export function sanitize(props: { type: string; content: string }) {
+  let output: any = "";
+  if (props.type === "html") {
+    output = sanitizeHtml(props.content, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img"]),
+      allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat(["data"])
+    });
+  } else if (props.type === "text") {
+    output = sanitizeHtml(props.content, {
+      allowedTags: [],
+      allowedAttributes: {}
+    });
+  }
+  log.info(`sanitize`, props, output);
+  return output;
+}
 
 export function formatPlainText(props: { text: string; wordCount: number }) {
   const truncatedHML = truncate(props.text, props.wordCount, { byWords: true });
   const formattedText = htmlToText.fromString(truncatedHML, { wordwrap: false });
-  log.info(`Library.formatPlainText()`, props, formattedText);
   return formattedText;
 }
 

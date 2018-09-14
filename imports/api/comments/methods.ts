@@ -6,6 +6,7 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Comments } from "./publish";
 import { can as userCan } from "../../modules/user";
+import { formatPlainText, sanitize } from "../../modules/library";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -17,7 +18,7 @@ const authCheck = (methodName, userId) => {
   return auth;
 };
 
-export const editComment = new ValidatedMethod({
+export const updateComment = new ValidatedMethod({
   name: "comment.edit",
   validate: new SimpleSchema({
     id: { type: String },
@@ -30,7 +31,7 @@ export const editComment = new ValidatedMethod({
     Comments.update(fields.id, {
       $set: {
         publish: true,
-        body: fields.body,
+        body: sanitize({ type: "html", content: fields.body }),
         modified: new Date()
       }
     });
@@ -72,7 +73,7 @@ export const createComment = new ValidatedMethod({
     log.info(`comment.create`, fields.postId, fields.body);
     Comments.insert({
       publish: true,
-      body: fields.body,
+      body: sanitize({ type: "html", content: fields.body }),
       authorId: this.userId,
       postId: fields.postId,
       parentId: fields.parentId || null,
@@ -84,6 +85,8 @@ export const createComment = new ValidatedMethod({
   }
 });
 
+
+/*
 export const updateCommentInline = new ValidatedMethod({
   name: "comment.updateInline",
   validate: new SimpleSchema({
@@ -114,3 +117,4 @@ export const updateCommentInline = new ValidatedMethod({
     return true;
   }
 });
+*/

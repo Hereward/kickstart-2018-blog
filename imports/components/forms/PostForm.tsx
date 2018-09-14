@@ -1,18 +1,20 @@
+/*
 import * as React from "react";
+import PropTypes from "prop-types";
 import * as jquery from "jquery";
 import * as BlockUi from "react-block-ui";
 import "react-block-ui/style.css";
-import Button from '@material-ui/core/Button';
+import Button from "@material-ui/core/Button";
 import "react-quill/dist/quill.snow.css";
 import Widget from "./Widget";
 
 const ReactQuill = require("react-quill");
 
 interface IProps {
-  handleChange: any;
-  handleSubmit: any;
-  postObj: any;
-  handleSetState: any;
+  handleChange: PropTypes.object.isRequired;
+  handleSubmit: PropTypes.object.isRequired;
+  postObj: PropTypes.object.isRequired;
+  handleSetState: PropTypes.object.isRequired;
   allowSubmit: boolean;
 }
 
@@ -65,11 +67,6 @@ export default class PostForm extends React.Component<IProps, IState> {
   }
 
 
-/*
-  preventDefault(e) {
-    e.preventDefault();
-  }
-  */
 
   componentDidMount() {
     jquery(`#${this.formID}`).bind("keypress", function kp(e) {
@@ -79,16 +76,6 @@ export default class PostForm extends React.Component<IProps, IState> {
     });
   }
 
-  /*
-  disableReturnKey(state) {
-    jquery(window).keydown(function drk(event) {
-      if (event.keyCode === 13) {
-        event.preventDefault();
-        return !state;
-      }
-    });
-  }
-  */
 
   handleSetStateUpstream(content) {
     this.props.handleSetState("body", content);
@@ -113,7 +100,13 @@ export default class PostForm extends React.Component<IProps, IState> {
   getWidget(props: any) {
     let widgetType = props.widgetType ? props.widgetType : "simple";
     return (
-      <Widget uncontrolled={true} widgetType={widgetType} handleChange={this.handleChange} dataObj={this.props.postObj} wProps={props} />
+      <Widget
+        uncontrolled={true}
+        widgetType={widgetType}
+        handleChange={this.handleChange}
+        dataObj={this.props.postObj}
+        wProps={props}
+      />
     );
   }
 
@@ -131,8 +124,8 @@ export default class PostForm extends React.Component<IProps, IState> {
             <label htmlFor="bodyText">Body Text:</label>
             <ReactQuill
               id="bodyText"
-              defaultValue={this.props.postObj.body}
               onChange={this.handleSetStateUpstream}
+              defaultValue={this.props.postObj.body}
               modules={this.modules}
               formats={this.formats}
               theme="snow"
@@ -140,8 +133,9 @@ export default class PostForm extends React.Component<IProps, IState> {
           </div>
 
           <div className="form-group">
-          <Button variant="raised" type="submit" color="primary">Submit</Button>
-            
+            <Button variant="raised" type="submit" color="primary">
+              Submit
+            </Button>
           </div>
         </form>
       </BlockUi>
@@ -149,4 +143,4 @@ export default class PostForm extends React.Component<IProps, IState> {
   }
 }
 
-// <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" />
+*/

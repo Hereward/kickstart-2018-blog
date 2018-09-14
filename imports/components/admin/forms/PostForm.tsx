@@ -13,6 +13,7 @@ import Widget from "../../forms/Widget";
 import * as Library from "../../../modules/library";
 import EditTags from "../components/EditTags";
 import RenderImage from "../components/RenderImage";
+import { can as userCan } from "../../../modules/user";
 
 const slugify = require("slugify");
 
@@ -53,6 +54,7 @@ interface IState {
   body: string;
   blockUI: boolean;
   type: boolean;
+  authorId: string;
 }
 
 const styles = theme => ({
@@ -128,8 +130,18 @@ class PostForm extends React.Component<IProps, IState> {
       title: settingsObj ? settingsObj.title : "",
       body: settingsObj ? settingsObj.body : "",
       type: settingsObj ? settingsObj.type : "",
+      authorId: settingsObj ? settingsObj.authorId : "",
       blockUI: false
     };
+  }
+
+  allowUpdateAuthor() {
+    return (
+      this.props.editMode === "admin" &&
+      this.props.contentType === "posts" &&
+      this.props.editingExistingData &&
+      userCan({ threshold: "admin" })
+    );
   }
 
   componentDidMount() {
@@ -168,13 +180,13 @@ class PostForm extends React.Component<IProps, IState> {
     pageFields = {
       id: this.state.id,
       publish: this.state.publish,
-      tags: this.state.tags,
-      body: this.state.body,
+      tags: this.state.tags.trim(),
+      body: this.state.body.trim(),
       image_id: this.state.imageId,
       showImage: this.state.showImage,
-      title: this.state.title,
-      summary: this.state.summary,
-      slug: this.state.slug
+      title: this.state.title.trim(),
+      summary: this.state.summary.trim(),
+      slug: this.state.slug.trim()
     };
 
     if (!editingExistingData) {
@@ -186,6 +198,9 @@ class PostForm extends React.Component<IProps, IState> {
     if (contentType === "posts") {
       const type = this.state.type || "story";
       pageFields.type = type;
+      if (this.state.authorId) {
+        pageFields.authorId = this.state.authorId.trim();
+      }
     }
 
     this.setState({ blockUI: true });
@@ -326,6 +341,14 @@ class PostForm extends React.Component<IProps, IState> {
               control={<Switch disabled={false} onChange={this.togglePublish} checked={this.state.publish} />}
               label="Publish"
             />
+
+            {this.allowUpdateAuthor() &&
+              this.getWidget({
+                placeholder: "Author ID",
+                baseName: "authorId",
+                name: this.renderWidgetId("authorId"),
+                label: "Author ID (use with caution)"
+              })}
 
             {this.getWidget({ baseName: "title", name: this.renderWidgetId("title"), label: "Title" })}
 

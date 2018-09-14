@@ -557,7 +557,7 @@ class Posts extends React.Component<IProps, IState> {
           <FormControlLabel control={checkBox} label="selected" />
         </div>
 
-        {hasAuthor ? <Author userId={dataObj.authorId} /> : ""}
+        {hasAuthor && <Author userId={dataObj.authorId} />}
         {hasMeta && <MetaInfo data={dataObj} />}
 
         {this.renderForm(dataObj)}

@@ -4,6 +4,7 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Pages } from "./publish";
 import { can as userCan } from "../../modules/user";
+import { formatPlainText, sanitize } from "../../modules/library";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -67,12 +68,12 @@ export const createPage = new ValidatedMethod({
     Pages.insert({
       publish: fields.publish,
       showImage: fields.showImage,
-      tags: fields.tags || "",
+      tags: sanitize({ type: "text", content: fields.tags }) || "",
       image_id: fields.image_id,
-      title: fields.title,
-      body: fields.body,
-      summary: fields.summary,
-      slug: fields.slug,
+      title: sanitize({type: "text", content: fields.title}),
+      body: sanitize({ type: "html", content: fields.body }),
+      summary: sanitize({type: "text", content: fields.summary}),
+      slug: sanitize({type: "text", content: fields.slug}),
       allowComments: fields.allowComments,
       closeComments: false,
       modified: new Date(),
@@ -110,13 +111,13 @@ export const updatePage = new ValidatedMethod({
       $set: {
         publish: fields.publish,
         showImage: fields.showImage,
-        tags: fields.tags || "",
+        tags: sanitize({ type: "text", content: fields.tags }) || "",
         image_id: fields.image_id,
-        title: fields.title,
-        body: fields.body,
-        summary: fields.summary || current.summary,
+        title: sanitize({type: "text", content: fields.title}),
+        body: sanitize({type: "html", content: fields.body}),
+        summary: sanitize({type: "text", content: fields.summary}),  
         closeComments: fields.closeComments,
-        slug: fields.slug || current.slug,
+        slug: sanitize({type: "text", content: fields.slug}) || current.slug,
         modified: new Date()
       }
     });

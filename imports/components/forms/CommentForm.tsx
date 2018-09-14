@@ -11,7 +11,7 @@ import * as BlockUi from "react-block-ui";
 import "react-block-ui/style.css";
 import "react-quill/dist/quill.snow.css";
 import * as Validation from "../../modules/validation";
-import { createComment, editComment } from "../../api/comments/methods";
+import { createComment, updateComment } from "../../api/comments/methods";
 import * as Library from "../../modules/library";
 
 const ReactQuill = require("react-quill");
@@ -197,11 +197,11 @@ class CommentForm extends React.Component<IProps, IState> {
       body: this.state.body
     };
 
-    editComment.call(fields, err => {
+    updateComment.call(fields, err => {
       this.setState({ blockUI: false });
       if (err) {
         Library.modalErrorAlert(err.reason);
-        log.error(`editComment failed`, err);
+        log.error(`updateComment failed`, err);
       } else {
         this.props.commentEdited();
         this.miniAlert(`Your comment has been edited.`);

@@ -1,5 +1,6 @@
 ///<reference path="../../../index.d.ts"/>
 import { Meteor } from "meteor/meteor";
+
 import * as truncate from "truncate-html";
 import { Accounts } from "meteor/accounts-base";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
@@ -7,7 +8,7 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Posts } from "./publish";
 import { can as userCan } from "../../modules/user";
 import { Comments } from "../comments/publish";
-import { formatPlainText } from "../../modules/library";
+import { formatPlainText, sanitize } from "../../modules/library";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -69,7 +70,7 @@ export const createPost = new ValidatedMethod({
     slug: { type: String },
     body: { type: String },
     allowComments: { type: Boolean },
-    type: { type: String },
+    type: { type: String }
   }).validator(),
 
   run(fields) {
@@ -77,7 +78,7 @@ export const createPost = new ValidatedMethod({
     const truncatedBody = truncateHTML(fields.body);
     if (!fields.summary) {
       //fields.summary = truncatePlainText(fields.body);
-      fields.summary = formatPlainText({text: fields.body, wordCount: 100});
+      fields.summary = formatPlainText({ text: fields.body, wordCount: 100 });
     }
 
     slugCheck({ slug: fields.slug, type: "new" });
@@ -85,13 +86,13 @@ export const createPost = new ValidatedMethod({
     Posts.insert({
       publish: fields.publish,
       showImage: fields.showImage,
-      tags: fields.tags || "",
+      tags: sanitize({ type: "text", content: fields.tags }) || "",
       image_id: fields.image_id,
-      title: fields.title,
+      title: sanitize({ type: "text", content: fields.title }),
       body: fields.body,
-      truncatedBody: truncatedBody,
-      summary: fields.summary,
-      slug: fields.slug,
+      truncatedBody: sanitize({ type: "html", content: truncatedBody }),
+      summary: sanitize({ type: "text", content: fields.summary }),
+      slug: sanitize({ type: "text", content: fields.slug }),
       allowComments: fields.allowComments,
       type: fields.type,
       closeComments: false,
@@ -124,6 +125,7 @@ export const updatePost = new ValidatedMethod({
   name: "posts.update",
   validate: new SimpleSchema({
     id: { type: String },
+    authorId: { type: String, optional: true },
     tags: { type: String, optional: true },
     publish: { type: Boolean },
     showImage: { type: Boolean },
@@ -133,7 +135,7 @@ export const updatePost = new ValidatedMethod({
     slug: { type: String },
     body: { type: String },
     closeComments: { type: Boolean },
-    type: { type: String },
+    type: { type: String }
   }).validator(),
 
   run(fields) {
@@ -141,27 +143,33 @@ export const updatePost = new ValidatedMethod({
     const truncatedBody = truncateHTML(fields.body);
     if (!fields.summary) {
       //fields.summary = truncatePlainText(fields.body);
-      fields.summary = formatPlainText({text: fields.body, wordCount: 100});
+      fields.summary = formatPlainText({ text: fields.body, wordCount: 100 });
     }
     //log.info(`updatePost`, fields);
     const current = Posts.findOne(fields.id);
     slugCheck({ slug: fields.slug, type: "update", current: current.slug });
 
+    const updateObj: any = {
+      publish: fields.publish,
+      showImage: fields.showImage,
+      tags: sanitize({ type: "text", content: fields.tags }) || "",
+      image_id: fields.image_id,
+      title: sanitize({ type: "text", content: fields.title }),
+      body: sanitize({ type: "html", content: fields.body }),
+      truncatedBody: sanitize({ type: "html", content: truncatedBody }),
+      summary: sanitize({ type: "text", content: fields.summary }),
+      closeComments: fields.closeComments,
+      type: fields.type,
+      slug: sanitize({ type: "text", content: fields.slug }) || current.slug,
+      modified: new Date()
+    };
+
+    if (fields.authorId) {
+      updateObj.authorId = fields.authorId;
+    }
+
     Posts.update(fields.id, {
-      $set: {
-        publish: fields.publish,
-        showImage: fields.showImage,
-        tags: fields.tags || "",
-        image_id: fields.image_id,
-        title: fields.title,
-        body: fields.body,
-        truncatedBody: truncatedBody,
-        summary: fields.summary,
-        closeComments: fields.closeComments,
-        type: fields.type,
-        slug: fields.slug || current.slug,
-        modified: new Date()
-      }
+      $set: updateObj
     });
 
     return true;

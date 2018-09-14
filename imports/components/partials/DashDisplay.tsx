@@ -155,7 +155,7 @@ export class DashDisplay extends React.Component<IProps, IState> {
       if (loggingOut || !userData) {
         this.destroyTip();
       } else {
-        log.info(`DashDisplay.componentDidUpdate() TIPS ON`, this.props);
+        //log.info(`DashDisplay.componentDidUpdate() TIPS ON`, this.props);
         this.setToolTips(this.props);
       }
     }
