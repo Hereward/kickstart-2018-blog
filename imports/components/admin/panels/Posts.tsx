@@ -36,6 +36,7 @@ import TagForm from "../forms/TagForm";
 import Author from "../components/Author";
 import MetaInfo from "../components/MetaInfo";
 import { publishPostList } from "../../../api/admin/methods";
+import { Profiles } from "../../../api/profiles/publish";
 
 //const drawerWidth = 240;
 let styles: any;
@@ -280,7 +281,6 @@ class Posts extends React.Component<IProps, IState> {
     this.editingType[type] = state;
   };
 
-
   loadMore() {
     this.props.dispatch({ type: "LOAD_MORE" });
   }
@@ -505,26 +505,42 @@ class Posts extends React.Component<IProps, IState> {
           />
         )}
 
-        <TextField
-          id="userId"
-          InputLabelProps={{
-            shrink: true
-          }}
-          placeholder="User ID"
-          fullWidth
-          margin="normal"
-          onChange={this.changeFilter("userId")}
-        />
-        <TextField
-          id="email"
-          InputLabelProps={{
-            shrink: true
-          }}
-          placeholder="Email"
-          fullWidth
-          margin="normal"
-          onChange={this.changeFilter("email")}
-        />
+        {contentType === "posts" && (
+          <TextField
+            id="userId"
+            InputLabelProps={{
+              shrink: true
+            }}
+            placeholder="User ID"
+            fullWidth
+            margin="normal"
+            onChange={this.changeFilter("userId")}
+          />
+        )}
+        {contentType === "posts" && (
+          <TextField
+            id="email"
+            InputLabelProps={{
+              shrink: true
+            }}
+            placeholder="Email"
+            fullWidth
+            margin="normal"
+            onChange={this.changeFilter("email")}
+          />
+        )}
+        {contentType === "posts" && (
+          <TextField
+            id="screenName"
+            InputLabelProps={{
+              shrink: true
+            }}
+            placeholder="Screen Name"
+            fullWidth
+            margin="normal"
+            onChange={this.changeFilter("screenName")}
+          />
+        )}
       </div>
     );
 
@@ -774,14 +790,16 @@ export default connect(mapStateToProps)(
     const bodyString = props.filters.body;
     const idString = props.filters.userId;
     const emailString = props.filters.email;
+    const screenNameString = props.filters.screenName;
     let filter: boolean = false;
     let titleFilter: any;
     let bodyFilter: any;
     let idFilter: any;
     let emailFilter: any;
+    let screenNameFilter: any;
     let combinedFilters: any = [];
     let filterCount: number = 0;
-    let user: any;
+    //let user: any;
     let posts: any = [];
 
     totalPosts = props.PostsDataSrc.find().count();
@@ -809,7 +827,7 @@ export default connect(mapStateToProps)(
 
     if (emailString) {
       let regex = new RegExp(`^${emailString}.*`, "i");
-      user = Meteor.users.findOne({ "emails.0.address": regex });
+      const user = Meteor.users.findOne({ "emails.0.address": regex });
 
       if (user) {
         //log.info(`Posts.tracker() USER`, user);
@@ -819,19 +837,27 @@ export default connect(mapStateToProps)(
       }
     }
 
-    if (filterCount > 0 || emailString) {
+    if (screenNameString) {
+      let regex = new RegExp(`^${screenNameString}.*`, "i");
+      const profile = Profiles.findOne({ screenName: regex });
+      if (profile) {
+        log.info(`Posts.tracker() filter screenNameString`, profile);
+        filterCount += 1;
+        screenNameFilter = { authorId: profile.owner };
+        combinedFilters.push(screenNameFilter);
+      }
+    }
+
+    if (filterCount > 0 || emailString || screenNameString) {
       filter = true;
     }
 
     if (filter) {
-      //log.info(`Posts.tracker() FILTER ON`, emailString, combinedFilters);
       if (combinedFilters.length) {
         posts = props.PostsDataSrc.find({ $or: combinedFilters }, options).fetch();
         totalFilteredPosts = props.PostsDataSrc.find({ $or: combinedFilters }).count();
-        //log.info(`Posts.tracker() totalFilteredPosts`, totalFilteredPosts, posts);
       }
     } else {
-      //log.info(`Posts.tracker() NON FILTER SEARCH`);
       posts = props.PostsDataSrc.find({}, options).fetch();
     }
 

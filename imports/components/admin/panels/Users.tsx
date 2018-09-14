@@ -28,6 +28,7 @@ import * as UserModule from "../../../modules/user";
 import User from "./User";
 import OptionGroup from "../components/OptionGroup";
 import InvitationForm from "../../admin/forms/InvitationForm";
+import { Profiles } from "../../../api/profiles/publish";
 
 const defaultRoles = Meteor.settings.public.admin.roles;
 
@@ -376,6 +377,16 @@ class Users extends React.Component<IProps, IState> {
           margin="normal"
           onChange={this.changeFilter("email")}
         />
+        <TextField
+          id="screenName"
+          InputLabelProps={{
+            shrink: true
+          }}
+          placeholder="Screen Name"
+          fullWidth
+          margin="normal"
+          onChange={this.changeFilter("screenName")}
+        />
       </div>
     );
 
@@ -566,8 +577,10 @@ export default connect(mapStateToProps)(
     let filters = props.filters;
     const idString = props.filters.userId;
     const emailString = props.filters.email;
+    const screenNameString = props.filters.screenName;
     let idFilter: any;
     let emailFilter: any;
+    let screenNameFilter: any;
     let combinedFilters = [];
     let filterCount: number = 0;
     let users: any = [];
@@ -587,11 +600,23 @@ export default connect(mapStateToProps)(
       combinedFilters.push(emailFilter);
     }
 
-    if (filterCount > 0) {
+    if (screenNameString) {
+      let regex = new RegExp(`^${screenNameString}.*`, "i");
+      const profile = Profiles.findOne({ screenName: regex });
+      //log.info(`Users.tracker() filter screenNameString`, screenNameString, profile);
+      if (profile) {
+        filterCount += 1;
+        screenNameFilter = { _id: profile.owner };
+        combinedFilters.push(screenNameFilter);
+      }
+    }
+
+    if (filterCount > 0 || screenNameString) {
       filter = true;
     }
 
     if (filter) {
+      //log.info(`Users.tracker() combinedFilters`, combinedFilters);
       if (combinedFilters.length) {
         users = Meteor.users.find({ $or: combinedFilters }, options).fetch();
       }

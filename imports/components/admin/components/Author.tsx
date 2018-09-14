@@ -32,6 +32,7 @@ interface IProps {
   userId: string;
   user: PropTypes.object.isRequired;
   profile: PropTypes.object.isRequired;
+  label?: string;
 }
 
 interface IState {
@@ -54,23 +55,23 @@ class Author extends React.Component<IProps, IState> {
 
   authorDetails() {
     const { user, classes, profile } = this.props;
-    const profileLink = profile ? <Link to={`/members/profile/${user._id}`}>{profile.screenName}</Link> : "";
+
+    const profileLink = profile ? <span><strong>{profile.screenName}</strong> <Link to={`/members/profile/${user._id}`}>[view profile]</Link></span> : "";
     return (
       <div className={classes.authorInfo}>
-        <strong>id:</strong> {user._id} <br />
-        {profileLink && (
-          <span>
-            {profileLink} <br />
-          </span>
-        )}
-        {user.emails[0].address}
+        <div>
+          <strong>id:</strong> {user._id}
+        </div>
+        {profileLink && <div>{profileLink}</div>}
+        <div>{user.emails[0].address}</div>
       </div>
     );
   }
 
   layout() {
+    const { label } = this.props;
     const layout = (
-      <OptionGroup show={this.state.showAuthorInfo} transparent={true} label="Author Info" action={this.toggleAuthor}>
+      <OptionGroup show={this.state.showAuthorInfo} transparent={true} label={label || "Author Info"} action={this.toggleAuthor}>
         {this.authorDetails()}
       </OptionGroup>
     );

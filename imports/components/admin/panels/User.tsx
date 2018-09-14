@@ -19,6 +19,7 @@ import * as Library from "../../../modules/library";
 import { userSettings } from "../../../api/settings/publish";
 import * as UserModule from "../../../modules/user";
 import OptionGroup from "../components/OptionGroup";
+import Author from "../components/Author";
 
 const defaultRoles = Meteor.settings.public.admin.roles;
 //const drawerWidth = 240;
@@ -173,20 +174,14 @@ class User extends React.Component<IProps, IState> {
   };
 
   layout() {
-    const { classes } = this.props;
+    const { classes, user } = this.props;
 
     if (this.props.ready) {
       const protectedUser = Roles.userIsInRole(this.props.userId, ["god", "super-admin"]);
       const authEnabled = this.props.settings.authEnabled;
       return (
         <BlockUi tag="div" blocking={this.state.blockUI}>
-          <h3 className={classes.heading}>User Data</h3>
-          <div className={`${classes.innerSection} ${classes.userDetail}`}>
-            {this.props.user._id}
-            <br />
-            {this.props.user.emails[0].address}
-          </div>
-
+          <div><Author label="User Info" userId={user._id} /></div>
           <h3 className={classes.heading}>Properties</h3>
           <div className={classes.innerSection}>
             <FormControlLabel
