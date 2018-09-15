@@ -61,7 +61,6 @@ The project has session timeout features, with some settings which are configura
 * [NPM Function Calls](#npm)
 * [Maintainers](#maintainers)
 * [VS Code Extensions](#VSextensions)
-* [Roadmap](#roadmap)
 * [Troubleshooting](#troubleshooting)
 * [License](#license)
 
@@ -223,15 +222,6 @@ I have been using both the ESLint and TSLint packages. The project contains a .e
 I'm also using the Prettier code formatter.
 
 I have also experimented with the Flow package.
-
-## <a name="roadmap"></a>Roadmap
-
-Planned additions to this project include:
-
-* Server side rendering
-* User groups & permissions
-* Admin panel
-* Blog
 
 ## <a name="troubleshooting"></a>Troubleshooting
 
