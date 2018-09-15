@@ -121,7 +121,10 @@ const tip = {
 const Wrapper = props => {
   const { componentProps, children } = props;
   return (
-    <Typography component="div" className={`${componentProps.classes.root} d-flex justify-content-between align-items-center`}>
+    <Typography
+      component="div"
+      className={`${componentProps.classes.root} d-flex justify-content-between align-items-center`}
+    >
       {children}
     </Typography>
   );
@@ -242,11 +245,11 @@ export class DashDisplay extends React.Component<IProps, IState> {
 
   userDisplay() {
     let display: any = "";
-    const { classes, userId, userData, profilePublic } = this.props;
+    const { classes, userId, userData, profilePublic, sessionExpired } = this.props;
 
     if (this.props.loggingOut && userData) {
       display = <span> {tip.loggingOut}</span>;
-    } else if (!this.props.sessionExpired && this.props.userData) {
+    } else if (!sessionExpired && userData && profilePublic) {
       const profileLink = `/members/profile/${userId}`;
       display = (
         <Link className={classes.link} to={profileLink}>
@@ -297,8 +300,6 @@ export class DashDisplay extends React.Component<IProps, IState> {
     return layout || "";
   }
 
-  // className={classes.errorIcon}
-
   getAvatar() {
     const { profilePublic, classes } = this.props;
     let layout: any = "";
@@ -309,27 +310,6 @@ export class DashDisplay extends React.Component<IProps, IState> {
       </div>
     );
   }
-  // d-inline-block
-
-  /*
-  drawer() {
-    const { classes, history, userId, loggingIn, loggingOut, sessionReady } = this.props;
-    const path = this.props.history.location.pathname;
-    const adminPage = path.match(/admin/);
-    let layout: any = "";
-    if (adminPage) {
-      layout = (
-        <IconButton color="inherit" aria-label="Exit Admin" onClick={() => history.push("/")}>
-          <PowerOffIcon />
-        </IconButton>
-      );
-      //layout = <PowerOffIcon onClick={() => history.push("/")} className={classes.powerOff} />;
-    } else {
-      layout = <MainDrawer sessionReady={sessionReady} loggingIn={loggingIn} loggingOut={loggingOut} userId={userId} />;
-    }
-    return layout;
-  }
-  */
 
   action = type => {
     const { classes, history } = this.props;

@@ -95,7 +95,7 @@ class Profile extends React.Component<IProps, IState> {
             </div>
           );
         } else {
-          return <Spinner />;
+          return <Spinner caption={`found ${totalPosts} posts`} />;
         }
 
       case 1:

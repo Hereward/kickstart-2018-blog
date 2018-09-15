@@ -2,6 +2,8 @@
 
 import * as React from "react";
 //import { Divider } from "@material-ui/core";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
 import * as dateFormat from "dateformat";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -14,7 +16,12 @@ let styles: any;
 styles = theme => ({
   info: {
     marginLeft: "1rem",
-    fontStyle: "italic",
+    padding: 0,
+    fontSize: "0.9rem",
+    "& li": {
+      padding: "0.1rem 0",
+      display: "block"
+    },
     maxWidth: "13rem",
     [theme.breakpoints.up("md")]: {
       maxWidth: "20rem"
@@ -50,12 +57,19 @@ class MetaInfo extends React.Component<IProps, IState> {
 
   info() {
     const { classes, data } = this.props;
+
     return (
-      <div className={classes.info}>
-        <strong>id:</strong> {data._id} <br />
-        <strong>c:</strong> {dateFormat(data.created, "dd mmmm yyyy")} <br />
-        <strong>m:</strong> {dateFormat(data.modified, "dd mmmm yyyy")}
-      </div>
+      <List className={classes.info}>
+        <ListItem>
+          <strong>id:</strong> {data._id}
+        </ListItem>
+        <ListItem>
+          <strong>c:</strong> {dateFormat(data.created, "dd mmmm yyyy")}
+        </ListItem>
+        <ListItem>
+          <strong>m:</strong> {dateFormat(data.modified, "dd mmmm yyyy")}
+        </ListItem>
+      </List>
     );
   }
 

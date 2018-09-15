@@ -2,7 +2,8 @@
 
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { Divider } from "@material-ui/core";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
@@ -15,7 +16,12 @@ let styles: any;
 styles = theme => ({
   authorInfo: {
     marginLeft: "1rem",
-    fontStyle: "italic",
+    padding: 0,
+    fontSize: "0.9rem",
+    "& li": {
+      padding: "0.1rem 0",
+      display: "block",
+    },
     maxWidth: "13rem",
     [theme.breakpoints.up("md")]: {
       maxWidth: "20rem"
@@ -56,22 +62,34 @@ class Author extends React.Component<IProps, IState> {
   authorDetails() {
     const { user, classes, profile } = this.props;
 
-    const profileLink = profile ? <span><strong>{profile.screenName}</strong> <Link to={`/members/profile/${user._id}`}>[view profile]</Link></span> : "";
+    const profileLink = profile ? (
+      <span>
+        <strong>{profile.screenName}</strong> <Link to={`/members/profile/${user._id}`}>[view profile]</Link>
+      </span>
+    ) : (
+      ""
+    );
+
     return (
-      <div className={classes.authorInfo}>
-        <div>
+      <List className={classes.authorInfo}>
+        <ListItem>
           <strong>id:</strong> {user._id}
-        </div>
-        {profileLink && <div>{profileLink}</div>}
-        <div>{user.emails[0].address}</div>
-      </div>
+        </ListItem>
+        {profileLink && <ListItem>{profileLink}</ListItem>}
+        <ListItem>{user.emails[0].address}</ListItem>
+      </List>
     );
   }
 
   layout() {
     const { label } = this.props;
     const layout = (
-      <OptionGroup show={this.state.showAuthorInfo} transparent={true} label={label || "Author Info"} action={this.toggleAuthor}>
+      <OptionGroup
+        show={this.state.showAuthorInfo}
+        transparent={true}
+        label={label || "Author Info"}
+        action={this.toggleAuthor}
+      >
         {this.authorDetails()}
       </OptionGroup>
     );

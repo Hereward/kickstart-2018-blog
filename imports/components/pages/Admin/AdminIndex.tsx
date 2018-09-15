@@ -66,12 +66,14 @@ styles = theme => ({
   mobileDrawerContainer: {
     zIndex: "3000 !important"
   },
-  desktopDrawerContainer: {},
+  desktopDrawerContainer: {
+    backgroundColor: "white",
+    height: "100%"
+  },
   adminDrawer: {
     margin: "1rem 1rem 0.5rem 1.75rem",
     padding: 0,
     fontWeight: "bold"
-
   },
   adminContainer: {
     width: "100%",
