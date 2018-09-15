@@ -24,7 +24,7 @@ imageIDnew?: string;
 */
 
 interface IProps {
-  settingsObj: PropTypes.object.isRequired;
+  settingsObj?: PropTypes.object.isRequired;
   classes: PropTypes.object.isRequired;
   importedTags: PropTypes.object.isRequired;
   editingExistingData: boolean;

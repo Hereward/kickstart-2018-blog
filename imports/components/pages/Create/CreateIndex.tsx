@@ -6,7 +6,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
-import PageContent from "../../partials/PageContent";
+//import PageContent from "../../partials/PageContent";
+import PostForm from "../../admin/forms/PostForm";
 
 let styles: any;
 styles = theme => ({});
@@ -21,27 +22,44 @@ interface IProps {
 
 interface IState {}
 
-class Boojam extends React.Component<IProps, IState> {
+class CreateIndex extends React.Component<IProps, IState> {
   constructor(props) {
     super(props);
     this.state = {};
   }
 
+  handleEditing = (state, editingExistingData: boolean) => {
+    return true;
+  };
+
+  handleNewPostCreated = pageFields => {
+    const { history } = this.props;
+    history.push(`/blog/${pageFields.slug}`);
+    //this.setState({ showForm: false });
+  };
+
+  handlePostUpdated = () => {
+    return true;
+  };
+
   layout() {
     return (
-      <PageContent
-        contentType="posts"
-        systemSettings={this.props.systemSettings}
-        history={this.props.history}
-        permissionThreshold="creator"
-        updateMethod="posts.updateInline"
-        imageUpdateMethod="image.UpdatePostAdmin"
-        postUpdateMethod="posts.update"
-        postCreateMethod="post.create"
-        subscription="posts"
-        showFormInit={true}
-        userId={this.props.userId}
-      />
+      <React.Fragment>
+        <h2>New Post</h2>
+        <PostForm
+          imageUpdateMethod="image.UpdatePostAdmin"
+          hasImage={true}
+          handleEditing={this.handleEditing}
+          postUpdateMethod="posts.update"
+          postCreateMethod="post.create"
+          hasTags={true}
+          editingExistingData={false}
+          handleNewPostCreated={this.handleNewPostCreated}
+          handlePostUpdated={this.handlePostUpdated}
+          editMode="creator"
+          contentType="posts"
+        />
+      </React.Fragment>
     );
   }
 
@@ -53,5 +71,5 @@ class Boojam extends React.Component<IProps, IState> {
 export default connect()(
   withTracker(props => {
     return {};
-  })(withStyles(styles, { withTheme: true })(Boojam))
+  })(withStyles(styles, { withTheme: true })(CreateIndex))
 );

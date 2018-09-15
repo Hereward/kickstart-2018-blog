@@ -61,7 +61,8 @@ styles = theme => ({
     color: "red"
   },
   smallTitle: {
-    fontSize: "small"
+    fontSize: "small",
+    textTransform: "capitalize"
   },
   mobileDrawerContainer: {
     zIndex: "3000 !important"
@@ -70,10 +71,11 @@ styles = theme => ({
     backgroundColor: "white",
     height: "100%"
   },
-  adminDrawer: {
+  adminDrawerHeading: {
     margin: "1rem 1rem 0.5rem 1.75rem",
     padding: 0,
-    fontWeight: "bold"
+    fontWeight: "bold",
+    textTransform: "capitalize"
   },
   adminContainer: {
     width: "100%",
@@ -369,11 +371,12 @@ class AdminIndex extends React.Component<IProps, IState> {
 
   drawerContents() {
     const { classes, theme } = this.props;
+    const { currentPanel } = this.state;
 
     const layout = (
       <div>
         <Hidden smDown implementation="css">
-          <div className={classes.adminDrawer}>Admin Dashboard</div>
+          <div className={classes.adminDrawerHeading}>Admin: {currentPanel}</div>
         </Hidden>
         <Divider />
         <List className={classes.adminDrawerList} component="nav">
@@ -483,6 +486,7 @@ class AdminIndex extends React.Component<IProps, IState> {
 
   render() {
     const { classes, theme } = this.props;
+    const { currentPanel } = this.state;
     const panel = this.renderPanel();
     const drawerContents = this.drawerContents();
 
@@ -501,7 +505,7 @@ class AdminIndex extends React.Component<IProps, IState> {
                 <MenuIcon />
               </IconButton>
               <Typography className={classes.smallTitle} variant="title" color="inherit" noWrap>
-                Admin Dashboard
+                Admin: {currentPanel}
               </Typography>
             </Toolbar>
           </AppBar>
