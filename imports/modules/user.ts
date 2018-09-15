@@ -167,6 +167,41 @@ export function authRequired(props) {
   return authRequired;
 }
 
+export function hasAuthority(targetUserId: string, role: string) {
+  //targetId: string,
+  const userId = id();
+  let status = false;
+  if (userId) {
+    const god = Roles.userIsInRole(userId, "god");
+    const superAdmin = Roles.userIsInRole(userId, "super-admin");
+    const admin = Roles.userIsInRole(userId, "admin");
+    const elevatedTarget = Roles.userIsInRole(targetUserId, ["god", "super-admin", "admin"]);
+    //const targetIsGod = Roles.userIsInRole(targetId, "god");
+    //const targetIsSuperAdmin = Roles.userIsInRole(targetId, "super-admin");
+    //const targetIsAdmin = Roles.userIsInRole(targetId, "admin");
+
+    switch (true) {
+      case elevatedTarget && role === "banned":
+        break;
+      case god && targetUserId !== userId:
+        status = true;
+        break;
+      case god && role !== "god":
+        status = true;
+        break;
+      case superAdmin && role !== "god" && role !== "super-admin":
+        status = true; //!targetIsGod && !targetIsSuperAdmin;
+        break;
+      case admin && role !== "god" && role !== "super-admin" && role !== "admin":
+        status = true; //!targetIsGod && !targetIsSuperAdmin && !targetIsAdmin;
+        break;
+      default:
+        status = false;
+    }
+  }
+  return status;
+}
+
 export function can(params: { do?: string; threshold?: any; owner?: any }) {
   let allowed: boolean = false;
   const userId = id();
@@ -195,9 +230,12 @@ export function can(params: { do?: string; threshold?: any; owner?: any }) {
       } else if (Roles.userIsInRole(userId, ["super-admin", "admin", "editor"])) {
         allowed = true;
       }
-    
     } else if (params.threshold) {
       allowed = Roles.userIsInRole(userId, params.threshold);
+    } else if (params.do === "editAdminRoles") {
+      if (Roles.userIsInRole(params.owner, ["god", "super-admin"])) {
+        return true;
+      }
     } else if (params.do === "configureNewUser") {
       allowed = true;
     }

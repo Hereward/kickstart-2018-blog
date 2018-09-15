@@ -224,11 +224,13 @@ class Users extends React.Component<IProps, IState> {
     return "";
   };
 
-  allowUser(id) {
-    //let prot = false;
-    const selfEdit = id === this.props.userId;
-    const protectedUser = Roles.userIsInRole(id, ["god", "super-admin"]);
-    const allowed = !selfEdit && (!protectedUser || this.isGod);
+  allowUser(targetId) {
+    if (this.isGod) {
+      return true;
+    }
+    const selfEdit = targetId === this.props.userId;
+    const protectedUser = Roles.userIsInRole(targetId, ["god", "super-admin"]);
+    const allowed = selfEdit || !protectedUser;
     return allowed;
   }
 
@@ -237,7 +239,7 @@ class Users extends React.Component<IProps, IState> {
     const allowed = this.allowUser(id);
     const email = userObj.emails[0].address;
     return this.state.expanded === id && allowed ? (
-      <User loggedInUserId={this.props.userId} userId={id} />
+      <User loggedInUserId={this.props.userId} targetUserId={id} />
     ) : (
       <div>
         <strong>Protected User:</strong>

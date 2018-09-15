@@ -50,25 +50,39 @@ const postsDataSrc = contentType => {
       return Pages;
     case "comments":
       return Comments;
-      case "tags":
+    case "tags":
       return Tags;
     default:
       return "";
   }
 };
 
-const protectedUser = (id, userId) => {
-  let status = false;
-  const rootAdmin = Accounts.findUserByEmail(Meteor.settings.private.adminEmail);
-  const rootId = rootAdmin ? rootAdmin._id : "";
-  const untouchable = rootId && (id === userId || id === rootId);
+const protectedUser = (targetId: string, userId: string, action: string, role?: string) => {
+  let status = true;
+  const rootAdminObj = Accounts.findUserByEmail(Meteor.settings.private.adminEmail);
+  const selfEdit = targetId === userId;
+  const rootId = rootAdminObj ? rootAdminObj._id : "";
+  const protectedTarget =
+    (selfEdit || targetId === rootId) && (action === "delete" || role === "god" || role === "banned");
+  const superAdmin = Roles.userIsInRole(userId, ["super-admin"]);
+  const rootAdmin = rootId === userId;
   const god = Roles.userIsInRole(userId, ["god"]);
-  const elevated = Roles.userIsInRole(id, ["god", "super-admin"]);
+  const admin = Roles.userIsInRole(userId, ["admin"]);
+  const targetUserElevated = Roles.userIsInRole(targetId, ["god", "super-admin", "admin"]);
+  const thisUserElevated = Roles.userIsInRole(userId, ["god", "super-admin", "admin"]);
 
-  if (untouchable) {
-    status = true;
-  } else if (!god && elevated) {
-    status = true;
+  if (!protectedTarget) {
+    if (rootAdmin && action === "changeRole") {
+      status = false;
+    } else if (god && action === "changeRole" && role !== "god") {
+      status = false;
+    } else if (superAdmin && action === "changeRole" && role !== "god" && role !== "super-admin") {
+      status = false;
+    } else if (admin && action === "changeRole" && role !== "god" && role !== "super-admin" && role !== "admin") {
+      status = false;
+    } else if (!targetUserElevated && thisUserElevated && action === "delete") {
+      status = false;
+    }
   }
 
   return status;
@@ -154,7 +168,6 @@ export const imageUpdatePageAdmin = new ValidatedMethod({
     return true;
   }
 });
-
 
 /*
 export const imageUpdateSettingsAdmin = new ValidatedMethod({
@@ -437,7 +450,7 @@ export const deleteUserList = new ValidatedMethod({
         const val = fields.selected[key];
 
         if (val === true) {
-          const prot = protectedUser(key, this.userId);
+          const prot = protectedUser(key, this.userId, "delete");
           if (!prot) {
             deletedList.push(key);
             deleteOneUser(key);
@@ -460,7 +473,7 @@ export const deleteUser = new ValidatedMethod({
   run(fields) {
     if (!this.isSimulation) {
       authCheck("deleteUser", this.userId, "admin");
-      const prot = protectedUser(fields.id, this.userId);
+      const prot = protectedUser(fields.id, this.userId, "delete");
       if (prot) {
         throw new Meteor.Error(`deleteUser not-authorized`, "Cannot delete protected user.");
       }
@@ -476,7 +489,7 @@ export const deleteUser = new ValidatedMethod({
 export const toggleRole = new ValidatedMethod({
   name: "admin.toggleRole",
   validate: new SimpleSchema({
-    id: { type: String },
+    targetId: { type: String },
     role: { type: String }
   }).validator(),
 
@@ -485,15 +498,15 @@ export const toggleRole = new ValidatedMethod({
     let prot = false;
 
     if (!this.isSimulation) {
-      prot = protectedUser(fields.id, this.userId);
+      prot = protectedUser(fields.targetId, this.userId, "changeRole", fields.role);
     }
 
     if (!prot) {
-      const current = Roles.userIsInRole(fields.id, fields.role);
+      const current = Roles.userIsInRole(fields.targetId, fields.role);
       if (current) {
-        Roles.removeUsersFromRoles(fields.id, fields.role);
+        Roles.removeUsersFromRoles(fields.targetId, fields.role);
       } else {
-        Roles.addUsersToRoles(fields.id, fields.role);
+        Roles.addUsersToRoles(fields.targetId, fields.role);
       }
     }
 
@@ -557,7 +570,7 @@ export const deletePostList = new ValidatedMethod({
           dataSrc.remove(key);
           if (fields.deleteComments) {
             log.info(`admin.deletePostList - deleting comments`);
-            Comments.remove({postId: key});
+            Comments.remove({ postId: key });
           }
         }
       }

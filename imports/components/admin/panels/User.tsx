@@ -28,7 +28,7 @@ let styles: any;
 interface IProps {
   classes: any;
   theme: any;
-  userId: string;
+  targetUserId: string;
   user: any;
   email: string;
   settings: any;
@@ -125,7 +125,7 @@ class User extends React.Component<IProps, IState> {
   };
 
   toggleRole = role => event => {
-    toggleRole.call({ role: role, id: this.props.userId }, err => {
+    toggleRole.call({ role: role, targetId: this.props.targetUserId }, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
         log.error(`toggleRole failed`, err);
@@ -138,7 +138,7 @@ class User extends React.Component<IProps, IState> {
   };
 
   getRoleStatus(role) {
-    const val = Roles.userIsInRole(this.props.userId, role);
+    const val = Roles.userIsInRole(this.props.targetUserId, role);
     return val;
   }
 
@@ -150,7 +150,7 @@ class User extends React.Component<IProps, IState> {
     this.setState({ blockUI: true });
     Library.confirmDialog().then(result => {
       if (result) {
-        deleteUser.call({ id: this.props.userId }, err => {
+        deleteUser.call({ id: this.props.targetUserId }, err => {
           if (err) {
             Library.modalErrorAlert(err.reason);
             log.error(`deleteUser failed`, err);
@@ -174,14 +174,16 @@ class User extends React.Component<IProps, IState> {
   };
 
   layout() {
-    const { classes, user } = this.props;
+    const { classes, user, targetUserId } = this.props;
 
     if (this.props.ready) {
-      const protectedUser = Roles.userIsInRole(this.props.userId, ["god", "super-admin"]);
+      const protectedUser = Roles.userIsInRole(targetUserId, ["god", "super-admin", "admin"]);
       const authEnabled = this.props.settings.authEnabled;
       return (
         <BlockUi tag="div" blocking={this.state.blockUI}>
-          <div><Author label="User Info" userId={user._id} /></div>
+          <div>
+            <Author label="User Info" userId={user._id} />
+          </div>
           <h3 className={classes.heading}>Properties</h3>
           <div className={classes.innerSection}>
             <FormControlLabel
@@ -189,7 +191,7 @@ class User extends React.Component<IProps, IState> {
               control={
                 <Switch
                   disabled={protectedUser}
-                  onChange={this.toggleLocked(this.props.userId)}
+                  onChange={this.toggleLocked(targetUserId)}
                   checked={this.props.settings.locked}
                 />
               }
@@ -201,7 +203,7 @@ class User extends React.Component<IProps, IState> {
               control={
                 <Switch
                   disabled={protectedUser}
-                  onChange={this.toggle2FA(this.props.userId)}
+                  onChange={this.toggle2FA(targetUserId)}
                   checked={authEnabled === 1 || authEnabled === 2 || authEnabled === 3}
                 />
               }
@@ -230,19 +232,43 @@ class User extends React.Component<IProps, IState> {
   }
 
   mapRoles() {
-    const { classes } = this.props;
-    const isGod = UserModule.can({ threshold: "god" });
+    const { classes, targetUserId, loggedInUserId } = this.props;
+    //const isSuperAdmin = UserModule.can({ threshold: "super-admin" });
+    //const isGod = UserModule.can({ threshold: "god" });
+    const layout = defaultRoles.map(role => {
+      //const protectedUserRoleGeneral = role === "god" || role === "super-admin" || role === "admin";
+      //const protectedUserRoleAdmin = role === "god" || role === "super-admin";
+      //let allow: boolean = false;
+      //const canEditAdminRoles =  UserModule.can({ do: "editAdminRoles", owner: targetUserId });
+      //const hasAuthority = UserModule.hasAuthority(role);
 
-    const layout = defaultRoles.map(value => {
-      //let disabled = false;
-      const disabled = (value === "god" || value === "super-admin") && !isGod; //{
-      //disabled = true;
-      //}
-      return value !== "user" ? (
-        <ListItem key={value} dense button className={classes.listItem}>
-          <ListItemText primary={value} />
+
+      const allow =  UserModule.hasAuthority(targetUserId, role);
+
+      /*
+      if (isGod) {
+        if (targetUserId !== loggedInUserId || role !== "god") {
+          allow = true;
+        }
+      } else {
+        allow = hasAuthority;
+      }
+      */
+
+      /*
+      } else if (isSuperAdmin && !protectedUserRoleAdmin) {
+        allow = hasAuthority;
+      } else {
+        allow = !protectedUserRoleGeneral && hasAuthority;
+      }
+      */
+
+      const disabled = !allow; //protectedUserRole && !isSuperAdmin;
+      return role !== "user" ? (
+        <ListItem key={role} dense button className={classes.listItem}>
+          <ListItemText primary={role} />
           <ListItemSecondaryAction>
-            <Checkbox onChange={this.toggleRole(value)} disabled={disabled} checked={this.getRoleStatus(value)} />
+            <Checkbox onChange={this.toggleRole(role)} disabled={disabled} checked={this.getRoleStatus(role)} />
           </ListItemSecondaryAction>
         </ListItem>
       ) : (
@@ -266,8 +292,8 @@ export default connect(mapStateToProps)(
   withTracker(props => {
     const usersHandle = Meteor.subscribe("allUsers");
     const settingsHandle = Meteor.subscribe("allSettings");
-    const user = Meteor.users.findOne(props.userId);
-    const settings = userSettings.findOne({ owner: props.userId });
+    const user = Meteor.users.findOne(props.targetUserId);
+    const settings = userSettings.findOne({ owner: props.targetUserId });
 
     return {
       user: user,
