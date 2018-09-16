@@ -72,7 +72,9 @@ const protectedUser = (targetId: string, userId: string, action: string, role?: 
   const thisUserElevated = Roles.userIsInRole(userId, ["god", "super-admin", "admin"]);
 
   if (!protectedTarget) {
-    if (rootAdmin && action === "changeRole") {
+    if (targetUserElevated && action === "changeRole" && role === "banned") {
+      status = true;
+    } else if (rootAdmin && action === "changeRole") {
       status = false;
     } else if (god && action === "changeRole" && role !== "god") {
       status = false;

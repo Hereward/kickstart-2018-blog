@@ -168,7 +168,6 @@ export function authRequired(props) {
 }
 
 export function hasAuthority(targetUserId: string, role: string) {
-  //targetId: string,
   const userId = id();
   let status = false;
   if (userId) {
@@ -176,9 +175,6 @@ export function hasAuthority(targetUserId: string, role: string) {
     const superAdmin = Roles.userIsInRole(userId, "super-admin");
     const admin = Roles.userIsInRole(userId, "admin");
     const elevatedTarget = Roles.userIsInRole(targetUserId, ["god", "super-admin", "admin"]);
-    //const targetIsGod = Roles.userIsInRole(targetId, "god");
-    //const targetIsSuperAdmin = Roles.userIsInRole(targetId, "super-admin");
-    //const targetIsAdmin = Roles.userIsInRole(targetId, "admin");
 
     switch (true) {
       case elevatedTarget && role === "banned":
@@ -190,10 +186,10 @@ export function hasAuthority(targetUserId: string, role: string) {
         status = true;
         break;
       case superAdmin && role !== "god" && role !== "super-admin":
-        status = true; //!targetIsGod && !targetIsSuperAdmin;
+        status = true;
         break;
       case admin && role !== "god" && role !== "super-admin" && role !== "admin":
-        status = true; //!targetIsGod && !targetIsSuperAdmin && !targetIsAdmin;
+        status = true;
         break;
       default:
         status = false;

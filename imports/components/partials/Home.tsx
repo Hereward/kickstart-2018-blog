@@ -5,7 +5,7 @@ import Transition from "./Transition";
 let fb: any;
 
 const HomeContent = props => (
-    <Transition>
+  <Transition>
     <div className="jumbotron">
       <div className="container">
         <h1 className="display-4">A starter platform for Meteor projects</h1>
@@ -37,10 +37,58 @@ const HomeContent = props => (
             For full documentation please visit the{" "}
             <a href="https://github.com/Hereward/kickstart-2018-blog">Github Repository</a>.
           </p>
+          <h3>Recently Added Features</h3>
+          <ul>
+            <li>Blog (create/edit/delete)</li>
+            <li>Tags (create/edit/delete)</li>
+            <li>Comments (create/edit/delete)</li>
+            <li>Integrated blog editing with permission system</li>
+            <li>
+              Added{" "}
+              <a href="https://www.npmjs.com/package/react-autosuggest" rel="nofollow">
+                react-autosuggest
+              </a>{" "}
+              &amp;{" "}
+              <a href="https://www.npmjs.com/package/react-tagsinput" rel="nofollow">
+                react-tagsinput
+              </a>{" "}
+              for tag editing
+            </li>
+            <li>Integrated blog &amp; page content with SSR</li>
+            <li>Added OG meta data for blog &amp; page posts</li>
+            <li>Replaced bootstrap navbar with material-ui Drawer component</li>
+            <li>
+              Implemented JSS{" ["}
+              <a href="http://cssinjs.org/" rel="nofollow">
+                CSSinJS
+              </a>{"] "}
+              - component level CSS styling - provided by{" "}
+              <a href="https://material-ui.com/customization/css-in-js/" rel="nofollow">
+                material-ui
+              </a>
+            </li>
+            <li>
+              Added{" "}
+              <a href="https://www.npmjs.com/package/react-share" rel="nofollow">
+                react-share
+              </a>{" "}
+              - social media share buttons
+            </li>
+            <li>Added tabbed profile pages for users (posts/about/settings)</li>
+            <li>Automatic route creation for generated pages</li>
+            <li>permissions system (meteor-roles)</li>
+            <li>admin panel</li>
+            <li>user management</li>
+            <li>send invitations</li>
+            <li>SSR (implemented for header and loading screen)</li>
+            <li>ability to set HTML meta data via admin panel</li>
+            <li>react-redux</li>
+            <li>improved routing</li>
+          </ul>
         </div>
       </div>
     </div>
-    </Transition>
+  </Transition>
 );
 
 export default HomeContent;

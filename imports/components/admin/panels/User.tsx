@@ -233,37 +233,9 @@ class User extends React.Component<IProps, IState> {
 
   mapRoles() {
     const { classes, targetUserId, loggedInUserId } = this.props;
-    //const isSuperAdmin = UserModule.can({ threshold: "super-admin" });
-    //const isGod = UserModule.can({ threshold: "god" });
     const layout = defaultRoles.map(role => {
-      //const protectedUserRoleGeneral = role === "god" || role === "super-admin" || role === "admin";
-      //const protectedUserRoleAdmin = role === "god" || role === "super-admin";
-      //let allow: boolean = false;
-      //const canEditAdminRoles =  UserModule.can({ do: "editAdminRoles", owner: targetUserId });
-      //const hasAuthority = UserModule.hasAuthority(role);
-
-
-      const allow =  UserModule.hasAuthority(targetUserId, role);
-
-      /*
-      if (isGod) {
-        if (targetUserId !== loggedInUserId || role !== "god") {
-          allow = true;
-        }
-      } else {
-        allow = hasAuthority;
-      }
-      */
-
-      /*
-      } else if (isSuperAdmin && !protectedUserRoleAdmin) {
-        allow = hasAuthority;
-      } else {
-        allow = !protectedUserRoleGeneral && hasAuthority;
-      }
-      */
-
-      const disabled = !allow; //protectedUserRole && !isSuperAdmin;
+      const allow = UserModule.hasAuthority(targetUserId, role);
+      const disabled = !allow; 
       return role !== "user" ? (
         <ListItem key={role} dense button className={classes.listItem}>
           <ListItemText primary={role} />
