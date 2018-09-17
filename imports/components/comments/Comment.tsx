@@ -15,7 +15,6 @@ import { withStyles } from "@material-ui/core/styles";
 import { Profiles } from "../../api/profiles/publish";
 import OptionGroup from "../admin/components/OptionGroup";
 import CommentForm from "../forms/CommentForm";
-//import CommentReplies from "./CommentReplies";
 import { can as userCan } from "../../modules/user";
 import { deleteComment } from "../../api/comments/methods";
 import * as Library from "../../modules/library";
@@ -23,11 +22,6 @@ import * as Library from "../../modules/library";
 let styles: any;
 styles = theme => ({
   commentBody: {
-    //border: "1px solid rgba(0, 0, 0, 0.125)",
-    //borderColor: "#fffcf9",
-    //borderRadius: "0.25rem",
-    //padding: "1rem",
-    //backgroundColor: "#fffcf9",
     margin: "0.5rem 0"
   },
   cardChild: {
@@ -53,7 +47,6 @@ styles = theme => ({
     marginLeft: "1rem"
   },
   editComment: {
-    //marginTop: "-0.75rem",
     marginBottom: "0.25rem",
     fontSize: "0.9rem"
   },
@@ -106,7 +99,6 @@ class CommentList extends React.Component<IProps, IState> {
 
   renderComment(comment) {
     const { classes } = this.props;
-    //layout: any = "";
     return <div className={classes.commentBody} dangerouslySetInnerHTML={this.createMarkup(comment.body)} />;
   }
 
@@ -190,7 +182,6 @@ class CommentList extends React.Component<IProps, IState> {
         Library.modalErrorAlert(err.reason);
         log.error(`deleteComment failed`, err);
       } else {
-        //this.props.commentEdited();
         this.miniAlert(`Your comment has been deleted.`);
       }
     });
@@ -218,9 +209,7 @@ class CommentList extends React.Component<IProps, IState> {
   layout() {
     const { classes, comment, commenterProfile, userId } = this.props;
     const { showEditForm } = this.state;
-    //log.info(`Comment.layout()`, this.props);
     let commentType: string;
-    //let CommentReplies: any;
 
     const cardStyle = comment.parentId ? classes.cardChild : classes.card;
     const cardBodyStyle = comment.parentId ? classes.cardBodyChild : classes.cardBody;
@@ -258,14 +247,11 @@ class CommentList extends React.Component<IProps, IState> {
 
 export default connect()(
   withTracker(props => {
-    //log.info(`Comment tracker`, props.comment);
-    //const profilesHandle = Meteor.subscribe("profiles-public");
     let profile: any = "";
     if (props.comment) {
       profile = Profiles.findOne({ owner: props.comment.authorId });
     }
 
-    // log.info(`Comment Tracker`, props.comment.authorId, profile);
     return {
       commenterProfile: profile
     };

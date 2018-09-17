@@ -84,7 +84,6 @@ class InvitationForm extends React.Component<IProps, IState> {
     let value = target.value;
     let id = target.id;
     this.setState({ [id]: value });
-    log.info(`admin changeInviteText`, id, value, this.state);
   };
 
   confirmSendInvitation() {
@@ -96,7 +95,6 @@ class InvitationForm extends React.Component<IProps, IState> {
   }
 
   sendInvitation = () => {
-    log.info(`sendInvitation`, this.state);
     this.setState({ block: true });
     sendInvitation.call(
       {
@@ -146,7 +144,6 @@ class InvitationForm extends React.Component<IProps, IState> {
   }
 
   render() {
-    log.info(`Invitation Form State`, this.state);
     const { classes } = this.props;
     return (
       <div>

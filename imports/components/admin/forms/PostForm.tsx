@@ -18,10 +18,6 @@ import { can as userCan } from "../../../modules/user";
 const slugify = require("slugify");
 
 const ReactQuill = require("react-quill");
-/*
-imageIDedit?: string;
-imageIDnew?: string;
-*/
 
 interface IProps {
   settingsObj?: PropTypes.object.isRequired;
@@ -78,8 +74,6 @@ const styles = theme => ({
 class PostForm extends React.Component<IProps, IState> {
   formID: string = "";
   rteID: string = "";
-
-  //override: any = {};
 
   toolbarOptions = [
     [{ header: [1, 2, 3, 4, false] }],
@@ -163,7 +157,6 @@ class PostForm extends React.Component<IProps, IState> {
   };
 
   handleSubmit = () => {
-    //log.info(`PostForm.handleSubmit()`, this.props);
     const {
       settingsObj,
       editingExistingData,
@@ -269,7 +262,6 @@ class PostForm extends React.Component<IProps, IState> {
       const final = `${slugString}-${dateString}`;
       this.setState({ slug: final });
     }
-    //log.info(`PostForm.handleCHange() value = [${value}]`, name);
     this.setState({ [name]: value });
   };
 
@@ -404,8 +396,6 @@ class PostForm extends React.Component<IProps, IState> {
     );
   }
 }
-
-//export default connect()(withStyles(styles, { withTheme: true })(PostForm));
 
 export default connect()(
   withTracker(props => {

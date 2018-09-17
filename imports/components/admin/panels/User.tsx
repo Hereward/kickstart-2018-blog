@@ -18,11 +18,9 @@ import { toggleLocked, toggleRole, deleteUser, adminToggle2FA } from "../../../a
 import * as Library from "../../../modules/library";
 import { userSettings } from "../../../api/settings/publish";
 import * as UserModule from "../../../modules/user";
-import OptionGroup from "../components/OptionGroup";
 import Author from "../components/Author";
 
 const defaultRoles = Meteor.settings.public.admin.roles;
-//const drawerWidth = 240;
 let styles: any;
 
 interface IProps {
@@ -169,7 +167,6 @@ class User extends React.Component<IProps, IState> {
       data = this.props.user.emails[0].address;
     }
     Library.simpleAlert(data);
-    //Library.confirmDialog({ title: data, message: "off", icon: "off" });
     return true;
   };
 
@@ -235,7 +232,7 @@ class User extends React.Component<IProps, IState> {
     const { classes, targetUserId, loggedInUserId } = this.props;
     const layout = defaultRoles.map(role => {
       const allow = UserModule.hasAuthority(targetUserId, role);
-      const disabled = !allow; 
+      const disabled = !allow;
       return role !== "user" ? (
         <ListItem key={role} dense button className={classes.listItem}>
           <ListItemText primary={role} />

@@ -1,9 +1,7 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
-//import { Roles } from "meteor/alanning:roles";
 import * as deepEqual from "deep-equal";
 import PropTypes from "prop-types";
-//import { Accounts } from "meteor/accounts-base";
 import * as striptags from "striptags";
 import * as truncate from "truncate-html";
 import { connect } from "react-redux";
@@ -14,7 +12,6 @@ import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-//import Icon from "@material-ui/core/Icon";
 import AddIcon from "@material-ui/icons/Add";
 import BlockIcon from "@material-ui/icons/Block";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -32,13 +29,11 @@ import OptionGroup from "../components/OptionGroup";
 import PostForm from "../forms/PostForm";
 import CommentForm from "../forms/CommentForm";
 import TagForm from "../forms/TagForm";
-//import RenderImage from "../components/RenderImage";
 import Author from "../components/Author";
 import MetaInfo from "../components/MetaInfo";
 import { publishPostList } from "../../../api/admin/methods";
 import { Profiles } from "../../../api/profiles/publish";
 
-//const drawerWidth = 240;
 let styles: any;
 
 interface IProps {
@@ -214,7 +209,6 @@ class Posts extends React.Component<IProps, IState> {
 
   initState = () => {
     const allowCreate = !(this.props.contentType === "comments");
-    //log.info(`Posts.initState - allowCreate = `, allowCreate);
 
     this.setState({
       allowSubmit: true,
@@ -237,12 +231,9 @@ class Posts extends React.Component<IProps, IState> {
     if (prevProps.contentType !== this.props.contentType) {
       this.initState();
     } else if (!deepEqual(prevProps.filters, filters)) {
-      log.info(`Posts.componentDidUpdate | filtersChanged`, prevProps.filters, filters);
       this.props.dispatch({ type: "LOAD_INIT" });
     }
   }
-
-  // !deepEqual(prevProps.filters, filters)
 
   UNSAFE_componentWillMount() {
     this.props.dispatch({ type: "LOAD_INIT" });
@@ -336,7 +327,6 @@ class Posts extends React.Component<IProps, IState> {
   publishSelected = publish => {
     const { contentType } = this.props;
     this.setState({ block: true });
-    //publishPostList.call()
     publishPostList.call({ publish: publish, contentType: contentType, selected: this.state.selectedPosts }, err => {
       if (err) {
         Library.modalErrorAlert(err.reason);
@@ -566,7 +556,6 @@ class Posts extends React.Component<IProps, IState> {
     const { classes, contentType, hasImage, hasTags, hasMeta, hasAuthor } = this.props;
     const checkedC = this.checkCheckBox(dataObj);
     const checkBox = this.checkBox("default", dataObj, checkedC);
-    //log.info(`getPostContent`, dataObj);
     return (
       <div>
         <div className={classes.checkBoxSmallContainer}>
@@ -652,7 +641,6 @@ class Posts extends React.Component<IProps, IState> {
   renderPost(dataObj: any) {
     const { classes, contentType } = this.props;
     const { expanded } = this.state;
-    //log.info(`Posts.renderPost`, dataObj);
     const unpub =
       dataObj.publish === false ? (
         <span>
@@ -741,7 +729,6 @@ class Posts extends React.Component<IProps, IState> {
 
   layout() {
     const { classes, allPosts, totalPosts, cursorLimit, totalFilteredPosts, filterOn } = this.props;
-    //log.info(`Posts.layout()`, allPosts, totalPosts, cursorLimit);
 
     const total = filterOn ? totalFilteredPosts : totalPosts;
     const viewing = total ? cursorLimit : 0;
@@ -799,7 +786,6 @@ export default connect(mapStateToProps)(
     let screenNameFilter: any;
     let combinedFilters: any = [];
     let filterCount: number = 0;
-    //let user: any;
     let posts: any = [];
 
     totalPosts = props.PostsDataSrc.find().count();
@@ -830,7 +816,6 @@ export default connect(mapStateToProps)(
       const user = Meteor.users.findOne({ "emails.0.address": regex });
 
       if (user) {
-        //log.info(`Posts.tracker() USER`, user);
         filterCount += 1;
         emailFilter = { authorId: user._id };
         combinedFilters.push(emailFilter);
@@ -841,7 +826,6 @@ export default connect(mapStateToProps)(
       let regex = new RegExp(`^${screenNameString}.*`, "i");
       const profile = Profiles.findOne({ screenName: regex });
       if (profile) {
-        log.info(`Posts.tracker() filter screenNameString`, profile);
         filterCount += 1;
         screenNameFilter = { authorId: profile.owner };
         combinedFilters.push(screenNameFilter);

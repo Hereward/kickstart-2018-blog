@@ -1,9 +1,7 @@
 import * as React from "react";
 import * as jquery from "jquery";
-//import { Form, FormGroup, FormText } from "reactstrap";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
-//import Switch from "@material-ui/core/Switch";
 import PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import * as BlockUi from "react-block-ui";
@@ -12,9 +10,7 @@ import "react-quill/dist/quill.snow.css";
 import * as Validation from "../../../modules/validation";
 import * as Library from "../../../modules/library";
 import Widget from "../../forms/Widget";
-const slugify = require('slugify');
-
-const ReactQuill = require("react-quill");
+const slugify = require("slugify");
 
 interface IProps {
   classes: any;
@@ -68,12 +64,10 @@ class TagForm extends React.Component<IProps, IState> {
     };
   }
 
-
-
   componentDidMount() {
     Validation.validate(this);
   }
- 
+
   getWidget = (props: any) => {
     let widgetType = props.widgetType ? props.widgetType : "simple";
     return (
@@ -94,7 +88,6 @@ class TagForm extends React.Component<IProps, IState> {
     return arraySplit[0];
   }
 
-
   handleChange = e => {
     const { handleEditing } = this.props;
     const { editingExistingData } = this.props;
@@ -105,10 +98,10 @@ class TagForm extends React.Component<IProps, IState> {
     const name = this.renderWidgetName(target.id);
     if (name === "titleRaw") {
       const truncVal = value.substring(0, 20);
-      slugString = slugify(truncVal, {lower: true, remove: /[^A-Za-z0-9-\s]/g});
+      slugString = slugify(truncVal, { lower: true, remove: /[^A-Za-z0-9-\s]/g });
       this.setState({ title: slugString });
     }
-    this.setState({ [name]: value }); 
+    this.setState({ [name]: value });
   };
 
   miniAlert = (message = "") => {
@@ -125,7 +118,6 @@ class TagForm extends React.Component<IProps, IState> {
   }
 
   handleSubmit = () => {
-    //log.info(`PostForm.handleSubmit()`, this.props);
     const {
       settingsObj,
       postUpdateMethod,

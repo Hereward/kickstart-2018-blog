@@ -1,7 +1,6 @@
 ///<reference path="../../../../index.d.ts"/>
 
 import * as React from "react";
-//import { Divider } from "@material-ui/core";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import * as dateFormat from "dateformat";
@@ -10,7 +9,6 @@ import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import OptionGroup from "./OptionGroup";
-//import { userInfo } from "os";
 
 let styles: any;
 styles = theme => ({
@@ -90,9 +88,6 @@ class MetaInfo extends React.Component<IProps, IState> {
 
 export default connect()(
   withTracker(props => {
-    //const usersHandle = Meteor.subscribe("allUsers");
-    //const user = Meteor.users.findOne(props.userId);
-    //log.info(`Author tracker`, props);
     return {};
   })(withStyles(styles, { withTheme: true })(MetaInfo))
 );

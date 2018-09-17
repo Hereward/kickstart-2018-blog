@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import PropTypes from "prop-types";
-//import { Button } from "reactstrap";
 import { connect } from "react-redux";
 import Paper from "@material-ui/core/Paper";
 import { withTracker } from "meteor/react-meteor-data";
@@ -49,19 +48,16 @@ class CommentList extends React.Component<IProps, IState> {
   }
 
   UNSAFE_componentWillMount() {
-    //log.info(`CommentList componentWillMount()`);
     this.props.dispatch({ type: "LOAD_INIT" });
   }
 
   loadMore = () => {
-    //log.info(`CommentList loadMore()`);
     this.props.dispatch({ type: "LOAD_MORE" });
   };
 
   mapComments() {
     const { classes, comments } = this.props;
     const mapped = comments.map(comment => {
-      //const checkedC = this.checkCheckBox(post);
       const layout = <Comment userId={this.props.userId} key={comment._id} comment={comment} />;
       return layout;
     });
@@ -82,7 +78,6 @@ class CommentList extends React.Component<IProps, IState> {
 
   render() {
     const { classes, comments, totalComments, cursorLimit } = this.props;
-    //log.info(`commentlist.render()`, totalComments, cursorLimit);
     return (
       <div>
         {comments ? this.mapComments() : ""}
@@ -107,7 +102,6 @@ export default connect(mapStateToProps)(
     };
     const totalComments = Comments.find({ publish: true, parentId: null, postId: props.postId }).count();
     const commentsList = Comments.find({ publish: true, parentId: null, postId: props.postId }, options).fetch();
-    //log.info(`CommentList tracker`, props, totalComments, commentsList);
     return {
       comments: commentsList,
       totalComments: totalComments

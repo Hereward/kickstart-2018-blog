@@ -6,10 +6,8 @@ import Switch from "@material-ui/core/Switch";
 import { toggleSystemOnline } from "../../../api/admin/methods";
 import * as Library from "../../../modules/library";
 import SettingsForm from "../../admin/forms/SettingsForm";
-//import RenderImage from "../components/RenderImage";
 import Spinner from "../../partials/Spinner";
 
-//const drawerWidth = 240;
 let styles: any;
 
 interface IProps {
@@ -27,7 +25,6 @@ styles = theme => ({
   groupHeading: {
     fontSize: "1.2rem",
     fontWeight: "bold"
-    //color: "rgba(0, 0, 0, 0.9)"
   },
   widgetItem: {
     maxWidth: "20rem",
@@ -94,8 +91,6 @@ class Settings extends React.Component<IProps, IState> {
     return systemSettings ? this.layout() : <Spinner />;
   }
 }
-
-//export default connect()(withStyles(styles, { withTheme: true })(Settings));
 
 export default connect()(
   withTracker(props => {

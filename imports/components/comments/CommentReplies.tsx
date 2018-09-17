@@ -57,14 +57,6 @@ class CommentReplies extends React.Component<IProps, IState> {
     this.state = {};
   }
 
-  UNSAFE_componentWillMount() {
-    //this.props.dispatch({ type: "LOAD_INIT" });
-  }
-
-  loadMore = () => {
-    //this.props.dispatch({ type: "LOAD_MORE" });
-  };
-
   loadMoreButton() {
     const { classes, loadMoreReplies } = this.props;
     return (
@@ -78,14 +70,8 @@ class CommentReplies extends React.Component<IProps, IState> {
 
   mapComments() {
     const { classes, comments, parentId } = this.props;
-    //log.info(`CommentReplies.mapComments()`, this.props);
     const mapped = comments.map(comment => {
-      //const checkedC = this.checkCheckBox(post);
-      //const layout = <div>boooo</div>;
-      const layout = (
-        <Comment parentId={parentId} userId={this.props.userId} key={comment._id} comment={comment} />
-      );
-      //const layout = <CommentReply key={comment._id} />;
+      const layout = <Comment parentId={parentId} userId={this.props.userId} key={comment._id} comment={comment} />;
       return layout;
     });
 
@@ -94,8 +80,6 @@ class CommentReplies extends React.Component<IProps, IState> {
 
   render() {
     const { classes, comments, totalComments, cursorLimitReplies } = this.props;
-
-    //log.info(`CommentReplies.render()`, totalComments, cursorLimitReplies);
 
     return totalComments ? (
       <div>
@@ -114,14 +98,12 @@ class CommentReplies extends React.Component<IProps, IState> {
 
 export default connect()(
   withTracker(props => {
-    //log.info(`CommentReplies.tracker()`, props);
     const commentsHandle = Meteor.subscribe("comments");
     let totalComments = 0;
     const options = {
       sort: { created: -1 },
       limit: props.cursorLimitReplies
     };
-    //const cursor = Comments.find({ parentId: props.parentId }, options);
     totalComments = Comments.find({ publish: true, parentId: props.parentId }).count();
     const commentsList = Comments.find({ publish: true, parentId: props.parentId }, options).fetch();
     return {

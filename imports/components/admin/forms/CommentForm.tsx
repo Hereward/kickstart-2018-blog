@@ -87,30 +87,7 @@ class CommentForm extends React.Component<IProps, IState> {
     };
   }
 
-  /*
-  preventDefault(e) {
-    e.preventDefault();
-  }
-  */
-  /*
-  keyUp = event => {
-    log.info(`CommentForm.keyUp()`, event.key);
-    if (event.key === "Enter") {
-      this.handleSubmit();
-    }
-  };
-  */
-
-  componentDidMount() {
-    /*
-    jquery(`#${this.formID}`).bind("keypress", (e) => {
-      if (e.keyCode === 13) {
-        return false;
-      }
-    });
-    */
-    //Validation.validate(this);
-  }
+  componentDidMount() {}
 
   getWidget = (props: any) => {
     let widgetType = props.widgetType ? props.widgetType : "simple";
@@ -136,7 +113,7 @@ class CommentForm extends React.Component<IProps, IState> {
     let value = target.type === "checkbox" ? target.checked : target.value;
     let name = this.renderWidgetName(target.id);
 
-    this.setState({ [name]: value }); // set the value of the target field
+    this.setState({ [name]: value });
   };
 
   updateBody = body => {
@@ -151,7 +128,6 @@ class CommentForm extends React.Component<IProps, IState> {
     e.preventDefault();
     const { postUpdateMethod, settingsObj } = this.props;
     this.setState({ blockUI: true });
-    //log.info(`Admin.CommentForm.handleSubmit()`, this.state);
     const fields = {
       id: settingsObj._id,
       publish: this.state.publish,

@@ -1,10 +1,7 @@
 import * as React from "react";
 import { withStyles } from "@material-ui/core/styles";
-//import Done from "@material-ui/icons/Done";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
-
-//import RaisedButton from "material-ui/RaisedButton";
 import Button from "@material-ui/core/Button";
 import * as BlockUi from "react-block-ui";
 import * as Validation from "../../../modules/validation";
@@ -77,11 +74,9 @@ class SettingsForm extends React.Component<IProps, IState> {
     let value = target.type === "checkbox" ? target.checked : target.value;
     let id = target.id;
     this.setState({ [id]: value });
-    log.info(`SettingsForm.handleChange()`, id, value, this.state);
   };
 
   handleSubmit = () => {
-    log.info(`SettingsForm.handleSubmit()`, this.state);
     this.setState({ blockUI: true });
     const settings = {
       title: this.state.title,
@@ -116,7 +111,6 @@ class SettingsForm extends React.Component<IProps, IState> {
   }
 
   updateImageId = (props: { imageId: string; newDataObject?: any }) => {
-    log.info(`SettingsForm.updateImageId()`, props);
     this.setState({ imageId: props.imageId });
   };
 

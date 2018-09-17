@@ -5,9 +5,6 @@ import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-//import IconButton from "@material-ui/core/IconButton";
-//import DropUpIcon from "@material-ui/icons/ArrowDropUp";
-//import DropDownIcon from "@material-ui/icons/ArrowDropDown";
 import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
@@ -32,7 +29,6 @@ import { Profiles } from "../../../api/profiles/publish";
 
 const defaultRoles = Meteor.settings.public.admin.roles;
 
-//const drawerWidth = 240;
 let styles: any;
 
 interface IProps {
@@ -204,12 +200,11 @@ class Users extends React.Component<IProps, IState> {
   handleSubmit() {}
 
   loadMore() {
-    this.props.dispatch({ type: "LOAD_MORE" }); // cursorBlock: this.cursorBlock
+    this.props.dispatch({ type: "LOAD_MORE" });
   }
 
   toggleUserSelect = id => event => {
     const currentState = Object.assign({}, this.state.selectedUsers);
-    //const currentState = this.state.selectedUsers;
     const selected = currentState[id] === true;
     currentState[id] = !selected;
     this.setState({ selectedUsers: currentState });
@@ -281,7 +276,6 @@ class Users extends React.Component<IProps, IState> {
   }
 
   deleteAll() {
-    log.info(`deleteAll`);
     this.setState({ block: true });
     deleteAllUsers.call({}, err => {
       if (err) {
@@ -502,7 +496,6 @@ class Users extends React.Component<IProps, IState> {
 
   mapUsers(usersArray) {
     const { classes } = this.props;
-    //const isGod = UserModule.can({ threshold: "god" });
 
     const mapped = usersArray.map(user => {
       const disabledC = this.disableCheckBox(user);
@@ -537,7 +530,6 @@ class Users extends React.Component<IProps, IState> {
 
   layout() {
     const { classes, totalUsers, cursorLimit, allUsers } = this.props;
-    //log.info(`Users.layout()`, allUsers, totalUsers, cursorLimit);
     return (
       <BlockUi tag="div" blocking={this.state.block}>
         {this.inviteOptions()}
@@ -605,7 +597,6 @@ export default connect(mapStateToProps)(
     if (screenNameString) {
       let regex = new RegExp(`^${screenNameString}.*`, "i");
       const profile = Profiles.findOne({ screenName: regex });
-      //log.info(`Users.tracker() filter screenNameString`, screenNameString, profile);
       if (profile) {
         filterCount += 1;
         screenNameFilter = { _id: profile.owner };
@@ -618,7 +609,6 @@ export default connect(mapStateToProps)(
     }
 
     if (filter) {
-      //log.info(`Users.tracker() combinedFilters`, combinedFilters);
       if (combinedFilters.length) {
         users = Meteor.users.find({ $or: combinedFilters }, options).fetch();
       }

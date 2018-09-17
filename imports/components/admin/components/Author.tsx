@@ -10,7 +10,6 @@ import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import OptionGroup from "./OptionGroup";
 import { Profiles } from "../../../api/profiles/publish";
-//import { userInfo } from "os";
 
 let styles: any;
 styles = theme => ({
@@ -20,7 +19,7 @@ styles = theme => ({
     fontSize: "0.9rem",
     "& li": {
       padding: "0.1rem 0",
-      display: "block",
+      display: "block"
     },
     maxWidth: "13rem",
     [theme.breakpoints.up("md")]: {
@@ -106,9 +105,7 @@ export default connect()(
   withTracker(props => {
     const usersHandle = Meteor.subscribe("allUsers");
     const user = Meteor.users.findOne(props.userId);
-
     const profile = Profiles.findOne({ owner: props.userId });
-    //log.info(`Author tracker`, props);
     return { user: user, profile: profile };
   })(withStyles(styles, { withTheme: true })(Author))
 );

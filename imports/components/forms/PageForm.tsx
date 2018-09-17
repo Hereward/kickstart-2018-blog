@@ -1,4 +1,4 @@
-/*
+/* delete
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";

@@ -5,11 +5,9 @@ import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-//import Button from "@material-ui/core/Button";
 import { EditorialImages } from "../../../api/images/methods";
 import UploadForm from "../../forms/UploadForm";
 import Image from "../../partials/Image";
-import { ToggleEditIcon } from "../../../modules/icons";
 import OptionGroup from "../components/OptionGroup";
 
 let styles: any;
@@ -48,13 +46,11 @@ class RenderImage extends React.Component<IProps, IState> {
   }
 
   componentWillMount() {
-    //log.info(`RenderImage.componentWillMount()`);
     this.setState({ editImage: false });
   }
 
   updateImageId = props => {
     this.props.updateImageId(props);
-    //this.setState({ newDataObject: props.newDataObject });
   };
 
   setNewImageObject = (newDataObject = "") => {
@@ -75,7 +71,6 @@ class RenderImage extends React.Component<IProps, IState> {
 
     if (this.state.editImage) {
       resolvedImageArray = imageArray.length ? imageArray : newDataArray;
-      //log.info(`RenderImage.layout() imageId = [${imageId}]`, imageArray, newDataObject, newDataArray, resolvedImageArray );
       layout = (
         <div className={classes.imageContainer}>
           <UploadForm
@@ -129,12 +124,9 @@ export default connect()(
       resolvedImageId = props.dataObj.imageId;
     }
     if (resolvedImageId) {
-      //const imageId = props.dataObj.image_id;
       imageCursor = EditorialImages.find({ _id: resolvedImageId });
       imageArray = imageCursor.fetch();
     }
-
-    //log.info(`RenderImage tracker`, props, imageArray);
 
     return {
       imageArray: imageArray
