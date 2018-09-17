@@ -1,9 +1,6 @@
 import { Roles } from "meteor/alanning:roles";
-
 declare var Meteor: any;
-
 declare var Mongo: any;
-
 export const systemSettings = new Mongo.Collection("systemSettings");
 
 if (Meteor.isServer) {

@@ -135,8 +135,6 @@ export const updateCommentAdmin = new ValidatedMethod({
   run(fields) {
     authCheck("comment.updateAdmin", this.userId, "admin");
     const current = Comments.findOne(fields.id);
-    log.info(`comment.updateAdmin`, fields);
-
     Comments.update(fields.id, {
       $set: {
         postId: fields.postId,
@@ -251,12 +249,7 @@ export const configureNewUser = new ValidatedMethod({
     if (!this.isSimulation) {
       authCheck("configureNewUser", this.userId);
       const allowMultiSession = Meteor.settings.public.session.allowMultiSession || false;
-
       const userId = fields.userId || this.userId;
-      log.info(`configureNewUser [${userId}]`);
-      //const userId = fields.userId;
-
-      // USER SETTINGS
       let key: any;
       let secret: any;
       userSettings.remove({ owner: userId });
@@ -313,8 +306,6 @@ export const updateSettings = new ValidatedMethod({
   run(fields) {
     if (!this.isSimulation) {
       authCheck("updateSettings", this.userId, "admin");
-      log.info(`admin.updateSetting`, fields);
-
       systemSettings.update(
         { active: true },
         {
@@ -342,7 +333,6 @@ export const toggleLocked = new ValidatedMethod({
 
   run(fields) {
     authCheck("toggleLocked", this.userId, "admin");
-    //log.info(`toggleLocked`, fields);
     lockAccountToggle(fields.id);
   }
 });
@@ -360,8 +350,6 @@ export const sendInvitation = new ValidatedMethod({
   run(fields) {
     if (!this.isSimulation) {
       authCheck("sendInvitation", this.userId, "admin");
-      //log.info(`admin.sendInvitation`, fields.email);
-
       const defaultMessage = `To get started, simply click the link below. \n\n`;
       const salutation = fields.name ? `Hi ${fields.name},  \n\n` : "Hi there,  \n\n";
       const message = fields.message ? `${fields.message}\n\n${defaultMessage}` : `${defaultMessage}`;
@@ -428,7 +416,6 @@ export const assignRolesNewUser = new ValidatedMethod({
       }
 
       Roles.setUserRoles(this.userId, userRoles);
-      log.info(`assignRolesNewUser - DONE`, email, userRoles);
     }
     return true;
   }
@@ -446,7 +433,6 @@ export const deleteUserList = new ValidatedMethod({
 
       const keys = Object.keys(fields.selected);
       let deletedList = [];
-      log.info(`admin.deleteUserList`, keys);
       for (var i = 0, len = keys.length; i < len; i++) {
         const key = keys[i];
         const val = fields.selected[key];
@@ -459,8 +445,6 @@ export const deleteUserList = new ValidatedMethod({
           }
         }
       }
-
-      log.info(`Selected Users Deleted`, deletedList);
     }
     return true;
   }
@@ -481,8 +465,6 @@ export const deleteUser = new ValidatedMethod({
       }
 
       deleteOneUser(fields.id);
-
-      log.info(`User Deleted`, fields.id);
     }
     return true;
   }
@@ -530,12 +512,10 @@ export const publishPostList = new ValidatedMethod({
       const dataSrc = postsDataSrc(fields.contentType);
       const keys = Object.keys(fields.selected);
       let publishList = [];
-      log.info(`admin.publishPostList`, keys);
       for (var i = 0, len = keys.length; i < len; i++) {
         const key = keys[i];
         const val = fields.selected[key];
         if (val === true) {
-          //dataSrc.update();
           dataSrc.update(key, {
             $set: {
               publish: fields.publish
@@ -543,8 +523,6 @@ export const publishPostList = new ValidatedMethod({
           });
         }
       }
-
-      log.info(`Selected posts publish status affected`, publishList);
     }
     return true;
   }
@@ -564,20 +542,16 @@ export const deletePostList = new ValidatedMethod({
       const dataSrc = postsDataSrc(fields.contentType);
       const keys = Object.keys(fields.selected);
       let deletedList = [];
-      log.info(`admin.deletePostList`, keys);
       for (var i = 0, len = keys.length; i < len; i++) {
         const key = keys[i];
         const val = fields.selected[key];
         if (val === true) {
           dataSrc.remove(key);
           if (fields.deleteComments) {
-            log.info(`admin.deletePostList - deleting comments`);
             Comments.remove({ postId: key });
           }
         }
       }
-
-      log.info(`Selected Posts Deleted`, deletedList);
     }
     return true;
   }
@@ -595,8 +569,6 @@ export const deleteAllPosts = new ValidatedMethod({
       const dataSrc = postsDataSrc(fields.contentType);
       dataSrc.remove({});
     }
-
-    log.info(`admin.deleteAllPosts -DONE!`);
 
     return true;
   }
@@ -620,7 +592,7 @@ export const deleteAllUsers = new ValidatedMethod({
       let userImageId = userProfileRecord.image_id;
 
       if (userImageId) {
-        excludeImagesExpression.push(userImageId); // {_id: userImageId}
+        excludeImagesExpression.push(userImageId);
       }
 
       let adminProfileRecord: any;
@@ -628,12 +600,8 @@ export const deleteAllUsers = new ValidatedMethod({
       let adminImageId = adminProfileRecord.image_id;
 
       if (adminImageId) {
-        excludeImagesExpression.push(adminImageId); // {_id: adminImageId}
+        excludeImagesExpression.push(adminImageId);
       }
-
-      log.info(
-        `deleteAllUsers: excludeImagesExpression= ${excludeImagesExpression} excludeUsersExpression=${excludeUsersExpression}`
-      );
 
       Meteor.users.remove({ _id: { $nin: excludeUsersExpression } });
       Auth.remove({ owner: { $nin: excludeUsersExpression } });
@@ -646,18 +614,13 @@ export const deleteAllUsers = new ValidatedMethod({
 
       if (avatarsCount) {
         const imagesArray = avatarsCursor.fetch();
-        log.info(`deleteAllUsers - image found! [${avatarsCount}]`, imagesArray);
         AvatarImages.remove({ _id: { $nin: excludeImagesExpression } }, function remove(error) {
           if (error) {
             log.error("IMAGE File wasn't removed, error: " + error.reason);
-          } else {
-            log.info("IMAGE File successfully removed");
           }
         });
       }
     }
-
-    log.info(`admin.deleteAllUsers -DONE!`);
 
     return true;
   }

@@ -8,7 +8,7 @@ const authCheck = (methodName, userId) => {
   let auth = true;
   if (!userId) {
     auth = false;
-    console.log(`authCheck (${methodName}) - NO USER ID`);
+    log.error(`authCheck (${methodName}) - NO USER ID`);
     throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
   }
   return auth;

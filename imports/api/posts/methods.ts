@@ -1,12 +1,9 @@
 ///<reference path="../../../index.d.ts"/>
 import { Meteor } from "meteor/meteor";
-
 import * as truncate from "truncate-html";
-import { Accounts } from "meteor/accounts-base";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Posts } from "./publish";
-import { can as userCan } from "../../modules/user";
 import { Comments } from "../comments/publish";
 import { formatPlainText, sanitize } from "../../modules/library";
 
@@ -50,13 +47,6 @@ function truncateHTML(html) {
   return trunc;
 }
 
-/*
-function truncatePlainText(text) {
-  const trunc = truncate(text, 50, { byWords: true, stripTags: true });
-  return trunc;
-}
-*/
-
 export const createPost = new ValidatedMethod({
   name: "post.create",
   validate: new SimpleSchema({
@@ -77,7 +67,6 @@ export const createPost = new ValidatedMethod({
     authCheck("post.create", this.userId);
     const truncatedBody = truncateHTML(fields.body);
     if (!fields.summary) {
-      //fields.summary = truncatePlainText(fields.body);
       fields.summary = formatPlainText({ text: fields.body, wordCount: 100 });
     }
 
@@ -142,10 +131,8 @@ export const updatePost = new ValidatedMethod({
     authCheck("posts.update", this.userId);
     const truncatedBody = truncateHTML(fields.body);
     if (!fields.summary) {
-      //fields.summary = truncatePlainText(fields.body);
       fields.summary = formatPlainText({ text: fields.body, wordCount: 100 });
     }
-    //log.info(`updatePost`, fields);
     const current = Posts.findOne(fields.id);
     slugCheck({ slug: fields.slug, type: "update", current: current.slug });
 

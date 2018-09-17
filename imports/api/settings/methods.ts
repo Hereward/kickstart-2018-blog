@@ -1,12 +1,9 @@
 ///<reference path="../../../index.d.ts"/>
-import { Accounts } from "meteor/accounts-base";
 import { Meteor } from "meteor/meteor";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
-import { userSessions } from "../sessions/publish";
 import { userSettings } from "./publish";
 import { Auth } from "../auth/publish";
-//import { insertAuth } from "../auth/methods";
 import { cancel2FASession } from "../sessions/methods";
 
 let serverAuth: any;
@@ -18,7 +15,7 @@ const authCheck = (methodName, userId) => {
   let auth = true;
   if (!userId) {
     auth = false;
-    log.info(`authCheck (${methodName}) - NO USER ID`);
+    log.error(`authCheck (${methodName}) - NO USER ID`);
     throw new Meteor.Error(`not-authorized [${methodName}]`, "Must be logged in to access this function.");
   }
   return auth;
@@ -38,12 +35,6 @@ export const createUserSettings = new ValidatedMethod({
     let key: any;
     let secret: any;
     userSettings.remove({ owner: userId });
-
-    /*
-    const rootAdminAccount = Accounts.findUserByEmail(Meteor.settings.private.adminEmail);
-    const rootId = (rootAdminAccount) ? rootAdminAccount._id : '';
-    const rootAdmin = (rootId === this.userId);
-*/
 
     let authId = userSettings.insert({
       authEnabled: 0,

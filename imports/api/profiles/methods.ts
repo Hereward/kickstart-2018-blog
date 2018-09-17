@@ -69,7 +69,6 @@ export const updateProfileImage = new ValidatedMethod({
   }).validator(),
 
   run(fields) {
-    log.info(`profileImage.update`, fields.id, fields.avatarId);
     authCheck("profileImage.update", this.userId);
 
     Profiles.update(fields.id, {
@@ -135,26 +134,25 @@ export const sendVerificationEmail = new ValidatedMethod({
 
   run(fields) {
     authCheck("profiles.sendVerificationEmail", this.userId);
-    //log.info(`sendVerificationEmail`, fields.userId, this.userId);
     const userId = fields.userId ? fields.userId : this.userId;
 
     let verificationEmailSent = 1;
 
     if (!this.isSimulation) {
-      log.info(`sendVerificationEmail - SERVER`, fields.userId, this.userId);
       let emailResServer = Accounts.sendVerificationEmail(userId);
       let error = false;
       if (!emailResServer) {
         verificationEmailSent = 2;
         error = true;
-        log.info(`sendVerificationEmail - SERVER ERROR - email not sent`);
+        log.error(`sendVerificationEmail - SERVER ERROR - email not sent`);
       }
 
-      userSettings.update({owner: fields.userId}, {
-        $set: { verificationEmailSent: verificationEmailSent }
-      });
-
-      log.info(`sendVerificationEmail - UPDATED PROFILE`, userId);
+      userSettings.update(
+        { owner: fields.userId },
+        {
+          $set: { verificationEmailSent: verificationEmailSent }
+        }
+      );
 
       if (error) {
         throw new Meteor.Error("Could not send verification email");

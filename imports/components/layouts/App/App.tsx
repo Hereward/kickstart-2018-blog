@@ -57,8 +57,6 @@ class App extends React.Component<IProps, IState> {
 
   mainContent() {
     const path = this.props.history.location.pathname;
-    //log.info(`path = `, path);
-    // <CssBaseline />
     const meta = this.props.systemSettings ? <Meta settings={this.props.systemSettings} /> : "";
     return (
       <div className="router-parent d-flex flex-column">
@@ -114,21 +112,14 @@ export default withRouter(
       let connectionRetryCount: number = 0;
       connected = Meteor.status().connected;
       connectionRetryCount = Meteor.status().retryCount;
-
       let profilePublic: any;
-
       let profileCursor = Profiles.find();
       let pcount = profileCursor.count();
-      //log.info(`APP tracker`, pcount, profileCursor.fetch());
-
       if (userId && userData) {
         sessionToken = User.sessionToken("get");
         let hashedToken = sessionToken ? User.hash(sessionToken) : "";
-
         profilePublic = Profiles.findOne({ owner: userId });
-
         userSettingsRec = userSettings.findOne({ owner: userId });
-
         userSession = userSessions.findOne({ owner: userId, sessionToken: hashedToken, active: true });
 
         if (userSession) {

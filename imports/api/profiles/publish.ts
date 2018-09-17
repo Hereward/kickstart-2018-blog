@@ -1,9 +1,6 @@
-//import { Mongo } from "meteor/mongo";
 import { Meteor } from "meteor/meteor";
 import { can as userCan, can } from "../../modules/user";
-
 declare var Mongo: any;
-
 export const Profiles = new Mongo.Collection("profiles");
 
 if (Meteor.isServer) {

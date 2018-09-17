@@ -1,11 +1,9 @@
 ///<reference path="../../../index.d.ts"/>
 import { Meteor } from "meteor/meteor";
-import { Accounts } from "meteor/accounts-base";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { userSessions } from "./publish";
 import { userSettings } from "../settings/publish";
-import { Auth } from "../auth/publish";
 import { hash } from "../../modules/user";
 
 const authCheck = (methodName, userId) => {
@@ -35,8 +33,6 @@ export const lockAccountToggle = userId => {
     if (newSetting === false) {
       userSessions.remove({ owner: userId });
     }
-
-    log.info(`lockAccountToggle`, newSetting, userId, settings);
 
     userSettings.update(
       { owner: userId },
@@ -214,7 +210,6 @@ export const purgeAllOtherSessions = new ValidatedMethod({
           ]
         };
         userSessions.remove(query);
-        log.info(`purgeAllOtherSessions - SUCCESS!`, userId, sessionRecord);
       }
     }
 
@@ -343,11 +338,6 @@ export const purgeInactiveSessions = userId => {
   let cursor = userSessions.find(query);
   let count = cursor.count();
   let recs = cursor.fetch();
-  if (recs) {
-    log.info(`purgeSessions user=[${userId}] count=[${count}]`);
-  } else {
-    log.info(`purgeSessions user=[${userId}] count=[${count}] NO PURGE REQUIRED`);
-  }
   userSessions.remove(query);
 };
 
@@ -443,7 +433,6 @@ export const keepAliveUserSession = new ValidatedMethod({
             });
           }
         } else if (!sessionRecord) {
-          log.info(`keepAliveUserSession - restoring session`);
           insertNewSession(this.userId, fields.sessionToken);
         }
       }

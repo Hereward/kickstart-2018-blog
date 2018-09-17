@@ -1,11 +1,8 @@
 ///<reference path="../../../index.d.ts"/>
 import { Meteor } from "meteor/meteor";
-import * as truncate from "truncate-html";
-import { Accounts } from "meteor/accounts-base";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Tags } from "./publish";
-import { can as userCan } from "../../modules/user";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -61,8 +58,6 @@ export const createTag = new ValidatedMethod({
 
   run(fields) {
     authCheck("comment.create", this.userId);
-
-    log.info(`comment.create`, fields.id, fields.title);
     Tags.insert({
       title: fields.title
     });

@@ -1,7 +1,5 @@
 import { Meteor } from "meteor/meteor";
-//import { Mongo } from "meteor/mongo";
 declare var Mongo: any;
-
 export const Pages = new Mongo.Collection("pages");
 
 if (Meteor.isServer) {

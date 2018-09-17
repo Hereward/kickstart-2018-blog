@@ -1,12 +1,9 @@
 ///<reference path="../../../index.d.ts"/>
 import { Meteor } from "meteor/meteor";
-import * as truncate from "truncate-html";
-import { Accounts } from "meteor/accounts-base";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Comments } from "./publish";
-import { can as userCan } from "../../modules/user";
-import { formatPlainText, sanitize } from "../../modules/library";
+import { sanitize } from "../../modules/library";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -27,7 +24,6 @@ export const updateComment = new ValidatedMethod({
 
   run(fields) {
     authCheck("comment.edit", this.userId);
-    //log.info(`comment.edit`, fields.postId, fields.body);
     Comments.update(fields.id, {
       $set: {
         publish: true,
@@ -49,11 +45,7 @@ export const deleteComment = new ValidatedMethod({
   run(fields) {
     if (!this.isSimulation) {
       authCheck("comment.delete", this.userId);
-      //const dataSrc = postsDataSrc(fields.contentType);
-      //const keys = Object.keys(fields.selected);
       Comments.remove(fields.id);
-
-      //log.info(`Selected Posts Deleted`, deletedList);
     }
     return true;
   }
@@ -70,7 +62,6 @@ export const createComment = new ValidatedMethod({
   run(fields) {
     authCheck("comment.create", this.userId);
 
-    log.info(`comment.create`, fields.postId, fields.body);
     Comments.insert({
       publish: true,
       body: sanitize({ type: "html", content: fields.body }),
@@ -84,37 +75,3 @@ export const createComment = new ValidatedMethod({
     return true;
   }
 });
-
-
-/*
-export const updateCommentInline = new ValidatedMethod({
-  name: "comment.updateInline",
-  validate: new SimpleSchema({
-    id: { type: String },
-    title: { type: String }
-  }).validator(),
-
-  run(fields) {
-    authCheck("comment.updateInline", this.userId);
-    log.info(`comment.updateInline`, fields);
-
-    const current = Comments.findOne(fields.id);
-
-    const allow = userCan({ threshold: "creator", owner: current.authorId });
-
-    if (!allow) {
-      console.log(`comment.updateInline - PERMISSION DENIED`);
-      throw new Meteor.Error(`not-authorized [comment.updateInline]`, "PERMISSION DENIED");
-    }
-
-    Comments.update(fields.id, {
-      $set: {
-        body: fields.body,
-        modified: new Date()
-      }
-    });
-
-    return true;
-  }
-});
-*/

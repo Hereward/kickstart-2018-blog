@@ -1,10 +1,8 @@
 import { Meteor } from "meteor/meteor";
-import { Accounts } from "meteor/accounts-base";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Pages } from "./publish";
-import { can as userCan } from "../../modules/user";
-import { formatPlainText, sanitize } from "../../modules/library";
+import { sanitize } from "../../modules/library";
 
 const authCheck = (methodName, userId) => {
   let auth = true;
@@ -24,7 +22,6 @@ const slugCheck = (props: { slug: string; type: string; current?: string }) => {
     valid = found === 0;
   } else {
     found = Pages.find({ slug: props.slug }).count();
-    //const current = Pages.findOne(props.id);
     const unchanged = props.current === props.slug;
     if (unchanged) {
       valid = true;
@@ -32,7 +29,6 @@ const slugCheck = (props: { slug: string; type: string; current?: string }) => {
       valid = found === 0;
     }
   }
-  //log.info(`slugValid()`, valid);
   if (!valid) {
     slugError();
   }
@@ -42,13 +38,11 @@ function slugError() {
   throw new Meteor.Error(`Invalid slug`, "Slug must be unique.");
 }
 
-
-
 export const createPage = new ValidatedMethod({
   name: "page.create",
   validate: new SimpleSchema({
     id: { type: String, optional: true },
-    tags: { type: String, optional: true},
+    tags: { type: String, optional: true },
     publish: { type: Boolean },
     showImage: { type: Boolean },
     image_id: { type: String },
@@ -61,7 +55,6 @@ export const createPage = new ValidatedMethod({
 
   run(fields) {
     authCheck("pages.create", this.userId);
-    //log.info(`createPage`, fields);
 
     slugCheck({ slug: fields.slug, type: "new" });
 
@@ -70,10 +63,10 @@ export const createPage = new ValidatedMethod({
       showImage: fields.showImage,
       tags: sanitize({ type: "text", content: fields.tags }) || "",
       image_id: fields.image_id,
-      title: sanitize({type: "text", content: fields.title}),
+      title: sanitize({ type: "text", content: fields.title }),
       body: sanitize({ type: "html", content: fields.body }),
-      summary: sanitize({type: "text", content: fields.summary}),
-      slug: sanitize({type: "text", content: fields.slug}),
+      summary: sanitize({ type: "text", content: fields.summary }),
+      slug: sanitize({ type: "text", content: fields.slug }),
       allowComments: fields.allowComments,
       closeComments: false,
       modified: new Date(),
@@ -88,7 +81,7 @@ export const updatePage = new ValidatedMethod({
   name: "pages.update",
   validate: new SimpleSchema({
     id: { type: String },
-    tags: { type: String, optional: true},
+    tags: { type: String, optional: true },
     publish: { type: Boolean },
     showImage: { type: Boolean },
     image_id: { type: String },
@@ -101,10 +94,7 @@ export const updatePage = new ValidatedMethod({
 
   run(fields) {
     authCheck("pages.update", this.userId);
-    //log.info(`updatePage`, fields);
-
     const current = Pages.findOne(fields.id);
-
     slugCheck({ slug: fields.slug, type: "update", current: current.slug });
 
     Pages.update(fields.id, {
@@ -113,11 +103,11 @@ export const updatePage = new ValidatedMethod({
         showImage: fields.showImage,
         tags: sanitize({ type: "text", content: fields.tags }) || "",
         image_id: fields.image_id,
-        title: sanitize({type: "text", content: fields.title}),
-        body: sanitize({type: "html", content: fields.body}),
-        summary: sanitize({type: "text", content: fields.summary}),  
+        title: sanitize({ type: "text", content: fields.title }),
+        body: sanitize({ type: "html", content: fields.body }),
+        summary: sanitize({ type: "text", content: fields.summary }),
         closeComments: fields.closeComments,
-        slug: sanitize({type: "text", content: fields.slug}) || current.slug,
+        slug: sanitize({ type: "text", content: fields.slug }) || current.slug,
         modified: new Date()
       }
     });
@@ -125,6 +115,3 @@ export const updatePage = new ValidatedMethod({
     return true;
   }
 });
-
-
-

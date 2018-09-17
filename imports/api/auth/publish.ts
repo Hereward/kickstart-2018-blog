@@ -1,7 +1,5 @@
 import { Meteor } from "meteor/meteor";
-
 declare var Mongo: any;
-
 export const Auth = new Mongo.Collection("enhancedAuth");
 
 if (Meteor.isServer) {

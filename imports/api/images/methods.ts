@@ -63,29 +63,9 @@ export const findOne = new ValidatedMethod({
   run(fields) {
     authCheck("images.findOne", this.userId);
     const fileCursor = EditorialImages.findOne({ _id: fields._id });
-    log.info(`findOne - server`, fields, fileCursor);
     return fileCursor;
   }
 });
-
-/*
-export const Images = new FilesCollection({
-  debug: true,
-  collectionName: "Images",
-  allowClientCode: false,
-  storagePath: Meteor.settings.public.images.storagePath,
-  permissions: 0o774,
-	parentDirPermissions: 0o774,
-  onBeforeUpload: function onBeforeUpload(file) {
-    // Allow upload files under 10MB, and only in png/jpg/jpeg formats
-    if (file.size <= 1024 * 1024 * 10 && /png|jpg|jpeg/i.test(file.extension)) {
-      return true;
-    } else {
-      return "Please upload image, with size equal or less than 10MB";
-    }
-  }
-});
-*/
 
 export const removeImage = new ValidatedMethod({
   name: "image.remove",
@@ -96,7 +76,6 @@ export const removeImage = new ValidatedMethod({
 
   run(fields) {
     authCheck("image.remove", this.userId);
-    log.info(`image.remove`, fields);
 
     if (!this.isSimulation) {
       const ImagesObj = resolveImageSource(fields.dataSource);
@@ -104,37 +83,13 @@ export const removeImage = new ValidatedMethod({
       ImagesObj.remove({ _id: fields.id }, function remove(error) {
         if (error) {
           log.error("Image wasn't removed, error: " + error.reason);
-        } else {
-          log.info("Image successfully removed");
         }
       });
     }
 
-    //source = fields.dataSource ? fields.dataSource :
-
     return true;
   }
 });
-
-/*
-removeImage(fileId, Images) {
-    authCheck("removeImage", this.userId);
-    check(fileId, String);
-    check(Images, Object);
-
-    if (!User.id()) {
-      throw new Meteor.Error("not-authorized");
-    }
-
-    Images.remove({ _id: fileId }, function remove(error) {
-      if (error) {
-        console.error("File wasn't removed, error: " + error.reason);
-      } else {
-        console.info("File successfully removed");
-      }
-    });
-  },
-  */
 
 Meteor.methods({
   RenameFile(fileId, Images) {
@@ -179,7 +134,7 @@ Meteor.methods({
         );
       })
       .catch(function writeImageDataError(error) {
-        console.log(error);
+        log.error(error);
       });
   }
 });

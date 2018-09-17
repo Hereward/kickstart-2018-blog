@@ -1,5 +1,4 @@
 import { Meteor } from "meteor/meteor";
-//import { Mongo } from "meteor/mongo";
 declare var Mongo: any;
 
 export const Comments = new Mongo.Collection("comments");
