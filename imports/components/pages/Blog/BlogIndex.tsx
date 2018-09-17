@@ -2,12 +2,9 @@
 
 import * as React from "react";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { connect } from "react-redux";
 import * as dateFormat from "dateformat";
-//import * as parseDomain from "parse-domain";
-//import { Button } from "reactstrap";
-//import * as truncate from "truncate-html";
 import Button from "@material-ui/core/Button";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
@@ -21,13 +18,10 @@ import EditorialImage from "./EditorialImage";
 import Share from "../../partials/Share";
 import * as Library from "../../../modules/library";
 
-//import Splash from "../../partials/Splash";
-
 let styles: any;
 
 styles = theme => ({
   mainHeading: {
-    //border: "1px solid rgba(0, 0, 0, 0.1)",
     backgroundColor: "rgba(0, 0, 0, 0.1)",
     padding: "0.5rem",
     fontSize: "1rem",
@@ -122,12 +116,9 @@ class BlogIndex extends React.Component<IProps, IState> {
 
   renderPost(post: any) {
     const { classes, location } = this.props;
-    //const parsedDomain = parseDomain(window.location.href);
     let layout: any = "";
     const url = `${window.location.hostname}${location.pathname}/${post.slug}`;
     const quote = Library.formatPlainText({ text: post.body, wordCount: 100 });
-    //const quote = truncate(post.body, 100, { byWords: true, stripTags: true });
-    //log.info(`BlogIndex.renderPost()`, url, this.props, window.location.hostname);
     if (post) {
       layout = (
         <div>
@@ -155,7 +146,6 @@ class BlogIndex extends React.Component<IProps, IState> {
 
   mapPosts() {
     const { classes, posts } = this.props;
-    //log.info(`BlogIndex mapPosts`, this.props);
     const mapped = posts.map(post => {
       const layout = (
         <div className={classes.postListItem} key={post._id}>
@@ -230,29 +220,22 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(
   withTracker(props => {
-    //log.info(`BlogIndex.Tracker()`, props);
     const commentsHandle = Meteor.subscribe("comments");
-    //let PostsDataHandle = Meteor.subscribe("posts");
     let totalPosts: number = 0;
     let posts: any = [];
-    let searchCriteria: any;
+    let searchCriteria: any = {};
     const urlTag = props.match.params.tag;
     const options = {
       sort: { created: -1 },
       limit: props.cursorLimit
     };
 
-    //if (PostsDataHandle.ready()) {
-    searchCriteria = {};
     if (urlTag) {
-      //const findRegex = `/.*${tag}.*/`;
       const findRegex = { $regex: urlTag, $options: "i" };
       searchCriteria.tags = findRegex;
-      // Items.find({"description": {$regex: ".*" + variable + ".*", $options: '<options>'}}).fetch();
     }
     totalPosts = Posts.find(searchCriteria).count();
     posts = Posts.find(searchCriteria, options).fetch();
-    //}
 
     return { posts: posts, totalPosts: totalPosts, urlTag: urlTag };
   })(withStyles(styles, { withTheme: true })(BlogIndex))

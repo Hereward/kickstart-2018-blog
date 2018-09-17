@@ -2,11 +2,10 @@
 
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
-//import PageContent from "../../partials/PageContent";
 import PostForm from "../../admin/forms/PostForm";
 
 let styles: any;
@@ -35,7 +34,6 @@ class CreateIndex extends React.Component<IProps, IState> {
   handleNewPostCreated = pageFields => {
     const { history } = this.props;
     history.push(`/blog/${pageFields.slug}`);
-    //this.setState({ showForm: false });
   };
 
   handlePostUpdated = () => {

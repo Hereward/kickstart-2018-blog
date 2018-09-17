@@ -2,7 +2,7 @@ import * as React from "react";
 import * as jquery from "jquery";
 import { connect } from "react-redux";
 import Button from "@material-ui/core/Button";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import * as BlockUi from "react-block-ui";
 import "react-block-ui/style.css";

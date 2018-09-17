@@ -1,9 +1,7 @@
 import * as React from "react";
 import * as dateFormat from "dateformat";
-//import { Divider } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { Meteor } from "meteor/meteor";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
@@ -15,7 +13,6 @@ import Spinner from "../../partials/Spinner";
 let styles: any;
 styles = theme => ({
   mainHeading: {
-    //border: "1px solid rgba(0, 0, 0, 0.1)",
     backgroundColor: "rgba(0, 0, 0, 0.1)",
     padding: "0.5rem",
     fontSize: "1rem",
@@ -34,7 +31,6 @@ styles = theme => ({
     marginBottom: "1rem"
   },
   readMore: {
-    //marginLeft: "auto",
     marginTop: "1rem",
     display: "block",
     textAlign: "left"
@@ -93,7 +89,6 @@ class PostList extends React.Component<IProps, IState> {
   }
 
   mapPosts() {
-    //log.info(`ProfilePosts.mapPosts()`, this.props);
     const { classes, totalPosts, posts, cursorLimit } = this.props;
     const mapped = posts.map(post => {
       const layout = (
@@ -133,7 +128,6 @@ class PostList extends React.Component<IProps, IState> {
 
   layout() {
     const { classes, totalPosts, posts, cursorLimit, ownerView } = this.props;
-    //log.info(`PostList.render()`, posts, totalPosts, cursorLimit);
     const totalPostsLabel = totalPosts ? ` (${totalPosts})` : "";
     return (
       <div className={classes.root}>
@@ -161,7 +155,6 @@ class PostList extends React.Component<IProps, IState> {
 
   render() {
     const { totalPosts } = this.props;
-    //const hasData = totalPosts;
     return totalPosts ? this.layout() : "";
   }
 }
@@ -178,7 +171,6 @@ export default connect()(
     totalPosts = Posts.find({ publish: publishFilter, authorId: props.profileUserId }).count();
     posts = Posts.find({ publish: publishFilter, authorId: props.profileUserId }, options).fetch();
 
-    log.info(`PostList.tracker() publish=[${publishFilter}]`, posts, props);
     return {
       posts: posts,
       totalPosts: totalPosts

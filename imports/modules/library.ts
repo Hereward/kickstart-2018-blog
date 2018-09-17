@@ -3,7 +3,6 @@ import * as truncate from "truncate-html";
 import * as htmlToText from "html-to-text";
 import * as sanitizeHtml from "sanitize-html";
 import { SweetAlert } from "sweetalert/typings/core";
-import * as User from "./user";
 
 const temp: any = _swal;
 const swal: SweetAlert = temp;
@@ -23,7 +22,6 @@ export function sanitize(props: { type: string; content: string }) {
       allowedAttributes: {}
     });
   }
-  log.info(`sanitize`, props, output);
   return output;
 }
 
@@ -103,7 +101,6 @@ export function modalSuccessAlert(params: any) {
     icon: "success"
   }).then(value => {
     if (obj.location) {
-      log.info(`changing page location [${location}]`);
       window.location.assign(obj.location);
     }
   });

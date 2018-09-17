@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
 import {
   FacebookShareButton,

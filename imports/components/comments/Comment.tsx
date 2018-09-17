@@ -7,7 +7,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import { Link } from "react-router-dom";
 import { Meteor } from "meteor/meteor";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as dateFormat from "dateformat";
 import { Card, CardBody } from "reactstrap";
 import { withTracker } from "meteor/react-meteor-data";

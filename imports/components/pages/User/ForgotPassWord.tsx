@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import * as React from "react";
 import { Accounts } from "meteor/accounts-base";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import ReactRouterPropTypes from "react-router-prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import { Link } from "react-router-dom";

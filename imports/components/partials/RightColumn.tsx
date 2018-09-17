@@ -4,11 +4,9 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import { Meteor } from "meteor/meteor";
 import { withTracker } from "meteor/react-meteor-data";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-//import { Posts } from "../../api/posts/publish";
 import { Tags } from "../../api/tags/publish";
-import { clearSessionAuthMethod } from "../../api/sessions/methods";
 import Spinner from "./Spinner";
 
 let styles: any;
@@ -66,7 +64,6 @@ class RightColumn extends React.Component<IProps, IState> {
 
 export default connect()(
   withTracker(props => {
-    //log.info(`RightColumn.tracker()`, props);
     const tagsHandle = Meteor.subscribe("tags");
     const urlTag = props.match.params.tag;
     const options = {
@@ -78,7 +75,6 @@ export default connect()(
       tags = Tags.find({}, options).fetch();
       totalTags = Tags.find().count();
     }
-    //log.info(`RightColumn.tracker() totalTags =[${totalTags}] urlTag=[${urlTag}]`, tags);
     return { tags: tags, totalTags: totalTags, urlTag: urlTag };
   })(withStyles(styles, { withTheme: true })(RightColumn))
 );

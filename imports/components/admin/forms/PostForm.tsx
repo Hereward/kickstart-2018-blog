@@ -2,7 +2,7 @@ import * as React from "react";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as dateFormat from "dateformat";
 import Button from "@material-ui/core/Button";
 import Switch from "@material-ui/core/Switch";

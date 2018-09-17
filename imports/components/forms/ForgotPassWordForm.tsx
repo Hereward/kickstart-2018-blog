@@ -1,8 +1,7 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import * as BlockUi from "react-block-ui";
-import PropTypes from "prop-types";
-//import RaisedButton from "material-ui/RaisedButton";
+import * as PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
 import "react-block-ui/style.css";

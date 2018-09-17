@@ -2,7 +2,6 @@ import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import { Alert } from "reactstrap";
 import * as Library from "../../modules/library";
-//import * as Methods from "../../api/auth/methods";
 import { currentValidToken } from "../../api/auth/methods";
 
 interface IProps {}
@@ -40,9 +39,7 @@ export default class AuthCodeDisplay extends React.Component<IProps, IState> {
     this.setTimer();
   }
 
-  componentWillReceiveProps(nextProps) {
-    //this.setTimer();
-  }
+  componentWillReceiveProps(nextProps) {}
 
   componentWillUpdate(nextProps) {}
 
@@ -62,13 +59,11 @@ export default class AuthCodeDisplay extends React.Component<IProps, IState> {
   }
 
   checkTokens() {
-    //console.log(`checkTokens`);
     currentValidToken.call({}, (err, token) => {
       if (err) {
         Library.modalErrorAlert(err.reason);
         console.log(`currentValidToken error`, err);
       } else if (token && this.oldToken !== token) {
-        //console.log(`checkTokens [${token}]`);
         this.setState({ currentValidToken: token });
         this.oldToken = token;
         this.expiredTokens.push(this.oldToken);

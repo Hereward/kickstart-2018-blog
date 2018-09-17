@@ -1,27 +1,20 @@
 import * as React from "react";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import Delete from "@material-ui/icons/Delete";
 import Cancel from "@material-ui/icons/Cancel";
 import Contacts from "@material-ui/icons/Contacts";
 import Settings from "@material-ui/icons/Settings";
 import Edit from "@material-ui/icons/Edit";
-import EditorCancel from "material-ui/svg-icons/content/clear";
 
-export const ToggleEditIcon = (props: {
-  currentState: boolean;
-  toggleImageEdit: any;
-  className?: any;
-}) => {
+export const ToggleEditIcon = (props: { currentState: boolean; toggleImageEdit: any; className?: any }) => {
   const newState = !props.currentState;
-  
+
   return (
     <IconButton
       id="boojam"
       aria-label="toggleEdit"
       className={props.className}
-      onClick={(e) => {
-        log.info(`ToggleEditIcon - I was CLICKED`, e, newState);
+      onClick={e => {
         props.toggleImageEdit(e);
       }}
     >

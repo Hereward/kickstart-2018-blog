@@ -20,5 +20,3 @@ const Meta = (props: { settings: any; url?: string }) => {
 };
 
 export default Meta;
-
-// <meta property="article:author" content="https://www.facebook.com/hereward.fenton" />

@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Accounts } from "meteor/accounts-base";
 import * as dateFormat from "dateformat";
-import PropTypes from "prop-types";
-import Button from "@material-ui/core/Button";
+import * as PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
@@ -83,7 +82,6 @@ class Settings extends React.Component<IProps, IState> {
   }
 
   doToggle2FA = () => {
-    log.info(`Settings.doToggle2FA()`);
     this.setState({ processing2FArequest: true });
     Accounts.logoutOtherClients();
     let token = User.sessionToken("get");
@@ -212,7 +210,6 @@ class Settings extends React.Component<IProps, IState> {
     } else {
       CustomTag = "li";
     }
-    //let CustomTag = iProps.eClass === "card-header" ? "div" : "li";
 
     let key: number = 0;
     let label = iProps.label ? <strong>{iProps.label}: </strong> : "";
@@ -221,7 +218,6 @@ class Settings extends React.Component<IProps, IState> {
       function iterateItem(item) {
         if (this.props.profile[item]) {
           if (iProps.method === "push") {
-            // const CustomTag = el;
             layout.push(
               <CustomTag key={key} className={`${iProps.eClass} ${classes[customClass]}`}>
                 {label}
@@ -236,7 +232,6 @@ class Settings extends React.Component<IProps, IState> {
       }.bind(this)
     );
     if (iProps.method === "concat") {
-      // const CustomTag = el;
       layout.push(
         <CustomTag key={key} className={`${iProps.eClass} ${classes[customClass]}`}>
           {label}
@@ -341,24 +336,6 @@ class Settings extends React.Component<IProps, IState> {
     return layout;
   }
 
-  doFeedDialog() {
-    _FB_feedDialog();
-  }
-
-  ogShare() {
-    _FB_ogShare();
-  }
-
-  fbShare() {
-    _FB_share();
-  }
-
-  /*
-  <div className={classes.fbButtons}>
-            <Button onClick={this.doFeedDialog} variant="contained">Feed</Button> <Button onClick={this.ogShare} variant="contained">ogShare</Button> <Button onClick={this.fbShare} variant="contained">fbShare</Button>
-          </div>
-          */
-
   settings() {
     const { profile, classes } = this.props;
     let layout: any = "";
@@ -402,17 +379,6 @@ class Settings extends React.Component<IProps, IState> {
     }
     return <div className="profile-details">{layout}</div>;
   }
-
-  /*
-  facebookLogin() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.FBLogin}>
-        <FBLogin />
-      </div>
-    );
-  }
-  */
 
   render() {
     const { profile } = this.props;

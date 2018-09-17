@@ -1,8 +1,7 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as BlockUi from "react-block-ui";
-//import RaisedButton from "material-ui/RaisedButton";
 import Button from "@material-ui/core/Button";
 import * as Validation from "../../modules/validation";
 

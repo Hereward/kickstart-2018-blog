@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import * as Autosuggest from "react-autosuggest";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as TagsInput from "react-tagsinput";
 import OptionGroup from "./OptionGroup";
 import { Tags } from "../../../api/tags/publish";

@@ -2,7 +2,7 @@ import * as React from "react";
 import * as PropTypes from "prop-types";
 
 interface IProps {
-  handleChange: any;
+  handleChange: PropTypes.object.isRequired;
   wProps: any;
   dataObj?: any;
   widgetType: string;

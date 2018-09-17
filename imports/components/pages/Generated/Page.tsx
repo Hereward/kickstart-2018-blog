@@ -1,11 +1,10 @@
 import { Meteor } from "meteor/meteor";
 import * as React from "react";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import Transition from "../../partials/Transition";
 import { Pages } from "../../../api/pages/publish";
 import PageContent from "../../partials/PageContent";
-//import * as User from "../../../modules/user";
 import Spinner from "../../partials/Spinner";
 
 interface IProps {
@@ -66,9 +65,6 @@ export default withTracker(props => {
   const pattern = /[a-z0-9]+(?:-[a-z0-9]+)*$/i;
   let match = pattern.exec(path);
   const slug = match[0];
-  //log.info(`Page.Tracker()`, path, slug, match);
-
-  //const slug = path.replace(/microsoft/i, "W3Schools");
   let page: any;
   let pagesHandle = Meteor.subscribe("pages");
   if (pagesHandle.ready()) {

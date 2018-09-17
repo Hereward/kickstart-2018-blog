@@ -1,8 +1,6 @@
 import * as React from "react";
-import PropTypes from "prop-types";
-import { withTracker } from "meteor/react-meteor-data";
+import * as PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { ListGroup, ListGroupItem } from "reactstrap";
 import UsersIcon from "@material-ui/icons/Contacts";
 import HomeIcon from "@material-ui/icons/Home";
 import PagesIcon from "@material-ui/icons/Description";
@@ -89,9 +87,7 @@ styles = theme => ({
   dashItem: {
     marginTop: "0.5rem"
   },
-  adminDrawerList: {
-    //minHeight: "100vh"
-  },
+  adminDrawerList: {},
   root: {
     flexGrow: 1,
     height: "auto",
@@ -143,12 +139,10 @@ styles = theme => ({
 });
 
 class AdminIndex extends React.Component<IProps, IState> {
-  //currentPanel: string;
   constructor(props) {
     super(props);
     this.handleSetState = this.handleSetState.bind(this);
     this.activatePanel = this.activatePanel.bind(this);
-    //this.currentPanel = "";
 
     const panel = this.initPanel();
     this.state = {
@@ -171,7 +165,6 @@ class AdminIndex extends React.Component<IProps, IState> {
     } else {
       panel = matchB[1];
     }
-    //log.info(`Admin.initPanel()`, `[${panel}]`, location);
     return panel;
   }
 
@@ -205,12 +198,6 @@ class AdminIndex extends React.Component<IProps, IState> {
   settingsLink() {
     return <Icon.SettingsIcon onClick={this.handleSetState} stateName="ShowSettings" />;
   }
-
-  /*
-  panel() {
-    return this.state.panel;
-  }
-  */
 
   homePanel() {
     return this.props.sessionReady ? <Home systemSettings={this.props.systemSettings} /> : "";
@@ -326,7 +313,6 @@ class AdminIndex extends React.Component<IProps, IState> {
     let layout: any;
 
     if (this.props.systemSettings) {
-      //let name = this.state.panel;
       switch (this.state.currentPanel) {
         case "home":
           layout = this.homePanel();
@@ -363,8 +349,6 @@ class AdminIndex extends React.Component<IProps, IState> {
     if (panel === this.state.currentPanel) {
       selected = classes.selected;
     }
-
-    //log.info(`Admin.getNavStyle()`, this.currentPanel, panel, selected);
 
     return selected;
   }

@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import * as React from "react";
 import { connect } from "react-redux";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { withRouter } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";

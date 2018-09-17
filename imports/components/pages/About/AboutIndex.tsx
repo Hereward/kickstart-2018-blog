@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { connect } from "react-redux";
 import { Roles } from "meteor/alanning:roles";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { withTracker } from "meteor/react-meteor-data";
@@ -9,7 +9,6 @@ import Transition from "../../partials/Transition";
 import { Pages } from "../../../api/pages/publish";
 import PageContent from "../../partials/PageContent";
 import * as User from "../../../modules/user";
-import { Profiles } from "../../../api/profiles/publish";
 import Author from "../Blog/Author";
 import Spinner from "../../partials/Spinner";
 
@@ -119,7 +118,6 @@ export default connect()(
     if (allUsersPublicHandle.ready()) {
       const cursor = Roles.getUsersInRole("creator", userSortOptions);
       creators = cursor.fetch();
-      //log.info(`About.Tracker()`, creators);
     }
 
     return { page: page, creators: creators };

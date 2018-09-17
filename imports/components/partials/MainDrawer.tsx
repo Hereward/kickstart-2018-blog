@@ -1,7 +1,7 @@
 import * as React from "react";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { withStyles } from "@material-ui/core/styles";
-import { Link, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import * as classNames from "classnames";
 import Drawer from "@material-ui/core/Drawer";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
@@ -11,14 +11,11 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import HomeIcon from "@material-ui/icons/Home";
 import InfoIcon from "@material-ui/icons/Info";
-import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import * as User from "../../modules/user";
-//import { mailFolderListItems, otherMailFolderListItems } from './tileData';
 
 interface IProps {
   classes: PropTypes.object.isRequired;

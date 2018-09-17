@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
 import * as deepEqual from "deep-equal";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as striptags from "striptags";
 import * as truncate from "truncate-html";
 import { connect } from "react-redux";

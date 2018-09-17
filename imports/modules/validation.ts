@@ -29,5 +29,3 @@ export function validate(context: any, rules: any = "") {
     }
   });
 }
-
-//".ignore, .ql-hidden, :hidden",

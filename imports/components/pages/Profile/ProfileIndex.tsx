@@ -2,8 +2,7 @@
 
 import { Meteor } from "meteor/meteor";
 import { withStyles } from "@material-ui/core/styles";
-import PropTypes from "prop-types";
-import AppBar from "@material-ui/core/AppBar";
+import * as PropTypes from "prop-types";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import * as React from "react";
@@ -19,7 +18,6 @@ import About from "./About";
 import { Posts } from "../../../api/posts/publish";
 import Settings from "./Settings";
 import { AvatarImages } from "../../../api/images/methods";
-//import FBLogin from "../../facebook/Login";
 
 let styles: any;
 styles = theme => ({
@@ -29,7 +27,7 @@ styles = theme => ({
   tabsRoot: {
     flexGrow: 1,
     width: "100%",
-    backgroundColor: "transparent",
+    backgroundColor: "transparent"
   },
   tabs: {
     boxShadow: "0 4px 10px -2px rgba(0, 0, 0, 0.3)",
@@ -85,7 +83,6 @@ class Profile extends React.Component<IProps, IState> {
       userSettings
     } = this.props;
     let imageObj: any;
-    //let link: any;
     switch (val) {
       case 0:
         if (totalPosts) {
@@ -160,17 +157,6 @@ class Profile extends React.Component<IProps, IState> {
     return <MetaWrapper settings={this.props.systemSettings} title="Profile Page" />;
   }
 
-  /*
-  facebookLogin() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.FBLogin}>
-        <FBLogin />
-      </div>
-    );
-  }
-  */
-
   render() {
     const { profile } = this.props;
     return profile ? (
@@ -188,8 +174,6 @@ class Profile extends React.Component<IProps, IState> {
 
 export default withTracker(props => {
   let avatarImage: any;
-  //const postsHandle = Meteor.subscribe("publishedPosts");
-  //let postsReady = postsHandle.ready();
   const avatarImagesDataHandle = Meteor.subscribe("avatarImages");
   let profile: any = "";
   let profileUserId = props.match.params.userId;
@@ -204,19 +188,13 @@ export default withTracker(props => {
   }
 
   if (avatarImagesDataHandle.ready()) {
-    //log.info(`avatarImagesDataHandle.ready`);
     if (profile) {
       const cursor: any = AvatarImages.find({ _id: profile.avatarId });
       avatarImage = cursor.fetch()[0];
-      //log.info(`ProfileIndex tracker`, profile.avatarId, avatarImage);
     }
   }
 
-  //if (postsReady) {
   totalPosts = Posts.find({ authorId: profileUserId }).count();
-  //}
-
-  log.info(`ProfileIndex tracker [${totalPosts}]`, profileUserId, profile);
 
   return {
     profile: profile,

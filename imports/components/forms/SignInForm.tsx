@@ -1,17 +1,15 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-//import Checkbox from "material-ui/Checkbox";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import * as PropTypes from "prop-types";
-//import RaisedButton from "material-ui/RaisedButton";
 import Button from "@material-ui/core/Button";
 import * as BlockUi from "react-block-ui";
 import * as Validation from "../../modules/validation";
 
 interface IProps {
-  handleSubmit: any;
-  handleChange: any;
+  handleSubmit: PropTypes.object.isRequired;
+  handleChange: PropTypes.object.isRequired;
   allowSubmit: boolean;
   handleCheck: any;
 }
@@ -38,13 +36,6 @@ export default class SignInForm extends React.Component<IProps, IState> {
     };
   }
 
-  /*
-  static propTypes = {
-    handleSubmit: PropTypes.func,
-    handleChange: PropTypes.func
-  };
-  */
-
   componentDidMount() {
     Validation.validate(this);
   }
@@ -57,15 +48,8 @@ export default class SignInForm extends React.Component<IProps, IState> {
     this.props.handleChange(e);
   }
 
-  /*
-  zhandleCheck(event, isInputChecked) {
-    this.props.handleCheck(isInputChecked);
-  }
-  */
-
   handleCheck = name => event => {
     this.props.handleCheck(event.target.checked);
-    //this.setState({ [name]: event.target.checked });
   };
 
   render() {
@@ -127,13 +111,3 @@ export default class SignInForm extends React.Component<IProps, IState> {
     );
   }
 }
-
-/*
-
- <Checkbox
-                id="keepMeLoggedIn"
-                label="Keep me signed in"
-                onCheck={(event, isInputChecked) => this.handleCheck(event, isInputChecked)}
-              />
-
-              */

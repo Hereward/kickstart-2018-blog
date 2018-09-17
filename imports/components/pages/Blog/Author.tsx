@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
 import { Meteor } from "meteor/meteor";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
 import { Profiles } from "../../../api/profiles/publish";

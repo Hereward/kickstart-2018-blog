@@ -1,7 +1,6 @@
 import { Auth } from "../api/auth/publish";
 declare var Npm: any;
 declare var exports: any;
-//declare var speakeasy: any;
 
 const crypto = require("crypto");
 const speakeasy = require("speakeasy");
@@ -39,7 +38,7 @@ exports.initAuth = function initAuth(authId, userId) {
   });
   toDataURLObj = future.wait();
   if (toDataURLObj.error) {
-    console.log(`initAuth toDataURL FAIL: `, toDataURLObj.error);
+    log.error(`initAuth toDataURL FAIL: `, toDataURLObj.error);
     throw new Meteor.Error(
       `initAuth toDataURL FAIL [initAuth] [${toDataURLObj.error}]`,
       "Could not retrieve QRCode URL."

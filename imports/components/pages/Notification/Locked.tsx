@@ -1,8 +1,6 @@
-import { Meteor } from "meteor/meteor";
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
 import Transition from "../../partials/Transition";
-import * as Library from "../../../modules/library";
 
 interface IProps {
   sessionReady: boolean;
@@ -22,7 +20,8 @@ class Locked extends React.Component<IProps> {
       <div className="page-content">
         <h1>Account Locked</h1>
         <div>
-          Your account has been locked. This can happen for a variety of reasons. Please contact Admin to reinstate access.
+          Your account has been locked. This can happen for a variety of reasons. Please contact Admin to reinstate
+          access.
         </div>
       </div>
     );

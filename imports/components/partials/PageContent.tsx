@@ -1,7 +1,7 @@
 ////<reference path="index.d.ts"/>
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { withTracker } from "meteor/react-meteor-data";
 import { connect } from "react-redux";
@@ -11,13 +11,10 @@ import BlockIcon from "@material-ui/icons/Block";
 import CancelIcon from "@material-ui/icons/Cancel";
 
 import PostForm from "../admin/forms/PostForm";
-//import * as PageMethods from "../../api/pages/methods";
 import * as Library from "../../modules/library";
-
 import MetaWrapper from "./MetaWrapper";
 import Author from "../pages/Blog/Author";
 import CommentCount from "../pages/Blog/CommentCount";
-//import RenderImage from "../admin/components/RenderImage";
 import { can as userCan } from "../../modules/user";
 import { deletePost } from "../../api/posts/methods";
 import EditorialImage from "../pages/Blog/EditorialImage";
@@ -78,7 +75,6 @@ styles = theme => ({
 });
 
 class PageContent extends React.Component<IProps, IState> {
-
   editInProgress = false;
 
   constructor(props) {
@@ -104,7 +100,6 @@ class PageContent extends React.Component<IProps, IState> {
 
   editLayout() {
     const { post, imageUpdateMethod, contentType } = this.props;
-    //log.info(`PageContent.editLayout()`, this.props);
     const headingLabel = post ? "Edit Post" : "New Post";
     return (
       <div>
@@ -139,7 +134,6 @@ class PageContent extends React.Component<IProps, IState> {
   handleNewPostCreated = pageFields => {
     const { history } = this.props;
     history.push(`/blog/${pageFields.slug}`);
-    //this.setState({ showForm: false });
   };
 
   handlePostUpdated = () => {
@@ -173,7 +167,6 @@ class PageContent extends React.Component<IProps, IState> {
         Library.modalErrorAlert(err.reason);
         log.error(`deletePost failed`, err);
       } else {
-        //this.props.commentEdited();
         this.miniAlert(`Your post has been deleted.`);
         history.push("/");
       }
@@ -275,15 +268,14 @@ class PageContent extends React.Component<IProps, IState> {
   getLayout() {
     const { classes, post, contentType, hasComments } = this.props;
     const { showForm } = this.state;
-    
+
     let layout: any;
 
     if (showForm) {
-      //const type
       layout = this.editLayout();
     } else if (post) {
       // VIEW PAGE
-      const quote = Library.formatPlainText({text: post.body, wordCount: 100}); //truncate(post.body, 100, { byWords: true, stripTags: true });
+      const quote = Library.formatPlainText({ text: post.body, wordCount: 100 });
 
       layout = (
         <div>
@@ -320,15 +312,6 @@ class PageContent extends React.Component<IProps, IState> {
     const { post } = this.props;
     return <MetaWrapper settings={this.props.systemSettings} customSettings={post} />;
   }
-
-  /*
-  getMetaz() {
-    const { post } = this.props;
-    const path = this.props.history.location.pathname;
-    const meta = post ? <Meta location={path} settings={post} /> : "";
-    return meta;
-  }
-  */
 
   render() {
     const { post } = this.props;

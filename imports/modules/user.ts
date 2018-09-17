@@ -108,7 +108,6 @@ export function logoutAndPurgeSessions(params: { title?: string; message?: strin
         console.log(`deActivateSession error`, err);
       }
       Meteor.logout(() => {
-        log.info(`User.logoutAndPurge() DONE`);
         if (params.title || params.message) {
           Library.modalSuccessAlert({ title: params.title, message: params.message, location: params.newLocation });
         } else if (params.newLocation) {
@@ -126,7 +125,7 @@ export function checkSessionStatus(prevProps?, newProps?) {
       log.info(`User.checkSessionStatus no sessionTokenString!`, id(), data(), prevProps, newProps);
       purgeAllSessions.call({}, (err, res) => {
         if (err) {
-          console.log(`purgeAllSessions error`, err.reason);
+          log.error(`purgeAllSessions error`, err.reason);
         }
         if (res) {
           Meteor.logout(() => {
@@ -144,7 +143,7 @@ export function checkSessionStatus(prevProps?, newProps?) {
       );
       keepAliveUserSession.call({ activityDetected: false, sessionToken: sessionTokenString }, (err, res) => {
         if (err) {
-          console.log(`keepAliveUserSession client error`, err.reason);
+          log.error(`keepAliveUserSession client error`, err.reason);
         }
       });
     }
@@ -201,7 +200,6 @@ export function hasAuthority(targetUserId: string, role: string) {
 export function can(params: { do?: string; threshold?: any; owner?: any }) {
   let allowed: boolean = false;
   const userId = id();
-  //log.info(`User.can()`, params.threshold, params.owner, userId);
 
   if (userId) {
     if (Roles.userIsInRole(userId, "god")) {

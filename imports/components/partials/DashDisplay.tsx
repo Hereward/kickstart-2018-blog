@@ -1,16 +1,10 @@
 import * as React from "react";
-import { Meteor } from "meteor/meteor";
 import * as PropTypes from "prop-types";
 import * as classNames from "classnames";
-import PowerOffIcon from "@material-ui/icons/PowerSettingsNew";
-import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import { Link } from "react-router-dom";
-import styled from "styled-components";
 import { withStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
-import Loader from "react-loader-spinner";
-import SvgIcon from "@material-ui/core/SvgIcon";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import VerifiedUser from "@material-ui/icons/VerifiedUser";
 import ErrorIcon from "@material-ui/icons/HighlightOff";
@@ -21,9 +15,6 @@ import "tooltipster/dist/css/tooltipster.bundle.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-light.min.css";
 import "tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css";
 import Avatar from "../pages/Profile/Avatar";
-//import MainDrawer from "./MainDrawer";
-
-import * as User from "../../modules/user";
 
 let styles: any;
 styles = theme => ({
@@ -52,7 +43,6 @@ styles = theme => ({
     color: "white",
     "&:hover": {
       color: "rgba(255, 255, 255, 0.75)"
-      //color: 'blue'
     }
   },
   errorIcon: {
@@ -138,14 +128,11 @@ export class DashDisplay extends React.Component<IProps, IState> {
     super(props);
   }
 
-  componentWillReceiveProps(nextProps) {
-    //this.setToolTips(nextProps);
-  }
+  componentWillReceiveProps(nextProps) {}
 
   componentWillUpdate(nextProps) {}
 
   componentDidUpdate(prevProps) {
-    //log.info(`DashDisplay.componentDidUpdate()`, prevProps, this.props);
     const { userData, userSession, loggingOut } = this.props;
 
     if (
@@ -153,12 +140,9 @@ export class DashDisplay extends React.Component<IProps, IState> {
       userData !== prevProps.userData ||
       userSession !== prevProps.userSession
     ) {
-      //log.info(`DashDisplay.componentDidUpdate() TIPS DESTROY`);
-      //this.destroyTip();
       if (loggingOut || !userData) {
         this.destroyTip();
       } else {
-        //log.info(`DashDisplay.componentDidUpdate() TIPS ON`, this.props);
         this.setToolTips(this.props);
       }
     }
@@ -215,14 +199,12 @@ export class DashDisplay extends React.Component<IProps, IState> {
   destroyTip() {
     let initialised = jquery(`.tooltipster`).hasClass("tooltipstered");
     if (initialised) {
-      log.info(`DashDisplay.destroyTip()`);
       jquery(`.tooltipster`).tooltipster("destroy");
     }
     this.currentTip = "";
   }
 
   setToolTips(props) {
-    //log.info(`DashDisplay.setToolTips()`);
     let newTip = this.dashBoardTip(props).tip;
     if (newTip !== this.currentTip) {
       this.destroyTip();
@@ -269,8 +251,6 @@ export class DashDisplay extends React.Component<IProps, IState> {
     const { classes } = this.props;
     return <CircularProgress size={22} className={classNames(classes.baseIcon, classes.spinner)} />;
   }
-
-  // size={20}
 
   getVerifiedIndicator() {
     const { classes } = this.props;

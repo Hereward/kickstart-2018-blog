@@ -1,14 +1,11 @@
 ///<reference path="../../../../index.d.ts"/>
 
 import * as React from "react";
-import { Link } from "react-router-dom";
 import { Meteor } from "meteor/meteor";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
-//import { Profiles } from "../../../api/profiles/publish";
 import { EditorialImages } from "../../../api/images/methods";
-import { clearSessionAuthMethod } from "../../../api/sessions/methods";
 
 let styles: any;
 
@@ -64,8 +61,6 @@ export default withTracker(props => {
     const cursor: any = EditorialImages.find({ _id: props.imageId });
     imageObject = cursor.fetch();
   }
-
-  //log.info(`EditorialImage`, imageObject);
 
   return { imageObject: imageObject };
 })(withStyles(styles, { withTheme: true })(EditorialImage));

@@ -8,7 +8,6 @@ const MetaWrapper = (props: { customSettings?: any; settings: any; title?: strin
     resolvedSettings = Object.assign({}, customSettings);
     resolvedSettings.title = `${customSettings.title} - ${settings.shortTitle}`;
   } else {
-    //resolvedSettings = Object.assign({}, settings);
     resolvedSettings = Object.assign({}, settings);
     if (title) {
       resolvedSettings.title = ` ${title} - ${settings.shortTitle}`;

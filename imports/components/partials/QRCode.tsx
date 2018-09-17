@@ -1,6 +1,5 @@
 ///<reference path="../../../index.d.ts"/>
 import * as React from "react";
-import { Meteor } from "meteor/meteor";
 import { Button } from "reactstrap";
 import Loader from "react-loader-spinner";
 import styled from "styled-components";

@@ -1,6 +1,6 @@
 ///<reference path="../../../index.d.ts"/>
 import * as React from "react";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import Loader from "react-loader-spinner";
 import { withStyles } from "@material-ui/core/styles";
 

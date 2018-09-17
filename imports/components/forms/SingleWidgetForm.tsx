@@ -1,6 +1,5 @@
 ///<reference path="../../../index.d.ts"/>
 import * as React from "react";
-import { withTracker } from "meteor/react-meteor-data";
 import * as PropTypes from "prop-types";
 import IconButton from "material-ui/IconButton";
 import ActionCheckCircle from "material-ui/svg-icons/action/check-circle";
@@ -12,8 +11,8 @@ import * as Validation from "../../modules/validation";
 
 
 interface IProps {
-  handleChange: any;
-  handleSubmit: any;
+  handleChange: PropTypes.object.isRequired;
+  handleSubmit: PropTypes.object.isRequired;
   name: string;
   type: string;
   label: string;

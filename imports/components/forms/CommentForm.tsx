@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as jquery from "jquery";
 import * as isTouchDevice from "is-touch-device";
-//import * as assert from "assert";
 import { Form, FormGroup, FormText } from "reactstrap";
 import { Link } from "react-router-dom";
 import Button from "@material-ui/core/Button";
@@ -55,12 +54,6 @@ const styles = theme => ({
   }
 });
 
-/*  
-    [theme.breakpoints.up("lg")]: {
-      display: "none"
-    }
-      */
-
 class CommentForm extends React.Component<IProps, IState> {
   touchDevice: boolean;
   formID: string = "CommentForm";
@@ -81,7 +74,6 @@ class CommentForm extends React.Component<IProps, IState> {
         handleEnter: {
           key: 13,
           handler: () => {
-            //log.info(`You hit the enter key`);
             this.handleSubmit();
             // Do nothing
           }
@@ -127,41 +119,9 @@ class CommentForm extends React.Component<IProps, IState> {
     };
   }
 
-  /*
-  preventDefault(e) {
-    e.preventDefault();
-  }
-  */
-  /*
-  keyUp = event => {
-    log.info(`CommentForm.keyUp()`, event.key);
-    if (event.key === "Enter") {
-      this.handleSubmit();
-    }
-  };
-  */
-
   componentDidMount() {
-    /*
-    jquery(`#${this.formID}`).bind("keypress", (e) => {
-      if (e.keyCode === 13) {
-        return false;
-      }
-    });
-    */
     Validation.validate(this);
   }
-
-  /*
-  disableReturnKey(state) {
-    jquery(window).keydown(event => {
-      if (event.keyCode === 13) {
-        event.preventDefault();
-        return !state;
-      }
-    });
-  }
-  */
 
   updateBody = body => {
     this.setState({ body: body });
@@ -177,11 +137,6 @@ class CommentForm extends React.Component<IProps, IState> {
     }
     const { postId, parentId, edit } = this.props;
     this.setState({ blockUI: true });
-    //e.preventDefault();
-
-    //log.info(`CommentForm.handleSubmit()`, this.props);
-
-    //this.props.handleSubmit();
 
     if (edit) {
       this.doEditComment();
@@ -240,7 +195,6 @@ class CommentForm extends React.Component<IProps, IState> {
   render() {
     const { classes, commentObj, postId, parentId, replyTo, edit, commentId } = this.props;
 
-    //log.info(`CommentForm.render()`, this.touchDevice);
     let formId: string = "";
     if (edit) {
       formId = `edit_comment_${commentId}`;

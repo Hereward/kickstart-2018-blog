@@ -6,20 +6,12 @@ import * as PropTypes from "prop-types";
 import PowerOffIcon from "@material-ui/icons/PowerSettingsNew";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
-import ReactRouterPropTypes from "react-router-prop-types";
-import { Link, NavLink } from "react-router-dom";
-import { withTracker } from "meteor/react-meteor-data";
-import { Session } from "meteor/session";
-import { connect } from "react-redux";
-
-import { Collapse, Navbar, NavbarToggler, Nav, NavItem, DropdownToggle, DropdownMenu, Dropdown } from "reactstrap";
-
+import { NavLink } from "react-router-dom";
 import * as SessionMethods from "../../api/sessions/methods";
 import * as Library from "../../modules/library";
 import * as User from "../../modules/user";
 import DashDisplay from "./DashDisplay";
 import MainDrawer from "./MainDrawer";
-//import Avatar from "../pages/Profile/Avatar";
 
 let styles: any;
 styles = theme => ({
@@ -80,8 +72,6 @@ class Navigation extends React.Component<IProps, IState> {
       dropdownOpen: false
     };
     this.emailVerifyPrompted = false;
-
-    //const { store } = context;
   }
 
   componentDidMount() {
@@ -119,7 +109,6 @@ class Navigation extends React.Component<IProps, IState> {
   }
 
   verifyEmailNotificationRequired() {
-    log.info(`verifyEmailNotificationRequired`, this.props);
     let notify = false;
     if (
       this.props.sessionReady &&
@@ -161,7 +150,6 @@ class Navigation extends React.Component<IProps, IState> {
           <PowerOffIcon />
         </IconButton>
       );
-      //layout = <PowerOffIcon onClick={() => history.push("/")} className={classes.powerOff} />;
     } else {
       layout = (
         <MainDrawer
@@ -177,45 +165,6 @@ class Navigation extends React.Component<IProps, IState> {
     return layout;
   }
 
-  /*
-  getAuthLayout() {
-    const { userId } = this.props;
-    let SignedInLayout = (
-      <DropdownMenu>
-        <NavLink exact className="dropdown-item nav-link" onClick={this.logOut} to="#">
-          Sign Out
-        </NavLink>
-
-        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to={`/members/profile/${userId}`}>
-          Profile
-        </NavLink>
-
-        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to="/members/change-password">
-          Change Password
-        </NavLink>
-      </DropdownMenu>
-    );
-
-    let SignedOutLayout = (
-      <DropdownMenu>
-        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to="/members/register">
-          Register
-        </NavLink>
-
-        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to="/members/signin">
-          Sign In
-        </NavLink>
-
-        <NavLink exact onClick={this.closeNavbar} className="dropdown-item nav-link" to="/members/forgot-password">
-          Forgot Password
-        </NavLink>
-      </DropdownMenu>
-    );
-
-    return this.props.sessionReady ? SignedInLayout : SignedOutLayout;
-  }
-  */
-
   logOut() {
     if (this.props.sessionReady) {
       this.props.dispatch({ type: "NAV_LOGOUT" });
@@ -226,15 +175,12 @@ class Navigation extends React.Component<IProps, IState> {
       }
       this.timerID = 0;
       this.props.history.push("/");
-      log.info(`Navigation logOut`, User.id());
       SessionMethods.deActivateSession.call({ sessionToken: User.sessionToken("get") }, (err, res) => {
         if (err) {
-          console.log(`deActivateSession error`, err.reason);
+          log.error(`deActivateSession error`, err.reason);
         }
         Meteor.logout(() => {
-          //Meteor["connection"].setUserId(null);
           this.props.dispatch({ type: "LOGOUT_DONE" });
-          log.info(`Navigation logOut DONE`);
         });
       });
     }

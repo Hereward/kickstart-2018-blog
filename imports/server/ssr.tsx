@@ -1,25 +1,14 @@
 import * as React from "react";
-import { StaticRouter } from "react-router";
-import { ServerStyleSheet, StyleSheetManager } from "styled-components";
-import { createStore } from "redux";
+import { ServerStyleSheet } from "styled-components";
 import { Helmet } from "react-helmet";
 import { renderToString, renderToStaticMarkup } from "react-dom/server";
-import { Provider } from "react-redux";
 import { onPageLoad } from "meteor/server-render";
-import MainRouter from "../components/routes/Main";
-import MainApp from "../components/layouts/App/App";
 import { systemSettings } from "../api/admin/publish";
 import Meta from "../components/partials/Meta";
-//import MetaWrapper from "../components/partials/MetaWrapper";
-import rootReducer from "../redux/reducers";
 import Splash from "../components/partials/Splash";
 import { Pages } from "../api/pages/publish";
 import { Posts } from "../api/posts/publish";
 import { EditorialImages } from "../api/images/methods";
-
-const context = {};
-
-const store = createStore(rootReducer);
 
 const getImageLink = (imageId = "") => {
   let link = "";
@@ -35,7 +24,6 @@ const extractData = (match, DataSrc, defaultImageLink) => {
   let data: any;
   const slug = match[1];
   const post = DataSrc.findOne({ slug: slug });
-  //log.info(`getCustomMetaData - extractData`, slug);
   if (post) {
     const imageId = post.image_id;
     if (imageId) {
@@ -106,7 +94,6 @@ onPageLoad(sink => {
 
   const customSettings = getCustomMetaData(url, defaultImageLink, systemSettingsObj);
   const resolvedSettings = customSettings || systemSettingsObj;
-
   sink.renderIntoElementById("react-root", renderToStaticMarkup(<Meta settings={resolvedSettings} url={fullUrl} />));
   const helmet = Helmet.renderStatic();
   sink.appendToHead(helmet.meta.toString());

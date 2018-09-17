@@ -1,7 +1,7 @@
 ///<reference path="../../../index.d.ts"/>
 
 import * as React from "react";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Paper from "@material-ui/core/Paper";
 import { withTracker } from "meteor/react-meteor-data";

@@ -1,11 +1,9 @@
 import * as React from "react";
 import { Meteor } from "meteor/meteor";
-import Icon from "@material-ui/core/Icon";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { withTracker } from "meteor/react-meteor-data";
 import { withStyles } from "@material-ui/core/styles";
-import { Posts } from "../../../api/posts/publish";
 import Transition from "../../partials/Transition";
 import PostList from "./PostList";
 import { can as userCan } from "../../../modules/user";
@@ -45,11 +43,8 @@ class ProfilePosts extends React.Component<IProps, IState> {
 
   constructor(props) {
     super(props);
-
     this.basePaginationUnit = Meteor.settings.public.admin.basePaginationUnit;
-    //this.ownerView = props.userId === props.profile.owner;
     this.ownerView = userCan({ threshold: "owner", owner: props.profile.owner });
-
     this.state = {
       cursorLimitDraft: this.basePaginationUnit,
       cursorLimitPublished: this.basePaginationUnit
@@ -60,7 +55,6 @@ class ProfilePosts extends React.Component<IProps, IState> {
     const cursorType: any = publishStatus === "draft" ? "cursorLimitDraft" : "cursorLimitPublished";
     const currentTotal = this.state[cursorType];
     const newTotal = currentTotal + this.basePaginationUnit;
-    log.info(`ProfilePosts.loadMorePosts()`, publishStatus, cursorType, newTotal);
     this.setState({ [cursorType]: newTotal });
   };
 

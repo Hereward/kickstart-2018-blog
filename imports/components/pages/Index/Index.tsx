@@ -1,29 +1,21 @@
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
-import { Link } from "react-router-dom";
-import * as ReactDOM from "react-dom";
 import * as dateFormat from "dateformat";
 import * as moment from "moment";
 import * as momentDurationFormatSetup from "moment-duration-format";
-import { Card, Button, CardHeader, CardFooter, CardBody, CardTitle, CardText } from "reactstrap";
+import { Card, CardHeader, CardBody, CardText } from "reactstrap";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-//import Checkbox from "material-ui/Checkbox";
 import { Tasks } from "../../../api/tasks/publish";
 import Task from "../../partials/Task";
 import Transition from "../../partials/Transition";
 import * as Methods from "../../../api/tasks/methods";
 import * as Library from "../../../modules/library";
-import * as Icon from "../../../modules/icons";
 import { Pages } from "../../../api/pages/publish";
-//import HomeContent from "../../partials/Home";
-import * as User from "../../../modules/user";
 
 momentDurationFormatSetup(moment);
 
 declare var Chronos: any;
-
-//declare var DocHead: any;
 
 interface IProps {
   history: any;
@@ -148,8 +140,6 @@ class Index extends React.Component<IProps, IState> {
       );
     }
   }
-
-  // <Checkbox label="Hide Completed Tasks" checked={this.state.hideCompleted} onClick={this.toggleHideCompleted} />
 
   sessionData() {
     let layout: any;

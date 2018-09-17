@@ -1,5 +1,5 @@
 import * as React from "react";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import { Meteor } from "meteor/meteor";
 import { _ } from "meteor/underscore";
 import Image from "../partials/Image";
@@ -12,7 +12,7 @@ interface IProps {
   fileLocator: any;
   loading: boolean;
   imageArray: any[];
-  dataObj: PropTypes.object;
+  dataObj: PropTypes.object.isRequired;
   updateMethod: string;
   updateImageId?: PropTypes.object;
   setNewImageObject?: PropTypes.object;
@@ -50,7 +50,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
 
   removeNewImage = () => {
     const { updateImageId, setNewImageObject } = this.props;
-    //log.info(`UploadForm.removeNewImage()`);
     this.setState({ newImage: false });
     setNewImageObject();
     updateImageId({ imageId: "" });
@@ -60,8 +59,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
     e.preventDefault();
 
     const { Images, updateMethod, dataObj, updateDirect, updateImageId, setNewImageObject } = this.props;
-
-    //let self = this;
 
     if (e.currentTarget.files && e.currentTarget.files[0]) {
       const file = e.currentTarget.files[0];
@@ -182,14 +179,10 @@ export default class UploadForm extends React.Component<IProps, IState> {
   }
 
   render() {
-    //let image: any;
-    //const { Images } = this.props;
     const { imageArray } = this.props;
-    //const { newImage } = this.state;
     let renderedImages: any = "";
 
     if (imageArray.length) {
-      //log.info(`UploadForm.render()`, imageArray );
       renderedImages = imageArray.map((imageObject, key) => {
         return this.getImage(imageObject, key);
       });
@@ -199,7 +192,6 @@ export default class UploadForm extends React.Component<IProps, IState> {
       return this.getLayout();
     }
   }
-
 
   getLayout(image: any = "") {
     let layout = (

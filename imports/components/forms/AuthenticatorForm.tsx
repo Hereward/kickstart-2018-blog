@@ -1,12 +1,10 @@
 ///<reference path="../../../index.d.ts"/>
 import * as React from "react";
 import { withTracker } from "meteor/react-meteor-data";
-import PropTypes from "prop-types";
+import * as PropTypes from "prop-types";
 import * as BlockUi from "react-block-ui";
-//import RaisedButton from "material-ui/RaisedButton";
 import Button from "@material-ui/core/Button";
 import * as Validation from "../../modules/validation";
-import * as Library from "../../modules/library";
 
 interface IProps {
   handleChange: any;
@@ -43,14 +41,12 @@ export default class AuthenticatorForm extends React.Component<IProps, IState> {
   }
 
   cancel2FA() {
-    // this.setState({cancelEnabled: false});
     this.props.cancel2FA();
   }
 
   cancelButton() {
     let layout: any;
     if (this.props.userSettings && this.props.userSettings.authEnabled > 1) {
-      //layout =  <RaisedButton secondary={true} label="Cancel" onClick={this.cancel2FA} />;
       layout = (
         <Button variant="raised" color="secondary" onClick={this.cancel2FA}>
           Cancel
@@ -89,5 +85,3 @@ export default class AuthenticatorForm extends React.Component<IProps, IState> {
     );
   }
 }
-
-// <RaisedButton disabled={!this.props.allowSubmit} type="submit" primary={true} label="Submit" /> {" "}
