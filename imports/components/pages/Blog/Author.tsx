@@ -17,7 +17,9 @@ styles = theme => ({
     marginLeft: "1rem",
     textTransform: "capitalize"
   },
-  link: {}
+  link: {
+    color: "black"
+  }
 });
 
 interface IProps {

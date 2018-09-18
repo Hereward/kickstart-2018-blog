@@ -2,13 +2,14 @@ import { Meteor } from "meteor/meteor";
 import { connect } from "react-redux";
 import { Roles } from "meteor/alanning:roles";
 import * as PropTypes from "prop-types";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
 import * as React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { withTracker } from "meteor/react-meteor-data";
 import Transition from "../../partials/Transition";
 import { Pages } from "../../../api/pages/publish";
 import PageContent from "../../partials/PageContent";
-import * as User from "../../../modules/user";
 import Author from "../Blog/Author";
 import Spinner from "../../partials/Spinner";
 
@@ -24,7 +25,9 @@ styles = theme => ({
     fontWeight: "bold",
     fontSize: "1.2rem",
     listStyleType: "none",
-    marginBottom: "1rem"
+    marginBottom: "1rem",
+    paddingTop: 0,
+    paddingBottom: 0
   }
 });
 
@@ -42,32 +45,36 @@ class About extends React.Component<IProps> {
     super(props);
   }
 
+
   customContent() {
     const { classes } = this.props;
-    const userList = this.mapUsers();
     return (
       <div className={classes.contributors}>
         <h2>Our Contributors</h2>
-        <ul className={classes.contributorList}>{userList}</ul>
+        {this.listContributors()}
       </div>
     );
   }
 
-  mapUsers() {
+  listContributors() {
     const { classes, creators } = this.props;
+    let layout: any = "";
+
     const mapped = creators.map(user => {
       const verified = user.emails[0].verified;
-      const layout = verified ? (
-        <li className={classes.contributor} key={`contributor_${user._id}`}>
+      const items = verified ? (
+        <ListItem className={classes.contributor} key={`contributor_${user._id}`}>
           <Author authorId={user._id} />
-        </li>
+        </ListItem>
       ) : (
         ""
       );
-      return layout;
+      return items;
     });
 
-    return mapped;
+    layout = <List dense={false}>{mapped}</List>;
+
+    return layout;
   }
 
   render() {
